@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 *.iml
 .gradle
 /local.properties
@@ -8,6 +10,7 @@
 /captures
 .externalNativeBuild
 
+>>>>>>> origin/master
 # Built application files
 *.apk
 *.ap_
@@ -45,6 +48,11 @@ captures/
 # Intellij
 *.iml
 .idea/workspace.xml
+<<<<<<< HEAD
+
+# Keystore files
+*.jks
+=======
 .idea/tasks.xml
 .idea/gradle.xml
 .idea/libraries
@@ -60,3 +68,4 @@ google-services.json
 
 Openssl.conf
 .idea/*
+>>>>>>> origin/master

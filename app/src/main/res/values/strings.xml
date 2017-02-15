@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Passman</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">Passman - Login</string>
+    <string name="nchost">Nextcloud host</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="next">Next</string>
+    <string name="login_header_text">Please enter your ownCloud / Nextloud credentials</string>
+    <string name="wrongNCUrl">Incorrect Nextcloud backend url or unable to connect</string>
+    <string name="wrongNCSettings">Settings incorrect</string>
+    <string name="net_error">Network error</string>
+    <string name="unlock">Unlock</string>
+    <string name="wrong_vault_pw">Wrong vault password</string>
+    <string name="label">Label</string>
+    <string name="email">eMail</string>
+    <string name="URL">URL</string>
+    <string name="description">Description</string>
+    <string name="copied_to_clipboard">Copied text to clipboard</string>
+    <string name="vault_password">Vault password</string>
+    <string name="vault_password_save">Save the vault password</string>
+</resources>
