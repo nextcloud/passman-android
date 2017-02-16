@@ -19,4 +19,5 @@
     <string name="copied_to_clipboard">Copied text to clipboard</string>
     <string name="vault_password">Vault password</string>
     <string name="vault_password_save">Save the vault password</string>
+    <string name="otp">OTP</string>
 </resources>

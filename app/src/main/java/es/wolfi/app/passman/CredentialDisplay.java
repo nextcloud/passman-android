@@ -25,12 +25,16 @@ package es.wolfi.app.passman;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import org.apache.commons.codec.binary.Base32;
+
+import net.bierbaumer.otp_authenticator.TOTPHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,8 +56,11 @@ public class CredentialDisplay extends Fragment {
     @BindView(R.id.credential_email) CopyTextItem email;
     @BindView(R.id.credential_url) TextView url;
     @BindView(R.id.credential_description) CopyTextItem description;
+    @BindView(R.id.credential_otp) CopyTextItem otp;
 
     private Credential credential;
+    private Handler handler;
+    private Runnable otp_refresh;
 
     private OnCredentialFragmentInteraction mListener;
 
@@ -119,6 +126,25 @@ public class CredentialDisplay extends Fragment {
         email.setText(credential.getEmail());
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
+
+        otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
+
+        handler = new Handler();
+        otp_refresh = new Runnable() {
+            @Override
+            public void run() {
+                int progress =  (int) (System.currentTimeMillis() / 1000) % 30 ;
+//                progressBar.setProgress(progress*100);
+//
+//                ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", (progress+1)*100);
+//                animation.setDuration(1000);
+//                animation.setInterpolator(new LinearInterpolator());
+//                animation.start();
+
+                otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
+                handler.postDelayed(this, 1000);
+            }
+        };
     }
 
     @Override
