@@ -22,6 +22,7 @@
 
 package es.wolfi.app.passman;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.LinearInterpolator;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import org.apache.commons.codec.binary.Base32;
 
@@ -57,6 +60,7 @@ public class CredentialDisplay extends Fragment {
     @BindView(R.id.credential_url) TextView url;
     @BindView(R.id.credential_description) CopyTextItem description;
     @BindView(R.id.credential_otp) CopyTextItem otp;
+    @BindView(R.id.credential_otp_progress) ProgressBar otp_progress;
 
     private Credential credential;
     private Handler handler;
@@ -93,6 +97,35 @@ public class CredentialDisplay extends Fragment {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
             credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
         }
+
+        handler = new Handler();
+        otp_refresh = new Runnable() {
+            @Override
+            public void run() {
+                int progress =  (int) (System.currentTimeMillis() / 1000) % 30 ;
+                otp_progress.setProgress(progress*100);
+
+                ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress+1)*100);
+                animation.setDuration(1000);
+                animation.setInterpolator(new LinearInterpolator());
+                animation.start();
+
+                otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
+                handler.postDelayed(this, 1000);
+            }
+        };
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        handler.post(otp_refresh);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(otp_refresh);
     }
 
     @Override
@@ -126,25 +159,7 @@ public class CredentialDisplay extends Fragment {
         email.setText(credential.getEmail());
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
-
-        otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
-
-        handler = new Handler();
-        otp_refresh = new Runnable() {
-            @Override
-            public void run() {
-                int progress =  (int) (System.currentTimeMillis() / 1000) % 30 ;
-//                progressBar.setProgress(progress*100);
-//
-//                ObjectAnimator animation = ObjectAnimator.ofInt(progressBar, "progress", (progress+1)*100);
-//                animation.setDuration(1000);
-//                animation.setInterpolator(new LinearInterpolator());
-//                animation.start();
-
-                otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
-                handler.postDelayed(this, 1000);
-            }
-        };
+        otp.setEnabled(false);
     }
 
     @Override

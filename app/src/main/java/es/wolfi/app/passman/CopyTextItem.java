@@ -104,6 +104,10 @@ public class CopyTextItem extends LinearLayout {
         toggle.setVisibility(View.GONE);
     }
 
+    public void setEnabled(boolean enabled) {
+        text.setEnabled(enabled);
+    }
+
     @OnClick(R.id.copy_btn_toggle_visible)
     public void toggleVisibility() {
         switch (text.getInputType()) {
