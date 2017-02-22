@@ -44,7 +44,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         alpha {
-            debuggable true
+            debuggable false
             jniDebuggable true
             applicationIdSuffix ".alpha"
             versionNameSuffix '-NIGHTLY'
