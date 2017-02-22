@@ -1,6 +1,23 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        alpha {
+            keyAlias 'debug'
+            storeFile file(ALPHA_STORE)
+            storePassword ALPHA_STORE_PASSWORD
+            keyAlias ALPHA_KEY_ALIAS
+            keyPassword ALPHA_KEY_PASSWORD
+            v2SigningEnabled false
+        }
+        release {
+            storeFile file(RELEASE_STORE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+            v2SigningEnabled false
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -8,7 +25,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -23,9 +40,24 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        alpha {
+            debuggable true
+            jniDebuggable true
+            applicationIdSuffix ".alpha"
+            versionNameSuffix '-NIGHTLY'
+            manifestPlaceholders = [appName: "Debug"]
+            resValue "string", "app_name", "@string/app_name_alpha"
+            signingConfig signingConfigs.alpha
+        }
     }
+
+    sourceSets.alpha {
+        manifest.srcFile 'conf/alpha/AndroidManifest.xml'
+    }
+
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
@@ -50,7 +82,6 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.1'
     compile 'com.android.support:recyclerview-v7:25.1.1'
     compile 'commons-codec:commons-codec:1.5'
-
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }
