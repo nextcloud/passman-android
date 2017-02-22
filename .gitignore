@@ -60,3 +60,5 @@ google-services.json
 
 Openssl.conf
 .idea/*
+
+gradle.properties
