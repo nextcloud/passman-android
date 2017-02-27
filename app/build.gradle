@@ -24,7 +24,7 @@ android {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1
+        versionCode 2
         versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -43,6 +43,13 @@ android {
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+            jniDebuggable true
+            applicationIdSuffix ".debug"
+            versionNameSuffix '-DEBUG'
+            resValue "string", "app_name", "@string/app_name_release"
+        }
         alpha {
             debuggable false
             jniDebuggable true
@@ -52,10 +59,6 @@ android {
             resValue "string", "app_name", "@string/app_name_alpha"
             signingConfig signingConfigs.alpha
         }
-    }
-
-    sourceSets.alpha {
-        manifest.srcFile 'conf/alpha/AndroidManifest.xml'
     }
 
     externalNativeBuild {
