@@ -28,14 +28,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import java.text.DateFormat;
+import java.util.List;
+
 import es.wolfi.app.passman.VaultFragment.OnListFragmentInteractionListener;
 import es.wolfi.passman.API.Vault;
-
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Vault} and makes a call to the
@@ -62,7 +59,6 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.id.setText(String.valueOf(mValues.get(position).vault_id));
 //        holder.id.setText(mValues.get(position).guid);
         holder.name.setText(mValues.get(position).name);
         DateFormat f = DateFormat.getDateInstance();
@@ -89,7 +85,6 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView id;
         public final TextView name;
         public final TextView created;
         public final TextView last_access;
@@ -98,7 +93,6 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            id = (TextView) view.findViewById(R.id.vault_id);
             name = (TextView) view.findViewById(R.id.vault_name);
             created = (TextView) view.findViewById(R.id.vault_created);
             last_access = (TextView) view.findViewById(R.id.vault_last_access);
