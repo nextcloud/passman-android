@@ -214,14 +214,21 @@ public class PasswordList extends AppCompatActivity implements
         int id = item.getItemId();
         switch (id) {
             case R.id.action_settings :
+                showNotImplementedMessage();
                 return true;
-
+            case R.id.action_refresh :
+                showNotImplementedMessage();
+                return true;
             case android.R.id.home :
                 onBackPressed();
                 return true;
             default :
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showNotImplementedMessage() {
+        Toast.makeText(this, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show();
     }
 
     @Override
