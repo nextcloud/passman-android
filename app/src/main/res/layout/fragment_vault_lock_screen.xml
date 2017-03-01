@@ -37,15 +37,26 @@
         tools:text="Vault name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
-    <EditText
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/input_layout_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/fragment_vault_password"
         android:layout_below="@+id/fragment_vault_name"
-        android:layout_alignParentStart="true"
-        android:hint="@string/vault_password" />
+        android:paddingTop="@dimen/activity_horizontal_margin">
+
+        <EditText
+            android:id="@+id/fragment_vault_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:ems="10"
+            android:hint="@string/vault_password"
+            android:inputType="textPassword">
+
+            <requestFocus/>
+        </EditText>
+
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:text="@string/unlock"
@@ -60,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/vault_lock_screen_chk_save_pw"
-        android:layout_below="@+id/fragment_vault_password"
+        android:layout_below="@+id/input_layout_password"
         android:layout_alignParentStart="true" />
 
 </RelativeLayout>
