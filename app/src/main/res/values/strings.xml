@@ -8,7 +8,7 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="next">Next</string>
-    <string name="login_header_text">Please enter your ownCloud / NextCloud credentials</string>
+    <string name="login_header_text">Please enter your ownCloud / Nextcloud credentials</string>
     <string name="wrongNCUrl">Incorrect Nextcloud backend url or unable to connect</string>
     <string name="wrongNCSettings">Settings incorrect</string>
     <string name="net_error">Network error</string>
