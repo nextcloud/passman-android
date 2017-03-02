@@ -59,12 +59,14 @@
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:text="@string/unlock"
+        android:id="@+id/fragment_vault_unlock"
+        style="@style/Button.Primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/fragment_vault_unlock" />
+        android:text="@string/unlock"
+        android:theme="@style/Button.Primary"/>
 
     <CheckBox
         android:text="@string/vault_password_save"
