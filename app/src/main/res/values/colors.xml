@@ -3,7 +3,16 @@
     <color name="colorPrimary">#0082c9</color>
     <color name="colorPrimaryDark">#006AA3</color>
     <color name="colorAccent">#007CC2</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <!--
     <color name="colorAccent">#FF4081</color>
     -->
+    <color name="login_text_color">@color/white</color>
+    <color name="login_text_hint_color">#7fC0E3</color>
+
+    <color name="primary_button_background_color">@color/colorAccent</color>
+    <color name="primary_button_text_color">@color/white</color>
+    <color name="secondary_button_background_color">#D6D7D7</color>
+    <color name="secondary_button_text_color">@color/black</color>
 </resources>

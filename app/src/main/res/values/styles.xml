@@ -13,8 +13,32 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.NoActionBar.Login" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/login_text_hint_color</item>
+        <item name="colorControlActivated">@color/login_text_color</item>
+        <item name="colorControlHighlight">@color/login_text_hint_color</item>
+        <item name="colorAccent">@color/login_text_hint_color</item>
+        <item name="android:textColorHint">@color/login_text_hint_color</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Button" parent="Base.Widget.AppCompat.Button">
+        <item name="colorButtonNormal">@color/secondary_button_background_color</item>
+        <item name="android:textColor">@color/secondary_button_text_color</item>
+    </style>
+
+    <style name="Button.Primary" parent="Button">
+        <item name="colorButtonNormal">@color/primary_button_background_color</item>
+        <item name="android:textColor">@color/primary_button_text_color</item>
+    </style>
+
+    <style name="Button.Login" parent="Button">
+        <item name="colorButtonNormal">@color/white</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
 
 </resources>
