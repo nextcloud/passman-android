@@ -23,15 +23,18 @@ package es.wolfi.utils;
 
 import android.graphics.Color;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-
 /**
  * Util implementation for color calculations.
  */
 public class ColorUtils {
 
-    public static int calculateColor(String name) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    /**
+     * calculates a color for a given name.
+     *
+     * @param name the name String
+     * @return the calculated color
+     */
+    public static int calculateColor(String name) {
         int hash = name.hashCode();
         int r = (hash & 0xFF0000) >> 16;
         int g = (hash & 0x00FF00) >> 8;
