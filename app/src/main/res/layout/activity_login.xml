@@ -2,6 +2,7 @@
 <!--
     *  Passman Android App
     *
+    * @copyright Copyright (c) 2017, Andy Scherzinger
     * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
     * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
     * @license GNU AGPL version 3 or any later version
@@ -21,7 +22,6 @@
     *
 -->
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
