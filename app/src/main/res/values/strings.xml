@@ -23,4 +23,6 @@
     <string name="vault_password_save">Save the vault password</string>
     <string name="otp" translatable="false">OTP</string>
     <string name="not_implemented_yet">Not implemented yet</string>
+    <string name="created">Created:</string>
+    <string name="last_accessed">Last accessed:</string>
 </resources>

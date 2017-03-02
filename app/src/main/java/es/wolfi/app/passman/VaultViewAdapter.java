@@ -23,6 +23,7 @@
 package es.wolfi.app.passman;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import java.util.List;
 
 import es.wolfi.app.passman.VaultFragment.OnListFragmentInteractionListener;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.ColorUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Vault} and makes a call to the
@@ -40,6 +42,7 @@ import es.wolfi.passman.API.Vault;
  * TODO: Replace the implementation with code for your data type.
  */
 public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.ViewHolder> {
+    private static final String TAG = VaultViewAdapter.class.getSimpleName();
 
     private final List<Vault> mValues;
     private final OnListFragmentInteractionListener mListener;
@@ -59,12 +62,17 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-//        holder.id.setText(mValues.get(position).guid);
         holder.name.setText(mValues.get(position).name);
-        DateFormat f = DateFormat.getDateInstance();
-        holder.created.setText("Created: ".concat(f.format(holder.mItem.getCreatedTime())));
-        holder.last_access.setText("Last access: ".concat(f.format(holder.mItem.getLastAccessTime())));
 
+        DateFormat f = DateFormat.getDateInstance();
+        holder.created.setText(f.format(holder.mItem.getCreatedTime()));
+        holder.last_access.setText(f.format(holder.mItem.getLastAccessTime()));
+
+        try {
+            holder.name.setTextColor(ColorUtils.calculateColor(mValues.get(position).name));
+        } catch (Exception e) {
+            Log.w(TAG, "Error calculating vault item color.");
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
