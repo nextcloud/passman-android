@@ -32,6 +32,8 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import es.wolfi.app.passman.VaultFragment.OnListFragmentInteractionListener;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ColorUtils;
@@ -92,18 +94,17 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.vault_name) TextView name;
+        @BindView(R.id.vault_created) TextView created;
+        @BindView(R.id.vault_last_access) TextView last_access;
+
         public final View mView;
-        public final TextView name;
-        public final TextView created;
-        public final TextView last_access;
         public Vault mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            name = (TextView) view.findViewById(R.id.vault_name);
-            created = (TextView) view.findViewById(R.id.vault_created);
-            last_access = (TextView) view.findViewById(R.id.vault_last_access);
+            ButterKnife.bind(this, view);
         }
 
         @Override
