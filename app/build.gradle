@@ -44,19 +44,21 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            jniDebuggable false
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug {
+        debubug {
             debuggable true
             jniDebuggable true
             applicationIdSuffix ".debug"
             versionNameSuffix '-DEBUG'
             resValue "string", "app_name", "@string/app_name_release"
+            signingConfig signingConfigs.alpha
         }
         alpha {
             debuggable false
-            jniDebuggable true
+            jniDebuggable false
             applicationIdSuffix ".alpha"
             versionNameSuffix '-NIGHTLY'
             manifestPlaceholders = [appName: "Debug"]
