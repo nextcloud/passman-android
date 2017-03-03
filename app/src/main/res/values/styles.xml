@@ -41,4 +41,17 @@
         <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
+    <style name="ImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">@color/transparent</item>
+        <item name="android:padding">8dp</item>
+    </style>
+
+    <style name="Label" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="FormText" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>
