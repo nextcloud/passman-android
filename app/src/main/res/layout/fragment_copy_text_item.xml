@@ -20,34 +20,36 @@
     *
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="es.wolfi.app.passman.CopyTextItem">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
 
-    <!-- TODO: Update blank fragment layout -->
-
-    <EditText
-        android:layout_width="164dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
+    <TextView
         android:id="@+id/copy_text_text"
-        tools:text="USER/*****" />
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        style="@style/FormText"
+        android:ems="10"
+        tools:text="USER/*****"/>
 
     <ImageButton
-        android:layout_width="46dp"
-        android:layout_height="42dp"
-        app:srcCompat="@mipmap/fa_clipboard"
-        android:id="@+id/copy_btn_copy"
-        style="@style/Widget.AppCompat.ImageButton"
-        android:scaleType="fitStart" />
-
-    <ImageButton
+        android:id="@+id/copy_btn_toggle_visible"
+        style="@style/ImageButton"
         android:layout_width="wrap_content"
-        android:layout_height="42dp"
-        app:srcCompat="@android:drawable/ic_menu_view"
-        android:id="@+id/copy_btn_toggle_visible" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        app:srcCompat="@drawable/ic_eye_grey"/>
+
+    <ImageButton
+        android:id="@+id/copy_btn_copy"
+        style="@style/ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        app:srcCompat="@drawable/ic_content_copy_grey"/>
 
 </LinearLayout>
