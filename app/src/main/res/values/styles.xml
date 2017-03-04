@@ -51,9 +51,9 @@
     </style>
 
     <style name="FormText" parent="TextAppearance.AppCompat.Medium">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
+        <item name="android:textColor">#333333</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">@dimen/standard_half_padding</item>
     </style>
 
 </resources>
