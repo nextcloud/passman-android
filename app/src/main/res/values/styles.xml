@@ -48,6 +48,7 @@
 
     <style name="Label" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:layout_marginTop">@dimen/label_top_margin</item>
     </style>
 
     <style name="FormText" parent="TextAppearance.AppCompat.Medium">
