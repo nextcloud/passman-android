@@ -20,7 +20,7 @@
     <string name="copied_to_clipboard">Copied text to clipboard</string>
     <string name="vault_password">Vault password</string>
     <string name="vault_password_save">Save the vault password</string>
-    <string name="otp" translatable="false">One-Time Password</string>
+    <string name="otp" translatable="false">OTP</string>
     <string name="not_implemented_yet">Not implemented yet</string>
     <string name="created">Created:</string>
     <string name="last_accessed">Last accessed:</string>
