@@ -1,8 +1,9 @@
 /**
  *  Passman Android App
  *
- * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
- * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2017, Andy Scherzinger
+ * @copyright Copyright (c) 2017, Sander Brand (brantje@gmail.com)
+ * @copyright Copyright (c) 2017, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,8 +30,8 @@ import android.graphics.Canvas;
 import android.support.design.widget.Snackbar;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -67,8 +68,12 @@ public class CopyTextItem extends LinearLayout {
     }
 
     void initView() {
-        View v = inflate(getContext(), R.layout.fragment_copy_text_item, (ViewGroup) getParent());
-        addView(v);
+        setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        setOrientation(HORIZONTAL);
+
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflater.inflate(R.layout.fragment_copy_text_item, this, true);
+
         ButterKnife.bind(this, v);
 
         setModeText();
@@ -108,9 +113,11 @@ public class CopyTextItem extends LinearLayout {
         switch (text.getInputType()) {
             case InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD:
                 text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                toggle.setImageDrawable(getResources().getDrawable(R.drawable.ic_eye_off_grey));
                 break;
             case InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD:
                 text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                toggle.setImageDrawable(getResources().getDrawable(R.drawable.ic_eye_grey));
                 break;
         }
     }
