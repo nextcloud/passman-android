@@ -8,16 +8,16 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="connect">Connect</string>
-    <string name="wrongNCUrl">Incorrect Nextcloud backend url or unable to connect</string>
+    <string name="wrongNCUrl">Incorrect Nextcloud backend URL or unable to connect</string>
     <string name="wrongNCSettings">Settings incorrect</string>
     <string name="net_error">Network error</string>
     <string name="unlock">Unlock</string>
     <string name="wrong_vault_pw">Wrong vault password</string>
     <string name="label">Label</string>
-    <string name="email">Email</string>
+    <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Description</string>
-    <string name="copied_to_clipboard">Copied text to clipboard</string>
+    <string name="copied_to_clipboard">Text copied to clipboard</string>
     <string name="vault_password">Vault password</string>
     <string name="vault_password_save">Save the vault password</string>
     <string name="otp" translatable="false">OTP</string>
