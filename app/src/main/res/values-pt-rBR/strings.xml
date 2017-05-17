@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Configurações</string>
+    <string name="action_refresh">Atualizar</string>
+    <string name="nchost">Endereço do servidor</string>
+    <string name="username">Usuário</string>
+    <string name="password">Senha</string>
+    <string name="connect">Conectar</string>
+    <string name="wrongNCUrl">URL da plataforma de serviço Nexcloud incorreta ou impossível conectar</string>
+    <string name="wrongNCSettings">Configurações incorretas</string>
+    <string name="net_error">Erro de rede</string>
+    <string name="unlock">Desbloquear</string>
+    <string name="wrong_vault_pw">Senha do cofre errada</string>
+    <string name="label">Etiqueta</string>
+    <string name="email">E-mail</string>
+    <string name="URL">URL</string>
+    <string name="description">Descrição</string>
+    <string name="copied_to_clipboard">Texto copiado para a área de transferência</string>
+    <string name="vault_password">Senha do cofre</string>
+    <string name="vault_password_save">Salvar a senha do cofre</string>
+    <string name="not_implemented_yet">Não implementado ainda</string>
+    <string name="created">Criado:</string>
+    <string name="last_accessed">Último acesso:</string>
+</resources>
