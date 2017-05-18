@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Ayarlar</string>
+    <string name="action_refresh">Yenile</string>
+    <string name="nchost">Sunucu adresi</string>
+    <string name="username">Kullanıcı Adı</string>
+    <string name="password">Parola</string>
+    <string name="connect">Bağlan</string>
+    <string name="wrongNCUrl">Nextcloud yönetim bölümü adresi yanlış ya da bağlanılamıyor</string>
+    <string name="wrongNCSettings">Ayarlar hatalı</string>
+    <string name="net_error">Ağ sorunu</string>
+    <string name="unlock">Kilidi aç</string>
+    <string name="wrong_vault_pw">Kasa parolası yanlış</string>
+    <string name="label">Etiket</string>
+    <string name="email">E-posta</string>
+    <string name="URL">Adres</string>
+    <string name="description">Açıklama</string>
+    <string name="copied_to_clipboard">Metin panoya kopyalandı</string>
+    <string name="vault_password">Kasa parolası</string>
+    <string name="vault_password_save">Kasa parolasını kaydet</string>
+    <string name="not_implemented_yet">Henüz çalışmıyor</string>
+    <string name="created">Oluşturulma:</string>
+    <string name="last_accessed">Son erişilme:</string>
+</resources>

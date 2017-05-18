@@ -1,0 +1,21 @@
+<resources>
+    <string name="action_settings">Ustawienia</string>
+    <string name="action_refresh">Odśwież</string>
+    <string name="nchost">Adres serwera</string>
+    <string name="username">Użytkownik</string>
+    <string name="password">Hasło</string>
+    <string name="connect">Połącz</string>
+    <string name="wrongNCSettings">Błędne ustawienia</string>
+    <string name="net_error">Błąd sieci</string>
+    <string name="unlock">Odblokuj</string>
+    <string name="wrong_vault_pw">Nieprawidłowe hasło do sejfu</string>
+    <string name="label">Etykieta</string>
+    <string name="email">E-mail</string>
+    <string name="URL">URL</string>
+    <string name="description">Opis</string>
+    <string name="copied_to_clipboard">Tekst został skopiowany do schowka</string>
+    <string name="vault_password">Hasło do sejfu</string>
+    <string name="vault_password_save">Zapisz hasło do sejfu</string>
+    <string name="not_implemented_yet">Jeszcze niezaimplementowane</string>
+    <string name="created">Utworzono:</string>
+    </resources>

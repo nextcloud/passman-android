@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Instellingen</string>
+    <string name="action_refresh">Verversen</string>
+    <string name="nchost">Server adres</string>
+    <string name="username">Gebruikersnaam</string>
+    <string name="password">Wachtwoord</string>
+    <string name="connect">Verbinden</string>
+    <string name="wrongNCUrl">Verkeerde Nextcloud link of niet in staat te verbinden</string>
+    <string name="wrongNCSettings">Onjuiste configuratie</string>
+    <string name="net_error">Netwerk fout</string>
+    <string name="unlock">Deblokkeren</string>
+    <string name="wrong_vault_pw">Onjuist kluiswachtwoord</string>
+    <string name="label">Label</string>
+    <string name="email">Email</string>
+    <string name="URL">URL</string>
+    <string name="description">Beschrijving</string>
+    <string name="copied_to_clipboard">Tekst gekopieerd naar klembord</string>
+    <string name="vault_password">Kluiswachtwoord</string>
+    <string name="vault_password_save">Kluiswachtwoord opslaan</string>
+    <string name="not_implemented_yet">Nog niet geïmplementeerd</string>
+    <string name="created">Aangemaakt:</string>
+    <string name="last_accessed">Laatste toegang</string>
+</resources>
