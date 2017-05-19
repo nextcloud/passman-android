@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Stillingar</string>
+    <string name="action_refresh">Endurlesa</string>
+    <string name="nchost">Vistfang þjóns</string>
+    <string name="username">Notandanafn</string>
+    <string name="password">Lykilorð</string>
+    <string name="connect">Tengjast</string>
+    <string name="wrongNCUrl">Ógild slóð á Nextcloud-bakenda eða að ekki tókst að tengjast</string>
+    <string name="wrongNCSettings">Röng uppsetning</string>
+    <string name="net_error">Villa í netkerfi</string>
+    <string name="unlock">Aflæsa</string>
+    <string name="wrong_vault_pw">Rangt lykilorð í lykilorðageymslu</string>
+    <string name="label">Skýring</string>
+    <string name="email">Tölvupóstfang</string>
+    <string name="URL">Slóð (URL)</string>
+    <string name="description">Lýsing</string>
+    <string name="copied_to_clipboard">Texti afritaður á klippispjald</string>
+    <string name="vault_password">Lykilorð að lykilorðageymslu</string>
+    <string name="vault_password_save">Vista lykilorð fyrir lykilorðageymslu!</string>
+    <string name="not_implemented_yet">Ekki útfært ennþá</string>
+    <string name="created">Búið til:</string>
+    <string name="last_accessed">Síðast notað:</string>
+</resources>

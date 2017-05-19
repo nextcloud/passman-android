@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Настройки</string>
+    <string name="action_refresh">Обновить</string>
+    <string name="nchost">Адрес сервера</string>
+    <string name="username">Имя пользователя</string>
+    <string name="password">Пароль</string>
+    <string name="connect">Подключиться</string>
+    <string name="wrongNCUrl">Неверный URL бэкэнда Nextcloud или невозможно соедениться</string>
+    <string name="wrongNCSettings">Неверные настройки</string>
+    <string name="net_error">Ошибка сети</string>
+    <string name="unlock">Разблокировать</string>
+    <string name="wrong_vault_pw">Неправильный пароль хранилища</string>
+    <string name="label">Метка</string>
+    <string name="email">Эл. почта</string>
+    <string name="URL">URL</string>
+    <string name="description">Описание</string>
+    <string name="copied_to_clipboard">Текст скопирован в буфер обмена</string>
+    <string name="vault_password">Пароль хранилища</string>
+    <string name="vault_password_save">Сохранить пароль хранилища</string>
+    <string name="not_implemented_yet">Еще не реализовано</string>
+    <string name="created">Создано:</string>
+    <string name="last_accessed">Посл. доступ:</string>
+</resources>

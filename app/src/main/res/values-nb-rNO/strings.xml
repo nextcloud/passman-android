@@ -1,0 +1,18 @@
+<resources>
+    <string name="action_settings">Innstillinger</string>
+    <string name="action_refresh">Oppdater</string>
+    <string name="nchost">Tjeneradresse</string>
+    <string name="username">Brukernavn</string>
+    <string name="password">Passord</string>
+    <string name="connect">Koble til</string>
+    <string name="net_error">Nettverksfeil</string>
+    <string name="unlock">Lås opp</string>
+    <string name="wrong_vault_pw">Feil hvelv-passord</string>
+    <string name="label">Etikett</string>
+    <string name="URL">URL</string>
+    <string name="description">Beskrivelse</string>
+    <string name="copied_to_clipboard">Tekst kopiert til utklippstavle</string>
+    <string name="vault_password">Hvelv-passord</string>
+    <string name="vault_password_save">Lagre hvelv-passordet</string>
+    <string name="created">Opprettet:</string>
+    </resources>
