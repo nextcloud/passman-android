@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Nastavení</string>
+    <string name="action_refresh">Obnovit</string>
+    <string name="nchost">Adresa serveru</string>
+    <string name="username">Uživatelské jméno</string>
+    <string name="password">Heslo</string>
+    <string name="connect">Připojit</string>
+    <string name="wrongNCUrl">Nesprávná URL Nextcloud backend serveru. Spojení se nezdařilo.</string>
+    <string name="wrongNCSettings">Nesprávné nastavení</string>
+    <string name="net_error">Chyba sítě</string>
+    <string name="unlock">Odemknout</string>
+    <string name="wrong_vault_pw">Nesprávné heslo k trezoru</string>
+    <string name="label">Popisek</string>
+    <string name="email">E-mail</string>
+    <string name="URL">URL</string>
+    <string name="description">Popis</string>
+    <string name="copied_to_clipboard">Text zkopírován do schránky</string>
+    <string name="vault_password">Heslo k trezoru</string>
+    <string name="vault_password_save">Uložit heslo k trezoru</string>
+    <string name="not_implemented_yet">Funkce není implementována</string>
+    <string name="created">Vytvořeno:</string>
+    <string name="last_accessed">Poslední přístup:</string>
+</resources>
