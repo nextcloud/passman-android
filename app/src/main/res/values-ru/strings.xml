@@ -5,7 +5,7 @@
     <string name="username">Имя пользователя</string>
     <string name="password">Пароль</string>
     <string name="connect">Подключиться</string>
-    <string name="wrongNCUrl">Неверный URL бэкэнда Nextcloud или невозможно соедениться</string>
+    <string name="wrongNCUrl">Неверный URL бэкэнда Nextcloud или невозможно соединиться</string>
     <string name="wrongNCSettings">Неверные настройки</string>
     <string name="net_error">Ошибка сети</string>
     <string name="unlock">Разблокировать</string>
