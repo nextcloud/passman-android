@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Impostazioni</string>
+    <string name="action_refresh">Aggiorna</string>
+    <string name="nchost">Indirizzo del server</string>
+    <string name="username">Nome utente</string>
+    <string name="password">Password</string>
+    <string name="connect">Connetti</string>
+    <string name="wrongNCUrl">URL del motore di Nextcloud non corretto o impossibile connettersi</string>
+    <string name="wrongNCSettings">Impostazioni non corrette</string>
+    <string name="net_error">Errore di rete</string>
+    <string name="unlock">Sblocca</string>
+    <string name="wrong_vault_pw">Password della cassaforte errata</string>
+    <string name="label">Etichetta</string>
+    <string name="email">Email</string>
+    <string name="URL">URL</string>
+    <string name="description">Descrizione</string>
+    <string name="copied_to_clipboard">Testo copiato negli appunti</string>
+    <string name="vault_password">Password della cassaforte</string>
+    <string name="vault_password_save">Salva la password della cassaforte</string>
+    <string name="not_implemented_yet">Non ancora implementato</string>
+    <string name="created">Creato:</string>
+    <string name="last_accessed">Ultimo accesso:</string>
+</resources>

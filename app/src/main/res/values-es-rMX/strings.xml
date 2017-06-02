@@ -1,12 +1,12 @@
 <resources>
-    <string name="action_settings">Ajustes</string>
+    <string name="action_settings">Configuraciones</string>
     <string name="action_refresh">Actualizar</string>
     <string name="nchost">Dirección del servidor</string>
     <string name="username">Nombre de usuario</string>
     <string name="password">Contraseña</string>
     <string name="connect">Conectar</string>
     <string name="wrongNCUrl">La URL del backend de Nexcloud es incorrecta o bien no fue posible conectarse</string>
-    <string name="wrongNCSettings">Ajustes incorrectos</string>
+    <string name="wrongNCSettings">Configuraciones incorrectas</string>
     <string name="net_error">Error en la red</string>
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">Contraseña de la bóveda equivocada</string>
