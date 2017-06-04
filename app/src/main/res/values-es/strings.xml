@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Configuración</string>
+    <string name="action_refresh">Actualizar</string>
+    <string name="nchost">Dirección del servidor</string>
+    <string name="username">Nombre de usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="connect">Conectar</string>
+    <string name="wrongNCUrl">URL del motor Nextcloud incorrecto o incapaz de conectar</string>
+    <string name="wrongNCSettings">Configuraciones incorrectas</string>
+    <string name="net_error">Error de red</string>
+    <string name="unlock">Desbloquear</string>
+    <string name="wrong_vault_pw">Contraseña de bóveda errónea</string>
+    <string name="label">Etiqueta</string>
+    <string name="email">Correo electrónico</string>
+    <string name="URL">URL</string>
+    <string name="description">Descripción</string>
+    <string name="copied_to_clipboard">Texto copiado al portapapeles</string>
+    <string name="vault_password">Contraseña de la bóveda</string>
+    <string name="vault_password_save">Guardar la contraseña de la bóveda</string>
+    <string name="not_implemented_yet">Todavía no se ha añadido</string>
+    <string name="created">Creado:</string>
+    <string name="last_accessed">Último acceso:</string>
+</resources>
