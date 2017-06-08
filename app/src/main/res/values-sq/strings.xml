@@ -1,0 +1,18 @@
+<resources>
+    <string name="action_refresh">Rifresko</string>
+    <string name="nchost">Adresa e serverit</string>
+    <string name="username">Username</string>
+    <string name="password">Fjalekalimi</string>
+    <string name="connect">Lidhu</string>
+    <string name="net_error">Error ne rrjet</string>
+    <string name="unlock">Hape</string>
+    <string name="label">Etikete</string>
+    <string name="email">E-mail</string>
+    <string name="URL">URL</string>
+    <string name="description">Pershkrimi</string>
+    <string name="copied_to_clipboard">Teksti u kopjua në clipboard </string>
+    <string name="vault_password">Fjalëkalim i Kasafortës</string>
+    <string name="vault_password_save">Ruaj fjalëkalimin e kasafortës </string>
+    <string name="created">Krijuar:</string>
+    <string name="last_accessed">Aksesi i fundit:</string>
+</resources>
