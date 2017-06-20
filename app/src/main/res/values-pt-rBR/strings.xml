@@ -5,7 +5,7 @@
     <string name="username">Usuário</string>
     <string name="password">Senha</string>
     <string name="connect">Conectar</string>
-    <string name="wrongNCUrl">URL da plataforma de serviço Nexcloud incorreta ou impossível conectar</string>
+    <string name="wrongNCUrl">URL da plataforma de serviço Nextcloud incorreta ou impossível conectar</string>
     <string name="wrongNCSettings">Configurações incorretas</string>
     <string name="net_error">Erro de rede</string>
     <string name="unlock">Desbloquear</string>
