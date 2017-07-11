@@ -2,7 +2,7 @@
     <string name="action_settings">Configuraciones</string>
     <string name="action_refresh">Actualizar</string>
     <string name="nchost">Dirección del servidor</string>
-    <string name="username">Nombre de usuario</string>
+    <string name="username">Usuario</string>
     <string name="password">Contraseña</string>
     <string name="connect">Conectar</string>
     <string name="wrongNCUrl">La URL del backend de Nexcloud es incorrecta o bien no fue posible conectarse</string>
