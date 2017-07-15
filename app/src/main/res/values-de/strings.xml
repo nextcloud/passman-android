@@ -16,7 +16,7 @@
     <string name="description">Beschreibung</string>
     <string name="copied_to_clipboard">Text wurde in die Zwischenablage kopiert</string>
     <string name="vault_password">Tresor-Passwort</string>
-    <string name="vault_password_save">Speichern Sie das Tresor-Passwort</string>
+    <string name="vault_password_save">Speichere das Tresor-Passwort</string>
     <string name="not_implemented_yet">Noch nicht implementiert</string>
     <string name="created">Erstellt:</string>
     <string name="last_accessed">Letzter Zugriff:</string>
