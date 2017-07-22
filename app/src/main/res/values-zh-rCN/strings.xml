@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">设置</string>
+    <string name="action_refresh">刷新</string>
+    <string name="nchost">服务器地址</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="connect">连接</string>
+    <string name="wrongNCUrl">无效 Nextcloud 后端URL或无法访问</string>
+    <string name="wrongNCSettings">配置错误</string>
+    <string name="net_error">网络错误</string>
+    <string name="unlock">解锁</string>
+    <string name="wrong_vault_pw">存储库密码错误</string>
+    <string name="label">标签</string>
+    <string name="email">邮箱</string>
+    <string name="URL">URL</string>
+    <string name="description">描述</string>
+    <string name="copied_to_clipboard">已复制到剪贴板</string>
+    <string name="vault_password">存储库密码</string>
+    <string name="vault_password_save">保存存储库密码</string>
+    <string name="not_implemented_yet">未生效</string>
+    <string name="created">创建于：</string>
+    <string name="last_accessed">上次访问：</string>
+</resources>
