@@ -1,8 +1,8 @@
 # passman-android
 Passman Android application
 
-This app is only compatible with passman V2.x or higher
-
+This app is only compatible with passman V2.x or higher.   
+The passwords will be provided by [passman](https://github.com/nextcloud/passman).
 ## Current features
 - Setup app (enter the nextcloud server settings)
 - Display vault list
