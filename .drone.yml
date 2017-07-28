@@ -1,0 +1,16 @@
+pipeline:
+  clone:
+    image: plugins/git
+    depth: 1
+  verified-check:
+    image: python
+    commands:
+      - wget https://raw.githubusercontent.com/brantje/passman-ci/master/verified-check.py
+      - pip install requests
+      - python ./verified-check.py
+    when:
+      matrix:
+        TESTS: verified-check
+matrix:
+  include:
+    - TESTS: verified-check
