@@ -15,7 +15,7 @@
     <string name="URL">URL</string>
     <string name="description">Pershkrimi</string>
     <string name="copied_to_clipboard">Teksti u kopjua në clipboard </string>
-    <string name="vault_password">Fjalëkalim i Kasafortës</string>
+    <string name="vault_password">Fjalëkalim i kasafortës</string>
     <string name="vault_password_save">Ruaj fjalëkalimin e kasafortës </string>
     <string name="not_implemented_yet">Nuk është implementuar akoma</string>
     <string name="created">Krijuar:</string>
