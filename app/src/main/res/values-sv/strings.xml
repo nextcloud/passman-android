@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Inställningar</string>
+    <string name="action_refresh">Uppdatera</string>
+    <string name="nchost">Serveradress</string>
+    <string name="username">Användarnamn</string>
+    <string name="password">Lösenord</string>
+    <string name="connect">Anslut</string>
+    <string name="wrongNCUrl">Inkorrekt Nextcloud-backend-URL eller oförmögen att ansluta</string>
+    <string name="wrongNCSettings">Felaktiga inställningar</string>
+    <string name="net_error">Nätverksfel</string>
+    <string name="unlock">Lås upp</string>
+    <string name="wrong_vault_pw">Fel valv-lösenord</string>
+    <string name="label">Etikett</string>
+    <string name="email">E-mail</string>
+    <string name="URL">URL</string>
+    <string name="description">Beskrivning</string>
+    <string name="copied_to_clipboard">Text kopierad</string>
+    <string name="vault_password">Valvlösenord</string>
+    <string name="vault_password_save">Spara valvlösenordet</string>
+    <string name="not_implemented_yet">Inte implementerad än</string>
+    <string name="created">Skapad:</string>
+    <string name="last_accessed">Senast åtkommen:</string>
+</resources>
