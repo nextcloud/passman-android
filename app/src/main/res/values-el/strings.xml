@@ -5,9 +5,11 @@
     <string name="username">Όνομα χρήστη</string>
     <string name="password">Συνθηματικό</string>
     <string name="connect">Σύνδεση</string>
+    <string name="wrongNCUrl">Εσφαλμένη διεύθυνσης URL του Nextcloud ή δεν είναι δυνατή η σύνδεση</string>
     <string name="wrongNCSettings">Λανθασμένες ρυθμίσεις</string>
     <string name="net_error">Σφάλμα δικτύου</string>
     <string name="unlock">Ξεκλείδωμα</string>
+    <string name="wrong_vault_pw">Λανθασμένος κωδικός πρόσβασης θυσαυροφυλακίου </string>
     <string name="label">Ετικέτα</string>
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
