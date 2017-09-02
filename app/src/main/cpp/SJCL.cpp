@@ -20,7 +20,7 @@
  *
  */
 
-#include "SJCL.h";
+#include "SJCL.h"
 #include <openssl/evp.h>
 #include <JSON.h>
 #include "base64.h"

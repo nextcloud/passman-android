@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Base64;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -134,6 +135,10 @@ public abstract class Core {
         String host = ton.getString(SettingValues.HOST.toString());
         String user = ton.getString(SettingValues.USER.toString());
         String pass = ton.getString(SettingValues.PASSWORD.toString());
+        Toast.makeText(c, host, Toast.LENGTH_LONG).show();
+        Log.d(LOG_TAG, "Host: " + host);
+        Log.d(LOG_TAG, "User: " + user);
+        Log.d(LOG_TAG, "Pass: " + pass);
 
         Vault.setUpAPI(host, user, pass);
         Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {
@@ -151,7 +156,8 @@ public abstract class Core {
                         ret = false;
                     }
                     else {
-                        if (toast) Toast.makeText(c, c.getString(R.string.net_error), Toast.LENGTH_LONG).show();
+                        Log.e(LOG_TAG, "Error: " + e.getMessage(), e);
+                        if (toast) Toast.makeText(c, c.getString(R.string.net_error) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
                         ret = false;
                     }
                 }

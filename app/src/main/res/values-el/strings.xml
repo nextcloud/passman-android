@@ -7,6 +7,8 @@
     <string name="connect">Σύνδεση</string>
     <string name="wrongNCUrl">Εσφαλμένη διεύθυνσης URL του Nextcloud ή δεν είναι δυνατή η σύνδεση</string>
     <string name="wrongNCSettings">Λανθασμένες ρυθμίσεις</string>
+    <string name="vault_password">Vault password</string>
+    <string name="vault_password_save">Save the vault password</string>
     <string name="net_error">Σφάλμα δικτύου</string>
     <string name="unlock">Ξεκλείδωμα</string>
     <string name="wrong_vault_pw">Λανθασμένος κωδικός πρόσβασης θυσαυροφυλακίου </string>
@@ -17,4 +19,5 @@
     <string name="copied_to_clipboard">Κείμενο που αντιγράφηκε στο πρόχειρο</string>
     <string name="created">Δημιουργήθηκε:</string>
     <string name="last_accessed">Τελευταία προσπέλαση:</string>
+    <string name="not_implemented_yet">Not implemented yet</string>
 </resources>

@@ -16,6 +16,8 @@
     <string name="copied_to_clipboard">Teks na knipbord gekopieer</string>
     <string name="vault_password">Kluiswagwoord</string>
     <string name="vault_password_save">Bewaar die kluiswagwoord</string>
+    <string name="wrongNCUrl">Transiflex sucks</string>
+    <string name="last_accessed">Transiflex sucks</string>
     <string name="not_implemented_yet">Nog nie geïmplementeer</string>
     <string name="created">Geskep:</string>
     </resources>

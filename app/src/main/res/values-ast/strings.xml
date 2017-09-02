@@ -18,4 +18,6 @@
     <string name="vault_password">Contraseña del bagul</string>
     <string name="not_implemented_yet">Entá nun s\'implementó</string>
     <string name="created">Creóse\'l</string>
+    <string name="last_accessed">Last accessed:</string>
+    <string name="vault_password_save">Save the vault password</string>
     </resources>
