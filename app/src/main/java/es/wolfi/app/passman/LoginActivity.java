@@ -36,6 +36,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -51,6 +52,7 @@ import es.wolfi.passman.API.Vault;
 public class LoginActivity extends AppCompatActivity {
     public final static String LOG_TAG = "LoginActivity";
 
+    @BindView(R.id.protocol) Spinner input_protocol;
     @BindView(R.id.host) EditText input_host;
     @BindView(R.id.user) EditText input_user;
     @BindView(R.id.pass) EditText input_pass;
@@ -75,7 +77,8 @@ public class LoginActivity extends AppCompatActivity {
     @OnClick(R.id.next)
     public void onNextClick() {
         Log.e("Login", "begin");
-        final String host = input_host.getText().toString();
+        final String protocol = input_protocol.getSelectedItem().toString().toLowerCase();
+        final String host = protocol + "://" + input_host.getText().toString();
         final String user = input_user.getText().toString();
         final String pass = input_pass.getText().toString();
 
