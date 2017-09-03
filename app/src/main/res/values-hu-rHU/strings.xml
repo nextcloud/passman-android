@@ -6,10 +6,6 @@
     <string name="password">Jelszó</string>
     <string name="connect">Kapcsolódás</string>
     <string name="wrongNCSettings">Hibás beállítások</string>
-    <string name="wrongNCUrl">Incorrect Nextcloud backend URL or unable to connect</string>
-    <string name="wrong_vault_pw">Wrong vault password</string>
-    <string name="not_implemented_yet">Not implemented yet</string>
-    <string name="vault_password_save">Save the vault password</string>
     <string name="net_error">Hálózati hiba</string>
     <string name="unlock">Feloldás</string>
     <string name="label">Címke</string>
