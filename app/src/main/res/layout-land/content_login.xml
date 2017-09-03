@@ -64,22 +64,39 @@
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/input_layout_host"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/activity_horizontal_margin">
+                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/host"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:ems="10"
-                    android:hint="@string/nchost"
-                    android:inputType="textPersonName"
-                    android:textColor="@color/login_text_color"
-                    android:textColorHint="@color/login_text_hint_color">
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                    <requestFocus/>
-                </EditText>
+                    <Spinner
+                        android:id="@+id/protocol"
+                        android:minWidth="@dimen/protocol_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_weight="1"
+                        android:spinnerMode="dropdown"
+                        android:entries="@array/protocols"/>
+
+                    <EditText
+                        android:id="@+id/host"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:hint="@string/nchost"
+                        android:inputType="textPersonName"
+                        android:textColor="@color/login_text_color"
+                        android:textColorHint="@color/login_text_hint_color">
+
+                        <requestFocus />
+                    </EditText>
+
+                </LinearLayout>
 
             </android.support.design.widget.TextInputLayout>
 
