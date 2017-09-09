@@ -1,0 +1,18 @@
+<resources>
+    <string name="action_settings">Nustatymai</string>
+    <string name="action_refresh">Įkelti iš naujo</string>
+    <string name="nchost">Serverio adresas</string>
+    <string name="username">Naudotojo vardas</string>
+    <string name="password">Slaptažodis</string>
+    <string name="connect">Prisijungti</string>
+    <string name="wrongNCSettings">Nustatymai neteisingi</string>
+    <string name="net_error">Tinklo klaida</string>
+    <string name="unlock">Atrakinti</string>
+    <string name="label">Etiketė</string>
+    <string name="email">el. paštas</string>
+    <string name="URL">URL</string>
+    <string name="description">Aprašas</string>
+    <string name="copied_to_clipboard">Tekstas nukopijuotas į iškarpinę</string>
+    <string name="vault_password_save">Išsaugokite saugyklos slaptažodį</string>
+    <string name="not_implemented_yet">Kol kas neįgyvendinta</string>
+    </resources>
