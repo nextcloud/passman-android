@@ -230,9 +230,6 @@ if [ ! -z "$VERBOSE" ] && [ "$VERBOSE" != "0" ]; then
   echo "ANDROID_DEV: $ANDROID_DEV"
 fi
 
-./config shared no-ssl3 no-comp no-hw no-engine --openssldir=/usr/local/ssl/android-14/
+./config shared no-ssl3 no-comp no-hw no-engine
 make depend
 make all
-find . -name libcrypto.a
-readelf -h ./libcrypto.a | grep -i 'class\|machine' | head -2
-make install CC=$ANDROID_TOOLCHAIN/arm-linux-androideabi-gcc RANLIB=$ANDROID_TOOLCHAIN/arm-linux-androideabi-ranlib
