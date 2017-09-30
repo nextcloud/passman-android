@@ -182,7 +182,7 @@ public class Vault extends Core {
                 Credential c = Credential.fromJSON(j.getJSONObject(i), v);
                 if(c.getDeleteTime() == 0) {
                     v.credentials.add(c);
-                    v.credential_guid.put(c.getGuid(), i);
+                    v.credential_guid.put(c.getGuid(), v.credentials.size() - 1);
                 }
             }
             v.challenge_password = v.credentials.get(0).password;
