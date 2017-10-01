@@ -9,6 +9,10 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds it for you.
 # Gradle automatically packages shared libraries with your APK.
 
+add_compile_options(
+    -UANDROID
+)
+
 add_library( # Sets the name of the library.
      passman-lib
 
