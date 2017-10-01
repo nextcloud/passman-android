@@ -180,10 +180,11 @@ public class Vault extends Core {
 
             for (int i = 0; i < j.length(); i++) {
                 Credential c = Credential.fromJSON(j.getJSONObject(i), v);
-                v.credentials.add(c);
-                v.credential_guid.put(c.getGuid(), i);
+                if(c.getDeleteTime() == 0) {
+                    v.credentials.add(c);
+                    v.credential_guid.put(c.getGuid(), v.credentials.size() - 1);
+                }
             }
-
             v.challenge_password = v.credentials.get(0).password;
         }
         else {
