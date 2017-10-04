@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">設定</string>
+    <string name="action_refresh">同期</string>
+    <string name="nchost">サーバーアドレス</string>
+    <string name="username">ユーザー名</string>
+    <string name="password">パスワード</string>
+    <string name="connect">接続</string>
+    <string name="wrongNCUrl">NextcloudのURLが間違っているか、接続できない</string>
+    <string name="wrongNCSettings">設定に誤りがあります</string>
+    <string name="net_error">ネットワークエラー</string>
+    <string name="unlock">解除</string>
+    <string name="wrong_vault_pw">保管庫パスワードが間違っています！</string>
+    <string name="label">ラベル</string>
+    <string name="email">メール</string>
+    <string name="URL">URL</string>
+    <string name="description">説明</string>
+    <string name="copied_to_clipboard">クリップボードにコピーされました</string>
+    <string name="vault_password">保管庫パスワード</string>
+    <string name="vault_password_save">保管庫パスワードを保存</string>
+    <string name="not_implemented_yet">未実装です</string>
+    <string name="created">作成:</string>
+    <string name="last_accessed">最終アクセス：</string>
+</resources>
