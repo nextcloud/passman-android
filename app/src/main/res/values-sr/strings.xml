@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Поставке</string>
+    <string name="action_refresh">Освежи</string>
+    <string name="nchost">Адреса сервера</string>
+    <string name="username">Корисничко име</string>
+    <string name="password">Лозинка</string>
+    <string name="connect">Повежи се</string>
+    <string name="wrongNCUrl">Неисправна адреса Некстклауд сервера или не могу да се повежем</string>
+    <string name="wrongNCSettings">Неисправне поставке</string>
+    <string name="net_error">Грешка на мрежи</string>
+    <string name="unlock">Откључај</string>
+    <string name="wrong_vault_pw">Погрешна лозинка за сеф</string>
+    <string name="label">Ознака</string>
+    <string name="email">Адреса е-поште</string>
+    <string name="URL">URL адреса</string>
+    <string name="description">Опис</string>
+    <string name="copied_to_clipboard">Текст копиран у оставу</string>
+    <string name="vault_password">Лозинка сефа</string>
+    <string name="vault_password_save">Сачувај лозинку сефа</string>
+    <string name="not_implemented_yet">Није још имплементирано</string>
+    <string name="created">Направљен:</string>
+    <string name="last_accessed">Последњи приступ:</string>
+</resources>
