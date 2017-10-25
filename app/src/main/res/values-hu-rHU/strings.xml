@@ -5,15 +5,19 @@
     <string name="username">Felhasználónév</string>
     <string name="password">Jelszó</string>
     <string name="connect">Kapcsolódás</string>
+    <string name="wrongNCUrl">Hibás Nextcloud háttércím vagy sikertelen kapcsolódás</string>
     <string name="wrongNCSettings">Hibás beállítások</string>
     <string name="net_error">Hálózati hiba</string>
     <string name="unlock">Feloldás</string>
+    <string name="wrong_vault_pw">Hibás széf jelszó</string>
     <string name="label">Címke</string>
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Leírás</string>
     <string name="copied_to_clipboard">Szöveg másolva a vágólapra</string>
     <string name="vault_password">Széf jelszó</string>
+    <string name="vault_password_save">Széf jelszó mentése</string>
+    <string name="not_implemented_yet">Még nincs lefejlesztve</string>
     <string name="created">Létrehozva:</string>
     <string name="last_accessed">Utoljára hozzáférve:</string>
 </resources>
