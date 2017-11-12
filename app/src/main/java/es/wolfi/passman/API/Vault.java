@@ -37,8 +37,9 @@ import java.util.Date;
 import java.util.HashMap;
 
 import es.wolfi.app.passman.SJCLCrypto;
+import es.wolfi.utils.Filterable;
 
-public class Vault extends Core {
+public class Vault extends Core implements Filterable{
     public int vault_id;
     public String guid;
     public String name;
@@ -192,5 +193,10 @@ public class Vault extends Core {
         }
 
         return v;
+    }
+
+    @Override
+    public String getFilterableAttribute() {
+        return this.name.toLowerCase();
     }
 }

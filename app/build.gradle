@@ -23,7 +23,7 @@ android {
         }
     }
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 19
@@ -38,7 +38,7 @@ android {
 
         }
         ndk {
-            abiFilters 'armeabi'
+            abiFilters 'armeabi', 'armeabi-v7a'
         }
     }
     buildTypes {
@@ -72,10 +72,19 @@ android {
             path "CMakeLists.txt"
         }
     }
-    productFlavors {
-        armabi {
 
+    flavorDimensions "arm"
+
+    productFlavors {
+        create("armabi") {
+            dimension("arm")
+            // ndk.abiFilters.add("armabi")
         }
+        create("armeabi-v7a") {
+            dimension("arm")
+            // ndk.abiFilters.add("armeabi-v7a")
+        }
+
     }
 
     lintOptions{
