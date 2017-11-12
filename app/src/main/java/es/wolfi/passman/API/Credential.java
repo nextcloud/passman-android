@@ -27,7 +27,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Credential extends Core {
+import es.wolfi.utils.Filterable;
+
+public class Credential extends Core implements Filterable {
     public int id;
 
 
@@ -260,5 +262,10 @@ public class Credential extends Core {
         Credential c = Credential.fromJSON(j);
         c.setVault(v);
         return c;
+    }
+
+    @Override
+    public String getFilterableAttribute() {
+        return getLabel().toLowerCase();
     }
 }
