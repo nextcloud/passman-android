@@ -33,10 +33,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
 import es.wolfi.app.passman.SJCLCrypto;
+import es.wolfi.utils.CredentialLabelSort;
 import es.wolfi.utils.Filterable;
 
 public class Vault extends Core implements Filterable{
@@ -181,12 +183,16 @@ public class Vault extends Core implements Filterable{
 
             for (int i = 0; i < j.length(); i++) {
                 Credential c = Credential.fromJSON(j.getJSONObject(i), v);
-                if(c.getDeleteTime() == 0) {
+                if(c.getDeleteTime() == 0 && !c.isHidden()) {
                     v.credentials.add(c);
-                    v.credential_guid.put(c.getGuid(), v.credentials.size() - 1);
+                    // v.credential_guid.put(c.getGuid(), v.credentials.size() - 1);
                 }
             }
             v.challenge_password = v.credentials.get(0).password;
+            Collections.sort(v.credentials, new CredentialLabelSort());
+            for (int i = 0; i < v.credentials.size(); i++) {
+                v.credential_guid.put(v.credentials.get(i).getGuid(), i);
+            }
         }
         else {
             v.challenge_password = o.getString("challenge_password");
