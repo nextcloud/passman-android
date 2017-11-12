@@ -113,7 +113,7 @@ public class CredentialItemFragment extends Fragment {
                     }
                     filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
                     ArrayList<Credential> input [] = new ArrayList[]{v.getCredentials()};
-                    filterTask.execute(input);
+                    filterTask.execute((Object[]) input);
                 }
 
                 @Override
