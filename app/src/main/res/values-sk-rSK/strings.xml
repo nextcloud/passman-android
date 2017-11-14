@@ -1,0 +1,24 @@
+<resources>
+    <string name="action_settings">Nastavenia</string>
+    <string name="action_refresh">Obnoviť</string>
+    <string name="nchost">Adresa servera</string>
+    <string name="username">Používateľské meno</string>
+    <string name="password">Heslo</string>
+    <string name="connect">Pripojiť</string>
+    <string name="wrongNCUrl">Nesprávna URL Nextcloud backend servera alebo sa nie je možné pripojiť</string>
+    <string name="wrongNCSettings">Nesprávne nastavenia</string>
+    <string name="net_error">Chyba siete</string>
+    <string name="unlock">Odomknúť</string>
+    <string name="wrong_vault_pw">Nesprávne heslo k trezoru</string>
+    <string name="label">Štítok</string>
+    <string name="email">E-mail</string>
+    <string name="URL">URL</string>
+    <string name="description">Popis</string>
+    <string name="copied_to_clipboard">Text skopírovaný do schránky</string>
+    <string name="vault_password">Heslo k trezoru</string>
+    <string name="vault_password_save">Uložiť heslo k trezoru</string>
+    <string name="not_implemented_yet">Funkcia nie je implementovaná</string>
+    <string name="created">Vytvorené:</string>
+    <string name="last_accessed">Posledný prístup:</string>
+    <string name="search">Hľadať</string>
+</resources>

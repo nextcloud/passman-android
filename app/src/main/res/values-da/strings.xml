@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">Ikke implementeret endnu</string>
     <string name="created">Oprettet:</string>
     <string name="last_accessed">Sidst tilgået:</string>
-    </resources>
+    <string name="search">Søg</string>
+</resources>
