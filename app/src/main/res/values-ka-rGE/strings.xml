@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">ჯერ არაა მოქმედებაში მოყვანილი</string>
     <string name="created">შექმნილია:</string>
     <string name="last_accessed">ბოლო წვდომა:</string>
-    </resources>
+    <string name="search">ძიება</string>
+</resources>
