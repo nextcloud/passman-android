@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">Nog niet geïmplementeerd</string>
     <string name="created">Aangemaakt:</string>
     <string name="last_accessed">Laatste toegang</string>
-    </resources>
+    <string name="search">Zoeken</string>
+</resources>
