@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">Jeszcze niezaimplementowane</string>
     <string name="created">Utworzono:</string>
     <string name="last_accessed">Ostatnio uzyskany dostęp:</string>
-    </resources>
+    <string name="search">Szukaj</string>
+</resources>
