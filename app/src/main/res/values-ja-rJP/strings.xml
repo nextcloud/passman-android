@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">未実装です</string>
     <string name="created">作成:</string>
     <string name="last_accessed">最終アクセス：</string>
-    </resources>
+    <string name="search">検索</string>
+</resources>
