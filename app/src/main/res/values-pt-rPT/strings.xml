@@ -1,0 +1,24 @@
+<resources>
+    <string name="action_settings">Definições</string>
+    <string name="action_refresh">Atualizar</string>
+    <string name="nchost">Endereço do Servidor</string>
+    <string name="username">Nome de utilizador</string>
+    <string name="password">Palavra-Passe</string>
+    <string name="connect">Conectar</string>
+    <string name="wrongNCUrl">Endereço do Nextcloud incorrecto,  ou incapaz de conectar</string>
+    <string name="wrongNCSettings">Definição incorreta</string>
+    <string name="net_error">Erro de Rede</string>
+    <string name="unlock">Desbloquear</string>
+    <string name="wrong_vault_pw">Palavra-passe errada</string>
+    <string name="label">Legenda</string>
+    <string name="email">Correio Eletrónico</string>
+    <string name="URL">Endereço</string>
+    <string name="description">Descrição</string>
+    <string name="copied_to_clipboard">Texto copiado para a área de transferência</string>
+    <string name="vault_password">Cofre Palavra-passe</string>
+    <string name="vault_password_save">Guardar Palavra-Chave do Cofre</string>
+    <string name="not_implemented_yet">Não implementado ainda</string>
+    <string name="created">Criado:</string>
+    <string name="last_accessed">Último acesso</string>
+    <string name="search">Procurar</string>
+</resources>
