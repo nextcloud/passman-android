@@ -1,0 +1,24 @@
+<resources>
+    <string name="action_settings">Configuraciones</string>
+    <string name="action_refresh">Actualizar</string>
+    <string name="nchost">Dirección del servidor</string>
+    <string name="username">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="connect">Conectar</string>
+    <string name="wrongNCUrl">La URL del backend de Nexcloud es incorrecta o bien no fue posible conectarse</string>
+    <string name="wrongNCSettings">Configuraciones incorrectas</string>
+    <string name="net_error">Error en la red</string>
+    <string name="unlock">Desbloquear</string>
+    <string name="wrong_vault_pw">Contraseña de la bóveda equivocada</string>
+    <string name="label">Etiqueta</string>
+    <string name="email">Correo electrónico</string>
+    <string name="URL">URL</string>
+    <string name="description">Descripción</string>
+    <string name="copied_to_clipboard">El texto ha sido copiado a la papelera</string>
+    <string name="vault_password">Contraseña de la bóveda</string>
+    <string name="vault_password_save">Guardar la contraseña de la bóveda</string>
+    <string name="not_implemented_yet">Aún no está implementado</string>
+    <string name="created">Creado:</string>
+    <string name="last_accessed">Último acceso:</string>
+    <string name="search">Buscar</string>
+</resources>
