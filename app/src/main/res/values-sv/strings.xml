@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">Inte implementerad än</string>
     <string name="created">Skapad:</string>
     <string name="last_accessed">Senast åtkommen:</string>
-    </resources>
+    <string name="search">Sök</string>
+</resources>
