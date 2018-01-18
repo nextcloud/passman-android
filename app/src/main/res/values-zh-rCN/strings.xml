@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">未生效</string>
     <string name="created">创建于：</string>
     <string name="last_accessed">上次访问：</string>
-    </resources>
+    <string name="search">搜索</string>
+</resources>
