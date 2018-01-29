@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">Nuk është implementuar akoma</string>
     <string name="created">Krijuar:</string>
     <string name="last_accessed">Aksesi i fundit:</string>
-    </resources>
+    <string name="search">Kërko</string>
+</resources>
