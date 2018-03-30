@@ -23,10 +23,23 @@
 package es.wolfi.utils;
 
 public class JSONUtils {
+    /**
+     * Checks if an string looks like a json object
+     * @param text to check
+     * @return true if it looks like a json object, false otherwise
+     */
     public static final boolean isJSONObject(String data){
+        if (data.length() == 0) return false;
         return data.charAt(0) == '{' && data.charAt(data.length() -1) == '}';
     }
+
+    /**
+     * Check if an string seems like a json array
+     * @param the text to check
+     * @return true if it looks like an array, false otherwise
+     */
     public static final boolean isJSONArray(String data){
+        if (data.length() == 0) return false;
         return data.charAt(0) == '[' && data.charAt(data.length() -1) == ']';
     }
 }

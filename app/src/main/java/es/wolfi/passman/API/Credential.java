@@ -238,7 +238,18 @@ public class Credential extends Core implements Filterable {
         c.username = j.getString("username");
         c.password = j.getString("password");
         c.url = j.getString("url");
-        c.favicon = j.getString("favicon");
+
+        try {
+            c.favicon = j.getString("favicon");
+        }
+        catch (JSONException ex) {
+            try {
+                c.favicon = j.getString("icon");
+            }
+            catch (JSONException ex2) {
+                Log.e("Credential parse", "error, it has no icon or favicon field!", ex2);
+            }
+        }
 
         if (j.isNull("renew_interval")) {
             c.renewInterval = 0;

@@ -96,6 +96,7 @@ public class PasswordList extends AppCompatActivity implements
                 showVaults();
                 }
             });
+
             }
         });
 
@@ -106,6 +107,12 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     public void showVaults() {
+        Core.getAPIVersion(this, new FutureCallback<Integer>() {
+            @Override
+            public void onCompleted(Exception e, Integer result) {
+
+            }
+        });
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
         if (vaults != null) {
             getSupportFragmentManager()

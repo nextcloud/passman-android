@@ -36,6 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -48,6 +49,8 @@ public abstract class Core {
     protected static String host;
     protected static String username;
     protected static String password;
+    protected static String version_name;
+    protected static int version_number = 0;
 
 
     public static void setUpAPI(String host, String username, String password) {
@@ -103,6 +106,21 @@ public abstract class Core {
                 }
 
                 callback.onCompleted(e, result);
+            }
+        });
+    }
+
+    // TODO Test this method once the server response works!
+    public static void getAPIVersion(final Context c, FutureCallback<Integer> cb) {
+        if (version_number != 0) {
+            cb.onCompleted(null, version_number);
+            return;
+        }
+
+        requestAPIGET(c, "version", new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                Log.d("getApiVersion", result);
             }
         });
     }
