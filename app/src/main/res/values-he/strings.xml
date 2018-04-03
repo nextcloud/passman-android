@@ -1,0 +1,24 @@
+<resources>
+    <string name="action_settings">הגדרות</string>
+    <string name="action_refresh">רענון</string>
+    <string name="nchost">כתובת שרת</string>
+    <string name="username">שם משתמש</string>
+    <string name="password">ססמה</string>
+    <string name="connect">התחברות</string>
+    <string name="wrongNCUrl">כתובת מנגנון ה־Nextcloud שגוי או שאין אפשרות להתחבר</string>
+    <string name="wrongNCSettings">ההגדרות שגויות</string>
+    <string name="net_error">שגיאת רשת</string>
+    <string name="unlock">שחרור</string>
+    <string name="wrong_vault_pw">ססמת הכספת שגויה</string>
+    <string name="label">תווית</string>
+    <string name="email">דוא״ל</string>
+    <string name="URL">כתובת</string>
+    <string name="description">תיאור</string>
+    <string name="copied_to_clipboard">הטקסט הועתק ללוח הגזירים</string>
+    <string name="vault_password">ססמת הכספת</string>
+    <string name="vault_password_save">שמירת ססמת הכספת</string>
+    <string name="not_implemented_yet">לא הוטמע עדיין</string>
+    <string name="created">מועד היצירה:</string>
+    <string name="last_accessed">גישה אחרונה:</string>
+    <string name="search">חיפוש</string>
+</resources>
