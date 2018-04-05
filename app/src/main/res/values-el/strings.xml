@@ -17,4 +17,5 @@
     <string name="copied_to_clipboard">Κείμενο που αντιγράφηκε στο πρόχειρο</string>
     <string name="created">Δημιουργήθηκε:</string>
     <string name="last_accessed">Τελευταία προσπέλαση:</string>
-    </resources>
+    <string name="search">Αναζήτηση</string>
+</resources>
