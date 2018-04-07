@@ -5,6 +5,7 @@
     <string name="username">Gebruikersnaam</string>
     <string name="password">Wagwoord</string>
     <string name="connect">Verbind</string>
+    <string name="wrongNCUrl">Verkeerde Nextcloud agtergrondprogram URL of kan nie koppel nie</string>
     <string name="wrongNCSettings">Verkeerde instellings</string>
     <string name="net_error">Netwerkfout</string>
     <string name="unlock">Ontgrendel</string>
@@ -18,4 +19,6 @@
     <string name="vault_password_save">Bewaar die kluiswagwoord</string>
     <string name="not_implemented_yet">Nog nie geïmplementeer</string>
     <string name="created">Geskep:</string>
-    </resources>
+    <string name="last_accessed">Laaste toegang verkry:</string>
+    <string name="search">Soek</string>
+</resources>
