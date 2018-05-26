@@ -6,7 +6,7 @@
     <string name="password">Heslo</string>
     <string name="connect">Připojit</string>
     <string name="wrongNCUrl">Nesprávná URL Nextcloud backend serveru. Spojení se nezdařilo.</string>
-    <string name="wrongNCSettings">Nesprávné nastavení</string>
+    <string name="wrongNCSettings">Nesprávná nastavení</string>
     <string name="net_error">Chyba sítě</string>
     <string name="unlock">Odemknout</string>
     <string name="wrong_vault_pw">Nesprávné heslo k trezoru</string>
