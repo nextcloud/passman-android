@@ -38,7 +38,7 @@ android {
 
         }
         ndk {
-            abiFilters 'armeabi', 'armeabi-v7a'
+            abiFilters 'armeabi-v7a'
         }
     }
     buildTypes {
@@ -76,10 +76,6 @@ android {
     flavorDimensions "arm"
 
     productFlavors {
-        create("armabi") {
-            dimension("arm")
-            // ndk.abiFilters.add("armabi")
-        }
         create("armeabi-v7a") {
             dimension("arm")
             // ndk.abiFilters.add("armeabi-v7a")
@@ -100,11 +96,11 @@ dependencies {
     implementation "com.android.support:appcompat-v7:${supportLibraryVersion}"
     implementation "com.android.support:design:${supportLibraryVersion}"
     implementation 'com.jakewharton:butterknife:8.5.1'
-    implementation 'com.koushikdutta.ion:ion:2.+'
+    implementation 'com.koushikdutta.ion:ion:2.2.1'
     implementation "com.android.support:support-v4:${supportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibraryVersion}"
     implementation "com.android.support:cardview-v7:${supportLibraryVersion}"
-    implementation 'commons-codec:commons-codec:1.5'
+    implementation 'commons-codec:commons-codec:1.6'
     testImplementation 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }
