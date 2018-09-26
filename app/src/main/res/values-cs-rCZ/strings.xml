@@ -1,11 +1,11 @@
 <resources>
     <string name="action_settings">Nastavení</string>
-    <string name="action_refresh">Obnovit</string>
+    <string name="action_refresh">Načíst znovu</string>
     <string name="nchost">Adresa serveru</string>
     <string name="username">Uživatelské jméno</string>
     <string name="password">Heslo</string>
     <string name="connect">Připojit</string>
-    <string name="wrongNCUrl">Nesprávná URL Nextcloud backend serveru. Spojení se nezdařilo.</string>
+    <string name="wrongNCUrl">Nesprávná URL Nextcloud podpůrné vrstvy nebo se spojení nezdařilo.</string>
     <string name="wrongNCSettings">Nesprávná nastavení</string>
     <string name="net_error">Chyba sítě</string>
     <string name="unlock">Odemknout</string>
