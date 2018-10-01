@@ -9,7 +9,7 @@
     <string name="wrongNCSettings">Configurações incorretas</string>
     <string name="net_error">Erro de rede</string>
     <string name="unlock">Desbloquear</string>
-    <string name="wrong_vault_pw">Senha do cofre errada</string>
+    <string name="wrong_vault_pw">Senha do cofre incorreta</string>
     <string name="label">Etiqueta</string>
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
