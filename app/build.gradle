@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 ext {
-    supportLibraryVersion = '25.2.0'
+    supportLibraryVersion = '28.0.0'
 }
 
 android {
@@ -22,14 +22,14 @@ android {
             v2SigningEnabled true
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "es.wolfi.app.passman"
-        minSdkVersion 19
-        targetSdkVersion 23
-        versionCode 7
-        versionName "0.141"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 8
+        versionName "0.142"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -38,7 +38,7 @@ android {
 
         }
         ndk {
-            abiFilters 'armeabi', 'armeabi-v7a'
+            abiFilters 'armeabi-v7a'
         }
     }
     buildTypes {
