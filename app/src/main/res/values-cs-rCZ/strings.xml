@@ -11,7 +11,7 @@
     <string name="unlock">Odemknout</string>
     <string name="wrong_vault_pw">Nesprávné heslo k trezoru</string>
     <string name="label">Popisek</string>
-    <string name="email">E-mail</string>
+    <string name="email">Email</string>
     <string name="URL">URL</string>
     <string name="description">Popis</string>
     <string name="copied_to_clipboard">Text zkopírován do schránky</string>
