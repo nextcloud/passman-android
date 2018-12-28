@@ -1,0 +1,20 @@
+<resources>
+    <string name="action_settings">Ezarpenak</string>
+    <string name="action_refresh">Berritu</string>
+    <string name="nchost">Zerbitzariaren helbidea</string>
+    <string name="username">Erabiltzaile-izena</string>
+    <string name="password">Pasahitza</string>
+    <string name="connect">Konektatu</string>
+    <string name="wrongNCSettings">Ezarpen okerrak</string>
+    <string name="net_error">Sare errorea</string>
+    <string name="unlock">Desblokeatu</string>
+    <string name="label">Etiketa</string>
+    <string name="email">E-maila</string>
+    <string name="URL">URLa</string>
+    <string name="description">Deskripzioa</string>
+    <string name="copied_to_clipboard">Testua arbelera kopiatua</string>
+    <string name="not_implemented_yet">Oraindik ezarri gabe</string>
+    <string name="created">Sortua:</string>
+    <string name="last_accessed">Azkenekoz atzitua:</string>
+    <string name="search">Bilatu</string>
+</resources>
