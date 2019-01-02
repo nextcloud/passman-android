@@ -110,6 +110,46 @@ public abstract class Core {
         });
     }
 
+    public static void requestAPIPOST(Context c, String endpoint, String body, final FutureCallback<String> callback) {
+        try {
+            String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
+            Log.d(Core.LOG_TAG, "Created Auth string");
+            Log.d(Core.LOG_TAG, "body:" + body);
+            Log.d(Core.LOG_TAG, "Running Ion");
+            
+            Ion.with(c)
+                    .load(host.concat(endpoint))
+                    .setHandler(null)
+                    .setHeader("Authorization", auth)                // set the header
+                    .setHeader("Content-Type", "application/json")
+                    .setStringBody(body)
+                    .asString()
+                    .setCallback(new FutureCallback<String>() {
+                        @Override
+                        public void onCompleted(Exception e, String result) {
+                            Log.d(Core.LOG_TAG, "In Callback");
+                            if (e == null && JSONUtils.isJSONObject(result)) {
+                                try {
+                                    JSONObject o = new JSONObject(result);
+                                    if (o.getString("message").equals("Current user is not logged in")) {
+                                        callback.onCompleted(new Exception("401"), null);
+                                        return;
+                                    }
+                                } catch (Exception ej) {
+                                    Log.d(Core.LOG_TAG, ej.toString());
+                                }
+                            }
+                            Log.d(Core.LOG_TAG, "Finished, calling back with result");
+                            callback.onCompleted(e, result);
+                        }
+                    });
+        }
+        catch (Exception ex)
+        {
+            Log.d(Core.LOG_TAG, ex.toString());
+        }
+    }
+
     // TODO Test this method once the server response works!
     public static void getAPIVersion(final Context c, FutureCallback<Integer> cb) {
         if (version_number != 0) {
@@ -156,7 +196,7 @@ public abstract class Core {
         Toast.makeText(c, host, Toast.LENGTH_LONG).show();
         Log.d(LOG_TAG, "Host: " + host);
         Log.d(LOG_TAG, "User: " + user);
-        Log.d(LOG_TAG, "Pass: " + pass);
+        //Log.d(LOG_TAG, "Pass: " + pass);
 
         Vault.setUpAPI(host, user, pass);
         Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {

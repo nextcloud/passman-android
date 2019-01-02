@@ -26,7 +26,7 @@
 
         <service
             android:name=".autofill.CredentialAutofillService"
-            android:label="Credential Autofill Service"
+            android:label="Passman Credential Autofill Service"
             android:permission="android.permission.BIND_AUTOFILL_SERVICE">
             <intent-filter>
                 <action android:name="android.service.autofill.AutofillService" />

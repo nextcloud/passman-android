@@ -24,13 +24,18 @@ package es.wolfi.passman.API;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
+import com.google.gson.JsonSerializer;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -38,6 +43,7 @@ import java.util.HashMap;
 
 import es.wolfi.app.passman.SJCLCrypto;
 import es.wolfi.utils.Filterable;
+import es.wolfi.utils.JSONUtils;
 
 public class Vault extends Core implements Filterable{
     public int vault_id;
@@ -61,8 +67,7 @@ public class Vault extends Core implements Filterable{
         try {
             return SJCLCrypto.decryptString(cryptogram, encryption_key);
         } catch (Exception e) {
-            Log.e("Vault", e.getMessage());
-            e.printStackTrace();
+            Log.e("Vault", e.toString());
         }
         return "Error decrypting";
     }
@@ -92,8 +97,42 @@ public class Vault extends Core implements Filterable{
     }
 
     public String encryptString(String plaintext) {
-        // TODO: Implement encryption
-        return "";
+        try {
+            // We can't encrypt NULL
+            if (plaintext == null)
+            {
+                plaintext = "";
+            }
+
+            // If this is just an unquoted string then we need to quote it
+            if (!JSONUtils.isJSONObject(plaintext) && !JSONUtils.isJSONArray(plaintext)) {
+                plaintext = JSONObject.quote(plaintext);
+            }
+
+            Log.d(Vault.LOG_TAG,"Sending: " + plaintext);
+
+            // Encrypt the plaintext into an SJCL compatible JSON object
+
+            JSONObject SJCLJSONObject = SJCLCrypto.encryptString(plaintext, encryption_key);
+
+            // JSON String representation of the SJCL JSON Object
+            String encryptedString = SJCLJSONObject.toString();
+
+            // SJCL doesn't like escaped forward slash - dirty hack to remove them
+            encryptedString = encryptedString.replace(
+                    "\\",
+                    "");
+
+            // Finally base 64 encode it
+            return Base64.encodeToString(encryptedString
+                    .getBytes("UTF-8"),
+                    Base64.NO_WRAP);
+
+        } catch (Exception e) {
+            Log.e("Vault", e.getMessage());
+            e.printStackTrace();
+        }
+        return "Error encrypting";
     }
 
     public Date getCreatedTime(){
@@ -111,6 +150,33 @@ public class Vault extends Core implements Filterable{
 
     public ArrayList<Credential> getCredentials() {
         return credentials;
+    }
+
+    public static void addCredential(Context c, final Vault v, Credential cred, final FutureCallback<Credential> cb) {
+        Log.d(Vault.LOG_TAG, "Adding Credential");
+        Vault.requestAPIPOST(c, "credentials", Credential.toJSON(cred,true).toString(), new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                if (e != null) {
+                    Log.d(Vault.LOG_TAG, e.toString());
+                    cb.onCompleted(e, null);
+                    return;
+                }
+
+                Log.d(Vault.LOG_TAG, result);
+//                cb.onCompleted(e, null);
+                try {
+                    Credential cred = Credential.fromJSON(new JSONObject(result));
+                    v.credentials.add(cred);
+
+                    cb.onCompleted(e, cred);
+                }
+                catch (JSONException ex) {
+                    Log.d(Vault.LOG_TAG, ex.toString());
+                    cb.onCompleted(ex, null);
+                }
+            }
+        });
     }
 
     public static void getVaults(Context c, final FutureCallback<HashMap<String, Vault>> cb) {

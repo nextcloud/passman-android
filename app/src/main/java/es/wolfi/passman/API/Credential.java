@@ -22,10 +22,12 @@
 
 package es.wolfi.passman.API;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import es.wolfi.utils.Filterable;
 
@@ -70,24 +72,30 @@ public class Credential extends Core implements Filterable {
         return vaultId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserId() { return userId; }
+
+    public Credential()
+    {
+        super();
+        this.userId = Core.username;
     }
 
     public String getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    public Credential setLabel(String label) {
         this.label = label;
+	    return this;
     }
 
     public String getDescription() {
         return vault.decryptString(description);
     }
 
-    public void setDescription(String description) {
+    public Credential setDescription(String description) {
         this.description = vault.encryptString(description);
+	    return this;
     }
 
     public long getCreated() {
@@ -98,128 +106,145 @@ public class Credential extends Core implements Filterable {
         return changed;
     }
 
-    public void setChanged(long changed) {
+    public Credential setChanged(long changed) {
         this.changed = changed;
+	    return this;
     }
 
     public String getTags() {
         return vault.decryptString(tags);
     }
 
-    public void setTags(String tags) {
+    public Credential setTags(String tags) {
         this.tags = vault.encryptString(tags);
+	    return this;
     }
 
     public String getEmail() {
         return vault.decryptString(email);
     }
 
-    public void setEmail(String email) {
+    public Credential setEmail(String email) {
         this.email = vault.encryptString(email);
+	    return this;
     }
 
     public String getUsername() {
         return vault.decryptString(username);
     }
 
-    public void setUsername(String username) {
+    public Credential setUsername(String username) {
         this.username = vault.encryptString(username);
+	    return this;
     }
 
     public String getPassword() {
         return vault.decryptString(password);
     }
 
-    public void setPassword(String password) {
+    public Credential setPassword(String password) {
         this.password = vault.encryptString(password);
+	    return this;
     }
 
     public String getUrl() {
         return vault.decryptString(url);
     }
 
-    public void setUrl(String url) {
+    public Credential setUrl(String url) {
         this.url = vault.encryptString(url);
+	return this;
     }
 
     public String getFavicon() {
         return favicon;
     }
 
-    public void setFavicon(String favicon) {
+    public Credential setFavicon(String favicon) {
         this.favicon = favicon;
+	    return this;
     }
 
     public long getRenewInterval() {
         return renewInterval;
     }
 
-    public void setRenewInterval(long renewInterval) {
+    public Credential setRenewInterval(long renewInterval) {
         this.renewInterval = renewInterval;
+	    return this;
     }
 
     public long getExpireTime() {
         return expireTime;
     }
 
-    public void setExpireTime(long expireTime) {
+    public Credential setExpireTime(long expireTime) {
         this.expireTime = expireTime;
+	    return this;
     }
 
     public long getDeleteTime() {
         return deleteTime;
     }
 
-    public void setDeleteTime(long deleteTime) {
+    public Credential setDeleteTime(long deleteTime) {
         this.deleteTime = deleteTime;
+	    return this;
     }
 
     public String getFiles() {
         return vault.decryptString(files);
     }
 
-    public void setFiles(String files) {
+    public Credential setFiles(String files) {
         this.files = vault.encryptString(files);
+	    return this;
     }
 
     public String getCustomFields() {
         return vault.decryptString(customFields);
     }
 
-    public void setCustomFields(String customFields) {
+    public Credential setCustomFields(String customFields) {
         this.customFields = vault.encryptString(customFields);
+	    return this;
     }
 
     public String getOtp() {
         return vault.decryptString(otp);
     }
 
-    public void setOtp(String otp) {
+    public Credential setOtp(String otp) {
         this.otp = vault.encryptString(otp);
+	    return this;
     }
 
     public boolean isHidden() {
         return hidden;
     }
 
-    public void setHidden(boolean hidden) {
+    public Credential setHidden(boolean hidden) {
         this.hidden = hidden;
+	    return this;
     }
 
     public String getSharedKey() {
         return sharedKey;
     }
 
-    public void setSharedKey(String sharedKey) {
+    public Credential setSharedKey(String sharedKey) {
         this.sharedKey = sharedKey;
+	    return this;
     }
 
     public Vault getVault() {
         return vault;
     }
 
-    public void setVault(Vault v) {
+    public Credential setVault(Vault v) {
         vault = v;
+        vaultId = v.vault_id;
+	    return this;
     }
 
     public static Credential fromJSON(JSONObject j) throws JSONException {
@@ -267,6 +292,60 @@ public class Credential extends Core implements Filterable {
         c.sharedKey = j.getString("shared_key");
 
         return c;
+    }
+    
+    // Treat null objects as JSONObject.NULL
+    private static Object ValueObjectOrNULLObject(Object valueObject)
+    {
+        if (valueObject == null)
+            return JSONObject.NULL;
+        
+        return valueObject;
+    }
+
+    public static JSONObject toJSON(Credential c, boolean forCreation) {
+        try {
+            JSONObject j = new JSONObject();
+
+            if (!forCreation) {
+                j.put("credential_id", ValueObjectOrNULLObject(c.id));
+                j.put("guid", ValueObjectOrNULLObject(c.guid));
+                //j.put("created", ValueObjectOrNULLObject(c.created));
+                //j.put("changed", ValueObjectOrNULLObject(c.changed));
+            }
+
+            j.put("vault_id", ValueObjectOrNULLObject(c.vaultId));
+            j.put("user_id", ValueObjectOrNULLObject(c.userId));
+            j.put("label", ValueObjectOrNULLObject(c.label));
+            j.put("description", ValueObjectOrNULLObject(c.description));
+
+            j.put("tags", ValueObjectOrNULLObject(c.tags));
+            j.put("email", ValueObjectOrNULLObject(c.email));
+            j.put("username", ValueObjectOrNULLObject(c.username));
+            j.put("password", ValueObjectOrNULLObject(c.password));
+            j.put("url", ValueObjectOrNULLObject(c.url));
+
+            j.put("favicon", ValueObjectOrNULLObject(c.favicon));
+
+            j.put("icon", ValueObjectOrNULLObject(c.favicon));
+
+            j.put("renew_interval", ValueObjectOrNULLObject(c.renewInterval));
+
+            j.put("expire_time", ValueObjectOrNULLObject(c.expireTime));
+            j.put("delete_time", ValueObjectOrNULLObject(c.deleteTime));
+            j.put("files", ValueObjectOrNULLObject(c.files));
+            j.put("custom_fields", ValueObjectOrNULLObject(c.customFields));
+            j.put("otp", ValueObjectOrNULLObject(c.otp));
+            j.put("hidden", ValueObjectOrNULLObject(c.hidden ? 1 : 0));
+            j.put("shared_key", ValueObjectOrNULLObject(c.sharedKey));
+
+            return j;
+        }
+        catch (Exception ex)
+        {
+            Log.d("Passman", ex.toString());
+        }
+        return new JSONObject();
     }
 
     public static Credential fromJSON(JSONObject j, Vault v) throws JSONException {
