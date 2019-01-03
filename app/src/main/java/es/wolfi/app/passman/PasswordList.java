@@ -56,7 +56,8 @@ public class PasswordList extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
         CredentialItemFragment.OnListFragmentInteractionListener,
         VaultLockScreen.VaultUnlockInteractionListener,
-        CredentialDisplay.OnCredentialFragmentInteraction
+        CredentialDisplay.OnCredentialFragmentInteraction,
+        CredentialCreate.OnCredentialCreateInteraction
 {
     SharedPreferences settings;
     SingleTon ton;
@@ -81,10 +82,17 @@ public class PasswordList extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                GeneralUtils.debug("Replace with your own action");
+                if (!getSupportFragmentManager().isStateSaved()) {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .replace(R.id.content_password_list, CredentialCreate.newInstance(), "createCredential")
+                            .addToBackStack(null)
+                            .commit();
+                }
             }
         });
-        fab.hide();
+        //fab.hide();
 
         //if (running) return;
 
@@ -478,11 +486,13 @@ public class PasswordList extends AppCompatActivity implements
 
     @Override
     public void onListFragmentCreatedView() {
+        GeneralUtils.debug("Credential view created");
         setDialog(false,"Credential view created");
     }
 
     @Override
     public void onVaultUnlock(Vault vault) {
+        GeneralUtils.debug("Vault unlock event");
         if (!getSupportFragmentManager().isStateSaved()) {
             getSupportFragmentManager().popBackStack();
         }
@@ -491,6 +501,11 @@ public class PasswordList extends AppCompatActivity implements
 
     @Override
     public void onCredentialFragmentInteraction(Credential credential) {
+        GeneralUtils.debug("Cred Interaction event");
+    }
 
+    @Override
+    public void OnCredentialCreated(Vault v, Credential credential) {
+        GeneralUtils.debug("Cred Created event");
     }
 }
