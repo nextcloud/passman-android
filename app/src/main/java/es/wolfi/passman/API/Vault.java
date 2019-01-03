@@ -42,6 +42,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import es.wolfi.app.passman.SJCLCrypto;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.Filterable;
 import es.wolfi.utils.JSONUtils;
 
@@ -82,6 +84,29 @@ public class Vault extends Core implements Filterable{
 
         encryption_key = "";
         return false;
+    }
+
+    public boolean unlockReplacementInstance() {
+        boolean ret = false;
+        try {
+            HashMap<String, Vault> vaultHashMap;
+
+            vaultHashMap = (HashMap<String, Vault>) SingleTon
+                    .getTon()
+                    .getExtra(SettingValues.VAULTS.toString());
+
+            if (vaultHashMap.containsKey(guid)) {
+                ret = vaultHashMap.get(guid).unlock(encryption_key);
+            }
+        }
+        catch (Exception ex) {
+            ret = false;
+        }
+        return ret;
+    }
+
+    public void lock() {
+        encryption_key = "";
     }
 
     public boolean is_unlocked() {

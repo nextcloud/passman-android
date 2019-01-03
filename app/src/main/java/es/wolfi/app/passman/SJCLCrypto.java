@@ -80,7 +80,7 @@ public class SJCLCrypto {
                 Log.e("SJCL", "Name: " + providers[i].getName() + " Version: " + providers[i].getVersion());
             }
 
-            Cipher aes = Cipher.getInstance(ALGORITHM, "BC");
+            Cipher aes = Cipher.getInstance(ALGORITHM);
 
             aes.init(Cipher.ENCRYPT_MODE,secretSpec);
 

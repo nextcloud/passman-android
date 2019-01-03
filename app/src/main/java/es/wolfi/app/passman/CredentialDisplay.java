@@ -95,7 +95,9 @@ public class CredentialDisplay extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            if (v != null) {
+                credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            }
         }
 
         handler = new Handler();
@@ -151,15 +153,17 @@ public class CredentialDisplay extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        label.setText(credential.getLabel());
-        user.setText(credential.getUsername());
-        password.setModePassword();
-        password.setText(credential.getPassword());
-        email.setModeEmail();
-        email.setText(credential.getEmail());
-        url.setText(credential.getUrl());
-        description.setText(credential.getDescription());
-        otp.setEnabled(false);
+        if (credential != null) {
+            label.setText(credential.getLabel());
+            user.setText(credential.getUsername());
+            password.setModePassword();
+            password.setText(credential.getPassword());
+            email.setModeEmail();
+            email.setText(credential.getEmail());
+            url.setText(credential.getUrl());
+            description.setText(credential.getDescription());
+            otp.setEnabled(false);
+        }
     }
 
     @Override

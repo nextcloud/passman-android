@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FilterListAsyncTask;
+import es.wolfi.utils.GeneralUtils;
 
 /**
  * A fragment representing a list of Items.
@@ -85,8 +86,10 @@ public class CredentialItemFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_credential_item_list, container, false);
 
+        GeneralUtils.debug("Creating View");
+
+        View view = inflater.inflate(R.layout.fragment_credential_item_list, container, false);
         // Set the adapter
         View credentialView = view.findViewById(R.id.list);
         if (credentialView instanceof RecyclerView) {
@@ -98,31 +101,37 @@ public class CredentialItemFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
-            searchInput.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            if (v != null) {
+                final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
+                searchInput.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    String searchText = searchInput.getText().toString().toLowerCase();
-                    if(filterTask != null){
-                        filterTask.cancel(true);
                     }
-                    filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
-                    ArrayList<Credential> input [] = new ArrayList[]{v.getCredentials()};
-                    filterTask.execute((Object[]) input);
-                }
 
-                @Override
-                public void afterTextChanged(Editable editable) {
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        String searchText = searchInput.getText().toString().toLowerCase();
+                        if (filterTask != null) {
+                            filterTask.cancel(true);
+                        }
+                        filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
+                        ArrayList<Credential> input[] = new ArrayList[]{v.getCredentials()};
+                        filterTask.execute((Object[]) input);
+                    }
 
-                }
-            });
-            recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+                recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+            }
         }
+        if (mListener != null) {
+            mListener.onListFragmentCreatedView();
+        }
+        GeneralUtils.debug("Returning View");
         return view;
     }
 
@@ -157,5 +166,6 @@ public class CredentialItemFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Credential item);
+        void onListFragmentCreatedView();
     }
 }

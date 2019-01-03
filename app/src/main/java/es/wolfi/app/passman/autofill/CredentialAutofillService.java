@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.autofill.AutofillId;
 import android.view.autofill.AutofillValue;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
 
@@ -34,6 +33,7 @@ import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.GeneralUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,13 +78,13 @@ public final class CredentialAutofillService extends AutofillService {
         final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
 
         if (v == null) {
-            toast("No active vault");
+            GeneralUtils.debugAndToast(true,getApplicationContext(),getString(R.string.autofill_noactivevault));
             callback.onSuccess(null);
             return;
         }
 
         if (!v.is_unlocked()) {
-            toast("Vault needs to be unlocked");
+            GeneralUtils.debugAndToast(true,getApplicationContext(),getString(R.string.autofill_vaultlocked));
             callback.onSuccess(null);
             return;
         }
@@ -96,7 +96,7 @@ public final class CredentialAutofillService extends AutofillService {
         ArrayList<Credential> allCred = v.getCredentials();
 
         if (allCred.isEmpty()) {
-            toast("No credentials in vault");
+            GeneralUtils.debugAndToast(true,getApplicationContext(),getString(R.string.autofill_vaultempty));
             callback.onSuccess(null);
             return;
         }
@@ -150,7 +150,7 @@ public final class CredentialAutofillService extends AutofillService {
                         break;
                     case View.AUTOFILL_HINT_PASSWORD:
                         value = thisCred.getPassword();
-                        displayValue = "Password for " + credLabel;
+                        displayValue = getString(R.string.autofill_passwordfor) + credLabel;
                         break;
                 }
 
@@ -200,13 +200,13 @@ public final class CredentialAutofillService extends AutofillService {
         final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
 
         if (v == null) {
-            toast("No active vault");
+            GeneralUtils.debugAndToast(true,getApplicationContext(),getString(R.string.autofill_noactivevault));
             callback.onSuccess();
             return;
         }
 
         if (!v.is_unlocked()) {
-            toast("Vault needs to be unlocked");
+            GeneralUtils.debugAndToast(true,getApplicationContext(),getString(R.string.autofill_vaultlocked));
             callback.onSuccess();
             return;
         }
@@ -271,7 +271,7 @@ public final class CredentialAutofillService extends AutofillService {
         Credential newCred = new Credential();
         newCred
                 .setVault(v)
-                .setDescription("Created by autofill service")
+                .setDescription(getString(R.string.autofill_createdbyautofillservice))
                 .setEmail(email)
                 .setLabel(requesterApplicationLabel)
                 .setCustomFields(customFieldString)
@@ -297,7 +297,7 @@ public final class CredentialAutofillService extends AutofillService {
             }
         });
         Log.d(TAG, "onSaveRequest() finished");
-        toast("onSaveRequest finished");
+        GeneralUtils.debug("onSaveRequest finished");
         callback.onSuccess();
     }
 
@@ -465,7 +465,4 @@ public final class CredentialAutofillService extends AutofillService {
         return presentation;
     }
 
-    private void toast(@NonNull CharSequence message) {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-    }
 }

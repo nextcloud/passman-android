@@ -22,6 +22,7 @@
 
 package es.wolfi.app.passman;
 
+import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -69,6 +70,8 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         DateFormat f = DateFormat.getDateInstance();
         holder.created.setText(f.format(holder.mItem.getCreatedTime()));
         holder.last_access.setText(f.format(holder.mItem.getLastAccessTime()));
+        holder.vault_state.setText(calculateVaultState(position));
+
 
         try {
             holder.name.setTextColor(ColorUtils.calculateColor(mValues.get(position).name));
@@ -88,6 +91,34 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         });
     }
 
+    private CharSequence calculateVaultState(int position) {
+        boolean unlocked = false;
+        boolean active = false;
+
+        // Active vault
+        final Vault av = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+
+        // Current vault
+        Vault v = mValues.get(position);
+
+        if (v != null) {
+            active = (av != null && v.guid.equals(av.guid));
+            unlocked = v.is_unlocked();
+        }
+
+
+        if (unlocked && active)
+            return "Active/Unlocked";
+        else if (unlocked && !active)
+            return "Unlocked";
+        else if (!unlocked && active)
+            return "Active/Locked";
+        else if (!unlocked && !active)
+            return "Locked";
+
+        return "Unknown";
+    }
+
     @Override
     public int getItemCount() {
         return mValues.size();
@@ -97,6 +128,7 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         @BindView(R.id.vault_name) TextView name;
         @BindView(R.id.vault_created) TextView created;
         @BindView(R.id.vault_last_access) TextView last_access;
+        @BindView(R.id.vault_state) TextView vault_state;
 
         public final View mView;
         public Vault mItem;

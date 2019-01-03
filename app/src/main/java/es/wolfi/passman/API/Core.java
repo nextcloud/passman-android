@@ -27,7 +27,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -36,12 +35,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.JSONUtils;
+import es.wolfi.utils.GeneralUtils;
 
 public abstract class Core {
     protected static final String LOG_TAG    = "API_LIB";
@@ -113,10 +112,7 @@ public abstract class Core {
     public static void requestAPIPOST(Context c, String endpoint, String body, final FutureCallback<String> callback) {
         try {
             String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
-            Log.d(Core.LOG_TAG, "Created Auth string");
-            Log.d(Core.LOG_TAG, "body:" + body);
-            Log.d(Core.LOG_TAG, "Running Ion");
-            
+
             Ion.with(c)
                     .load(host.concat(endpoint))
                     .setHandler(null)
@@ -127,7 +123,6 @@ public abstract class Core {
                     .setCallback(new FutureCallback<String>() {
                         @Override
                         public void onCompleted(Exception e, String result) {
-                            Log.d(Core.LOG_TAG, "In Callback");
                             if (e == null && JSONUtils.isJSONObject(result)) {
                                 try {
                                     JSONObject o = new JSONObject(result);
@@ -139,7 +134,6 @@ public abstract class Core {
                                     Log.d(Core.LOG_TAG, ej.toString());
                                 }
                             }
-                            Log.d(Core.LOG_TAG, "Finished, calling back with result");
                             callback.onCompleted(e, result);
                         }
                     });
@@ -193,7 +187,7 @@ public abstract class Core {
         String host = ton.getString(SettingValues.HOST.toString());
         String user = ton.getString(SettingValues.USER.toString());
         String pass = ton.getString(SettingValues.PASSWORD.toString());
-        Toast.makeText(c, host, Toast.LENGTH_LONG).show();
+        GeneralUtils.debug(host);
         Log.d(LOG_TAG, "Host: " + host);
         Log.d(LOG_TAG, "User: " + user);
         //Log.d(LOG_TAG, "Pass: " + pass);
@@ -206,16 +200,15 @@ public abstract class Core {
 
                 if (e != null) {
                     if (e.getMessage().equals("401")) {
-                        if (toast) Toast.makeText(c, c.getString(R.string.wrongNCSettings), Toast.LENGTH_LONG).show();
+                        GeneralUtils.debugAndToast(toast,c, c.getString(R.string.wrongNCSettings));
                         ret = false;
                     }
                     else if (e.getMessage().contains("Unable to resolve host") || e.getMessage().contains("Invalid URI")) {
-                        if (toast) Toast.makeText(c, c.getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
+                        GeneralUtils.debugAndToast(toast,c, c.getString(R.string.wrongNCUrl));
                         ret = false;
                     }
                     else {
-                        Log.e(LOG_TAG, "Error: " + e.getMessage(), e);
-                        if (toast) Toast.makeText(c, c.getString(R.string.net_error) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        GeneralUtils.debugAndToast(toast,c,c.getString(R.string.net_error) + ": " + e.getMessage());
                         ret = false;
                     }
                 }
