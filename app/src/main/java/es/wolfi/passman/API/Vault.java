@@ -1,41 +1,36 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.passman.API;
 
 import android.content.Context;
-import android.content.Intent;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import com.google.gson.JsonSerializer;
+import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.json.JSONTokener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,9 +40,10 @@ import es.wolfi.app.passman.SJCLCrypto;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.Filterable;
+import es.wolfi.utils.GeneralUtils;
 import es.wolfi.utils.JSONUtils;
 
-public class Vault extends Core implements Filterable{
+public class Vault extends Core implements Filterable {
     public int vault_id;
     public String guid;
     public String name;
@@ -98,8 +94,7 @@ public class Vault extends Core implements Filterable{
             if (vaultHashMap.containsKey(guid)) {
                 ret = vaultHashMap.get(guid).unlock(encryption_key);
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ret = false;
         }
         return ret;
@@ -124,8 +119,7 @@ public class Vault extends Core implements Filterable{
     public String encryptString(String plaintext) {
         try {
             // We can't encrypt NULL
-            if (plaintext == null)
-            {
+            if (plaintext == null) {
                 plaintext = "";
             }
 
@@ -133,8 +127,6 @@ public class Vault extends Core implements Filterable{
             if (!JSONUtils.isJSONObject(plaintext) && !JSONUtils.isJSONArray(plaintext)) {
                 plaintext = JSONObject.quote(plaintext);
             }
-
-            Log.d(Vault.LOG_TAG,"Sending: " + plaintext);
 
             // Encrypt the plaintext into an SJCL compatible JSON object
 
@@ -150,7 +142,7 @@ public class Vault extends Core implements Filterable{
 
             // Finally base 64 encode it
             return Base64.encodeToString(encryptedString
-                    .getBytes("UTF-8"),
+                            .getBytes("UTF-8"),
                     Base64.NO_WRAP);
 
         } catch (Exception e) {
@@ -160,7 +152,7 @@ public class Vault extends Core implements Filterable{
         return "Error encrypting";
     }
 
-    public Date getCreatedTime(){
+    public Date getCreatedTime() {
         return new Date((long) created * 1000);
     }
 
@@ -169,7 +161,7 @@ public class Vault extends Core implements Filterable{
         return credentials.get(credential_guid.get(guid));
     }
 
-    public Date getLastAccessTime(){
+    public Date getLastAccessTime() {
         return new Date((long) last_access * 1000);
     }
 
@@ -177,35 +169,113 @@ public class Vault extends Core implements Filterable{
         return credentials;
     }
 
-    public static void addCredential(Context c, final Vault v, Credential cred, final FutureCallback<Credential> cb) {
+    public static void addCredential(boolean wait,
+                                     Context c,
+                                     final Vault v,
+                                     Credential cred,
+                                     final FutureCallback<Credential> cb) {
+
         Log.d(Vault.LOG_TAG, "Adding Credential");
-        Vault.requestAPIPOST(c, "credentials", Credential.toJSON(cred,true).toString(), new FutureCallback<String>() {
-            @Override
-            public void onCompleted(Exception e, String result) {
-                if (e != null) {
-                    Log.d(Vault.LOG_TAG, e.toString());
-                    cb.onCompleted(e, null);
-                    return;
-                }
 
-                Log.d(Vault.LOG_TAG, result);
-//                cb.onCompleted(e, null);
+        Future<String> future = Vault.requestAPIMethod(c,
+                "credentials",
+                "POST",
+                Credential.toJSON(cred, true).toString(),
+                new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        if (e != null) {
+                            Log.d(Vault.LOG_TAG, e.toString());
+                            cb.onCompleted(e, null);
+                            return;
+                        }
+
+                        Log.d(Vault.LOG_TAG, result);
+                        //                cb.onCompleted(e, null);
+                        try {
+                            Credential cred = Credential.fromJSON(new JSONObject(result), v);
+                            v.credentials.add(cred);
+                            v.credential_guid.put(cred.getGuid(), v.credentials.size() - 1);
+
+                            cb.onCompleted(e, cred);
+                        } catch (JSONException ex) {
+                            Log.d(Vault.LOG_TAG, ex.toString());
+                            cb.onCompleted(ex, null);
+                        }
+                    }
+                });
+
+        if (wait) {
+            if (future != null) {
                 try {
-                    Credential cred = Credential.fromJSON(new JSONObject(result));
-                    v.credentials.add(cred);
-
-                    cb.onCompleted(e, cred);
+                    Log.d(Vault.LOG_TAG, "Add: Waiting for the future");
+                    future.get();
+                    Log.d(Vault.LOG_TAG, "Add: Back to the future");
                 }
-                catch (JSONException ex) {
-                    Log.d(Vault.LOG_TAG, ex.toString());
-                    cb.onCompleted(ex, null);
+                catch (Exception ex) {
+                    Log.d(Vault.LOG_TAG, "Add: Error from the future: " + ex.toString());
                 }
             }
-        });
+        }
+    }
+
+    public static void saveCredential(boolean wait,
+                                      Context c,
+                                     final Vault v,
+                                     final Credential cred,
+                                     final FutureCallback<Credential> cb) {
+
+        Log.d(Vault.LOG_TAG, "Saving Credential");
+
+        Future<String> future = Vault.requestAPIMethod(c,
+                "credentials/" + cred.getGuid(),
+                "PATCH",
+                Credential.toJSON(cred, false).toString(),
+                new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        if (e != null) {
+                            Log.d(Vault.LOG_TAG, e.toString());
+                            cb.onCompleted(e, null);
+                            return;
+                        }
+
+                        Log.d(Vault.LOG_TAG, result);
+                        //                cb.onCompleted(e, null);
+                        try {
+                            // TODO: Credential in the Vault will not match references
+                            // We should deal with any reference issues
+
+                            Credential newcred = Credential.fromJSON(new JSONObject(result), v);
+                            v.credential_guid.remove(cred.getGuid());
+                            v.credentials.remove(cred);
+                            v.credentials.add(newcred);
+                            v.credential_guid.put(newcred.getGuid(), v.credentials.size() - 1);
+
+                            cb.onCompleted(e, newcred);
+                        } catch (JSONException ex) {
+                            Log.d(Vault.LOG_TAG, ex.toString());
+                            cb.onCompleted(ex, null);
+                        }
+                    }
+                });
+
+        if (wait) {
+            if (future != null) {
+                try {
+                    Log.d(Vault.LOG_TAG, "Save: Waiting for the future");
+                    future.get();
+                    Log.d(Vault.LOG_TAG, "Save: Back to the future");
+                }
+                catch (Exception ex) {
+                    Log.d(Vault.LOG_TAG, "Save: Error from the future: " + ex.toString());
+                }
+            }
+        }
     }
 
     public static void getVaults(Context c, final FutureCallback<HashMap<String, Vault>> cb) {
-        Vault.requestAPIGET(c, "vaults",new FutureCallback<String>() {
+        Vault.requestAPIGET(c, "vaults", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
@@ -224,8 +294,7 @@ public class Vault extends Core implements Filterable{
                     }
 
                     cb.onCompleted(e, l);
-                }
-                catch (JSONException ex) {
+                } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
             }
@@ -233,7 +302,7 @@ public class Vault extends Core implements Filterable{
     }
 
     public static void getVault(Context c, String guid, final FutureCallback<Vault> cb) {
-        Vault.requestAPIGET(c, "vaults/".concat(guid),new FutureCallback<String>() {
+        Vault.requestAPIGET(c, "vaults/".concat(guid), new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
@@ -247,15 +316,14 @@ public class Vault extends Core implements Filterable{
                     Vault v = Vault.fromJSON(data);
 
                     cb.onCompleted(e, v);
-                }
-                catch (JSONException ex) {
+                } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
             }
         });
     }
 
-    protected static Vault fromJSON(JSONObject o) throws JSONException{
+    protected static Vault fromJSON(JSONObject o) throws JSONException {
         Vault v = new Vault();
 
         v.vault_id = o.getInt("vault_id");
@@ -265,21 +333,20 @@ public class Vault extends Core implements Filterable{
         v.public_sharing_key = o.getString("public_sharing_key");
         v.last_access = o.getDouble("last_access");
 
-        if (o.has("credentials")){
+        if (o.has("credentials")) {
             JSONArray j = o.getJSONArray("credentials");
             v.credentials = new ArrayList<Credential>();
             v.credential_guid = new HashMap<>();
 
             for (int i = 0; i < j.length(); i++) {
                 Credential c = Credential.fromJSON(j.getJSONObject(i), v);
-                if(c.getDeleteTime() == 0) {
+                if (c.getDeleteTime() == 0) {
                     v.credentials.add(c);
                     v.credential_guid.put(c.getGuid(), v.credentials.size() - 1);
                 }
             }
             v.challenge_password = v.credentials.get(0).password;
-        }
-        else {
+        } else {
             v.challenge_password = o.getString("challenge_password");
         }
 

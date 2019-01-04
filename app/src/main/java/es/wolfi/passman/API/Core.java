@@ -28,6 +28,7 @@ import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 
+import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
@@ -109,13 +110,14 @@ public abstract class Core {
         });
     }
 
-    public static void requestAPIPOST(Context c, String endpoint, String body, final FutureCallback<String> callback) {
+/*    public static void requestAPIPOST(Context c, String endpoint, String body, final FutureCallback<String> callback) {
         try {
             String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
 
             Ion.with(c)
-                    .load(host.concat(endpoint))
-                    .setHandler(null)
+                    .load("POST", host.concat(endpoint))
+                    //.setHandler(null) - might need this for autofill
+                    .setLogging(Core.LOG_TAG,Log.DEBUG)
                     .setHeader("Authorization", auth)                // set the header
                     .setHeader("Content-Type", "application/json")
                     .setStringBody(body)
@@ -142,6 +144,41 @@ public abstract class Core {
         {
             Log.d(Core.LOG_TAG, ex.toString());
         }
+    }*/
+
+    public static Future<String> requestAPIMethod(Context c, String endpoint, String method, String body, final FutureCallback<String> callback) {
+        try {
+            String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
+
+            return Ion.with(c)
+                    .load(method, host.concat(endpoint))
+                    .setHeader("Authorization", auth)                // set the header
+                    .setHeader("Content-Type", "application/json")
+                    .setStringBody(body)
+                    .asString()
+                    .setCallback(new FutureCallback<String>() {
+                        @Override
+                        public void onCompleted(Exception e, String result) {
+                            if (e == null && JSONUtils.isJSONObject(result)) {
+                                try {
+                                    JSONObject o = new JSONObject(result);
+                                    if (o.getString("message").equals("Current user is not logged in")) {
+                                        callback.onCompleted(new Exception("401"), null);
+                                        return;
+                                    }
+                                } catch (Exception ej) {
+                                    Log.d(Core.LOG_TAG, ej.toString());
+                                }
+                            }
+                            callback.onCompleted(e, result);
+                        }
+                    });
+        }
+        catch (Exception ex)
+        {
+            Log.d(Core.LOG_TAG, ex.toString());
+        }
+        return null;
     }
 
     // TODO Test this method once the server response works!
@@ -198,7 +235,7 @@ public abstract class Core {
             public void onCompleted(Exception e, HashMap<String, Vault> result) {
                 boolean ret = true;
 
-                if (e != null) {
+                if (e != null && e.getMessage() != null) {
                     if (e.getMessage().equals("401")) {
                         GeneralUtils.debugAndToast(toast,c, c.getString(R.string.wrongNCSettings));
                         ret = false;

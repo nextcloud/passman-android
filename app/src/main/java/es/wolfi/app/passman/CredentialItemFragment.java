@@ -24,6 +24,7 @@ package es.wolfi.app.passman;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -52,10 +53,12 @@ public class CredentialItemFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
+    private FloatingActionButton fab = null;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -90,8 +93,24 @@ public class CredentialItemFragment extends Fragment {
         GeneralUtils.debug("Creating View");
 
         View view = inflater.inflate(R.layout.fragment_credential_item_list, container, false);
+
+        View fabView = view.findViewById(R.id.addcredfab);
+
+        if (fabView instanceof FloatingActionButton) {
+            GeneralUtils.debug("Setting Listener View");
+            fab = (FloatingActionButton)fabView;
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onActionCreateClick();
+                }
+
+            });
+        }
+
         // Set the adapter
         View credentialView = view.findViewById(R.id.list);
+
         if (credentialView instanceof RecyclerView) {
             Context context = credentialView.getContext();
             final RecyclerView recyclerView = (RecyclerView) credentialView;
@@ -166,6 +185,7 @@ public class CredentialItemFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Credential item);
+        void onActionCreateClick();
         void onListFragmentCreatedView();
     }
 }

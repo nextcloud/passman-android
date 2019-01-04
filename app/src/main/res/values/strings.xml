@@ -42,4 +42,6 @@
     <string name="refreshingdisplay">Refreshing display</string>
     <string name="vault_state">State:</string>
     <string name="vaultactiveandunlocked">Active/Unlocked</string>
+    <string name="menu_link_app">Link App</string>
+    <string name="linkedapp">Linked App Package</string>
 </resources>

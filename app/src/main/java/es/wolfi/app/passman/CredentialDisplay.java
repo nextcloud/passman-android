@@ -28,6 +28,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.GeneralUtils;
 
 
 /**
@@ -62,9 +64,11 @@ public class CredentialDisplay extends Fragment {
     @BindView(R.id.credential_otp) CopyTextItem otp;
     @BindView(R.id.credential_otp_progress) ProgressBar otp_progress;
 
-    private Credential credential;
+    //private Credential credential;
     private Handler handler;
+    private FloatingActionButton fab = null;
     private Runnable otp_refresh;
+    private Credential credential;
 
     private OnCredentialFragmentInteraction mListener;
 
@@ -93,6 +97,7 @@ public class CredentialDisplay extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
             if (v != null) {
@@ -134,7 +139,23 @@ public class CredentialDisplay extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_credential_display, container, false);
+        View view = inflater.inflate(R.layout.fragment_credential_display, container, false);
+
+        View fabView = view.findViewById(R.id.editcredfab);
+
+        if (fabView instanceof FloatingActionButton) {
+            GeneralUtils.debug("Setting Edit Cred listener");
+            fab = (FloatingActionButton)fabView;
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (credential != null) {
+                        mListener.onActionEditClick(credential.getGuid());
+                    }
+                }
+            });
+        }
+        return view;
     }
 
     @Override
@@ -184,6 +205,7 @@ public class CredentialDisplay extends Fragment {
      */
     public interface OnCredentialFragmentInteraction {
         // TODO: Update argument type and name
-        void onCredentialFragmentInteraction(Credential credential);
+        //void onCredentialFragmentInteraction(Credential credential);
+        void onActionEditClick(String credentialGuid);
     }
 }

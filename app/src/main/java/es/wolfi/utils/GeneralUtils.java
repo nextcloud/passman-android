@@ -48,30 +48,30 @@ public class GeneralUtils {
     }
 
     public static void debugAndToast(boolean toast, Context c, @NonNull String message) {
+        debug(message);
         if (toast) {
             toast(c, message);
         }
-        debug(message);
     }
 
     public static void debugAndToast(boolean toast, View v, @NonNull String message) {
+        debug(message);
         if (toast) {
             toast(v, message);
         }
-        debug(message);
     }
 
     public static void debugAndToast(boolean toast, Context c,  int resId) {
+        debug(c.getString(resId));
         if (toast) {
             toast(c, c.getString(resId));
         }
-        debug(c.getString(resId));
     }
 
     public static void debugAndToast(boolean toast, View v,  int resId) {
+        debug(v.getContext().getString(resId));
         if (toast) {
             toast(v, resId);
         }
-        debug(v.getContext().getString(resId));
     }
 }
