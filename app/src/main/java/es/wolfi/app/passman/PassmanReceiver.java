@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationManagerCompat;
 
-import java.util.HashMap;
-
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.GeneralUtils;
@@ -27,7 +25,7 @@ public class PassmanReceiver extends BroadcastReceiver {
                 String vaultGuid = intent.getStringExtra("VaultGuid");
 
                 if (credGuid != null && vaultGuid != null) {
-                    Vault v = getVaultByGuid(vaultGuid);
+                    Vault v = Vault.getVaultByGuid(vaultGuid);
                     if (v != null) {
                         Credential c = v.findCredentialByGUID(credGuid);
                         if (c != null)
@@ -55,17 +53,6 @@ public class PassmanReceiver extends BroadcastReceiver {
                 notificationManager.cancelAll();
             }
         }
-    }
-
-    private Vault getVaultByGuid(String guid) {
-        HashMap<String, Vault> vaults = (HashMap<String, Vault>)
-                SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
-
-        if (vaults != null)
-        {
-            return vaults.get(guid);
-        }
-        return null;
     }
 
     public void copyTextToClipboard(Context c, String label, String text) {

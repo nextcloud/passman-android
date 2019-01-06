@@ -110,7 +110,8 @@ public class VaultLockScreen extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        vault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+
+        vault = Vault.getActiveVault();
 
         Log.e("VaultLockScreen", "Vault guid: ".concat(vault.guid));
         vault_name.setText(vault.name);

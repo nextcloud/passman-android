@@ -119,7 +119,7 @@ public class CredentialItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+            final Vault v = Vault.getActiveVault();
             if (v != null) {
                 final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
                 searchInput.addTextChangedListener(new TextWatcher() {

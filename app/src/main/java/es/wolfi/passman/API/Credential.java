@@ -22,12 +22,10 @@
 
 package es.wolfi.passman.API;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import es.wolfi.utils.Filterable;
 
@@ -247,53 +245,6 @@ public class Credential extends Core implements Filterable {
 	    return this;
     }
 
-    public static Credential fromJSON(JSONObject j) throws JSONException {
-        Credential c = new Credential();
-
-        c.id = j.getInt("credential_id");
-        c.guid = j.getString("guid");
-        c.vaultId = j.getInt("vault_id");
-        c.userId = j.getString("user_id");
-        c.label = j.getString("label");
-        c.description = j.getString("description");
-        c.created = j.getLong("created");
-        c.changed = j.getLong("changed");
-        c.tags = j.getString("tags");
-        c.email = j.getString("email");
-        c.username = j.getString("username");
-        c.password = j.getString("password");
-        c.url = j.getString("url");
-
-        try {
-            c.favicon = j.getString("favicon");
-        }
-        catch (JSONException ex) {
-            try {
-                c.favicon = j.getString("icon");
-            }
-            catch (JSONException ex2) {
-                Log.e("Credential parse", "error, it has no icon or favicon field!", ex2);
-            }
-        }
-
-        if (j.isNull("renew_interval")) {
-            c.renewInterval = 0;
-        }
-        else {
-            c.renewInterval = j.getLong("renew_interval");
-        }
-
-        c.expireTime = j.getLong("expire_time");
-        c.deleteTime = j.getLong("delete_time");
-        c.files = j.getString("files");
-        c.customFields = j.getString("custom_fields");
-        c.otp = j.getString("otp");
-        c.hidden = (j.getInt("hidden") > 0);
-        c.sharedKey = j.getString("shared_key");
-
-        return c;
-    }
-    
     // Treat null objects as JSONObject.NULL
     private static Object ValueObjectOrNULLObject(Object valueObject)
     {
@@ -346,6 +297,53 @@ public class Credential extends Core implements Filterable {
             Log.d("Passman", ex.toString());
         }
         return new JSONObject();
+    }
+
+    public static Credential fromJSON(JSONObject j) throws JSONException {
+        Credential c = new Credential();
+
+        c.id = j.getInt("credential_id");
+        c.guid = j.getString("guid");
+        c.vaultId = j.getInt("vault_id");
+        c.userId = j.getString("user_id");
+        c.label = j.getString("label");
+        c.description = j.getString("description");
+        c.created = j.getLong("created");
+        c.changed = j.getLong("changed");
+        c.tags = j.getString("tags");
+        c.email = j.getString("email");
+        c.username = j.getString("username");
+        c.password = j.getString("password");
+        c.url = j.getString("url");
+
+        try {
+            c.favicon = j.getString("favicon");
+        }
+        catch (JSONException ex) {
+            try {
+                c.favicon = j.getString("icon");
+            }
+            catch (JSONException ex2) {
+                Log.e("Credential parse", "error, it has no icon or favicon field!", ex2);
+            }
+        }
+
+        if (j.isNull("renew_interval")) {
+            c.renewInterval = 0;
+        }
+        else {
+            c.renewInterval = j.getLong("renew_interval");
+        }
+
+        c.expireTime = j.getLong("expire_time");
+        c.deleteTime = j.getLong("delete_time");
+        c.files = j.getString("files");
+        c.customFields = j.getString("custom_fields");
+        c.otp = j.getString("otp");
+        c.hidden = (j.getInt("hidden") > 0);
+        c.sharedKey = j.getString("shared_key");
+
+        return c;
     }
 
     public static Credential fromJSON(JSONObject j, Vault v) throws JSONException {

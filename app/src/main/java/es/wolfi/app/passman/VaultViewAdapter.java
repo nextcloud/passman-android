@@ -96,7 +96,7 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         boolean active = false;
 
         // Active vault
-        final Vault av = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        final Vault av = Vault.getActiveVault();
 
         // Current vault
         Vault v = mValues.get(position);
@@ -105,7 +105,6 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
             active = (av != null && v.guid.equals(av.guid));
             unlocked = v.is_unlocked();
         }
-
 
         if (unlocked && active)
             return "Active/Unlocked";

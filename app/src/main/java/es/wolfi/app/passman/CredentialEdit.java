@@ -104,7 +104,7 @@ public class CredentialEdit extends Fragment {
 
         if (getArguments() != null) {
             if (!TextUtils.isEmpty(getArguments().getString(ARG_CREDENTIAL))) {
-                Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                Vault v = Vault.getActiveVault();
                 if (v != null) {
                     credential = v.findCredentialByGUID(getArguments().getString(ARG_CREDENTIAL));
                 }
@@ -207,7 +207,7 @@ public class CredentialEdit extends Fragment {
                 public void onClick(View view) {
                     fab.setEnabled(false);
 
-                    Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                    Vault v = Vault.getActiveVault();
                     if (v != null && credential == null) {
                         Credential newCred = buildNewCredential(v);
 

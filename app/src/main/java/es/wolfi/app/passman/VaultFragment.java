@@ -36,8 +36,7 @@ import android.view.ViewGroup;
 import es.wolfi.passman.API.Vault;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A fragment representing a list of Items.
@@ -94,7 +93,7 @@ public class VaultFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            HashMap<String, Vault> vaults = (HashMap<String, Vault>)SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
+            ConcurrentHashMap<String, Vault> vaults = Vault.getAllVaults();
             ArrayList<Vault> l = new ArrayList<Vault>(vaults.values());
             recyclerView.setAdapter(new VaultViewAdapter(l, mListener));
         }

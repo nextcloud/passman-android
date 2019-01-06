@@ -85,7 +85,7 @@ public final class CredentialAutofillService extends AutofillService {
 
         // Open Vault
 
-        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        final Vault v = Vault.getActiveVault();
 
         if (v == null) {
             GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_noactivevault));
@@ -244,7 +244,7 @@ public final class CredentialAutofillService extends AutofillService {
 
         // Open Vault
 
-        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        final Vault v = Vault.getActiveVault();
 
         if (v == null) {
             GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_noactivevault));

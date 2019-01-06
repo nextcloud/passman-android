@@ -52,7 +52,7 @@ import android.widget.TextView;
 
 import com.koushikdutta.async.future.FutureCallback;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import es.wolfi.passman.API.Core;
 import es.wolfi.passman.API.Credential;
@@ -144,9 +144,9 @@ public class PasswordList extends AppCompatActivity implements
 
             }
         });
-        HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+       ConcurrentHashMap<String, Vault> vaults = Vault.getAllVaults();
 
-        ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
+        Vault.unsetActiveVault();
 
         if (vaults != null) {
             if (!getSupportFragmentManager().isStateSaved()) {
@@ -165,7 +165,7 @@ public class PasswordList extends AppCompatActivity implements
 
     public void showActiveVault() {
         GeneralUtils.debug("Opening active vault");
-        Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        Vault vault = Vault.getActiveVault();
         if (vault != null && vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
                 GeneralUtils.debug("Listing Credentials");
@@ -224,13 +224,13 @@ public class PasswordList extends AppCompatActivity implements
                 }
 
                 // Update the vault record to avoid future loads
-                ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(result.guid, result);
+                Vault.getAllVaults().put(result.guid, result);
 
                 if (oldVaultObj.is_unlocked()) {
                     oldVaultObj.unlockReplacementInstance();
                 }
 
-                ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
+                Vault.setActiveVault(result);
 
                 // if fragment is not null, then refresh the Fragment
                 // this has the effect of calling onCreateView again
@@ -262,7 +262,7 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     void showUnlockVault() {
-        Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        Vault v = Vault.getActiveVault();
         if (v != null && v.unlock(settings.getString(v.guid, ""))) {
             GeneralUtils.debug("Unlocked using stored credentials");
             showActiveVault();
@@ -332,8 +332,8 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     private void lockVaults() {
-        HashMap<String, Vault> vaultHashMap =
-                (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+       ConcurrentHashMap<String, Vault> vaultHashMap = Vault.getAllVaults();
+
         for (Vault v : vaultHashMap.values()) {
             if (v.is_unlocked()) {
                 v.lock();
@@ -345,8 +345,8 @@ public class PasswordList extends AppCompatActivity implements
 
     private void clearSavedCredentials() {
         lockVaults();
-        HashMap<String, Vault> vaultHashMap =
-                (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+       ConcurrentHashMap<String, Vault> vaultHashMap = Vault.getAllVaults();
+
         for (Vault v : vaultHashMap.values()) {
             settings.edit()
                     .putString(v.guid, "")
@@ -403,13 +403,12 @@ public class PasswordList extends AppCompatActivity implements
         //GeneralUtils.debug("Refreshing");
         setDialog(true, getString(R.string.progresstext));
         // remember the active vault so we can put it back
-        final Vault activeVault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        final Vault activeVault = Vault.getActiveVault();
 
         // clear all vaults
-        ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
+        Vault.unsetActiveVault();
 
-        HashMap<String, Vault> currentVaults = (HashMap<String, Vault>) ton
-                .getExtra(SettingValues.VAULTS.toString());
+       ConcurrentHashMap<String, Vault> currentVaults = Vault.getAllVaults();
 
         if (currentVaults != null) {
             currentVaults.clear();
@@ -419,9 +418,9 @@ public class PasswordList extends AppCompatActivity implements
 
         //setDialog(false,"");
         //
-        Vault.getVaults(this, new FutureCallback<HashMap<String, Vault>>() {
+        Vault.getVaults(this, new FutureCallback<ConcurrentHashMap<String, Vault>>() {
             @Override
-            public void onCompleted(Exception e, HashMap<String, Vault> result) {
+            public void onCompleted(Exception e,ConcurrentHashMap<String, Vault> result) {
                 if (e != null) {
 
                     // Not logged in, restart activity
@@ -441,11 +440,11 @@ public class PasswordList extends AppCompatActivity implements
                     return;
                 }
 
-                ton.addExtra(SettingValues.VAULTS.toString(), result);
+                Vault.setAllVaults(result);
 
                 if (activeVault != null) {
-                    Vault v = result.get(activeVault.guid);
-                    if (v != null) {
+                    Vault newVault = Vault.getVaultByGuid(activeVault.guid);
+                    if (newVault != null) {
                         // load the vault, use an old reference to transfer the lock
                         loadActiveVault(activeVault);
                     }
@@ -464,7 +463,7 @@ public class PasswordList extends AppCompatActivity implements
 
     @Override
     public void onListFragmentInteraction(Vault item) {
-        ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), item);
+        Vault.setActiveVault(item);
         showActiveVault();
     }
 

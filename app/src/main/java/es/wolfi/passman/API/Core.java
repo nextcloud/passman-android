@@ -35,7 +35,7 @@ import com.koushikdutta.ion.Ion;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -83,10 +83,10 @@ public abstract class Core {
         Core.password = password;
     }
 
-    public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+    public static Future<String> requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
         String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
 
-        Ion.with(c)
+        return Ion.with(c)
         .load(host.concat(endpoint))
         .setHeader("Authorization", auth)                // set the header
         .asString()
@@ -109,42 +109,6 @@ public abstract class Core {
             }
         });
     }
-
-/*    public static void requestAPIPOST(Context c, String endpoint, String body, final FutureCallback<String> callback) {
-        try {
-            String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
-
-            Ion.with(c)
-                    .load("POST", host.concat(endpoint))
-                    //.setHandler(null) - might need this for autofill
-                    .setLogging(Core.LOG_TAG,Log.DEBUG)
-                    .setHeader("Authorization", auth)                // set the header
-                    .setHeader("Content-Type", "application/json")
-                    .setStringBody(body)
-                    .asString()
-                    .setCallback(new FutureCallback<String>() {
-                        @Override
-                        public void onCompleted(Exception e, String result) {
-                            if (e == null && JSONUtils.isJSONObject(result)) {
-                                try {
-                                    JSONObject o = new JSONObject(result);
-                                    if (o.getString("message").equals("Current user is not logged in")) {
-                                        callback.onCompleted(new Exception("401"), null);
-                                        return;
-                                    }
-                                } catch (Exception ej) {
-                                    Log.d(Core.LOG_TAG, ej.toString());
-                                }
-                            }
-                            callback.onCompleted(e, result);
-                        }
-                    });
-        }
-        catch (Exception ex)
-        {
-            Log.d(Core.LOG_TAG, ex.toString());
-        }
-    }*/
 
     public static Future<String> requestAPIMethod(Context c, String endpoint, String method, String body, final FutureCallback<String> callback) {
         try {
@@ -230,9 +194,10 @@ public abstract class Core {
         //Log.d(LOG_TAG, "Pass: " + pass);
 
         Vault.setUpAPI(host, user, pass);
-        Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {
+
+        Vault.getVaults(c, new FutureCallback<ConcurrentHashMap<String, Vault>>() {
             @Override
-            public void onCompleted(Exception e, HashMap<String, Vault> result) {
+            public void onCompleted(Exception e, ConcurrentHashMap<String, Vault> result) {
                 boolean ret = true;
 
                 if (e != null && e.getMessage() != null) {

@@ -99,7 +99,7 @@ public class CredentialDisplay extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+            Vault v = Vault.getActiveVault();
             if (v != null) {
                 credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
             }
