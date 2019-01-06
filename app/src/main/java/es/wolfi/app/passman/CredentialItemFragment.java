@@ -46,7 +46,7 @@ import es.wolfi.utils.GeneralUtils;
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnListCredentialFragmentInteractionListener}
  * interface.
  */
 public class CredentialItemFragment extends Fragment {
@@ -56,7 +56,7 @@ public class CredentialItemFragment extends Fragment {
 
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnListCredentialFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
     private FloatingActionButton fab = null;
 
@@ -158,11 +158,11 @@ public class CredentialItemFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnListCredentialFragmentInteractionListener) {
+            mListener = (OnListCredentialFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement OnListCredentialFragmentInteractionListener");
         }
     }
 
@@ -182,9 +182,10 @@ public class CredentialItemFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
+    public interface OnListCredentialFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Credential item);
+        void onCredentialClick(Credential item);
+        boolean onCredentialLongClick(Credential item);
         void onActionCreateClick();
         void onListFragmentCreatedView();
     }

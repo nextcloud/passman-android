@@ -3,7 +3,6 @@ package es.wolfi.app.passman.autofill;
 import android.app.assist.AssistStructure;
 import android.app.assist.AssistStructure.ViewNode;
 import android.content.pm.ApplicationInfo;
-import android.net.Uri;
 import android.os.CancellationSignal;
 import android.service.autofill.AutofillService;
 import android.service.autofill.Dataset;
@@ -15,9 +14,6 @@ import android.service.autofill.SaveCallback;
 import android.service.autofill.SaveInfo;
 import android.service.autofill.SaveRequest;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.util.ArrayMap;
-import android.support.v4.util.Pair;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -40,16 +36,11 @@ import es.wolfi.utils.GeneralUtils;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
-import static java.util.stream.Collectors.toList;
 
 public final class CredentialAutofillService extends AutofillService {
 
@@ -73,7 +64,7 @@ public final class CredentialAutofillService extends AutofillService {
 
         // Find autofillable fields
 
-        List<Pair<String, AutofillId>> fields = getAutofillableFields(latestAssistStructure);
+        AutofillFieldCollection fields = getAutofillableFields(latestAssistStructure, false);
 
         final String packageName = getApplicationContext().getPackageName();
 
@@ -136,12 +127,6 @@ public final class CredentialAutofillService extends AutofillService {
          * (Maybe store apk signature or signing cert thumbprint in custom field)
          */
 
-        /* Process credentials
-         * Loop through the matching credentials
-         * Create dataset
-         * Add dataset to FillResponse
-         */
-
         Set<AutofillId> tempFields = new HashSet<>();
 
         for (Credential thisCred : matchingCredentials) {
@@ -152,39 +137,50 @@ public final class CredentialAutofillService extends AutofillService {
 
             Dataset.Builder dataset = new Dataset.Builder();
 
-            for (Pair<String, AutofillId> field : fields) {
+            // simplify into a function
+            AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
+            AutofillField bestEmail = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
+            AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
 
-                String value = ""; // actual value we want to set the field to
-                String displayValue = credLabel; // display value for the field
+            if (bestUsername != null) {
+                String value = returnBestString(thisCred.getUsername(),
+                        thisCred.getEmail(),
+                        thisCred.getLabel());
 
-                String hint = field.first; // hint of field type we are filling
-                AutofillId id = field.second; // id for the field
+                buildAndAddPresentation(dataset,
+                        packageName,
+                        bestUsername,
+                        value,
+                        credLabel);
 
-                switch (hint) {
-                    case View.AUTOFILL_HINT_EMAIL_ADDRESS:
-                        value = returnBestString(thisCred.getEmail(),
-                                thisCred.getUsername(),
-                                thisCred.getLabel());
-                        break;
-                    case View.AUTOFILL_HINT_USERNAME:
-                        value = returnBestString(thisCred.getUsername(),
-                                thisCred.getEmail(),
-                                thisCred.getLabel());
-                        break;
-                    case View.AUTOFILL_HINT_PASSWORD:
-                        value = thisCred.getPassword();
-                        displayValue = getString(R.string.autofill_passwordfor) + credLabel;
-                        break;
-                }
-
-                tempFields.add(id);
-
-                Log.d(TAG, "Added to presentation: " + displayValue);
-                // Draw the field in the dataset
-                RemoteViews presentation = newDatasetPresentation(packageName, displayValue);
-                dataset.setValue(id, AutofillValue.forText(value), presentation);
+                tempFields.add(bestUsername.getAutofillid());
             }
-            Log.d(TAG, "Added to dataset");
+
+            if (bestEmail != null) {
+                String value = returnBestString(thisCred.getEmail(),
+                        thisCred.getUsername(),
+                        thisCred.getLabel());
+
+                buildAndAddPresentation(dataset,
+                        packageName,
+                        bestEmail,
+                        value,
+                        credLabel);
+                tempFields.add(bestEmail.getAutofillid());
+            }
+
+            if (bestPassword != null) {
+                String value = thisCred.getPassword();
+
+                buildAndAddPresentation(dataset,
+                        packageName,
+                        bestPassword,
+                        value,
+                        "Password for: " + credLabel);
+                tempFields.add(bestPassword.getAutofillid());
+            }
+
+            //Log.d(TAG, "Added to dataset");
             response.addDataset(dataset.build());
         }
 
@@ -203,9 +199,13 @@ public final class CredentialAutofillService extends AutofillService {
                             requiredIds)
                             .setFlags(FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE)
                             .build());
+
+            Log.d(TAG, "Building and calling success");
+            callback.onSuccess(response.build());
+            return;
         }
-        Log.d(TAG, "Building and calling success");
-        callback.onSuccess(response.build());
+        Log.d(TAG, "Failed to find anything to do, bailing");
+        callback.onSuccess(null);
     }
 
     @Override
@@ -233,7 +233,7 @@ public final class CredentialAutofillService extends AutofillService {
             requesterDomainName = "";
         }
 
-        List<Pair<String, AutofillValue>> fields = getAutofillableFields(latestStructure, true);
+        AutofillFieldCollection fields = getAutofillableFields(latestStructure, true);
 
         // We don't have any fields to work with
         if (fields.isEmpty()) {
@@ -272,37 +272,16 @@ public final class CredentialAutofillService extends AutofillService {
 
         Log.d(TAG, "onSaveRequest(): Application: " + requesterApplicationLabel);
 
-        String username = null;
-        String email = null;
-        String password = null;
 
+        // simplify into a function
+        AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
+        AutofillField bestEmail = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
+        AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
 
-        // TODO: switch this around, find the best
-        // option for each of our hints
-        // and send them.
-        // See GetHints/inferHints below.
+        String username = AutofillField.toStringValue(bestUsername);
+        String email = AutofillField.toStringValue(bestEmail);
+        String password = AutofillField.toStringValue(bestPassword);
 
-        for (Pair<String, AutofillValue> field : fields) {
-
-            String hint = field.first; // hint of field type we are filling
-            AutofillValue value = field.second; // id for the field
-
-            if (!value.isText()) {
-                continue;
-            }
-
-            switch (hint) {
-                case View.AUTOFILL_HINT_EMAIL_ADDRESS:
-                    email = value.getTextValue().toString();
-                    break;
-                case View.AUTOFILL_HINT_USERNAME:
-                    username = value.getTextValue().toString();
-                    break;
-                case View.AUTOFILL_HINT_PASSWORD:
-                    password = value.getTextValue().toString();
-                    break;
-            }
-        }
         String customFieldString = "";
         try {
             JSONArray customFields = new JSONArray();
@@ -379,66 +358,7 @@ public final class CredentialAutofillService extends AutofillService {
                 firstDomain = domain;
             }
         }
-    }
 
-
-    @NonNull
-    static CredentialAutofillService.WebDomainResult getLikelyDomain(ArrayList<AssistStructure> assistStructures) {
-        GeneralUtils.debug("Finding domains.");
-        CredentialAutofillService.WebDomainResult res = new CredentialAutofillService.WebDomainResult();
-        GeneralUtils.debug("Finding domains - res allocated");
-        for (AssistStructure assistStructure : assistStructures) {
-            int nodes = assistStructure.getWindowNodeCount();
-            for (int i = 0; i < nodes; i++) {
-                AssistStructure.ViewNode viewNode = assistStructure.getWindowNodeAt(i).getRootViewNode();
-                getNodeDomain(viewNode, res);
-            }
-        }
-        GeneralUtils.debug("Returning, found :" + String.valueOf(res.allDomains.size()) + " domains.");
-        return res;
-    }
-
-    static void getNodeDomain(AssistStructure.ViewNode viewNode, CredentialAutofillService.WebDomainResult res) {
-        String webDomain = viewNode.getWebDomain();
-        if (webDomain != null) {
-            res.addDomain(webDomain);
-        }
-        for (int i = 0; i < viewNode.getChildCount(); i++) {
-            getNodeDomain(viewNode.getChildAt(i), res);
-        }
-    }
-
-    @NonNull
-    static RemoteViews newDatasetPresentation(@NonNull String packageName,
-                                              @NonNull CharSequence text) {
-        RemoteViews presentation =
-                new RemoteViews(packageName, R.layout.autofill_list_item);
-        presentation.setTextViewText(R.id.autofilltext, text);
-        return presentation;
-    }
-
-
-    @NonNull
-    private List<Pair<String, AutofillId>> getAutofillableFields(@NonNull AssistStructure structure) {
-        List<Pair<String, AutofillId>> fields = new ArrayList<>();
-        int nodes = structure.getWindowNodeCount();
-        for (int i = 0; i < nodes; i++) {
-            ViewNode node = structure.getWindowNodeAt(i).getRootViewNode();
-            addAutofillableFields(fields, node);
-        }
-        return fields;
-    }
-
-    @NonNull
-    private List<Pair<String, AutofillValue>> getAutofillableFields(@NonNull AssistStructure structure,
-                                                                    boolean asValue) {
-        List<Pair<String, AutofillValue>> fields = new ArrayList<>();
-        int nodes = structure.getWindowNodeCount();
-        for (int i = 0; i < nodes; i++) {
-            ViewNode node = structure.getWindowNodeAt(i).getRootViewNode();
-            addAutofillableFields(fields, node, asValue);
-        }
-        return fields;
     }
 
     @NonNull
@@ -493,11 +413,12 @@ public final class CredentialAutofillService extends AutofillService {
 
                         String credPackageName = thisCredCustomField.getString("value");
 
-                        Log.d(TAG, "Checking custom fields: " +
+                        /*
+                            Log.d(TAG, "Checking custom fields: " +
                                 packageName +
                                 " vs " +
                                 credPackageName);
-
+                        */
                         if (packageName.equalsIgnoreCase(credPackageName)) {
                             matchingCred.add(thisCred);
                             break;
@@ -515,183 +436,111 @@ public final class CredentialAutofillService extends AutofillService {
         return matchingCred;
     }
 
-    private void addAutofillableFields(@NonNull List<Pair<String, AutofillId>> fields,
-                                       @NonNull ViewNode node) {
+    @NonNull
+    static WebDomainResult getLikelyDomain(ArrayList<AssistStructure> assistStructures) {
+        WebDomainResult res = new WebDomainResult();
 
-        ArrayList<String> potentialHints = getHints(node);
-
-        if (potentialHints != null) {
-            for (String hint : potentialHints) {
-                if (hint != null && isValidHint(hint)) {
-                    AutofillId id = node.getAutofillId();
-                    //if (!fields.containsKey(hint)) {
-                    Log.v(TAG, "Setting hint '" + hint + "' on " + id);
-                    Pair<String, AutofillId> thisField = new Pair<>(hint, id);
-                    fields.add(thisField);
-                    // } else {
-                    //     Log.v(TAG, "Ignoring hint '" + hint + "' on " + id
-                    //             + " because it was already set");
-                    // }
-                } else {
-                    Log.v(TAG, "Ignoring hint '" + hint + "' on node " + node.getId()
-                            + " because it is null or we cannot handle it.");
-                }
+        for (AssistStructure assistStructure : assistStructures) {
+            int nodes = assistStructure.getWindowNodeCount();
+            for (int i = 0; i < nodes; i++) {
+                AssistStructure.ViewNode viewNode = assistStructure.getWindowNodeAt(i).getRootViewNode();
+                getNodeDomain(viewNode, res);
             }
         }
-        int childrenSize = node.getChildCount();
-        for (int i = 0; i < childrenSize; i++) {
-            addAutofillableFields(fields, node.getChildAt(i));
+        GeneralUtils.debug("Returning, found :" + String.valueOf(res.allDomains.size()) + " domains.");
+        return res;
+    }
+
+    static void getNodeDomain(AssistStructure.ViewNode viewNode, WebDomainResult res) {
+        String webDomain = viewNode.getWebDomain();
+        if (webDomain != null) {
+            res.addDomain(webDomain);
+        }
+        for (int i = 0; i < viewNode.getChildCount(); i++) {
+            getNodeDomain(viewNode.getChildAt(i), res);
         }
     }
 
-    private void addAutofillableFields(@NonNull List<Pair<String, AutofillValue>> fields,
+    @NonNull
+    static RemoteViews newDatasetPresentation(@NonNull String packageName,
+                                              @NonNull CharSequence text) {
+        RemoteViews presentation =
+                new RemoteViews(packageName, R.layout.autofill_list_item);
+        presentation.setTextViewText(R.id.autofilltext, text);
+        return presentation;
+    }
+
+    public void buildAndAddPresentation(@NonNull Dataset.Builder dataset,
+                                        @NonNull String packageName,
+                                        @NonNull AutofillField field,
+                                        @NonNull String value,
+                                        @NonNull String displayValue) {
+        RemoteViews presentation = newDatasetPresentation(packageName, displayValue);
+        dataset.setValue(field.getAutofillid(), AutofillValue.forText(value), presentation);
+        //Log.d(TAG, "Added to presentation: " + displayValue);
+    }
+
+    @NonNull
+    private AutofillFieldCollection getAutofillableFields(@NonNull AssistStructure structure,
+                                                          boolean asValue) {
+        AutofillFieldCollection fields = new AutofillFieldCollection();
+        int nodes = structure.getWindowNodeCount();
+        for (int i = 0; i < nodes; i++) {
+            ViewNode node = structure.getWindowNodeAt(i).getRootViewNode();
+            addAutofillableFields(fields, node, asValue);
+        }
+        return fields;
+    }
+
+    private void addAutofillableFields(@NonNull AutofillFieldCollection fields,
                                        @NonNull ViewNode node,
                                        boolean asValue) {
-
-        ArrayList<String> potentialHints = getHints(node);
-
-        if (potentialHints != null) {
-            for (String hint : potentialHints) {
-                if (hint != null && isValidHint(hint)) {
-                    //AutofillId id = node.getAutofillId();
-                    //if (!fields.containsKey(hint)) {
-                    //Log.v(TAG, "Setting hint '" + hint + "' on " + id);
-                    Pair<String, AutofillValue> thisField = new Pair<>(hint, node.getAutofillValue());
-                    fields.add(thisField);
-                    //fields.put(hint, node.getAutofillValue());
-                    //} else {
-                    //Log.v(TAG, "Ignoring hint '" + hint + "' on " + id
-                    //         + " because it was already set");
-                    //}
-                } else {
-                    Log.v(TAG, "Ignoring hint '" + hint + "' on node " + node.getId()
-                            + " because it is null or we cannot handle it.");
-                }
+        AutofillField thisField;
+        try {
+            if (!asValue) {
+                thisField = new AutofillField(node.getAutofillId(), node);
+            } else {
+                thisField = new AutofillField(node.getAutofillValue(), node);
             }
+            fields.add(thisField);
+        } catch (Exception ex) {
+            //Log.d(TAG, "Couldn't add node to fields: " + ex.toString());
         }
+
         int childrenSize = node.getChildCount();
         for (int i = 0; i < childrenSize; i++) {
             addAutofillableFields(fields, node.getChildAt(i), asValue);
         }
     }
 
-    /* true for hints we can handle */
-    static boolean isValidHint(@NonNull String hint) {
-        switch (hint) {
-            case View.AUTOFILL_HINT_EMAIL_ADDRESS:
-            case View.AUTOFILL_HINT_PASSWORD:
-            case View.AUTOFILL_HINT_USERNAME:
-                return true;
+    /*    @NonNull
+    private AutofillFieldCollection getAutofillableFields(@NonNull AssistStructure structure) {
+        AutofillFieldCollection fields = new AutofillFieldCollection();
+        int nodes = structure.getWindowNodeCount();
+        for (int i = 0; i < nodes; i++) {
+            ViewNode node = structure.getWindowNodeAt(i).getRootViewNode();
+            addAutofillableFields(fields, node);
         }
-        return false;
+        return fields;
     }
 
-    // Based on:
-    // https://github.com/googlesamples/android-AutofillFramework/blob/master/
-    // afservice/src/main/java/com/example/android/autofill/service/simple/DebugService.java
 
-    @Nullable
-    protected ArrayList<String> getHints(@NonNull ViewNode node) {
+    private void addAutofillableFields(@NonNull AutofillFieldCollection fields,
+                                       @NonNull ViewNode node) {
 
-        ArrayList<String> potentialHints;
-
-        // If real autofill hints are defined, use them
-        // and skip the heuristics below
-
-        String[] hints = node.getAutofillHints();
-
-        if (hints != null) {
-            potentialHints = new ArrayList<>(Arrays.asList(hints));
-            return potentialHints;
+        try {
+            AutofillField thisField = new AutofillField(node.getAutofillId(), node);
+            fields.add(thisField);
+        } catch (Exception ex) {
+            Log.d(TAG, "Couldn't add node to fields: " + ex.toString());
         }
 
-        // Otherwise
-        // Then try some rudimentary heuristics based on other node properties
-
-        potentialHints = new ArrayList<>();
-
-        // TODO - node.getHtmlInfo(); - not really any point as password will be *****
-        // in the compat browsers
-        // TODO - figure out how to decide which required and which optional
-        // Maybe give priority by order for each ViewNode.
-        // Android hint first
-        // then viewHint
-        // then resourceId
-        // by the text in the EditText
-
-        // PROBLEM WAS THAT WE FOUND TOO MANY APPLICABLE VIEWNODES
-        // AND WE CAN'T HAVE REQUIRED IDs for ALL OF THEM!
-        // NEED TO FIGURE OUT WHICH ONES ARE THE REAL AUTH BOXES.
-
-        // Maybe get Autofill Hint fields first, then other heuristically found
-        // views, but only if they are in focus.
-
-
-        /*String viewHint = node.getHint();
-        String hint = inferHint(node, viewHint);
-        if (hint != null) {
-            Log.d(TAG, "Found hint using view hint(" + viewHint + "): " + hint);
-            potentialHints.add(hint);
-        } else if (!TextUtils.isEmpty(viewHint)) {
-            Log.v(TAG, "No hint using view hint: " + viewHint);
+        int childrenSize = node.getChildCount();
+        for (int i = 0; i < childrenSize; i++) {
+            addAutofillableFields(fields, node.getChildAt(i));
         }
+    }*/
 
-        String resourceId = node.getIdEntry();
-        hint = inferHint(node, resourceId);
-        if (hint != null) {
-            Log.d(TAG, "Found hint using resourceId(" + resourceId + "): " + hint);
-            potentialHints.add(hint);
-        } else if (!TextUtils.isEmpty(resourceId)) {
-            Log.v(TAG, "No hint using resourceId: " + resourceId);
-        }
 
-        CharSequence text = node.getText();
-        CharSequence className = node.getClassName();
-        if (text != null && className != null && className.toString().contains("EditText")) {
-            hint = inferHint(node, text.toString());
-            if (hint != null) {
-                Log.d(TAG, "Found hint using text: " + hint);
-                potentialHints.add(hint);
-            }
-        } else if (!TextUtils.isEmpty(text)) {
-            Log.v(TAG, "No hint using class " + className);
-        }
-*/
-        return potentialHints;
-    }
-
-    /**
-     * Uses heuristics to infer an autofill hint from a {@code string}.
-     *
-     * @return standard autofill hint, or {@code null} when it could not be inferred.
-     */
-    @Nullable
-    protected String inferHint(ViewNode node, @Nullable String actualHint) {
-        if (actualHint == null) return null;
-
-        String hint = actualHint.toLowerCase();
-        if (hint.contains("label") || hint.contains("container")) {
-            Log.v(TAG, "Ignoring 'label/container' hint: " + hint);
-            return null;
-        }
-
-        if (hint.contains("password")) return View.AUTOFILL_HINT_PASSWORD;
-        if (hint.contains("username")
-                || (hint.contains("login") && hint.contains("id")))
-            return View.AUTOFILL_HINT_USERNAME;
-        if (hint.contains("email")) return View.AUTOFILL_HINT_EMAIL_ADDRESS;
-        if (hint.contains("name")) return View.AUTOFILL_HINT_NAME;
-        if (hint.contains("phone")) return View.AUTOFILL_HINT_PHONE;
-
-        // When everything else fails, return the full string - this is helpful to help app
-        // developers visualize when autofill is triggered when it shouldn't (for example, in a
-        // chat conversation window), so they can mark the root view of such activities with
-        // android:importantForAutofill=noExcludeDescendants
-        //if (node.isEnabled() && node.getAutofillType() != View.AUTOFILL_TYPE_NONE) {
-        //Log.v(TAG, "Falling back to " + actualHint);
-        //return actualHint;
-        //}
-        return null;
-    }
 
 }

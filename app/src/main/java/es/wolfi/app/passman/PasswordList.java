@@ -22,15 +22,24 @@
 package es.wolfi.app.passman;
 
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.support.v7.app.AppCompatActivity;
@@ -52,7 +61,7 @@ import es.wolfi.utils.GeneralUtils;
 
 public class PasswordList extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
-        CredentialItemFragment.OnListFragmentInteractionListener,
+        CredentialItemFragment.OnListCredentialFragmentInteractionListener,
         VaultLockScreen.VaultUnlockInteractionListener,
         CredentialDisplay.OnCredentialFragmentInteraction,
         CredentialEdit.OnCredentialChangeInteraction {
@@ -64,6 +73,7 @@ public class PasswordList extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        GeneralUtils.debug("onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password_list);
 
@@ -74,6 +84,24 @@ public class PasswordList extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        createNotificationChannel();
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("CredentialCopyChannel", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override
@@ -441,7 +469,7 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(Credential item) {
+    public void onCredentialClick(Credential item) {
         if (!getSupportFragmentManager().isStateSaved()) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -450,6 +478,69 @@ public class PasswordList extends AppCompatActivity implements
                     .addToBackStack(null)
                     .commit();
         }
+    }
+
+    @Override
+    public boolean onCredentialLongClick(Credential item) {
+        try {
+            Intent copyUsernameIntent = new Intent(this, PassmanReceiver.class);
+            copyUsernameIntent.setAction("COPYUSERNAMEINTENTACTION");
+            copyUsernameIntent.putExtra("CredGuid", item.getGuid());
+            copyUsernameIntent.putExtra("VaultGuid", item.getVault().guid);
+
+            Intent copyEmailAddressIntent = new Intent(this, PassmanReceiver.class);
+            copyEmailAddressIntent.setAction("COPYEMAILINTENTACTION");
+            copyEmailAddressIntent.putExtra("CredGuid", item.getGuid());
+            copyEmailAddressIntent.putExtra("VaultGuid", item.getVault().guid);
+
+            Intent copyPasswordIntent = new Intent(this, PassmanReceiver.class);
+            copyPasswordIntent.setAction("COPYPASSWORDINTENTACTION");
+            copyPasswordIntent.putExtra("CredGuid", item.getGuid());
+            copyPasswordIntent.putExtra("VaultGuid", item.getVault().guid);
+
+            Intent dismissIntent = new Intent(this, PassmanReceiver.class);
+            dismissIntent.setAction("DISMISSCOPYINTENTACTION");
+
+            PendingIntent copyUsername =
+                    PendingIntent.getBroadcast(this, 0, copyUsernameIntent, 0);
+
+            PendingIntent copyEmailAddress =
+                    PendingIntent.getBroadcast(this, 0, copyEmailAddressIntent, 0);
+
+            PendingIntent copyPassword =
+                    PendingIntent.getBroadcast(this, 0, copyPasswordIntent, 0);
+
+            PendingIntent dismiss =
+                    PendingIntent.getBroadcast(this, 0, dismissIntent, 0);
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "CredentialCopyChannel")
+                    .setSmallIcon(R.drawable.logo_vertical)
+                    .setContentTitle(item.getLabel())
+                    .setContentText("Use the actions to copy the field.")
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText("Use the actions to copy the field. Click to dismiss."))
+                    .setTimeoutAfter(60000)
+                    .setOnlyAlertOnce(true)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setContentIntent(dismiss)
+                    .addAction(R.drawable.logo_vertical, getString(R.string.notification_copyusername),
+                            copyUsername)
+                    .addAction(R.drawable.logo_vertical, getString(R.string.notification_copyemail),
+                            copyEmailAddress)
+                    .addAction(R.drawable.logo_vertical, getString(R.string.notification_copypassword),
+                            copyPassword);
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+            // notificationId is a unique int for each notification that you must define
+            notificationManager.notify(0, mBuilder.build());
+            return true;
+        }
+        catch (Exception ex)
+        {
+            GeneralUtils.debug("Problem sending notification: " + ex.toString());
+        }
+        return false;
     }
 
     @Override

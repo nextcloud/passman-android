@@ -6,6 +6,11 @@
         android:name="com.example.android.autofill.app"
         android:maxLongVersionCode="10000000000"/>
 
+    <!-- Netflix -->
+    <compatibility-package
+        android:name="com.netflix.mediaclient"
+        android:maxLongVersionCode="10000000000"/>
+
     <!-- well-known browswers, alphabetical order -->
     <compatibility-package
         android:name="com.android.chrome"

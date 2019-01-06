@@ -44,4 +44,10 @@
     <string name="vaultactiveandunlocked">Active/Unlocked</string>
     <string name="menu_link_app">Link App</string>
     <string name="linkedapp">Linked App Package</string>
+    <string name="channel_name">Passman Android</string>
+    <string name="channel_description">Credential Copy Notification</string>
+    <string name="notification_dismiss">Dismiss</string>
+    <string name="notification_copyusername">Copy Username</string>
+    <string name="notification_copyemail">Copy Email</string>
+    <string name="notification_copypassword">Copy Password</string>
 </resources>
