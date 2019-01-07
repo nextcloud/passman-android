@@ -1,15 +1,15 @@
 <resources>
     <string name="action_settings">Einstellungen</string>
-    <string name="action_refresh">Aktuallisieren</string>
+    <string name="action_refresh">Aktualisieren</string>
     <string name="nchost">Serveradresse</string>
     <string name="username">Benutzername</string>
     <string name="password">Passwort</string>
     <string name="connect">Verbinden</string>
-    <string name="wrongNCUrl">Fehlerhafte Nexcloud Backend URL oder Verbindungsfehler</string>
+    <string name="wrongNCUrl">Fehlerhafte Nextcloud Backend URL oder Verbindungsfehler</string>
     <string name="wrongNCSettings">Einstellungen falsch</string>
     <string name="net_error">Netzwerkfehler</string>
     <string name="unlock">Öffnen</string>
-    <string name="wrong_vault_pw">Falscher Tressor-Passwort</string>
+    <string name="wrong_vault_pw">Falsches Tresor-Passwort</string>
     <string name="label">Beschriftung</string>
     <string name="email">E-Mail</string>
     <string name="URL">URL</string>
