@@ -13,6 +13,7 @@ The passwords will be provided by [passman](https://github.com/nextcloud/passman
 - Create credential (Basic)
 - Edit credential (Basic)
 - Android autofill support (Basic)
+- Copy credential notification on long press (Basic)
 
 ## Build locally
 
