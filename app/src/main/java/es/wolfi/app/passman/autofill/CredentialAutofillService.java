@@ -350,8 +350,6 @@ public final class CredentialAutofillService extends AutofillService {
 
             domain = domain.toLowerCase();
 
-            GeneralUtils.debug("Found domain: " + domain);
-
             allDomains.add(domain);
 
             if (firstDomain == null) {
@@ -512,35 +510,5 @@ public final class CredentialAutofillService extends AutofillService {
             addAutofillableFields(fields, node.getChildAt(i), asValue);
         }
     }
-
-    /*    @NonNull
-    private AutofillFieldCollection getAutofillableFields(@NonNull AssistStructure structure) {
-        AutofillFieldCollection fields = new AutofillFieldCollection();
-        int nodes = structure.getWindowNodeCount();
-        for (int i = 0; i < nodes; i++) {
-            ViewNode node = structure.getWindowNodeAt(i).getRootViewNode();
-            addAutofillableFields(fields, node);
-        }
-        return fields;
-    }
-
-
-    private void addAutofillableFields(@NonNull AutofillFieldCollection fields,
-                                       @NonNull ViewNode node) {
-
-        try {
-            AutofillField thisField = new AutofillField(node.getAutofillId(), node);
-            fields.add(thisField);
-        } catch (Exception ex) {
-            Log.d(TAG, "Couldn't add node to fields: " + ex.toString());
-        }
-
-        int childrenSize = node.getChildCount();
-        for (int i = 0; i < childrenSize; i++) {
-            addAutofillableFields(fields, node.getChildAt(i));
-        }
-    }*/
-
-
 
 }

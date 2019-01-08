@@ -75,11 +75,6 @@ public class SJCLCrypto {
 
             SecretKeySpec secretSpec = new SecretKeySpec(secretKey.getEncoded(),"AES");
 
-            Provider[] providers = Security.getProviders();
-            for (int i = 0; i < providers.length; i++){
-                Log.e("SJCL", "Name: " + providers[i].getName() + " Version: " + providers[i].getVersion());
-            }
-
             Cipher aes = Cipher.getInstance(ALGORITHM);
 
             aes.init(Cipher.ENCRYPT_MODE,secretSpec);

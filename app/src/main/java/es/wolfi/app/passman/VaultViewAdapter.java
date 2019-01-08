@@ -67,7 +67,7 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         holder.mItem = mValues.get(position);
         holder.name.setText(mValues.get(position).name);
 
-        DateFormat f = DateFormat.getDateInstance();
+        DateFormat f = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
         holder.created.setText(f.format(holder.mItem.getCreatedTime()));
         holder.last_access.setText(f.format(holder.mItem.getLastAccessTime()));
         holder.vault_state.setText(calculateVaultState(position));

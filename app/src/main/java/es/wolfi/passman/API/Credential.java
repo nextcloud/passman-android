@@ -1,23 +1,22 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.passman.API;
@@ -31,7 +30,6 @@ import es.wolfi.utils.Filterable;
 
 public class Credential extends Core implements Filterable {
     public int id;
-
 
 
     protected String guid;
@@ -58,6 +56,13 @@ public class Credential extends Core implements Filterable {
 
     protected Vault vault;
 
+    public Credential() {
+        super();
+        this.userId = Core.username;
+    }
+
+    // property getter/setters
+
     public int getId() {
         return id;
     }
@@ -70,12 +75,8 @@ public class Credential extends Core implements Filterable {
         return vaultId;
     }
 
-    public String getUserId() { return userId; }
-
-    public Credential()
-    {
-        super();
-        this.userId = Core.username;
+    public String getUserId() {
+        return userId;
     }
 
     public String getLabel() {
@@ -84,7 +85,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setLabel(String label) {
         this.label = label;
-	    return this;
+        return this;
     }
 
     public String getDescription() {
@@ -93,7 +94,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setDescription(String description) {
         this.description = vault.encryptString(description);
-	    return this;
+        return this;
     }
 
     public long getCreated() {
@@ -106,7 +107,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setChanged(long changed) {
         this.changed = changed;
-	    return this;
+        return this;
     }
 
     public String getTags() {
@@ -115,7 +116,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setTags(String tags) {
         this.tags = vault.encryptString(tags);
-	    return this;
+        return this;
     }
 
     public String getEmail() {
@@ -124,7 +125,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setEmail(String email) {
         this.email = vault.encryptString(email);
-	    return this;
+        return this;
     }
 
     public String getUsername() {
@@ -133,7 +134,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setUsername(String username) {
         this.username = vault.encryptString(username);
-	    return this;
+        return this;
     }
 
     public String getPassword() {
@@ -142,7 +143,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setPassword(String password) {
         this.password = vault.encryptString(password);
-	    return this;
+        return this;
     }
 
     public String getUrl() {
@@ -151,7 +152,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setUrl(String url) {
         this.url = vault.encryptString(url);
-	return this;
+        return this;
     }
 
     public String getFavicon() {
@@ -160,7 +161,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setFavicon(String favicon) {
         this.favicon = favicon;
-	    return this;
+        return this;
     }
 
     public long getRenewInterval() {
@@ -169,7 +170,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setRenewInterval(long renewInterval) {
         this.renewInterval = renewInterval;
-	    return this;
+        return this;
     }
 
     public long getExpireTime() {
@@ -178,7 +179,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setExpireTime(long expireTime) {
         this.expireTime = expireTime;
-	    return this;
+        return this;
     }
 
     public long getDeleteTime() {
@@ -187,7 +188,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setDeleteTime(long deleteTime) {
         this.deleteTime = deleteTime;
-	    return this;
+        return this;
     }
 
     public String getFiles() {
@@ -196,7 +197,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setFiles(String files) {
         this.files = vault.encryptString(files);
-	    return this;
+        return this;
     }
 
     public String getCustomFields() {
@@ -205,7 +206,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setCustomFields(String customFields) {
         this.customFields = vault.encryptString(customFields);
-	    return this;
+        return this;
     }
 
     public String getOtp() {
@@ -214,7 +215,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setOtp(String otp) {
         this.otp = vault.encryptString(otp);
-	    return this;
+        return this;
     }
 
     public boolean isHidden() {
@@ -223,7 +224,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setHidden(boolean hidden) {
         this.hidden = hidden;
-	    return this;
+        return this;
     }
 
     public String getSharedKey() {
@@ -232,7 +233,7 @@ public class Credential extends Core implements Filterable {
 
     public Credential setSharedKey(String sharedKey) {
         this.sharedKey = sharedKey;
-	    return this;
+        return this;
     }
 
     public Vault getVault() {
@@ -242,15 +243,16 @@ public class Credential extends Core implements Filterable {
     public Credential setVault(Vault v) {
         vault = v;
         vaultId = v.vault_id;
-	    return this;
+        return this;
     }
 
+    // JSON handlers + Credential object Builders
+
     // Treat null objects as JSONObject.NULL
-    private static Object ValueObjectOrNULLObject(Object valueObject)
-    {
+    private static Object ValueObjectOrNULLObject(Object valueObject) {
         if (valueObject == null)
             return JSONObject.NULL;
-        
+
         return valueObject;
     }
 
@@ -291,16 +293,16 @@ public class Credential extends Core implements Filterable {
             j.put("shared_key", ValueObjectOrNULLObject(c.sharedKey));
 
             return j;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             Log.d("Passman", ex.toString());
         }
         return new JSONObject();
     }
 
-    public static Credential fromJSON(JSONObject j) throws JSONException {
-        Credential c = new Credential();
+    public static Credential fromJSON(JSONObject j, Credential c) throws JSONException {
+        if (c == null) {
+            c = new Credential();
+        }
 
         c.id = j.getInt("credential_id");
         c.guid = j.getString("guid");
@@ -318,20 +320,17 @@ public class Credential extends Core implements Filterable {
 
         try {
             c.favicon = j.getString("favicon");
-        }
-        catch (JSONException ex) {
+        } catch (JSONException ex) {
             try {
                 c.favicon = j.getString("icon");
-            }
-            catch (JSONException ex2) {
+            } catch (JSONException ex2) {
                 Log.e("Credential parse", "error, it has no icon or favicon field!", ex2);
             }
         }
 
         if (j.isNull("renew_interval")) {
             c.renewInterval = 0;
-        }
-        else {
+        } else {
             c.renewInterval = j.getLong("renew_interval");
         }
 
@@ -346,8 +345,19 @@ public class Credential extends Core implements Filterable {
         return c;
     }
 
+    public static Credential fromJSON(JSONObject j) throws JSONException {
+        Credential c = new Credential();
+        return fromJSON(j, c);
+    }
+
     public static Credential fromJSON(JSONObject j, Vault v) throws JSONException {
         Credential c = Credential.fromJSON(j);
+        c.setVault(v);
+        return c;
+    }
+
+    public static Credential fromJSON(JSONObject j, Vault v, Credential oldCred) throws JSONException {
+        Credential c = Credential.fromJSON(j, oldCred);
         c.setVault(v);
         return c;
     }

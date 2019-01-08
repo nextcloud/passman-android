@@ -29,6 +29,8 @@ import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -110,7 +112,16 @@ public class CredentialEdit extends Fragment {
                 }
             }
         }
+
+        setHasOptionsMenu(true);
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+    }
+
 
     @Override
     public void onResume() {
@@ -120,77 +131,6 @@ public class CredentialEdit extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-    }
-
-
-    public Credential buildNewCredential(Vault v) {
-        String customFieldString = "";
-        try {
-            JSONArray customFields = new JSONArray();
-            JSONObject customField = new JSONObject();
-            customField.put("label", "androidCredPackageName");
-            customField.put("value", linkedAppPackage.getText());
-            customField.put("secret", false);
-            customField.put("field_type", "text");
-            customFields.put(customField);
-            customFieldString = customFields.toString();
-        } catch (JSONException e) {
-        }
-
-        GeneralUtils.debug("Building credential");
-
-        Credential newCred = new Credential();
-        newCred
-                .setVault(v)
-                .setDescription(description.getText().toString())
-                .setEmail(email.getText().toString())
-                .setLabel(label.getText().toString())
-                .setCustomFields(customFieldString)
-                .setUsername(user.getText().toString())
-                .setPassword(password.getText().toString())
-                .setFiles((new JSONArray()).toString())
-                .setTags((new JSONArray()).toString())
-                .setOtp((new JSONObject()).toString())
-                .setUrl(url.getText().toString());
-
-        return newCred;
-    }
-
-    public Credential buildOldCredential(Vault v, Credential c) {
-        String customFields = c.getCustomFields();
-        try {
-            if (!TextUtils.isEmpty(customFields)) {
-                if (JSONUtils.isJSONArray(customFields)) {
-                    JSONArray customFieldArray = new JSONArray(customFields);
-                    for (int i = 0; i < customFieldArray.length(); i++) {
-                        JSONObject currentFieldObject = customFieldArray.getJSONObject(i);
-                        String label = currentFieldObject.getString("label");
-                        String value = currentFieldObject.getString("value");
-                        if (!TextUtils.isEmpty(label) && !TextUtils.isEmpty(value)) {
-                            if (label.equalsIgnoreCase("androidCredPackageName")) {
-                                currentFieldObject.put("value", linkedAppPackage.getText().toString());
-                                customFieldArray.put(i, currentFieldObject);
-                                customFields = customFieldArray.toString();
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (JSONException ex) {
-            GeneralUtils.debug(ex.toString());
-        }
-
-        c
-                .setCustomFields(customFields)
-                .setDescription(description.getText().toString())
-                .setEmail(email.getText().toString())
-                .setLabel(label.getText().toString())
-                .setUsername(user.getText().toString())
-                .setPassword(password.getText().toString())
-                .setUrl(url.getText().toString());
-
-        return c;
     }
 
     @Override
@@ -316,6 +256,76 @@ public class CredentialEdit extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public Credential buildNewCredential(Vault v) {
+        String customFieldString = "";
+        try {
+            JSONArray customFields = new JSONArray();
+            JSONObject customField = new JSONObject();
+            customField.put("label", "androidCredPackageName");
+            customField.put("value", linkedAppPackage.getText());
+            customField.put("secret", false);
+            customField.put("field_type", "text");
+            customFields.put(customField);
+            customFieldString = customFields.toString();
+        } catch (JSONException e) {
+        }
+
+        GeneralUtils.debug("Building credential");
+
+        Credential newCred = new Credential();
+        newCred
+                .setVault(v)
+                .setDescription(description.getText().toString())
+                .setEmail(email.getText().toString())
+                .setLabel(label.getText().toString())
+                .setCustomFields(customFieldString)
+                .setUsername(user.getText().toString())
+                .setPassword(password.getText().toString())
+                .setFiles((new JSONArray()).toString())
+                .setTags((new JSONArray()).toString())
+                .setOtp((new JSONObject()).toString())
+                .setUrl(url.getText().toString());
+
+        return newCred;
+    }
+
+    public Credential buildOldCredential(Vault v, Credential c) {
+        String customFields = c.getCustomFields();
+        try {
+            if (!TextUtils.isEmpty(customFields)) {
+                if (JSONUtils.isJSONArray(customFields)) {
+                    JSONArray customFieldArray = new JSONArray(customFields);
+                    for (int i = 0; i < customFieldArray.length(); i++) {
+                        JSONObject currentFieldObject = customFieldArray.getJSONObject(i);
+                        String label = currentFieldObject.getString("label");
+                        String value = currentFieldObject.getString("value");
+                        if (!TextUtils.isEmpty(label) && !TextUtils.isEmpty(value)) {
+                            if (label.equalsIgnoreCase("androidCredPackageName")) {
+                                currentFieldObject.put("value", linkedAppPackage.getText().toString());
+                                customFieldArray.put(i, currentFieldObject);
+                                customFields = customFieldArray.toString();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (JSONException ex) {
+            GeneralUtils.debug(ex.toString());
+        }
+
+        c
+                .setCustomFields(customFields)
+                .setDescription(description.getText().toString())
+                .setEmail(email.getText().toString())
+                .setLabel(label.getText().toString())
+                .setUsername(user.getText().toString())
+                .setPassword(password.getText().toString())
+                .setUrl(url.getText().toString());
+
+        return c;
     }
 
     /**

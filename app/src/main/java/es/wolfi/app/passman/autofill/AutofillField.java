@@ -32,6 +32,8 @@ public class AutofillField implements Comparable {
     private int discoveryTypes;
 
 
+    // constructors
+
     public AutofillField(AutofillId id, AssistStructure.ViewNode viewNode) throws Exception
     {
         if (id == null || viewNode == null)
@@ -104,8 +106,7 @@ public class AutofillField implements Comparable {
         return discoveryTypes;
     }
 
-    private int calculateSortValue()
-    {
+    private int calculateSortValue() {
         // prioritise focused fields
         if (!isFocused()) {
             return discoveryTypes + 1;

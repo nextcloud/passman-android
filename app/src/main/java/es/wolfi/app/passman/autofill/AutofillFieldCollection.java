@@ -37,5 +37,4 @@ public class AutofillFieldCollection extends ArrayList<AutofillField> {
         return allMatching;
     }
 
-
 }

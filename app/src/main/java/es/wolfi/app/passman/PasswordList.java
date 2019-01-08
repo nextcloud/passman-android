@@ -71,6 +71,8 @@ public class PasswordList extends AppCompatActivity implements
 
     static boolean running = false;
 
+    // activity event handlers
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         GeneralUtils.debug("onCreate");
@@ -86,22 +88,6 @@ public class PasswordList extends AppCompatActivity implements
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         createNotificationChannel();
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("CredentialCopyChannel", name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     @Override
@@ -133,9 +119,66 @@ public class PasswordList extends AppCompatActivity implements
             });
             running = true;
         } else {
-            showActiveVault();
+            showVaults();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_password_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_settings:
+                showNotImplementedMessage();
+                return true;
+            case R.id.action_refresh:
+                refreshVaults();
+                return true;
+            case R.id.action_clearsavedcreds:
+                clearSavedCredentials();
+                return true;
+            case R.id.action_lockvaults:
+                lockVaults();
+                return true;
+            case R.id.action_autofill:
+                launchAutofillServiceIntent();
+                return true;
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_refresh_credentials:
+                return false;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    // activity event handler helpers
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("CredentialCopyChannel", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    // vault operations and navigation
 
     public void showVaults() {
         Core.getAPIVersion(this, new FutureCallback<Integer>() {
@@ -144,9 +187,8 @@ public class PasswordList extends AppCompatActivity implements
 
             }
         });
-       ConcurrentHashMap<String, Vault> vaults = Vault.getAllVaults();
 
-        Vault.unsetActiveVault();
+        ConcurrentHashMap<String, Vault> vaults = Vault.getAllVaults();
 
         if (vaults != null) {
             if (!getSupportFragmentManager().isStateSaved()) {
@@ -192,6 +234,25 @@ public class PasswordList extends AppCompatActivity implements
         }
     }
 
+    void showUnlockVault() {
+        Vault v = Vault.getActiveVault();
+        if (v != null && v.unlock(settings.getString(v.guid, ""))) {
+            GeneralUtils.debug("Unlocked using stored credentials");
+            showActiveVault();
+            return;
+        } else if (v != null) {
+            GeneralUtils.debug("Showing lock screen");
+            if (!getSupportFragmentManager().isStateSaved()) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                        .replace(R.id.content_password_list, new VaultLockScreen(), "vaultLockScreen")
+                        .addToBackStack(null)
+                        .commit();
+            }
+        }
+    }
+
     private void loadActiveVault(final Vault oldVaultObj) {
         if (oldVaultObj == null) {
             return;
@@ -199,6 +260,7 @@ public class PasswordList extends AppCompatActivity implements
 
         GeneralUtils.debug("Loading active Vault");
         setDialog(true, getString(R.string.loadingactivevault));
+
         Vault.getVault(this, oldVaultObj.guid, new FutureCallback<Vault>() {
             @Override
             public void onCompleted(Exception e, Vault result) {
@@ -219,39 +281,22 @@ public class PasswordList extends AppCompatActivity implements
                             showVaults();
                         }
                     }, 30000);
+
                     setDialog(false, "Error loading active vault");
                     return;
                 }
 
-                // Update the vault record to avoid future loads
-                Vault.getAllVaults().put(result.guid, result);
 
                 if (oldVaultObj.is_unlocked()) {
-                    oldVaultObj.unlockReplacementInstance();
+                    if (!oldVaultObj.unlockReplacementInstance()) {
+                        GeneralUtils.debug("Couldn't transfer lock, showing Vaults.");
+                        showVaults();
+                    }
                 }
-
-                Vault.setActiveVault(result);
-
-                // if fragment is not null, then refresh the Fragment
-                // this has the effect of calling onCreateView again
 
                 Fragment fragment = getVisibleFragment();
                 if (fragment != null) {
-                    GeneralUtils.debug("Refreshing fragment: " + fragment.getTag());
-                    setDialog(true, getString(R.string.refreshingdisplay));
-
-                    if (!getSupportFragmentManager().isStateSaved()) {
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .detach(fragment)
-                                .attach(fragment)
-                                .commit();
-                    }
-
-                    if (!fragment.getTag().equals("credItems")) {
-                        // && !fragment.getTag().equals("vaultList")) {
-                        showActiveVault();
-                    }
+                    refreshFragment(fragment);
                 } else {
                     setDialog(true, getString(R.string.refreshingdisplay));
                     GeneralUtils.debug("Refreshing display");
@@ -261,24 +306,56 @@ public class PasswordList extends AppCompatActivity implements
         });
     }
 
-    void showUnlockVault() {
-        Vault v = Vault.getActiveVault();
-        if (v != null && v.unlock(settings.getString(v.guid, ""))) {
-            GeneralUtils.debug("Unlocked using stored credentials");
-            showActiveVault();
-            return;
-        } else if (v != null) {
-            GeneralUtils.debug("Showing lock screen");
-            if (!getSupportFragmentManager().isStateSaved()) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                        .replace(R.id.content_password_list, new VaultLockScreen(), "vaultLockScreen")
-                        .addToBackStack(null)
-                        .commit();
+    private void refreshVaults() {
+        setDialog(true, getString(R.string.progresstext));
+        final Vault activeVault = Vault.getActiveVault();
+
+        Vault.getVaults(this, new FutureCallback<ConcurrentHashMap<String, Vault>>() {
+            @Override
+            public void onCompleted(Exception e, ConcurrentHashMap<String, Vault> result) {
+                if (e != null) {
+
+                    // Not logged in, restart activity
+                    if (e.getMessage().equals("401")) {
+                        recreate();
+                    }
+
+                    GeneralUtils.toast(findViewById(R.id.content_password_list), R.string.net_error);
+
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showVaults();
+                        }
+                    }, 30000);
+                    setDialog(false, "refreshVaults bad finish");
+                    return;
+                }
+
+                Vault.setAllVaults(result);
+
+                if (activeVault != null) {
+                    GeneralUtils.debug("Active, loading");
+                    Vault newVault = Vault.getVaultByGuid(activeVault.guid);
+                    if (newVault != null) {
+                        // load the vault, use an old reference to transfer the lock
+                        loadActiveVault(activeVault);
+                    }
+                } else {
+                    GeneralUtils.debug("Not active, showing vaults");
+                    Fragment fragment = getVisibleFragment();
+                    if (fragment != null) {
+                        refreshFragment(fragment);
+                    } else {
+                        showVaults();
+                    }
+                }
             }
-        }
+        });
     }
+
+
+    // menu operations
 
     private void launchAutofillServiceIntent() {
         final AutofillManager afm = getSystemService(AutofillManager.class);
@@ -297,42 +374,8 @@ public class PasswordList extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_password_list, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_settings:
-                showNotImplementedMessage();
-                return true;
-            case R.id.action_refresh:
-                refreshVaults();
-                return true;
-            case R.id.action_clearsavedcreds:
-                clearSavedCredentials();
-                return true;
-            case R.id.action_lockvaults:
-                lockVaults();
-                return true;
-            case R.id.action_autofill:
-                launchAutofillServiceIntent();
-                return true;
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
     private void lockVaults() {
-       ConcurrentHashMap<String, Vault> vaultHashMap = Vault.getAllVaults();
+        ConcurrentHashMap<String, Vault> vaultHashMap = Vault.getAllVaults();
 
         for (Vault v : vaultHashMap.values()) {
             if (v.is_unlocked()) {
@@ -340,12 +383,15 @@ public class PasswordList extends AppCompatActivity implements
             }
         }
         GeneralUtils.debugAndToast(true, findViewById(R.id.content_password_list), R.string.vaultslocked);
+
+        Vault.unsetActiveVault();
+
         showVaults();
     }
 
     private void clearSavedCredentials() {
         lockVaults();
-       ConcurrentHashMap<String, Vault> vaultHashMap = Vault.getAllVaults();
+        ConcurrentHashMap<String, Vault> vaultHashMap = Vault.getAllVaults();
 
         for (Vault v : vaultHashMap.values()) {
             settings.edit()
@@ -356,6 +402,13 @@ public class PasswordList extends AppCompatActivity implements
         GeneralUtils.debugAndToast(true, findViewById(R.id.content_password_list), R.string.credentialscleared);
         showVaults();
     }
+
+    private void showNotImplementedMessage() {
+        GeneralUtils.toast(findViewById(R.id.content_password_list), R.string.not_implemented_yet);
+    }
+
+
+    // fragment helpers
 
     private Fragment getVisibleFragment() {
 
@@ -369,8 +422,27 @@ public class PasswordList extends AppCompatActivity implements
         return null;
     }
 
+    private void refreshFragment(Fragment fragment) {
+        GeneralUtils.debug("Refreshing fragment: " + fragment.getTag());
+
+        if (!getSupportFragmentManager().isStateSaved()) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .detach(fragment)
+                    .attach(fragment)
+                    .commit();
+        }
+        setDialog(false, "Fragment refreshed.");
+        GeneralUtils.debug("Done refreshing fragment: " + fragment.getTag());
+
+        if (fragment.getTag().contains("vaultList") && Vault.getActiveVault() != null) {
+            showActiveVault();
+        }
+    }
+
     private void setDialog(boolean showDialog, String text) {
         GeneralUtils.debug("Dialog, Show: " + String.valueOf(showDialog) + ": " + text);
+
         try {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 
@@ -399,67 +471,7 @@ public class PasswordList extends AppCompatActivity implements
         }
     }
 
-    private void refreshVaults() {
-        //GeneralUtils.debug("Refreshing");
-        setDialog(true, getString(R.string.progresstext));
-        // remember the active vault so we can put it back
-        final Vault activeVault = Vault.getActiveVault();
-
-        // clear all vaults
-        Vault.unsetActiveVault();
-
-       ConcurrentHashMap<String, Vault> currentVaults = Vault.getAllVaults();
-
-        if (currentVaults != null) {
-            currentVaults.clear();
-        }
-
-        // call the API to refresh the Vaults
-
-        //setDialog(false,"");
-        //
-        Vault.getVaults(this, new FutureCallback<ConcurrentHashMap<String, Vault>>() {
-            @Override
-            public void onCompleted(Exception e,ConcurrentHashMap<String, Vault> result) {
-                if (e != null) {
-
-                    // Not logged in, restart activity
-                    if (e.getMessage().equals("401")) {
-                        recreate();
-                    }
-
-                    GeneralUtils.toast(findViewById(R.id.content_password_list), R.string.net_error);
-
-                    new android.os.Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showVaults();
-                        }
-                    }, 30000);
-                    setDialog(false, "refreshVaults bad finish");
-                    return;
-                }
-
-                Vault.setAllVaults(result);
-
-                if (activeVault != null) {
-                    Vault newVault = Vault.getVaultByGuid(activeVault.guid);
-                    if (newVault != null) {
-                        // load the vault, use an old reference to transfer the lock
-                        loadActiveVault(activeVault);
-                    }
-                } else {
-                    showVaults();
-                }
-                //setDialog(false,"refreshVaults good finished");
-            }
-        });
-
-    }
-
-    private void showNotImplementedMessage() {
-        GeneralUtils.toast(findViewById(R.id.content_password_list), R.string.not_implemented_yet);
-    }
+    // fragment event handlers
 
     @Override
     public void onListFragmentInteraction(Vault item) {
@@ -513,30 +525,47 @@ public class PasswordList extends AppCompatActivity implements
                     PendingIntent.getBroadcast(this, 0, dismissIntent, 0);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "CredentialCopyChannel")
-                    .setSmallIcon(R.drawable.logo_vertical)
+                    .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(item.getLabel())
                     .setContentText("Use the actions to copy the field.")
                     .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText("Use the actions to copy the field. Click to dismiss."))
-                    .setTimeoutAfter(60000)
+                            .bigText("Use the actions to copy the field. Touch to dismiss."))
+                    .setTimeoutAfter(30000)
                     .setOnlyAlertOnce(true)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setContentIntent(dismiss)
-                    .addAction(R.drawable.logo_vertical, getString(R.string.notification_copyusername),
-                            copyUsername)
-                    .addAction(R.drawable.logo_vertical, getString(R.string.notification_copyemail),
-                            copyEmailAddress)
-                    .addAction(R.drawable.logo_vertical, getString(R.string.notification_copypassword),
+                    .setContentIntent(dismiss);
+
+            if (mBuilder != null) {
+                String userName = item.getUsername();
+                String email = item.getEmail();
+                String password = item.getPassword();
+
+                if (userName != null && !userName.isEmpty() && !userName.equals("null")) {
+                    mBuilder.addAction(R.drawable.logo_vertical,
+                            getString(R.string.notification_copyusername),
+                            copyUsername);
+                }
+                if (email != null && !email.isEmpty() && !email.equals("null")) {
+                    mBuilder.addAction(R.drawable.logo_vertical,
+                            getString(R.string.notification_copyemail),
+                            copyEmailAddress);
+                }
+                if (password != null && !password.isEmpty() && !password.equals("null")) {
+                    mBuilder.addAction(R.drawable.logo_vertical,
+                            getString(R.string.notification_copypassword),
                             copyPassword);
+                }
+                if (mBuilder.mActions.size() > 0) {
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-            // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(0, mBuilder.build());
-            return true;
-        }
-        catch (Exception ex)
-        {
+                    // notificationId is a unique int for each notification that you must define
+                    notificationManager.notify(0, mBuilder.build());
+                    return true;
+                } else {
+                    GeneralUtils.toast(getApplicationContext(), "Username, Email or Password required.");
+                }
+            }
+        } catch (Exception ex) {
             GeneralUtils.debug("Problem sending notification: " + ex.toString());
         }
         return false;
@@ -584,11 +613,6 @@ public class PasswordList extends AppCompatActivity implements
         }
         showActiveVault();
     }
-
-    /*    @Override
-    public void onCredentialFragmentInteraction(Credential credential) {
-        GeneralUtils.debug("Cred Interaction event");
-    }*/
 
     @Override
     public void OnCredentialChanged(String vaultGuid, String credentialGuid) {
