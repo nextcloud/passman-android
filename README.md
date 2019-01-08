@@ -10,6 +10,9 @@ The passwords will be provided by [passman](https://github.com/nextcloud/passman
 - Display credential list
 - Display a single credential (with edit fields)
 - OTP generation
+- Create credential (Basic)
+- Edit credential (Basic)
+- Android autofill support (Basic)
 
 ## Build locally
 
