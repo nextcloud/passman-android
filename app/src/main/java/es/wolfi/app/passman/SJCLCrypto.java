@@ -25,26 +25,32 @@ package es.wolfi.app.passman;
 import android.util.Log;
 import android.util.Base64;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import java.security.AlgorithmParameters;
-import java.security.Provider;
 import java.security.SecureRandom;
-import java.security.Security;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import org.json.JSONObject;
+import org.json.JSONStringer;
+import org.json.JSONTokener;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import es.wolfi.utils.JSONUtils;
+
 public class SJCLCrypto {
-    public static native String decryptString(String cryptogram, String key) throws Exception;
+    //public static native String decryptString(String cryptogram, String key) throws Exception;
 
     private static final String ALGORITHM = "AES/CCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 64;
-    private static final int IV_LENGTH_BYTE = 16;
     private static final int SALT_LENGTH_BYTE = 8;
     private static final int ITER = 1000;
     private static final int KEY_LENGTH_BIT = 256;
@@ -107,6 +113,74 @@ public class SJCLCrypto {
         catch (Exception ex)
         {
             Log.d("SJCL", "Could not encrypt: " + ex.toString());
+        }
+        return null;
+    }
+
+    public static String decryptString(String todecrypt, String stringkey)
+    {
+        try {
+
+            if (todecrypt == null || stringkey == null)
+            {
+                return null;
+            }
+
+            // Retrieve the parameters
+
+            String jsonString = new String(Base64.decode(todecrypt, Base64.DEFAULT));
+
+            JSONObject jsonResult = new JSONObject(jsonString);
+
+            byte[] salt = Base64.decode(jsonResult.getString("salt"), Base64.DEFAULT);
+            byte[] iv = Base64.decode(jsonResult.getString("iv"), Base64.DEFAULT);
+
+
+            // TODO: Check the iv is at least 13 bytes
+            // and figure out what to do if its not.
+            // For now, just trim the nonce to 13 bytes
+
+            byte[] strippedIV = Arrays.copyOf(iv, 13);
+
+
+            byte[] ct = Base64.decode(jsonResult.getString("ct"), Base64.DEFAULT);
+
+            int KEY_LENGTH_BIT_LOCAL = jsonResult.getInt("ks");
+            int TAG_LENGTH_BIT_LOCAL = jsonResult.getInt("ts");
+
+            PBEKeySpec keySpec = new PBEKeySpec(
+                    stringkey.toCharArray(),
+                    salt,
+                    ITER,
+                    KEY_LENGTH_BIT_LOCAL);
+
+            GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(TAG_LENGTH_BIT_LOCAL, strippedIV);
+
+            SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2withHmacSHA256");
+            SecretKey secretKey = secretKeyFactory.generateSecret(keySpec);
+
+            SecretKeySpec secretSpec = new SecretKeySpec(secretKey.getEncoded(),"AES");
+
+            Cipher aes = Cipher.getInstance(ALGORITHM);
+
+            aes.init(Cipher.DECRYPT_MODE, secretSpec, gcmParameterSpec);
+
+            byte[] decryptedTextBytes = aes.doFinal(ct);
+
+            String stringDecrypted = new String(decryptedTextBytes);
+
+            try {
+                JsonParser jsonParser = new JsonParser();
+                JsonElement jsonElement = jsonParser.parse(stringDecrypted);
+                return jsonElement.getAsString();
+            }
+            catch (UnsupportedOperationException ex)            {
+                return stringDecrypted;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.d("SJCL", "Could not decrypt: " + ex.toString());
         }
         return null;
     }
