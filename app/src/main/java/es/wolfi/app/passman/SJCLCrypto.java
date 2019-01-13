@@ -39,12 +39,8 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import org.json.JSONObject;
-import org.json.JSONStringer;
-import org.json.JSONTokener;
 
 import javax.crypto.spec.SecretKeySpec;
-
-import es.wolfi.utils.JSONUtils;
 
 public class SJCLCrypto {
     //public static native String decryptString(String cryptogram, String key) throws Exception;
