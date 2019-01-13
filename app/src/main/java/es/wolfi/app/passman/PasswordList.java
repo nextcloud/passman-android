@@ -69,6 +69,8 @@ public class PasswordList extends AppCompatActivity implements
     SingleTon ton;
     Dialog dialog;
 
+    static int notificationNumber = Integer.MIN_VALUE;
+
     static boolean running = false;
 
     // activity event handlers
@@ -494,35 +496,47 @@ public class PasswordList extends AppCompatActivity implements
     @Override
     public boolean onCredentialLongClick(Credential item) {
         try {
+            String itemGuid = item.getGuid();
+            String vaultGuid = item.getVault().guid;
+
             Intent copyUsernameIntent = new Intent(this, PassmanReceiver.class);
             copyUsernameIntent.setAction("COPYUSERNAMEINTENTACTION");
-            copyUsernameIntent.putExtra("CredGuid", item.getGuid());
-            copyUsernameIntent.putExtra("VaultGuid", item.getVault().guid);
+            copyUsernameIntent.putExtra("CredGuid", itemGuid);
+            copyUsernameIntent.putExtra("VaultGuid", vaultGuid);
 
             Intent copyEmailAddressIntent = new Intent(this, PassmanReceiver.class);
             copyEmailAddressIntent.setAction("COPYEMAILINTENTACTION");
-            copyEmailAddressIntent.putExtra("CredGuid", item.getGuid());
-            copyEmailAddressIntent.putExtra("VaultGuid", item.getVault().guid);
+            copyEmailAddressIntent.putExtra("CredGuid", itemGuid);
+            copyEmailAddressIntent.putExtra("VaultGuid", vaultGuid);
 
             Intent copyPasswordIntent = new Intent(this, PassmanReceiver.class);
             copyPasswordIntent.setAction("COPYPASSWORDINTENTACTION");
-            copyPasswordIntent.putExtra("CredGuid", item.getGuid());
-            copyPasswordIntent.putExtra("VaultGuid", item.getVault().guid);
+            copyPasswordIntent.putExtra("CredGuid", itemGuid);
+            copyPasswordIntent.putExtra("VaultGuid", vaultGuid);
 
             Intent dismissIntent = new Intent(this, PassmanReceiver.class);
             dismissIntent.setAction("DISMISSCOPYINTENTACTION");
 
+            if (notificationNumber < Integer.MAX_VALUE)
+                notificationNumber++;
+            else
+                notificationNumber = Integer.MIN_VALUE;
+
             PendingIntent copyUsername =
-                    PendingIntent.getBroadcast(this, 0, copyUsernameIntent, 0);
+                    PendingIntent.getBroadcast(this, notificationNumber, copyUsernameIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
 
             PendingIntent copyEmailAddress =
-                    PendingIntent.getBroadcast(this, 0, copyEmailAddressIntent, 0);
+                    PendingIntent.getBroadcast(this, notificationNumber, copyEmailAddressIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
 
             PendingIntent copyPassword =
-                    PendingIntent.getBroadcast(this, 0, copyPasswordIntent, 0);
+                    PendingIntent.getBroadcast(this, notificationNumber, copyPasswordIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
 
             PendingIntent dismiss =
-                    PendingIntent.getBroadcast(this, 0, dismissIntent, 0);
+                    PendingIntent.getBroadcast(this, notificationNumber, dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "CredentialCopyChannel")
                     .setSmallIcon(R.mipmap.ic_launcher)
@@ -531,7 +545,7 @@ public class PasswordList extends AppCompatActivity implements
                     .setStyle(new NotificationCompat.BigTextStyle()
                             .bigText("Use the actions to copy the field. Touch to dismiss."))
                     .setTimeoutAfter(30000)
-                    .setOnlyAlertOnce(true)
+                    .setOnlyAlertOnce(false)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(dismiss);
 
