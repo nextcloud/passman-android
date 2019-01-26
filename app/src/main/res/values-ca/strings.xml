@@ -1,5 +1,5 @@
 <resources>
-    <string name="action_settings">Configuració</string>
+    <string name="action_settings">Paràmetres</string>
     <string name="action_refresh">Refresca</string>
     <string name="nchost">Adreça del servidor</string>
     <string name="username">Usuari</string>
