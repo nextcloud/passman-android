@@ -27,6 +27,7 @@ import android.util.Base64;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.json.JSONObject;
 
 import java.security.AlgorithmParameters;
 import java.security.SecureRandom;
@@ -38,8 +39,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
-import org.json.JSONObject;
-
 import javax.crypto.spec.SecretKeySpec;
 
 public class SJCLCrypto {
@@ -51,9 +50,9 @@ public class SJCLCrypto {
     private static final int ITER = 1000;
     private static final int KEY_LENGTH_BIT = 256;
 
-    static {
+    /*static {
         System.loadLibrary("passman-lib");
-    }
+    }*/
 
     public static JSONObject encryptString(String toencrypt, String stringkey)
     {
@@ -117,8 +116,7 @@ public class SJCLCrypto {
     {
         try {
 
-            if (todecrypt == null || stringkey == null)
-            {
+            if (todecrypt == null || stringkey == null) {
                 return null;
             }
 
@@ -135,7 +133,6 @@ public class SJCLCrypto {
             // TODO: Check the iv is at least 13 bytes
             // and figure out what to do if its not.
             // For now, just trim the nonce to 13 bytes
-
             byte[] strippedIV = Arrays.copyOf(iv, 13);
 
 
@@ -151,7 +148,6 @@ public class SJCLCrypto {
                     KEY_LENGTH_BIT_LOCAL);
 
             GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(TAG_LENGTH_BIT_LOCAL, strippedIV);
-
             SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2withHmacSHA256");
             SecretKey secretKey = secretKeyFactory.generateSecret(keySpec);
 
