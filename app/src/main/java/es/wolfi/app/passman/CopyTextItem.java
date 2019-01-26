@@ -29,6 +29,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.support.design.widget.Snackbar;
 import android.text.InputType;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,6 +103,12 @@ public class CopyTextItem extends LinearLayout {
     public void setModeEmail() {
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         toggle.setVisibility(View.GONE);
+    }
+
+    public void setModeUrl() {
+        text.setAutoLinkMask(Linkify.ALL);
+        text.setLinksClickable(true);
+        text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
     }
 
     public void setEnabled(boolean enabled) {

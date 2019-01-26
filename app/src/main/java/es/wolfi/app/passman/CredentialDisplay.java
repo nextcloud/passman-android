@@ -57,7 +57,7 @@ public class CredentialDisplay extends Fragment {
     @BindView(R.id.credential_user) CopyTextItem user;
     @BindView(R.id.credential_password) CopyTextItem password;
     @BindView(R.id.credential_email) CopyTextItem email;
-    @BindView(R.id.credential_url) TextView url;
+    @BindView(R.id.credential_url) CopyTextItem url;
     @BindView(R.id.credential_description) TextView description;
     @BindView(R.id.credential_otp) CopyTextItem otp;
     @BindView(R.id.credential_otp_progress) ProgressBar otp_progress;
@@ -157,6 +157,7 @@ public class CredentialDisplay extends Fragment {
         password.setText(credential.getPassword());
         email.setModeEmail();
         email.setText(credential.getEmail());
+        url.setModeUrl();
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
         otp.setEnabled(false);
