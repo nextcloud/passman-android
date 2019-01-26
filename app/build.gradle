@@ -31,7 +31,7 @@ android {
         versionCode 8
         versionName "0.142"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
+        /*externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11 -frtti -fexceptions"
             }
@@ -39,7 +39,7 @@ android {
         }
         ndk {
             abiFilters 'armeabi-v7a'
-        }
+        }*/
     }
     buildTypes {
         release {
@@ -67,11 +67,11 @@ android {
         }
     }
 
-    externalNativeBuild {
+    /*externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
         }
-    }
+    }*/
 
     flavorDimensions "arm"
 
