@@ -400,16 +400,18 @@ public final class CredentialAutofillService extends AutofillService {
             }
 
             try {
-                JSONArray thisCredCustomFields = new JSONArray(thisCred.getCustomFields());
-                for (int i = 0; i < thisCredCustomFields.length(); i++) {
-                    JSONObject thisCredCustomField = thisCredCustomFields.getJSONObject(i);
+                String thisCredCustomFieldsString = thisCred.getCustomFields();
+                if(thisCredCustomFieldsString != null) {
+                    JSONArray thisCredCustomFields = new JSONArray(thisCredCustomFieldsString);
+                    for (int i = 0; i < thisCredCustomFields.length(); i++) {
+                        JSONObject thisCredCustomField = thisCredCustomFields.getJSONObject(i);
 
-                    String customFieldLabel =
-                            thisCredCustomField.getString("label");
+                        String customFieldLabel =
+                                thisCredCustomField.getString("label");
 
-                    if (customFieldLabel.equalsIgnoreCase("androidCredPackageName")) {
+                        if (customFieldLabel.equalsIgnoreCase("androidCredPackageName")) {
 
-                        String credPackageName = thisCredCustomField.getString("value");
+                            String credPackageName = thisCredCustomField.getString("value");
 
                         /*
                             Log.d(TAG, "Checking custom fields: " +
@@ -417,9 +419,10 @@ public final class CredentialAutofillService extends AutofillService {
                                 " vs " +
                                 credPackageName);
                         */
-                        if (packageName.equalsIgnoreCase(credPackageName)) {
-                            matchingCred.add(thisCred);
-                            break;
+                            if (packageName.equalsIgnoreCase(credPackageName)) {
+                                matchingCred.add(thisCred);
+                                break;
+                            }
                         }
                     }
                 }
