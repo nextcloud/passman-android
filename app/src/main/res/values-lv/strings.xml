@@ -10,7 +10,7 @@
     <string name="net_error">Datu tīkla kļūda</string>
     <string name="unlock">Atbloķēt</string>
     <string name="wrong_vault_pw">Nepareiza akreditācijas datu komplekta parole</string>
-    <string name="label">Marķējums</string>
+    <string name="label">Apzīmējums</string>
     <string name="email">E-pasts</string>
     <string name="URL">URL</string>
     <string name="description">Apraksts</string>
