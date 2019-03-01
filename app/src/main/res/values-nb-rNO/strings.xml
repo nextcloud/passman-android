@@ -1,7 +1,7 @@
 <resources>
     <string name="action_settings">Innstillinger</string>
     <string name="action_refresh">Oppdater</string>
-    <string name="nchost">Tjeneradresse</string>
+    <string name="nchost">Serveradresse</string>
     <string name="username">Brukernavn</string>
     <string name="password">Passord</string>
     <string name="connect">Koble til</string>
