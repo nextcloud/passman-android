@@ -1,8 +1,8 @@
 <resources>
     <string name="action_settings">Paràmetres</string>
-    <string name="action_refresh">Refresca</string>
+    <string name="action_refresh">Actualitza</string>
     <string name="nchost">Adreça del servidor</string>
-    <string name="username">Usuari</string>
+    <string name="username">Nom d\'usuari</string>
     <string name="password">Contrasenya</string>
     <string name="connect">Connecta</string>
     <string name="wrongNCSettings">Configuració incorrecte</string>
@@ -10,8 +10,9 @@
     <string name="unlock">Desbloqueja</string>
     <string name="label">Etiqueta</string>
     <string name="email">E-mail</string>
-    <string name="URL">Url</string>
+    <string name="URL">URL</string>
     <string name="description">Descripció</string>
     <string name="created">Creat:</string>
     <string name="last_accessed">Últim accés:</string>
-    </resources>
+    <string name="search">Cerca</string>
+</resources>
