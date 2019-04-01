@@ -12,6 +12,8 @@
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Descripció</string>
+    <string name="copied_to_clipboard">Text copiat al porta-papers</string>
+    <string name="not_implemented_yet">Encara no s\'ha implementat</string>
     <string name="created">Creat:</string>
     <string name="last_accessed">Últim accés:</string>
     <string name="search">Cerca</string>
