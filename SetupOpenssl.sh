@@ -74,22 +74,22 @@ fi
 # http://groups.google.com/group/android-ndk/browse_thread/thread/a998e139aca71d77
 if [ -z "$ANDROID_NDK_ROOT" ] || [ ! -d "$ANDROID_NDK_ROOT" ]; then
   echo "Error: ANDROID_NDK_ROOT is not a valid path. Please edit this script."
-  # echo "$ANDROID_NDK_ROOT"
-  # exit 1
+  echo "$ANDROID_NDK_ROOT"
+  exit 1
 fi
 
 # Error checking
 if [ ! -d "$ANDROID_NDK_ROOT/toolchains" ]; then
   echo "Error: ANDROID_NDK_ROOT/toolchains is not a valid path. Please edit this script."
-  # echo "$ANDROID_NDK_ROOT/toolchains"
-  # exit 1
+  echo "$ANDROID_NDK_ROOT/toolchains"
+  exit 1
 fi
 
 # Error checking
 if [ ! -d "$ANDROID_NDK_ROOT/toolchains/$_ANDROID_EABI" ]; then
   echo "Error: ANDROID_EABI is not a valid path. Please edit this script."
-  # echo "$ANDROID_NDK_ROOT/toolchains/$_ANDROID_EABI"
-  # exit 1
+  echo "$ANDROID_NDK_ROOT/toolchains/$_ANDROID_EABI"
+  exit 1
 fi
 
 #####################################################################
@@ -110,9 +110,9 @@ do
 done
 
 # Error checking
-  echo "Error: ANDROID_TOOLCHAIN is not valid. Please edit this script."
-  # echo "$ANDROID_TOOLCHAIN"
-  # exit 1
+#  echo "Error: ANDROID_TOOLCHAIN is not valid. Please edit this script."
+#  echo "$ANDROID_TOOLCHAIN"
+#  exit 1
 #fi
 
 case $_ANDROID_ARCH in
@@ -132,8 +132,8 @@ do
   # Error checking
   if [ ! -e "$ANDROID_TOOLCHAIN/$tool" ]; then
     echo "Error: Failed to find $tool. Please edit this script."
-    # echo "$ANDROID_TOOLCHAIN/$tool"
-    # exit 1
+    echo "$ANDROID_TOOLCHAIN/$tool"
+    exit 1
   fi
 done
 
@@ -148,14 +148,15 @@ fi
 # For the Android SYSROOT. Can be used on the command line with --sysroot
 # https://android.googlesource.com/platform/ndk/+/ics-mr0/docs/STANDALONE-TOOLCHAIN.html
 export ANDROID_SYSROOT="$ANDROID_NDK_ROOT/platforms/$_ANDROID_API/$_ANDROID_ARCH"
+#export ANDROID_SYSROOT="$ANDROID_NDK_ROOT/sysroot"
 export CROSS_SYSROOT="$ANDROID_SYSROOT"
 export NDK_SYSROOT="$ANDROID_SYSROOT"
 
 # Error checking
 if [ -z "$ANDROID_SYSROOT" ] || [ ! -d "$ANDROID_SYSROOT" ]; then
   echo "Error: ANDROID_SYSROOT is not valid. Please edit this script."
-  # echo "$ANDROID_SYSROOT"
-  # exit 1
+  echo "$ANDROID_SYSROOT"
+  exit 1
 fi
 
 #####################################################################
@@ -207,6 +208,7 @@ fi
 # For the Android toolchain
 # https://android.googlesource.com/platform/ndk/+/ics-mr0/docs/STANDALONE-TOOLCHAIN.html
 export ANDROID_SYSROOT="$ANDROID_NDK_ROOT/platforms/$_ANDROID_API/$_ANDROID_ARCH"
+#export ANDROID_SYSROOT="$ANDROID_NDK_ROOT/sysroot"
 export SYSROOT="$ANDROID_SYSROOT"
 export NDK_SYSROOT="$ANDROID_SYSROOT"
 export ANDROID_NDK_SYSROOT="$ANDROID_SYSROOT"
@@ -215,6 +217,7 @@ export ANDROID_API="$_ANDROID_API"
 # CROSS_COMPILE and ANDROID_DEV are DFW (Don't Fiddle With). Its used by OpenSSL build system.
 # export CROSS_COMPILE="arm-linux-androideabi-"
 export ANDROID_DEV="$ANDROID_NDK_ROOT/platforms/$_ANDROID_API/$_ANDROID_ARCH/usr"
+#export ANDROID_DEV="$ANDROID_SYSROOT/usr"
 export HOSTCC=gcc
 
 VERBOSE=1
@@ -232,4 +235,4 @@ fi
 
 ./config shared no-ssl3 no-comp no-hw no-engine
 make depend
-make all
+make all -j8

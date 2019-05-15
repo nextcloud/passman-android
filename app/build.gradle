@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 ext {
-    supportLibraryVersion = '25.2.0'
+    supportLibraryVersion = '26.1.0'
 }
 
 android {
@@ -22,12 +22,12 @@ android {
             v2SigningEnabled true
         }
     }
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 26
         versionCode 7
         versionName "0.141"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -38,7 +38,7 @@ android {
 
         }
         ndk {
-            abiFilters 'armeabi', 'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
     }
     buildTypes {
