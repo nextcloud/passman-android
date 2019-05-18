@@ -25,7 +25,6 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,12 +35,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.JSONUtils;
+import timber.log.Timber;
 
 public abstract class Core {
     protected static final String LOG_TAG    = "API_LIB";
@@ -84,7 +83,7 @@ public abstract class Core {
     }
 
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
-        String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
+        String auth = "Bearer " + password; //.concat(Base64.encodeToString(password.getBytes(), Base64.NO_WRAP));
 
         Ion.with(c)
         .load(host.concat(endpoint))
@@ -126,6 +125,33 @@ public abstract class Core {
     }
 
     /**
+     * Check if we have a stored hostname.
+     * User probably previously logged in.
+     *
+     * @return true|false
+     */
+    public static boolean haveHost(final Context c)
+    {
+        SingleTon ton = SingleTon.getTon();
+
+        String host = ton.getString( SettingValues.HOST.toString() );
+        if (host == null)
+        {
+            Timber.d( "host not set in ton" );
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences( c );
+            String url = settings.getString( SettingValues.HOST.toString(), null );
+
+            Timber.d( "got url: %s", url );
+            // If the url is null app has not yet been configured!
+            return url != null;
+        }
+
+        Timber.d( "have host: %s", host );
+
+        return true;
+    }
+
+    /**
      * Check if the user has logged in, also sets up the API
      * @param c     The context where this should be run
      * @param toast Whether we want or not a toast! Yum!
@@ -135,11 +161,14 @@ public abstract class Core {
         SingleTon ton = SingleTon.getTon();
 
         if (ton.getString(SettingValues.HOST.toString()) == null) {
+            Timber.d( "no HOST in ton?!" );
+
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
             String url = settings.getString(SettingValues.HOST.toString(), null);
 
             // If the url is null app has not yet been configured!
             if (url == null) {
+                Timber.d( "no host in prefs" );
                 cb.onCompleted(null, false);
                 return;
             }
@@ -154,9 +183,9 @@ public abstract class Core {
         String user = ton.getString(SettingValues.USER.toString());
         String pass = ton.getString(SettingValues.PASSWORD.toString());
         Toast.makeText(c, host, Toast.LENGTH_LONG).show();
-        Log.d(LOG_TAG, "Host: " + host);
-        Log.d(LOG_TAG, "User: " + user);
-        Log.d(LOG_TAG, "Pass: " + pass);
+        Timber.d( "Host: %s", host );
+        Timber.d( "User: %s", user );
+        Timber.d( "Pass: %s", pass );
 
         Vault.setUpAPI(host, user, pass);
         Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {
@@ -174,7 +203,7 @@ public abstract class Core {
                         ret = false;
                     }
                     else {
-                        Log.e(LOG_TAG, "Error: " + e.getMessage(), e);
+                        Timber.e( e, "Error: %s", e.getMessage() );
                         if (toast) Toast.makeText(c, c.getString(R.string.net_error) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
                         ret = false;
                     }

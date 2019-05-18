@@ -25,6 +25,7 @@ package es.wolfi.app.passman;
 
 public enum CallbackNames {
     LOGIN("login"),
+    PASSWORDLIST("passwordlist")
     ;
 
 

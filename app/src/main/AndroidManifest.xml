@@ -2,27 +2,62 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="es.wolfi.app.passman">
 
+    <uses-permission android:name="android.permission.ACCOUNT_MANAGER" />
+
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS"
+        />
+
+    <uses-permission
+        android:maxSdkVersion="22"
+        android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission
+        android:maxSdkVersion="22"
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:hardwareAccelerated="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".App"
+        >
         <activity
             android:name=".PasswordList"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
+            <!--intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter-->
         </activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:theme="@style/AppTheme.NoActionBar.Login" />
+            android:theme="@style/AppTheme.NoActionBar.Login">
+            <intent-filter>
+                <action android:name="es.wolfi.app.passman.AUTH_RETURN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="nc" />
+                <data android:host="login" />
+                <data android:pathPrefix="/server" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".SplashActivity"
+            android:icon="@mipmap/ic_launcher"
+            android:logo="@mipmap/ic_launcher"
+            android:theme="@style/AppTheme.Splash"
+            android:label="@string/app_name"
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

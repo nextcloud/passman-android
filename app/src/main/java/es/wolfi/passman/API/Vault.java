@@ -23,7 +23,6 @@
 package es.wolfi.passman.API;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -122,7 +121,7 @@ public class Vault extends Core implements Filterable{
                     return;
                 }
 
-//                Log.e(Vault.LOG_TAG, result);
+                Log.e(Vault.LOG_TAG, result);
 //                cb.onCompleted(e, null);
                 try {
                     JSONArray data = new JSONArray(result);

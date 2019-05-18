@@ -22,22 +22,21 @@
 
 package es.wolfi.app.passman;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import es.wolfi.passman.API.Vault;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
+import es.wolfi.passman.API.Vault;
 
 /**
  * A fragment representing a list of Items.
@@ -46,6 +45,8 @@ import java.util.List;
  * interface.
  */
 public class VaultFragment extends Fragment {
+
+    private static final String TAG = VaultFragment.class.getSimpleName();
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -73,6 +74,8 @@ public class VaultFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate");
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -115,6 +118,7 @@ public class VaultFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d( TAG, "onDetach" );
         mListener = null;
     }
 

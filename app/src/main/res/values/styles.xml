@@ -9,6 +9,15 @@
         <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
     </style>
 
+    <style name="AppTheme.Splash" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -21,6 +30,10 @@
         <item name="colorControlHighlight">@color/login_text_hint_color</item>
         <item name="colorAccent">@color/login_text_hint_color</item>
         <item name="android:textColorHint">@color/login_text_hint_color</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Login.Item" parent="AppTheme.NoActionBar.Login">
+        <item name="android:textColor">@color/login_text_color</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
