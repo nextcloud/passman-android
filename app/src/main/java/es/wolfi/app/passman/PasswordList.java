@@ -67,6 +67,7 @@ public class PasswordList extends AppCompatActivity implements
     void launch ( Context c )
     {
         Intent i = new Intent( c, PasswordList.class );
+        i.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TASK );
         c.startActivity( i );
     }
 
@@ -326,15 +327,18 @@ public class PasswordList extends AppCompatActivity implements
         editor.remove( SettingValues.HOST.toString() );
         editor.remove( SettingValues.USER.toString() );
         editor.remove( SettingValues.PASSWORD.toString() );
-        editor.commit();
+        editor.apply();
 
         ton.removeString( SettingValues.HOST.toString() );
         ton.removeString( SettingValues.USER.toString() );
         ton.removeString( SettingValues.PASSWORD.toString() );
 
         Intent restart = new Intent(this, SplashActivity.class);
-        restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        restart.addFlags( Intent.FLAG_ACTIVITY_NO_HISTORY );
+        restart.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TASK );
         startActivity(restart);
+
+        finish();
     }
 
     private void showNotImplementedMessage() {

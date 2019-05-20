@@ -232,8 +232,11 @@ public class LoginActivity extends AppCompatActivity
     public static void launch(Context c, ICallback cb) {
         SingleTon.getTon().addCallback(CallbackNames.LOGIN.toString(), cb);
         Intent i = new Intent(c, LoginActivity.class);
+        i.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TASK );
+        //i.setFlags( Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS );
         c.startActivity(i);
     }
+    
 
     @Override
     protected
