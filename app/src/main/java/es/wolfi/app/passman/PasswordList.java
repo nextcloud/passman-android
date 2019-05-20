@@ -307,9 +307,34 @@ public class PasswordList extends AppCompatActivity implements
             case android.R.id.home :
                 onBackPressed();
                 return true;
+
+            case R.id.action_logout:
+                onLogoutPressed();
+                return true;
+
             default :
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private
+    void onLogoutPressed ()
+    {
+        Timber.d( "LOGOUT!" );
+
+        SharedPreferences.Editor editor = settings.edit();
+        editor.remove( SettingValues.HOST.toString() );
+        editor.remove( SettingValues.USER.toString() );
+        editor.remove( SettingValues.PASSWORD.toString() );
+        editor.commit();
+
+        ton.removeString( SettingValues.HOST.toString() );
+        ton.removeString( SettingValues.USER.toString() );
+        ton.removeString( SettingValues.PASSWORD.toString() );
+
+        Intent restart = new Intent(this, SplashActivity.class);
+        restart.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(restart);
     }
 
     private void showNotImplementedMessage() {
