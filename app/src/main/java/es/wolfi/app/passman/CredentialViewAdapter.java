@@ -21,14 +21,16 @@
  */
 package es.wolfi.app.passman;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import es.wolfi.passman.API.Credential;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
+
+import es.wolfi.passman.API.Credential;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the

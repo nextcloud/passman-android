@@ -24,20 +24,21 @@ package es.wolfi.app.passman;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import org.apache.commons.codec.binary.Base32;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import net.bierbaumer.otp_authenticator.TOTPHelper;
+
+import org.apache.commons.codec.binary.Base32;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,7 +51,8 @@ import es.wolfi.passman.API.Vault;
  * Use the {@link CredentialDisplay#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CredentialDisplay extends Fragment {
+public class CredentialDisplay extends Fragment
+{
     public static String CREDENTIAL = "credential";
 
     @BindView(R.id.credential_label) TextView label;

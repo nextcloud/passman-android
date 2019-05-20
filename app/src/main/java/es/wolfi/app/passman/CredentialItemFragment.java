@@ -24,16 +24,17 @@ package es.wolfi.app.passman;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -47,7 +48,8 @@ import es.wolfi.utils.FilterListAsyncTask;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class CredentialItemFragment extends Fragment {
+public class CredentialItemFragment extends Fragment
+{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -93,9 +95,9 @@ public class CredentialItemFragment extends Fragment {
             Context context = credentialView.getContext();
             final RecyclerView recyclerView = (RecyclerView) credentialView;
             if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                recyclerView.setLayoutManager(new LinearLayoutManager( context));
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                recyclerView.setLayoutManager(new GridLayoutManager( context, mColumnCount));
             }
             final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
             final EditText searchInput = (EditText) view.findViewById(R.id.search_input);

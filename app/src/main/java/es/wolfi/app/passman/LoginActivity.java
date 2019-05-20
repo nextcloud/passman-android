@@ -21,7 +21,6 @@
  */
 package es.wolfi.app.passman;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -31,15 +30,8 @@ import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,9 +41,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.koushikdutta.ion.Ion;
+import com.nextcloud.android.sso.AccountImporter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -59,7 +58,10 @@ import butterknife.ButterKnife;
 import es.wolfi.passman.API.Core;
 import timber.log.Timber;
 
-public class LoginActivity extends AppCompatActivity {
+import static com.google.common.base.Preconditions.checkNotNull;
+
+public class LoginActivity extends AppCompatActivity
+{
 
     public static final String ACTION_AUTH_RETURN
           = "es.wolfi.app.passman.AUTH_RETURN";
@@ -77,6 +79,9 @@ public class LoginActivity extends AppCompatActivity {
     SharedPreferences settings;
     SingleTon ton;
 
+    private
+    ItemClickListener mItemClickListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,25 +92,11 @@ public class LoginActivity extends AppCompatActivity {
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         ton = SingleTon.getTon();
 
-        mListView.setOnItemClickListener( new AdapterView.OnItemClickListener() {
-            @Override
-            public
-            void onItemClick (
-                  final AdapterView< ? > parent, final View view, final int position,
-                  final long id )
-            {
-                Account account = (Account) parent.getItemAtPosition( position );
+        mItemClickListener = new ItemClickListener( this );
 
-                AccountManagerFuture< Bundle > authTokenFuture =
-                      mAccountManager.getAuthToken( account,
-                                                    "nextcloud",
-                                                    null,
-                                                    LoginActivity.this,
-                                                    new NCAccountManagerCallback(), null );
-            }
-        } );
+        mListView.setOnItemClickListener( mItemClickListener );
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar);
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
@@ -118,30 +109,7 @@ public class LoginActivity extends AppCompatActivity {
 //            return;
 //        }
 
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.GET_ACCOUNTS ) !=
-              PackageManager.PERMISSION_GRANTED )
-        {
-            Timber.d( "don't have GET_ACCOUNTS permission" );
-
-            if ( ActivityCompat.shouldShowRequestPermissionRationale( this, Manifest.permission.GET_ACCOUNTS ) )
-            {
-                // show explanation..
-                Timber.d( "should show request permission!" );
-            }
-            // else {
-            //
-            //}
-
-            Timber.d( "request GET_ACCOUNTS!" );
-            ActivityCompat.requestPermissions( this,
-                                               new String[] { android.Manifest.permission.GET_ACCOUNTS },
-                                               REQUEST_GET_ACCOUNTS );
-        }
-        else
-        {
-            Timber.d( "already have GET_ACCOUNTS permission" );
-            getAccount();
-        }
+        getAccount();
 
         // handle login!
 
@@ -156,7 +124,13 @@ public class LoginActivity extends AppCompatActivity {
         switch ( requestCode )
         {
             case REQ_CHOOSE_ACCOUNT:
-                Timber.d( "choose account: %s", data.toString() );
+                if (data != null)
+                {
+                    Timber.d( "choose account: %s", data.toString() );
+                }
+                else {
+                    Timber.w( "request failed?!" );
+                }
                 break;
 
             default:
@@ -165,35 +139,19 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public
-    void onRequestPermissionsResult (
-          final int requestCode, @NonNull final String[] permissions,
-          @NonNull final int[] grantResults )
-    {
-        Timber.d( "onRequestPermissionsResult" );
-
-        if (requestCode != REQUEST_GET_ACCOUNTS)
-        {
-            Timber.w( "unsupported request code?!" );
-            return;
-        }
-
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-        {
-            getAccount();
-        }
-        else
-        {
-            Timber.w( "permission denied >:(" );
-            // we need this permission, try and reask or bail?
-        }
-    }
-
     private
     void getAccount()
     {
-//        if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M )
+//        Intent chooseIntent = AccountPicker.newChooseAccountIntent( null, null, new String[]{"nextcloud"},true, null, "org.nextcloud", null, null );
+//        startActivityForResult( chooseIntent, REQ_CHOOSE_ACCOUNT );
+
+        List<Account> accountsImporter = AccountImporter.findAccounts( this );
+        Timber.d( "accounts Importer: %d", accountsImporter.size() );
+
+        //Intent chooseIntent = AccountManager.newChooseAccountIntent( null, null, new String[] { "nextcloud"} , false,null,"org.nextcloud", null, null);
+        //startActivityForResult( chooseIntent, REQ_CHOOSE_ACCOUNT );
+
+        //        if ( android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M )
 //        {
 //            Intent intent =
 //                  AccountManager.newChooseAccountIntent( null, null,
@@ -208,13 +166,21 @@ public class LoginActivity extends AppCompatActivity {
 //        }
 
         AccountManager accountManager = AccountManager.get( this );
-        Account[] accounts = accountManager.getAccountsByType("nextcloud");
+        Account[] accountsByTypeNextcloud = accountManager.getAccountsByType( "nextcloud" );
+        Account[] accountsByTypeOrgNextcloud = accountManager.getAccountsByType( "org.nextcloud" );
+        Account[] accountsByTypeNull = accountManager.getAccountsByType( null );
+        Account[] accounts = accountManager.getAccounts( );
+        Timber.d( "accounts Nextcloud: %d", accountsByTypeNextcloud.length );
+        Timber.d( "accounts Org.Nextcloud: %d", accountsByTypeOrgNextcloud.length );
+        Timber.d( "accounts null: %d", accountsByTypeNull.length );
         Timber.d( "accounts: %d", accounts.length );
         //accountManager.
 
-        mListView.setAdapter( new AccountListAdapter( this, R.layout.login_list_item, accounts) );
+        mItemClickListener.setAccounts( accountsByTypeNextcloud );
 
-        for ( Account account : accounts )
+        mListView.setAdapter( new AccountListAdapter( this, R.layout.login_list_item, accountsByTypeNextcloud) );
+
+        for ( Account account : accountsByTypeNextcloud )
         {
             Timber.d( "account: %s", account.toString() );
         }
@@ -269,12 +235,30 @@ public class LoginActivity extends AppCompatActivity {
         c.startActivity(i);
     }
 
+    @Override
+    protected
+    void onSaveInstanceState ( final Bundle outState )
+    {
+        String host = ton.getString( SettingValues.HOST.toString() );
+
+        if ( host != null )
+        {
+            String user = ton.getString( SettingValues.USER.toString() );
+            String pass = ton.getString( SettingValues.PASSWORD.toString() );
+
+            outState.putString( SettingValues.USER.toString(), user );
+            outState.putString( SettingValues.PASSWORD.toString(), pass );
+            outState.putString( SettingValues.HOST.toString(), host );
+        }
+
+        super.onSaveInstanceState( outState );
+    }
+
     private static
     class AccountListAdapter extends ArrayAdapter<Account>
     {
 
         private AccountManager mAccountManager;
-
         public
         AccountListAdapter (
               @NonNull final Context context, final int resource, @NonNull final Account[] objects )
@@ -336,9 +320,17 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private
+    private static
     class NCAccountManagerCallback implements AccountManagerCallback< Bundle >
     {
+        private LoginActivity mActivity;
+
+        public NCAccountManagerCallback(@NonNull LoginActivity activity )
+        {
+            mActivity = checkNotNull( activity, "Null context?!");
+        }
+
+
         @Override
         public
         void run (
@@ -347,6 +339,9 @@ public class LoginActivity extends AppCompatActivity {
             Timber.d( "in account manager callback!" );
             try
             {
+                SingleTon ton = SingleTon.getTon();
+
+
                 Bundle results = future.getResult();
 
                 Timber.d( "got auth token: %s",
@@ -374,14 +369,17 @@ public class LoginActivity extends AppCompatActivity {
 
                 Core.setUpAPI(host, username, authtoken);
 
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(
+                      mActivity );
+
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString( SettingValues.HOST.toString(), host );
                 editor.putString( SettingValues.USER.toString(), username );
                 editor.putString( SettingValues.PASSWORD.toString(), authtoken );
                 editor.apply();
 
-                PasswordList.launch( LoginActivity.this );
-                finish();
+                PasswordList.launch( mActivity );
+                mActivity.finish();
             }
             catch ( OperationCanceledException e )
             {
@@ -398,22 +396,34 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected
-    void onSaveInstanceState ( final Bundle outState )
+
+    private static
+    class ItemClickListener implements AdapterView.OnItemClickListener
     {
-        String host = ton.getString( SettingValues.HOST.toString() );
+        private AccountManagerFuture< Bundle > authTokenFuture;
+        private AccountManager                 mAccountManager;
+        private LoginActivity                  mActivity;
+        private Account[] mAccounts;
 
-        if (host != null)
+        public ItemClickListener(@NonNull LoginActivity activity )
         {
-            String user = ton.getString( SettingValues.USER.toString() );
-            String pass = ton.getString( SettingValues.PASSWORD.toString() );
-
-            outState.putString( SettingValues.USER.toString(), user );
-            outState.putString( SettingValues.PASSWORD.toString(), pass );
-            outState.putString( SettingValues.HOST.toString(), host );
+            mActivity = checkNotNull( activity, "Null activity?!" );
+            mAccountManager = AccountManager.get( mActivity );
         }
 
-        super.onSaveInstanceState( outState );
+        private
+        void setAccounts ( final Account[] accounts )
+        {
+            mAccounts = accounts;
+        }
+
+        @Override
+        public
+        void onItemClick (
+              final AdapterView< ? > parent, final View view, final int position, final long id )
+        {
+            authTokenFuture = mAccountManager.getAuthToken( mAccounts[position], "nextcloud.password", null,
+                                                            mActivity, new NCAccountManagerCallback(mActivity), null );
+        }
     }
 }

@@ -24,14 +24,15 @@ package es.wolfi.app.passman;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,8 @@ import es.wolfi.passman.API.Vault;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class VaultFragment extends Fragment {
+public class VaultFragment extends Fragment
+{
 
     private static final String TAG = VaultFragment.class.getSimpleName();
 
@@ -92,9 +94,9 @@ public class VaultFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                recyclerView.setLayoutManager(new LinearLayoutManager( context));
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                recyclerView.setLayoutManager(new GridLayoutManager( context, mColumnCount));
             }
 
             HashMap<String, Vault> vaults = (HashMap<String, Vault>)SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());

@@ -27,12 +27,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.koushikdutta.async.future.FutureCallback;
 
@@ -78,7 +80,7 @@ public class PasswordList extends AppCompatActivity implements
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         ton = SingleTon.getTon();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById( R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -149,7 +151,7 @@ public class PasswordList extends AppCompatActivity implements
 
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
         if (vaults != null) {
-            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment vaultFragment = fragmentManager.findFragmentByTag( "vault" );
             if (vaultFragment != null && vaultFragment.isVisible())
             {
