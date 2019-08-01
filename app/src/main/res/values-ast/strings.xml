@@ -1,7 +1,7 @@
 <resources>
     <string name="action_settings">Axustes</string>
     <string name="action_refresh">Refrescar</string>
-    <string name="nchost">Direición de sividor</string>
+    <string name="nchost">Direición del sividor</string>
     <string name="username">Nome d\'usuariu</string>
     <string name="password">Contraseña</string>
     <string name="connect">Coneutar</string>
