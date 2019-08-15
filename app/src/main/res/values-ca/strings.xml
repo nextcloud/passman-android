@@ -1,17 +1,24 @@
 <resources>
     <string name="action_settings">Paràmetres</string>
-    <string name="action_refresh">Refresca</string>
+    <string name="action_refresh">Actualitza</string>
     <string name="nchost">Adreça del servidor</string>
-    <string name="username">Usuari</string>
+    <string name="username">Nom d\'usuari</string>
     <string name="password">Contrasenya</string>
     <string name="connect">Connecta</string>
-    <string name="wrongNCSettings">Configuració incorrecte</string>
+    <string name="wrongNCUrl">URL del rerefons de Nextcloud incorrecta o no es pot connectar</string>
+    <string name="wrongNCSettings">Paràmetres incorrectes</string>
     <string name="net_error">Error de xarxa</string>
-    <string name="unlock">Desbloqueja</string>
+    <string name="unlock">Desbloca</string>
+    <string name="wrong_vault_pw">La contrasenya de la cripta és incorrecta</string>
     <string name="label">Etiqueta</string>
-    <string name="email">E-mail</string>
-    <string name="URL">Url</string>
+    <string name="email">Correu electrònic</string>
+    <string name="URL">URL</string>
     <string name="description">Descripció</string>
+    <string name="copied_to_clipboard">Text copiat al porta-papers</string>
+    <string name="vault_password">Contrasenya de la cripta</string>
+    <string name="vault_password_save">Desa la contrasenya de la cripta</string>
+    <string name="not_implemented_yet">Encara no s\'ha implementat</string>
     <string name="created">Creat:</string>
-    <string name="last_accessed">Últim accés:</string>
-    </resources>
+    <string name="last_accessed">Darrer accés:</string>
+    <string name="search">Cerca</string>
+</resources>

@@ -17,4 +17,5 @@
     <string name="vault_password">Slėptuvės slaptažodis</string>
     <string name="vault_password_save">Įsirašykite slėptuvės slaptažodį</string>
     <string name="not_implemented_yet">Kol kas neįgyvendinta</string>
+    <string name="created">Sukurta:</string>
     </resources>
