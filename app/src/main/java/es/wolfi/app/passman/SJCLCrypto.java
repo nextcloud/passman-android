@@ -80,8 +80,7 @@ public class SJCLCrypto {
 
             aes.init(Cipher.ENCRYPT_MODE,secretSpec);
 
-            AlgorithmParameters algorithmParameters = aes.getParameters();
-            ivBytes = algorithmParameters.getParameterSpec(IvParameterSpec.class).getIV();
+            ivBytes = aes.getIV();
 
             byte[] encryptedTextBytes = aes.doFinal(toencrypt.getBytes("UTF-8"));
 
