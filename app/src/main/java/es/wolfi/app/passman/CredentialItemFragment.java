@@ -24,6 +24,7 @@ package es.wolfi.app.passman;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +32,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -40,21 +44,24 @@ import java.util.ArrayList;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FilterListAsyncTask;
+import es.wolfi.utils.GeneralUtils;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * Activities containing this fragment MUST implement the {@link OnListCredentialFragmentInteractionListener}
  * interface.
  */
 public class CredentialItemFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
+    private OnListCredentialFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
+    private FloatingActionButton fab = null;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -80,15 +87,42 @@ public class CredentialItemFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_credential_item_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        GeneralUtils.debug("Creating View");
+
         View view = inflater.inflate(R.layout.fragment_credential_item_list, container, false);
+
+        View fabView = view.findViewById(R.id.addcredfab);
+
+        if (fabView instanceof FloatingActionButton) {
+            GeneralUtils.debug("Setting Listener View");
+            fab = (FloatingActionButton)fabView;
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onActionCreateClick();
+                }
+
+            });
+        }
 
         // Set the adapter
         View credentialView = view.findViewById(R.id.list);
+
         if (credentialView instanceof RecyclerView) {
             Context context = credentialView.getContext();
             final RecyclerView recyclerView = (RecyclerView) credentialView;
@@ -97,32 +131,38 @@ public class CredentialItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
-            searchInput.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            final Vault v = Vault.getActiveVault();
+            if (v != null) {
+                final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
+                searchInput.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    String searchText = searchInput.getText().toString().toLowerCase();
-                    if(filterTask != null){
-                        filterTask.cancel(true);
                     }
-                    filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
-                    ArrayList<Credential> input [] = new ArrayList[]{v.getCredentials()};
-                    filterTask.execute((Object[]) input);
-                }
 
-                @Override
-                public void afterTextChanged(Editable editable) {
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        String searchText = searchInput.getText().toString().toLowerCase();
+                        if (filterTask != null) {
+                            filterTask.cancel(true);
+                        }
+                        filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
+                        ArrayList<Credential> input[] = new ArrayList[]{v.getCredentials()};
+                        filterTask.execute((Object[]) input);
+                    }
 
-                }
-            });
-            recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+                recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+            }
         }
+        if (mListener != null) {
+            mListener.onListFragmentCreatedView();
+        }
+        GeneralUtils.debug("Returning View");
         return view;
     }
 
@@ -130,11 +170,11 @@ public class CredentialItemFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof OnListCredentialFragmentInteractionListener) {
+            mListener = (OnListCredentialFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement OnListCredentialFragmentInteractionListener");
         }
     }
 
@@ -154,8 +194,11 @@ public class CredentialItemFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
+    public interface OnListCredentialFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(Credential item);
+        void onCredentialClick(Credential item);
+        boolean onCredentialLongClick(Credential item);
+        void onActionCreateClick();
+        void onListFragmentCreatedView();
     }
 }

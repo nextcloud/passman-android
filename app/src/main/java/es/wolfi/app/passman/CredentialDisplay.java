@@ -28,13 +28,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.koushikdutta.async.future.FutureCallback;
+
 import org.apache.commons.codec.binary.Base32;
 
 import net.bierbaumer.otp_authenticator.TOTPHelper;
@@ -43,6 +50,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.GeneralUtils;
 
 
 /**
@@ -62,9 +70,11 @@ public class CredentialDisplay extends Fragment {
     @BindView(R.id.credential_otp) CopyTextItem otp;
     @BindView(R.id.credential_otp_progress) ProgressBar otp_progress;
 
-    private Credential credential;
+    //private Credential credential;
     private Handler handler;
+    private FloatingActionButton fab = null;
     private Runnable otp_refresh;
+    private Credential credential;
 
     private OnCredentialFragmentInteraction mListener;
 
@@ -93,9 +103,12 @@ public class CredentialDisplay extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-            Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            Vault v = Vault.getActiveVault();
+            if (v != null) {
+                credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            }
         }
 
         handler = new Handler();
@@ -114,6 +127,15 @@ public class CredentialDisplay extends Fragment {
                 handler.postDelayed(this, 1000);
             }
         };
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.menu_credential_display, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -132,7 +154,23 @@ public class CredentialDisplay extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_credential_display, container, false);
+        View view = inflater.inflate(R.layout.fragment_credential_display, container, false);
+
+        View fabView = view.findViewById(R.id.editcredfab);
+
+        if (fabView instanceof FloatingActionButton) {
+            GeneralUtils.debug("Setting Edit Cred listener");
+            fab = (FloatingActionButton)fabView;
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (credential != null) {
+                        mListener.onActionEditClick(credential.getGuid());
+                    }
+                }
+            });
+        }
+        return view;
     }
 
     @Override
@@ -147,26 +185,67 @@ public class CredentialDisplay extends Fragment {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_refresh_credentials:
+                GeneralUtils.toast(getView(), "Refreshing");
+                Vault v = Vault.getActiveVault();
+                if (v != null && credential != null) {
+                    Vault.refreshCredential(false,
+                            getActivity(),
+                            v,
+                            credential,
+                            new FutureCallback<Credential>() {
+                                @Override
+                                public void onCompleted(Exception e, Credential result) {
+                                    if (e != null || result == null) {
+                                        GeneralUtils.toast(getView(), "Refresh failed");
+                                        return;
+                                    }
+
+                                    credential = result;
+                                    refreshCredentialView();
+                                    GeneralUtils.toast(getView(), "Refreshed");
+                                }
+                            });
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        label.setText(credential.getLabel());
-        user.setText(credential.getUsername());
-        password.setModePassword();
-        password.setText(credential.getPassword());
-        email.setModeEmail();
-        email.setText(credential.getEmail());
-        url.setModeUrl();
-        url.setText(credential.getUrl());
-        description.setText(credential.getDescription());
-        otp.setEnabled(false);
+        refreshCredentialView();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    protected boolean refreshCredentialView()
+    {
+        if (credential != null) {
+            label.setText(credential.getLabel());
+            user.setText(credential.getUsername());
+            password.setModePassword();
+            password.setText(credential.getPassword());
+            email.setModeEmail();
+            email.setText(credential.getEmail());
+            url.setModeUrl();
+            url.setText(credential.getUrl());
+            description.setText(credential.getDescription());
+            otp.setEnabled(false);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -181,6 +260,7 @@ public class CredentialDisplay extends Fragment {
      */
     public interface OnCredentialFragmentInteraction {
         // TODO: Update argument type and name
-        void onCredentialFragmentInteraction(Credential credential);
+        //void onCredentialFragmentInteraction(Credential credential);
+        void onActionEditClick(String credentialGuid);
     }
 }

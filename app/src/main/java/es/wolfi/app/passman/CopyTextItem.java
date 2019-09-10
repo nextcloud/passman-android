@@ -27,7 +27,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.support.design.widget.Snackbar;
 import android.text.InputType;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -40,6 +39,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import es.wolfi.utils.GeneralUtils;
 
 public class CopyTextItem extends LinearLayout {
 
@@ -135,6 +135,6 @@ public class CopyTextItem extends LinearLayout {
         ClipData clip = ClipData.newPlainText("pss_data", text.getText().toString());
         clipboard.setPrimaryClip(clip);
 
-        Snackbar.make(this, R.string.copied_to_clipboard, Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+        GeneralUtils.toast(this,R.string.copied_to_clipboard);
     }
 }

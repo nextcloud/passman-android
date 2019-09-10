@@ -27,21 +27,21 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.koushikdutta.async.future.Future;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.logging.Logger;
+import java.util.concurrent.ConcurrentHashMap;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.JSONUtils;
+import es.wolfi.utils.GeneralUtils;
 
 public abstract class Core {
     protected static final String LOG_TAG    = "API_LIB";
@@ -83,10 +83,10 @@ public abstract class Core {
         Core.password = password;
     }
 
-    public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+    public static Future<String> requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
         String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
 
-        Ion.with(c)
+        return Ion.with(c)
         .load(host.concat(endpoint))
         .setHeader("Authorization", auth)                // set the header
         .asString()
@@ -108,6 +108,41 @@ public abstract class Core {
                 callback.onCompleted(e, result);
             }
         });
+    }
+
+    public static Future<String> requestAPIMethod(Context c, String endpoint, String method, String body, final FutureCallback<String> callback) {
+        try {
+            String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
+
+            return Ion.with(c)
+                    .load(method, host.concat(endpoint))
+                    .setHeader("Authorization", auth)                // set the header
+                    .setHeader("Content-Type", "application/json")
+                    .setStringBody(body)
+                    .asString()
+                    .setCallback(new FutureCallback<String>() {
+                        @Override
+                        public void onCompleted(Exception e, String result) {
+                            if (e == null && JSONUtils.isJSONObject(result)) {
+                                try {
+                                    JSONObject o = new JSONObject(result);
+                                    if (o.getString("message").equals("Current user is not logged in")) {
+                                        callback.onCompleted(new Exception("401"), null);
+                                        return;
+                                    }
+                                } catch (Exception ej) {
+                                    Log.d(Core.LOG_TAG, ej.toString());
+                                }
+                            }
+                            callback.onCompleted(e, result);
+                        }
+                    });
+        }
+        catch (Exception ex)
+        {
+            Log.d(Core.LOG_TAG, ex.toString());
+        }
+        return null;
     }
 
     // TODO Test this method once the server response works!
@@ -153,29 +188,29 @@ public abstract class Core {
         String host = ton.getString(SettingValues.HOST.toString());
         String user = ton.getString(SettingValues.USER.toString());
         String pass = ton.getString(SettingValues.PASSWORD.toString());
-        Toast.makeText(c, host, Toast.LENGTH_LONG).show();
+        GeneralUtils.debug(host);
         Log.d(LOG_TAG, "Host: " + host);
         Log.d(LOG_TAG, "User: " + user);
-        Log.d(LOG_TAG, "Pass: " + pass);
+        //Log.d(LOG_TAG, "Pass: " + pass);
 
         Vault.setUpAPI(host, user, pass);
-        Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {
+
+        Vault.getVaults(c, new FutureCallback<ConcurrentHashMap<String, Vault>>() {
             @Override
-            public void onCompleted(Exception e, HashMap<String, Vault> result) {
+            public void onCompleted(Exception e, ConcurrentHashMap<String, Vault> result) {
                 boolean ret = true;
 
-                if (e != null) {
+                if (e != null && e.getMessage() != null) {
                     if (e.getMessage().equals("401")) {
-                        if (toast) Toast.makeText(c, c.getString(R.string.wrongNCSettings), Toast.LENGTH_LONG).show();
+                        GeneralUtils.debugAndToast(toast,c, c.getString(R.string.wrongNCSettings));
                         ret = false;
                     }
                     else if (e.getMessage().contains("Unable to resolve host") || e.getMessage().contains("Invalid URI")) {
-                        if (toast) Toast.makeText(c, c.getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
+                        GeneralUtils.debugAndToast(toast,c, c.getString(R.string.wrongNCUrl));
                         ret = false;
                     }
                     else {
-                        Log.e(LOG_TAG, "Error: " + e.getMessage(), e);
-                        if (toast) Toast.makeText(c, c.getString(R.string.net_error) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        GeneralUtils.debugAndToast(toast,c,c.getString(R.string.net_error) + ": " + e.getMessage());
                         ret = false;
                     }
                 }

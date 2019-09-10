@@ -23,7 +23,6 @@
 package es.wolfi.utils;
 
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -34,18 +33,16 @@ import es.wolfi.app.passman.VaultFragment;
 import es.wolfi.app.passman.VaultViewAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.Filterable;
-import es.wolfi.utils.ListUtils;
 
 public class FilterListAsyncTask <T extends Filterable> extends AsyncTask<ArrayList<T>, Integer, ArrayList<T>>{
 
     private String filter;
     RecyclerView recyclerView;
-    CredentialItemFragment.OnListFragmentInteractionListener credentialMListener = null;
+    CredentialItemFragment.OnListCredentialFragmentInteractionListener credentialMListener = null;
     VaultFragment.OnListFragmentInteractionListener vaultMListener = null;
     Boolean isVaultFragment;
 
-    public FilterListAsyncTask(String filter, RecyclerView recyclerView, CredentialItemFragment.OnListFragmentInteractionListener mListener){
+    public FilterListAsyncTask(String filter, RecyclerView recyclerView, CredentialItemFragment.OnListCredentialFragmentInteractionListener mListener){
         this.filter = filter;
         this.recyclerView = recyclerView;
         this.credentialMListener = mListener;
