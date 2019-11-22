@@ -10,7 +10,7 @@
     <string name="net_error">Chyba sítě</string>
     <string name="unlock">Odemknout</string>
     <string name="wrong_vault_pw">Nesprávné heslo k trezoru</string>
-    <string name="label">Popisek</string>
+    <string name="label">Štítek</string>
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Popis</string>
