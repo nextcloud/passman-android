@@ -1,0 +1,14 @@
+<resources>
+    <string name="action_settings">Тохиргоо</string>
+    <string name="action_refresh">Сэргээх</string>
+    <string name="nchost">хүлээн авагчийн хаяг</string>
+    <string name="username">Хэрэглэгчийн нэр</string>
+    <string name="password">Нууц үг</string>
+    <string name="connect">Холбох</string>
+    <string name="label">Хаяг</string>
+    <string name="email">И-мэйл</string>
+    <string name="URL">URL</string>
+    <string name="description">Тодорхойлолт</string>
+    <string name="created">Үүсгэсэн:</string>
+    <string name="search">Хайх</string>
+</resources>

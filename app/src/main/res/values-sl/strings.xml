@@ -15,4 +15,5 @@
     <string name="not_implemented_yet">Možnost še ni dodana</string>
     <string name="created">Ustvarjeno:</string>
     <string name="last_accessed">Zadnji dostop:</string>
-    </resources>
+    <string name="search">Poišči</string>
+</resources>

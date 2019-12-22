@@ -18,4 +18,5 @@
     <string name="vault_password">Contraseña del bagul</string>
     <string name="not_implemented_yet">Entá nun s\'implementó</string>
     <string name="created">Creóse\'l</string>
-    </resources>
+    <string name="search">Search</string>
+</resources>

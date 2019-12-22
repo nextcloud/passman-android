@@ -12,4 +12,7 @@
     <string name="wrong_vault_pw">Feil velv passord</string>
     <string name="email">E-post</string>
     <string name="URL">URL</string>
-    </resources>
+    <string name="description">Skildring</string>
+    <string name="created">Oppretta:</string>
+    <string name="search">Search</string>
+</resources>

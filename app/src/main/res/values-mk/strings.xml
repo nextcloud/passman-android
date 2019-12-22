@@ -1,0 +1,13 @@
+<resources>
+    <string name="action_settings">Параметри</string>
+    <string name="action_refresh">Освежи</string>
+    <string name="nchost">Адреса на серверот</string>
+    <string name="username">Корисничко име</string>
+    <string name="password">Лозинка</string>
+    <string name="connect">Поврзи се</string>
+    <string name="email">е-пошта</string>
+    <string name="URL">Адреса</string>
+    <string name="description">Опис</string>
+    <string name="created">Создадено:</string>
+    <string name="search">Барај</string>
+</resources>

@@ -1,5 +1,6 @@
 <resources>
     <string name="action_settings">الإعدادات</string>
+    <string name="action_refresh">إنعاش</string>
     <string name="nchost">عنوان الخادم</string>
     <string name="username">إسم المستخدم</string>
     <string name="password">الكلمة السرية</string>
@@ -8,6 +9,7 @@
     <string name="net_error">خطأ في الشبكة</string>
     <string name="label">تسمية</string>
     <string name="email">البريد الإلكتروني</string>
+    <string name="URL">الرابط</string>
     <string name="description">الوصف</string>
     <string name="copied_to_clipboard">تم نسخ النص إلى الحافظة</string>
     <string name="created">تاريخ الإنشاء :</string>
