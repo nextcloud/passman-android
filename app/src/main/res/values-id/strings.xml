@@ -1,0 +1,13 @@
+<resources>
+    <string name="action_settings">Setelan</string>
+    <string name="action_refresh">Segarkan</string>
+    <string name="nchost">Alamat peladen</string>
+    <string name="username">Nama pengguna</string>
+    <string name="password">Kata kunci</string>
+    <string name="connect">Menghubungkan</string>
+    <string name="email">Surel</string>
+    <string name="URL">URL</string>
+    <string name="description">Deskrisi</string>
+    <string name="created">Dibuat:</string>
+    <string name="search">Cari</string>
+</resources>

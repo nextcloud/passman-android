@@ -4,9 +4,11 @@
     <string name="nchost">Адрес на сървъра</string>
     <string name="username">Потребител</string>
     <string name="password">Парола</string>
+    <string name="connect">Свързване</string>
     <string name="wrongNCUrl">URL адреса на Nextcloud сървъра е грешен или не може да се осъществи връзка</string>
     <string name="wrongNCSettings">Настройките са грешни</string>
     <string name="net_error">Мрежова грешка</string>
+    <string name="unlock">Отключване</string>
     <string name="wrong_vault_pw">Грешна парола за хранилището</string>
     <string name="label">Етикет</string>
     <string name="email">Имейл</string>

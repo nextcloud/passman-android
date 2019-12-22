@@ -1,0 +1,13 @@
+<resources>
+    <string name="action_settings">Sätted</string>
+    <string name="action_refresh">Värskenda</string>
+    <string name="nchost">Serveri aadress</string>
+    <string name="username">Kasutajanimi</string>
+    <string name="password">Parool</string>
+    <string name="connect">Ühenda</string>
+    <string name="email">E-post</string>
+    <string name="URL">URL</string>
+    <string name="description">Kirjeldus</string>
+    <string name="created">Loodud:</string>
+    <string name="search">Otsi</string>
+</resources>
