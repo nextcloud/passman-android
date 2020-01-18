@@ -14,7 +14,7 @@
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Opis</string>
-    <string name="copied_to_clipboard">Tekst został skopiowany do schowka</string>
+    <string name="copied_to_clipboard">Tekst skopiowany do schowka</string>
     <string name="vault_password">Hasło do sejfu</string>
     <string name="vault_password_save">Zapisz hasło do sejfu</string>
     <string name="not_implemented_yet">Jeszcze niezaimplementowane</string>
