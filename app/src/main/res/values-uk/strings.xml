@@ -11,6 +11,7 @@
     <string name="unlock">Розблокувати</string>
     <string name="wrong_vault_pw">Невірний пароль сховища</string>
     <string name="label">Мітка</string>
+    <string name="email">Електронна пошта</string>
     <string name="URL">URL-адреса</string>
     <string name="description">Опис</string>
     <string name="copied_to_clipboard">Текст скопійовано в буфер обміну</string>
