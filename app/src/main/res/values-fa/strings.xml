@@ -1,0 +1,13 @@
+<resources>
+    <string name="action_settings">تنظیمات</string>
+    <string name="action_refresh">تازه‌سازی</string>
+    <string name="nchost">آدرس سرور</string>
+    <string name="username">نام کاربری</string>
+    <string name="password">گذرواژه</string>
+    <string name="connect">اتصال</string>
+    <string name="email">پست الکترونیک</string>
+    <string name="URL">URL</string>
+    <string name="description">توضیحات</string>
+    <string name="created">ایجاد شده توسط:</string>
+    <string name="search">جستجو</string>
+</resources>
