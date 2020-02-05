@@ -4,7 +4,7 @@
     <string name="nchost">آدرس سرور</string>
     <string name="username">نام کاربری</string>
     <string name="password">گذرواژه</string>
-    <string name="connect">اتصال</string>
+    <string name="connect">متصل شدن</string>
     <string name="wrongNCUrl">نادرست URL باطن نکست کلود یا قادر به متصل شدن</string>
     <string name="wrongNCSettings">تنظیمات نادرست است</string>
     <string name="net_error">خطای شبکه</string>
