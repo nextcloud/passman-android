@@ -5,7 +5,7 @@
     <string name="username">Uživatelské jméno</string>
     <string name="password">Heslo</string>
     <string name="connect">Připojit</string>
-    <string name="wrongNCUrl">Nesprávná URL Nextcloud podpůrné vrstvy nebo se spojení nezdařilo.</string>
+    <string name="wrongNCUrl">Nesprávná URL Nextcloud podpůrné vrstvy nebo se nedaří spojit</string>
     <string name="wrongNCSettings">Nesprávná nastavení</string>
     <string name="net_error">Chyba sítě</string>
     <string name="unlock">Odemknout</string>
@@ -17,7 +17,7 @@
     <string name="copied_to_clipboard">Text zkopírován do schránky</string>
     <string name="vault_password">Heslo k trezoru</string>
     <string name="vault_password_save">Uložit heslo k trezoru</string>
-    <string name="not_implemented_yet">Funkce není implementována</string>
+    <string name="not_implemented_yet">Zatím neimplementováno</string>
     <string name="created">Vytvořeno:</string>
     <string name="last_accessed">Poslední přístup:</string>
     <string name="search">Hledat</string>
