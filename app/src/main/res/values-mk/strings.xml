@@ -5,6 +5,7 @@
     <string name="username">Корисничко име</string>
     <string name="password">Лозинка</string>
     <string name="connect">Поврзи се</string>
+    <string name="net_error">Грешка во мрежата</string>
     <string name="email">е-пошта</string>
     <string name="URL">Адреса</string>
     <string name="description">Опис</string>
