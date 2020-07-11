@@ -9,11 +9,14 @@
     <string name="wrongNCSettings">Stumm direizh</string>
     <string name="net_error">Fazi network</string>
     <string name="unlock">Digeriñ</string>
+    <string name="wrong_vault_pw">Ger-tremenn koufr fall</string>
     <string name="label">Tiketenn</string>
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Diskrivadur</string>
     <string name="copied_to_clipboard">Testenn eilet er golver</string>
+    <string name="vault_password">Ger-tremenn koufr</string>
+    <string name="vault_password_save">Enrollañ ar ger-tremenn koufr</string>
     <string name="not_implemented_yet">N\'eo ket bet lakaet c\'hoaz</string>
     <string name="created">Krouet :</string>
     <string name="last_accessed">Digoradur divezha :</string>
