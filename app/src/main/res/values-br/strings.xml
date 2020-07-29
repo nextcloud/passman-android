@@ -19,6 +19,6 @@
     <string name="vault_password_save">Enrollañ ar ger-tremenn koufr</string>
     <string name="not_implemented_yet">N\'eo ket bet lakaet c\'hoaz</string>
     <string name="created">Krouet :</string>
-    <string name="last_accessed">Digoradur divezha :</string>
+    <string name="last_accessed">Digoradur divezhañ :</string>
     <string name="search">Klask</string>
 </resources>
