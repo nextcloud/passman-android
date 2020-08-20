@@ -57,6 +57,8 @@ public class Vault extends Core implements Filterable{
         encryption_key = k;
     }
 
+    public String getEncryptionKey() { return encryption_key; }
+
     public String decryptString(String cryptogram) {
         try {
             return SJCLCrypto.decryptString(cryptogram, encryption_key);

@@ -209,6 +209,43 @@ public class PasswordList extends AppCompatActivity implements
                 .commit();
     }
 
+    void refreshVault(){
+        final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
+            @Override
+            public void onCompleted(Exception e, Vault result) {
+                if (e != null) {
+                    // Not logged in, restart activity
+                    if (e.getMessage() != null && e.getMessage().equals("401")) {
+                        recreate();
+                    }
+
+                    Log.e(Tag.CREATOR.toString(), "Unknown network error", e);
+
+                    Toast.makeText(getApplicationContext(), getString(R.string.net_error), Toast.LENGTH_LONG).show();
+                    new android.os.Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            showVaults();
+                        }
+                    }, 30000);
+                    return;
+                }
+
+                result.setEncryptionKey(vault.getEncryptionKey());
+                ton.removeExtra(vault.guid);
+                ton.addExtra(vault.guid, result);
+                ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
+                ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
+
+                HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+                vaults.put(vault.guid, result);
+
+                recreate();
+            }
+        });
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -224,7 +261,7 @@ public class PasswordList extends AppCompatActivity implements
                 showNotImplementedMessage();
                 return true;
             case R.id.action_refresh :
-                showNotImplementedMessage();
+                refreshVault();
                 return true;
             case android.R.id.home :
                 onBackPressed();
