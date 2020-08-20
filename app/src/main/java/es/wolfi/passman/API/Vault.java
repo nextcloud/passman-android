@@ -81,6 +81,10 @@ public class Vault extends Core implements Filterable{
         return false;
     }
 
+    public void lock() {
+        encryption_key = "";
+    }
+
     public boolean is_unlocked() {
         try {
             if (!encryption_key.isEmpty()) {

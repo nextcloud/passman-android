@@ -22,10 +22,18 @@
 
 package es.wolfi.app.passman;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatImageButton;
 import android.util.Log;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -55,6 +63,9 @@ public class PasswordList extends AppCompatActivity implements
 
     static boolean running = false;
 
+    private AppCompatImageButton VaultLockButton;
+    private boolean inCredentialItem = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,27 +79,46 @@ public class PasswordList extends AppCompatActivity implements
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        this.VaultLockButton = (AppCompatImageButton) findViewById(R.id.VaultLockButton);
+        this.VaultLockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                lockVault();
+            }
+        });
+        this.VaultLockButton.setVisibility(View.INVISIBLE);
+
+        FloatingActionButton addCredentialsButton = (FloatingActionButton) findViewById(R.id.addCredentialsButton);
+        addCredentialsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Adding credentials not implemented yet", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
-        fab.hide();
+        addCredentialsButton.hide();
 
         if (running) return;
+
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
 
         // @TODO: Display loading screen while checking credentials!
         final AppCompatActivity self = this;
         Core.checkLogin(this, false, new FutureCallback<Boolean>() {
             @Override
             public void onCompleted(Exception e, Boolean result) {
+            // To dismiss the dialog
+            progress.dismiss();
+
             if (result) {
                 showVaults();
                 return;
             }
+
             // If not logged in, show login form!
             LoginActivity.launch(self, new ICallback() {
                 @Override
@@ -96,17 +126,14 @@ public class PasswordList extends AppCompatActivity implements
                 showVaults();
                 }
             });
-
             }
         });
-
-
-
 
         running = true;
     }
 
     public void showVaults() {
+        this.VaultLockButton.setVisibility(View.INVISIBLE);
         Core.getAPIVersion(this, new FutureCallback<Integer>() {
             @Override
             public void onCompleted(Exception e, Integer result) {
@@ -149,9 +176,11 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     public void showActiveVault() {
+        this.inCredentialItem = false;
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         if (vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
+                this.VaultLockButton.setVisibility(View.VISIBLE);
                 getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
@@ -162,8 +191,7 @@ public class PasswordList extends AppCompatActivity implements
             else {
                 showUnlockVault();
             }
-        }
-        else {
+        } else {
             Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
                 @Override
                 public void onCompleted(Exception e, Vault result) {
@@ -196,6 +224,7 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     void showUnlockVault() {
+        this.VaultLockButton.setVisibility(View.VISIBLE);
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         if (v.unlock(settings.getString(v.guid, ""))){
             showActiveVault();
@@ -207,6 +236,19 @@ public class PasswordList extends AppCompatActivity implements
                 .replace(R.id.content_password_list, new VaultLockScreen(), "vault")
                 .addToBackStack(null)
                 .commit();
+    }
+
+    void lockVault(){
+        final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        vault.lock();
+        ton.removeExtra(vault.guid);
+        ton.addExtra(vault.guid, vault);
+
+        ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
+        ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), vault);
+        settings.edit().remove(vault.guid).apply();
+
+        onBackPressed();
     }
 
     void refreshVault(){
@@ -246,6 +288,41 @@ public class PasswordList extends AppCompatActivity implements
         });
     }
 
+    void refreshVaults(){
+        ton.removeExtra(SettingValues.VAULTS.toString());
+        showVaults();
+    }
+
+    public static void triggerRebirth(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+        assert intent != null;
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+        context.startActivity(mainIntent);
+        Runtime.getRuntime().exit(0);
+    }
+
+    void refreshButtonPressed(){
+        boolean atLeastOneFragmentIsVisible = false;
+        for (Fragment x : getSupportFragmentManager().getFragments()){
+            if(x.isVisible()) {
+                atLeastOneFragmentIsVisible = true;
+            }
+        }
+        if(!atLeastOneFragmentIsVisible){
+            triggerRebirth(this);
+        }
+
+        Fragment vaultFragment = (Fragment)getSupportFragmentManager().findFragmentByTag("vault");
+        Fragment vaultsFragment = (Fragment)getSupportFragmentManager().findFragmentByTag("vaults");
+        if (vaultFragment != null && vaultFragment.isVisible()){
+            refreshVault();
+        } else if (vaultsFragment != null && vaultsFragment.isVisible()){
+            refreshVaults();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -261,7 +338,7 @@ public class PasswordList extends AppCompatActivity implements
                 showNotImplementedMessage();
                 return true;
             case R.id.action_refresh :
-                refreshVault();
+                refreshButtonPressed();
                 return true;
             case android.R.id.home :
                 onBackPressed();
@@ -283,6 +360,8 @@ public class PasswordList extends AppCompatActivity implements
 
     @Override
     public void onListFragmentInteraction(Credential item) {
+        this.inCredentialItem = true;
+        this.VaultLockButton.setVisibility(View.INVISIBLE);
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
@@ -300,5 +379,17 @@ public class PasswordList extends AppCompatActivity implements
     @Override
     public void onCredentialFragmentInteraction(Credential credential) {
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        Fragment vaultFragment = (Fragment)getSupportFragmentManager().findFragmentByTag("vault");
+        Fragment credentialFragment = (Fragment)getSupportFragmentManager().findFragmentByTag("credential");
+        if (vaultFragment != null && vaultFragment.isVisible()){
+            this.VaultLockButton.setVisibility(View.INVISIBLE);
+        } else if (credentialFragment != null && credentialFragment.isVisible()){
+            this.VaultLockButton.setVisibility(View.VISIBLE);
+        }
+        super.onBackPressed();
     }
 }
