@@ -31,3 +31,17 @@ the default values.
 
 ## Testing server
 If you want access to a passman testing server, poke us on irc (freenode/#passman-dev)
+
+## Troubleshooting
+
+### Run SetupOpenssl.sh on Debian
+
+On trying to build a local development version with Android Studio, the openssl setup required the package `arm-linux-androideabi-gcc` which is missing on my Debian 11 (bullseye) and not available in the default repositories.
+After executing these commands, I still got errors in the end when running SetupOpenssl.sh, but the app can be built and executed.
+
+```
+apt install cmake
+git clone https://git.code.sf.net/p/armlinuxandroideabi49/code armlinuxandroideabi49-code
+PATH="$PATH:$(pwd)/armlinuxandroideabi49-code/bin/"
+./SetupOpenssl.sh
+```
