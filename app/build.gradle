@@ -48,7 +48,7 @@ android {
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debubug {
+        debug {
             debuggable true
             jniDebuggable true
             applicationIdSuffix ".debug"
@@ -87,9 +87,10 @@ android {
 
     }
 
-    lintOptions{
+    lintOptions {
         disable 'MissingTranslation'
     }
+    ndkVersion '21.3.6528147'
 }
 
 dependencies {
@@ -104,7 +105,7 @@ dependencies {
     implementation "com.android.support:support-v4:${supportLibraryVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibraryVersion}"
     implementation "com.android.support:cardview-v7:${supportLibraryVersion}"
-    implementation 'commons-codec:commons-codec:1.5'
+    implementation 'commons-codec:commons-codec:1.10'
     testImplementation 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 }
