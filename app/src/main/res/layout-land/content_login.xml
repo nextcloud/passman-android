@@ -61,7 +61,7 @@
             tools:context="es.wolfi.app.passman.LoginActivity"
             tools:showIn="@layout/activity_login">
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_host"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -98,9 +98,9 @@
 
                 </LinearLayout>
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -116,9 +116,9 @@
                     android:textColor="@color/login_text_color"
                     android:textColorHint="@color/login_text_hint_color"/>
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,9 +135,9 @@
                     android:textColor="@color/login_text_color"
                     android:textColorHint="@color/login_text_hint_color"/>
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/next"
                 style="@style/Button.Login"
                 android:layout_width="match_parent"
