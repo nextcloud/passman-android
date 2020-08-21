@@ -383,11 +383,14 @@ public class PasswordList extends AppCompatActivity implements
     @Override
     public void onBackPressed(){
         Fragment vaultFragment = (Fragment)getSupportFragmentManager().findFragmentByTag("vault");
+        Fragment vaultsFragment = (Fragment)getSupportFragmentManager().findFragmentByTag("vaults");
         Fragment credentialFragment = (Fragment)getSupportFragmentManager().findFragmentByTag("credential");
         if (vaultFragment != null && vaultFragment.isVisible()){
             this.VaultLockButton.setVisibility(View.INVISIBLE);
         } else if (credentialFragment != null && credentialFragment.isVisible()){
             this.VaultLockButton.setVisibility(View.VISIBLE);
+        } else if (vaultsFragment != null && vaultsFragment.isVisible()){
+            running = false;
         }
         super.onBackPressed();
     }
