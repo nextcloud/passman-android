@@ -38,12 +38,12 @@ android {
 
         }
         ndk {
-            abiFilters 'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
         }
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             jniDebuggable false
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -57,11 +57,12 @@ android {
             signingConfig signingConfigs.alpha
         }
         alpha {
+            minifyEnabled true
             debuggable false
             jniDebuggable false
             applicationIdSuffix ".alpha"
             versionNameSuffix '-NIGHTLY'
-            manifestPlaceholders = [appName: "Debug"]
+            manifestPlaceholders = [appName: "Alpha"]
             resValue "string", "app_name", "@string/app_name_alpha"
             signingConfig signingConfigs.alpha
         }
@@ -78,13 +79,16 @@ android {
     productFlavors {
         create("armabi") {
             dimension("arm")
-            // ndk.abiFilters.add("armabi")
         }
         create("armeabi-v7a") {
             dimension("arm")
-            // ndk.abiFilters.add("armeabi-v7a")
         }
-
+        create("arm64-v8a") {
+            dimension("arm")
+        }
+        create("x86_64") {
+            dimension("x86")
+        }
     }
 
     lintOptions {
