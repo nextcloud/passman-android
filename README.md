@@ -30,7 +30,7 @@ The passwords will be provided by [passman](https://github.com/nextcloud/passman
 1. If you want to compile either an alpha or release version, create a keystore either
 with Android Studio or `keytool` and add at least a key for the alpha build:
     ```
-    keytool -genkey -v -keystore keystore.jks -alias beta
+    keytool -genkey -v -keystore keystore.jks -alias beta -keyalg rsa
     ```
 1. Create a `gradle.properties` file based on `gradle.properties.example` and fill in the
 appropriate values for your keystore. If you only build debug builds you can leave
