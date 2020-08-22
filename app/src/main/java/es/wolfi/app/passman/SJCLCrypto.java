@@ -23,6 +23,7 @@ package es.wolfi.app.passman;
 
 public class SJCLCrypto {
     public static native String decryptString(String cryptogram, String key) throws Exception;
+    public static native String encryptString(String plaintext, String key) throws Exception;
 
     static {
         System.loadLibrary("passman-lib");

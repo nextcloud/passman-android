@@ -90,6 +90,76 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
     }
 }
 
+int encryptccm(unsigned char *plaintext, int plaintext_len,
+                unsigned char *aad, int aad_len,
+                unsigned char *key,
+                unsigned char *iv,
+                unsigned char *ciphertext,
+                unsigned char *tag)
+{
+    EVP_CIPHER_CTX *ctx;
+
+    int len;
+
+    int ciphertext_len;
+
+
+    /* Create and initialise the context */
+    if(!(ctx = EVP_CIPHER_CTX_new()))
+        handleErrors("Error initializing context");
+
+    /* Initialise the encryption operation. */
+    if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL))
+        handleErrors("Error setting crypto mode");
+
+    /*
+     * Setting IV len to 7. Not strictly necessary as this is the default
+     * but shown here for the purposes of this example.
+     */
+    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 7, NULL))
+        handleErrors("Error setting IV Length");
+
+    /* Set tag length */
+    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, 14, NULL);
+
+    /* Initialise key and IV */
+    if(1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv))
+        handleErrors("Error setting KEY and IV");
+
+    /* Provide the total plaintext length */
+    if(1 != EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len))
+        handleErrors("Error setting plaintext length");
+
+    /* Provide any AAD data. This can be called zero or one times as required */
+    if(1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_len))
+        handleErrors("Error setting AAD data");
+
+    /*
+     * Provide the message to be encrypted, and obtain the encrypted output.
+     * EVP_EncryptUpdate can only be called once for this.
+     */
+    if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
+        handleErrors("Error obtaining the encrypted output");
+    ciphertext_len = len;
+
+    /*
+     * Finalise the encryption. Normally ciphertext bytes may be written at
+     * this stage, but this does not occur in CCM mode.
+     */
+    if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
+        handleErrors("Error finalizing the encryption");
+    ciphertext_len += len;
+
+    /* Get the tag */
+    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, 14, tag))
+        handleErrors("Error getting the encryption tag");
+
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+
+    return ciphertext_len;
+}
+
 /**
  * Casts an WString to an standard char array, beware, it does not care about encoding!
  * It just discards the wide part of the chars!
@@ -177,6 +247,38 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     free(data);
     free(derived_key);
 //    free(food);
+
+    return ret;
+}
+
+char* SJCL::encrypt(char* plaintext, const string& key) {
+
+    unsigned char *ciphertext;
+    char* ret = NULL;
+
+    // Assuming plaintext will always be smaller than the sjcl cyphertext which includes the tag and padding and stuff
+    ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext));
+
+    // Ensure plaintext ends up null terminated
+    for (int i = 0; i < strlen(plaintext); i++) ciphertext[i] = '\0';
+    string s = string("The allocated string is: ") + string((char*)ciphertext);
+
+    if (0 < encryptccm(reinterpret_cast<unsigned char *>(plaintext), strlen(plaintext), NULL, NULL, (unsigned char *) key.c_str(), NULL, ciphertext, NULL)
+            ) {
+        // Try to make strings strings instead of json encoded strings
+        JSONValue *result = JSON::Parse((char *) ciphertext);
+        if (result->IsString()) {
+            ret =  wstring_to_char(result->AsString());
+            free(ciphertext);
+            free(result);
+        }
+        else {
+            ret = (char *) ciphertext;
+        }
+    }
+
+    // Free up resources
+    free(plaintext);
 
     return ret;
 }
