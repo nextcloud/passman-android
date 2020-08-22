@@ -22,10 +22,27 @@
 
 package es.wolfi.passman.API;
 
+import android.content.Context;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.async.http.BasicNameValuePair;
+import com.koushikdutta.async.http.NameValuePair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import es.wolfi.utils.Filterable;
 
@@ -57,6 +74,20 @@ public class Credential extends Core implements Filterable {
     protected String sharedKey;
 
     protected Vault vault;
+
+    private ArrayList<String> _encryptedFields = new ArrayList<String>() {
+        {
+            add("description");
+            add("username");
+            add("password");
+            add("files");
+            add("custom_fields");
+            add("otp");
+            add("email");
+            add("tags");
+            add("url");
+        }
+    };
 
     public int getId() {
         return id;
@@ -220,6 +251,7 @@ public class Credential extends Core implements Filterable {
 
     public void setVault(Vault v) {
         vault = v;
+        vaultId = vault.vault_id;
     }
 
     public static Credential fromJSON(JSONObject j) throws JSONException {
@@ -273,6 +305,32 @@ public class Credential extends Core implements Filterable {
         Credential c = Credential.fromJSON(j);
         c.setVault(v);
         return c;
+    }
+
+    private Credential encryptCredential(Credential credential){
+        vault.encryptString("");
+        return credential;
+    }
+
+    public void save(Context c, final FutureCallback<String> cb){
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("vault_id", String.valueOf(getVaultId()));
+        params.put("label", label);
+        params.put("description", description);
+        params.put("email", email);
+        params.put("username", getUsername());
+        params.put("password", password);
+        params.put("url", url);
+
+        for(Map.Entry<String, String> entry : params.entrySet()){
+            Log.e("dbg cred "+entry.getKey(), "->" + entry.getValue() + "<-");
+        }
+
+        //Log.v("Credential label", label);
+        //Log.v("Credential user", username);
+        //Log.v("Credential pass", password);
+
+        //requestAPIPOST(c, "credentials", params, cb);
     }
 
     @Override

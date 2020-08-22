@@ -71,7 +71,9 @@ public class PasswordList extends AppCompatActivity implements
     static boolean running = false;
 
     private AppCompatImageButton VaultLockButton;
+    //private AppCompatImageButton saveCredentialButton;
     private FloatingActionButton addCredentialsButton;
+    private static CredentialAdd currentCredentialAdd;
     private static String activatedBeforeRecreate = "";
 
     @Override
@@ -90,6 +92,29 @@ public class PasswordList extends AppCompatActivity implements
             ab.setDisplayHomeAsUpEnabled(true);
         }
 
+        /*
+        this.saveCredentialButton = (AppCompatImageButton) findViewById(R.id.SaveCredentialButton);
+        this.saveCredentialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Saving credentials not implemented yet", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+
+                if (currentCredentialAdd == null){
+                    return;
+                }
+                currentCredentialAdd.save(getApplicationContext(), new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        Snackbar.make(view, "Successfully saved: " + result, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                });
+            }
+        });
+        this.saveCredentialButton.setVisibility(View.INVISIBLE);
+         */
+
         this.VaultLockButton = (AppCompatImageButton) findViewById(R.id.VaultLockButton);
         this.VaultLockButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +130,15 @@ public class PasswordList extends AppCompatActivity implements
             public void onClick(View view) {
                 Snackbar.make(view, "Adding credentials not implemented yet", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                //saveCredentialButton.setVisibility(View.VISIBLE);
+                addCredentialsButton.hide();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                        .replace(R.id.content_password_list, CredentialAdd.newInstance(), "credential")
+                        .addToBackStack(null)
+                        .commit();
             }
         });
         this.addCredentialsButton.hide();
@@ -185,6 +219,7 @@ public class PasswordList extends AppCompatActivity implements
                 this.VaultLockButton.setVisibility(View.VISIBLE);
                 this.addCredentialsButton.show();
                 activatedBeforeRecreate = "vault";
+                Log.v("Open vault", String.valueOf(vault.vault_id));
                 getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
@@ -251,6 +286,11 @@ public class PasswordList extends AppCompatActivity implements
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), vault);
         settings.edit().remove(vault.guid).apply();
+
+        Fragment credentialFragment = getSupportFragmentManager().findFragmentByTag("credential");
+        if (credentialFragment != null && credentialFragment.isVisible()) {
+            onBackPressed();
+        }
 
         onBackPressed();
     }

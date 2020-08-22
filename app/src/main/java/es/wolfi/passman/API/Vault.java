@@ -60,6 +60,9 @@ public class Vault extends Core implements Filterable{
     public String getEncryptionKey() { return encryption_key; }
 
     public String decryptString(String cryptogram) {
+        if (cryptogram == null){
+            return "";
+        }
         try {
             return SJCLCrypto.decryptString(cryptogram, encryption_key);
         } catch (Exception e) {
@@ -99,7 +102,17 @@ public class Vault extends Core implements Filterable{
 
     public String encryptString(String plaintext) {
         // TODO: Implement encryption
-        return "";
+
+        if (plaintext == null){
+            return "";
+        }
+        try {
+            return SJCLCrypto.encryptString(plaintext, encryption_key);
+        } catch (Exception e) {
+            Log.e("Vault", e.getMessage());
+            e.printStackTrace();
+        }
+        return "Error encrypting";
     }
 
     public Date getCreatedTime(){

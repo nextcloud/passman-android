@@ -30,13 +30,28 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.async.http.NameValuePair;
 import com.koushikdutta.ion.Ion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -108,6 +123,82 @@ public abstract class Core {
                 callback.onCompleted(e, result);
             }
         });
+    }
+
+    private static String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for(Map.Entry<String, String> entry : params.entrySet()){
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
+    }
+
+    public static void requestAPIPOST(Context c, String endpoint, HashMap<String, String> postDataParams, final FutureCallback<String> callback) {
+        String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
+        Log.v("Credential endpoint", host.concat(endpoint));
+
+        URL url;
+        String response = "";
+        Exception ex = null;
+        try {
+            url = new URL(host.concat(endpoint));
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestProperty ("Authorization", auth);
+            conn.setReadTimeout(15000);
+            conn.setConnectTimeout(15000);
+            conn.setRequestMethod("POST");
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+
+
+            OutputStream os = conn.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
+            writer.write(getPostDataString(postDataParams));
+
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode=conn.getResponseCode();
+
+            if (responseCode == HttpsURLConnection.HTTP_OK) {
+                String line;
+                BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                while ((line=br.readLine()) != null) {
+                    response += line;
+                }
+            }
+            else {
+                response = "";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            ex = e;
+        }
+
+        if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+            try {
+                JSONObject o = new JSONObject(response);
+                if (o.getString("message").equals("Current user is not logged in")) {
+                    callback.onCompleted(new Exception("401"), null);
+                    return;
+                }
+            } catch (JSONException e1) {
+                ex = e1;
+            }
+        }
+
+        callback.onCompleted(ex, response);
     }
 
     // TODO Test this method once the server response works!

@@ -1,6 +1,6 @@
 <resources>
     <string name="action_settings">Einstellungen</string>
-    <string name="action_refresh">Aktuallisieren</string>
+    <string name="action_refresh">Aktualisieren</string>
     <string name="nchost">Serveradresse</string>
     <string name="username">Benutzername</string>
     <string name="password">Passwort</string>
@@ -21,4 +21,5 @@
     <string name="created">Erstellt:</string>
     <string name="last_accessed">Letzter Zugriff:</string>
     <string name="search">Suche</string>
+    <string name="save">Speichern</string>
 </resources>
