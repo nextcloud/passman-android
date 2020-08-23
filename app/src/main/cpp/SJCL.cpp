@@ -130,6 +130,10 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
     if(1 != EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len))
         handleErrors("Error setting plaintext length");
 
+    //handleErrors(std::to_string(EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len)).c_str());
+    //handleErrors((char*) plaintext);
+    //handleErrors(std::to_string(len).c_str());
+
     /* Provide any AAD data. This can be called zero or one times as required */
     if(1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_len))
         handleErrors("Error setting AAD data");
@@ -254,6 +258,9 @@ char* SJCL::decrypt(string sjcl_json, string key) {
 char* SJCL::encrypt(char* plaintext, const string& key) {
 
     unsigned char *ciphertext;
+    unsigned char tag[14];
+    unsigned char *iv = (unsigned char *)"";
+    unsigned char *additional = (unsigned char *)"";
     char* ret = NULL;
 
     // Assuming plaintext will always be smaller than the sjcl cyphertext which includes the tag and padding and stuff
@@ -263,22 +270,14 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     for (int i = 0; i < strlen(plaintext); i++) ciphertext[i] = '\0';
     string s = string("The allocated string is: ") + string((char*)ciphertext);
 
-    if (0 < encryptccm(reinterpret_cast<unsigned char *>(plaintext), strlen(plaintext), NULL, NULL, (unsigned char *) key.c_str(), NULL, ciphertext, NULL)
-            ) {
-        // Try to make strings strings instead of json encoded strings
-        JSONValue *result = JSON::Parse((char *) ciphertext);
-        if (result->IsString()) {
-            ret =  wstring_to_char(result->AsString());
-            free(ciphertext);
-            free(result);
-        }
-        else {
-            ret = (char *) ciphertext;
-        }
+    int ret_code = encryptccm(reinterpret_cast<unsigned char *>(plaintext), strlen(plaintext), additional, strlen ((char *)additional), (unsigned char *) key.c_str(), iv, ciphertext, tag);
+    if (0 < ret_code) {
+        Datagram* ciphertext_base64 = BASE64::encode((unsigned char *) ciphertext, sizeof((unsigned char *) ciphertext));
+        ret = (char *) ciphertext_base64->data;
     }
 
     // Free up resources
-    free(plaintext);
+    free(ciphertext);
 
     return ret;
 }

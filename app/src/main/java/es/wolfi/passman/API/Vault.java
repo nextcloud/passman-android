@@ -103,7 +103,7 @@ public class Vault extends Core implements Filterable{
     public String encryptString(String plaintext) {
         // TODO: Implement encryption
 
-        if (plaintext == null){
+        if (plaintext == null || plaintext.length() == 0){
             return "";
         }
         try {
