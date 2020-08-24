@@ -307,13 +307,14 @@ public class Credential extends Core implements Filterable {
         return c;
     }
 
-    private Credential encryptCredential(Credential credential){
-        vault.encryptString("");
-        return credential;
-    }
-
     public void save(Context c, final FutureCallback<String> cb){
-        HashMap<String, String> params = new HashMap<String, String>();
+
+        String enc = vault.encryptString("test123");
+        //Log.e("enc test", enc);
+        String dec = vault.decryptString(enc);
+        //Log.e("dec test", dec);
+
+        /*HashMap<String, String> params = new HashMap<String, String>();
         params.put("vault_id", String.valueOf(getVaultId()));
         params.put("label", label);
         params.put("description", description);
@@ -324,7 +325,7 @@ public class Credential extends Core implements Filterable {
 
         for(Map.Entry<String, String> entry : params.entrySet()){
             Log.e("dbg cred "+entry.getKey(), "->" + entry.getValue() + "<-");
-        }
+        }*/
 
         //Log.v("Credential label", label);
         //Log.v("Credential user", username);

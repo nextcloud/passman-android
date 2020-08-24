@@ -23,13 +23,31 @@
 #include "SJCL.h"
 #include <openssl/evp.h>
 #include <JSON.h>
+#include "json.hpp"
 #include "base64.h"
 #include <android/log.h>
+#include <vector>
+#include <algorithm>
 
 #define LOG_TAG "SJCL"
 
 void handleErrors(const char* error){
     __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, (const char*)"FUCK THIS SHIT GOT AN ERROR: %s", error);
+}
+
+string get_random_string(int n){
+    const int MAX_SIZE = 62;
+
+    srand(time(NULL));
+    char letters[MAX_SIZE] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q',
+                              'r','s','t','u','v','w','x','y','z',
+                              'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+                              'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+                              '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    string ran = "";
+    for (int i=0;i<n;i++)
+        ran = ran + letters[rand() % MAX_SIZE];
+    return ran;
 }
 
 int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad,
@@ -94,8 +112,10 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
                 unsigned char *aad, int aad_len,
                 unsigned char *key,
                 unsigned char *iv,
+                int iv_len,
                 unsigned char *ciphertext,
-                unsigned char *tag)
+                unsigned char *tag,
+                int tag_len)
 {
     EVP_CIPHER_CTX *ctx;
 
@@ -116,11 +136,11 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
      * Setting IV len to 7. Not strictly necessary as this is the default
      * but shown here for the purposes of this example.
      */
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 7, NULL))
+    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, iv_len, NULL))
         handleErrors("Error setting IV Length");
 
     /* Set tag length */
-    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, 14, NULL);
+    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, tag_len, NULL);
 
     /* Initialise key and IV */
     if(1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv))
@@ -129,10 +149,6 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
     /* Provide the total plaintext length */
     if(1 != EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len))
         handleErrors("Error setting plaintext length");
-
-    //handleErrors(std::to_string(EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len)).c_str());
-    //handleErrors((char*) plaintext);
-    //handleErrors(std::to_string(len).c_str());
 
     /* Provide any AAD data. This can be called zero or one times as required */
     if(1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_len))
@@ -155,7 +171,7 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
     ciphertext_len += len;
 
     /* Get the tag */
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, 14, tag))
+    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, tag_len, tag))
         handleErrors("Error getting the encryption tag");
 
     /* Clean up */
@@ -180,6 +196,8 @@ char* wstring_to_char(wstring str) {
 using namespace WLF::Crypto;
 
 char* SJCL::decrypt(string sjcl_json, string key) {
+    handleErrors("dec json:");
+    handleErrors(sjcl_json.c_str());
     JSONValue *data = JSON::Parse(sjcl_json.c_str());
 
     if (data == NULL || ! data->IsObject()) {
@@ -211,6 +229,9 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     Datagram* cryptogram = BASE64::decode((unsigned char *) cyphertext, strlen(cyphertext));
     int cyphertext_data_length = cryptogram->length - tag_size;
 
+    handleErrors(to_string(cyphertext_data_length).c_str());
+    handleErrors(to_string(strlen(cyphertext)).c_str());
+
     Datagram* salt = BASE64::decode((unsigned char *) salt_64, strlen(salt_64));
     Datagram* iv_raw = BASE64::decode((unsigned char *) iv_64, strlen(iv_64));
 //    Datagram* aadata = BASE64::decode((const unsigned char *) "", 0); // Not sure if this is required since we don't use adata
@@ -228,9 +249,10 @@ char* SJCL::decrypt(string sjcl_json, string key) {
 
     char* ret = NULL;
     // Decrypt the data
-    if (0 < decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
-       &cryptogram->data[cyphertext_data_length], derived_key, iv_raw->data, plaintext)
-    ) {
+    int plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
+               &cryptogram->data[cyphertext_data_length], derived_key, iv_raw->data, plaintext);
+
+    if (0 < plaintext_len) {
         // Try to make strings strings instead of json encoded strings
         JSONValue *result = JSON::Parse((char *) plaintext);
         if (result->IsString()) {
@@ -256,24 +278,63 @@ char* SJCL::decrypt(string sjcl_json, string key) {
 }
 
 char* SJCL::encrypt(char* plaintext, const string& key) {
+    int iv_len = 8;    //8? (see 3.1 at https://tools.ietf.org/html/rfc4309#page-4)
+    int salt_len = 12;  //can I use a random number here?
+    int iter = 1000;
+    int key_size = 256;
+    int tag_size = 64;
 
+    int ks = key_size / 8;  // Make it bytes
+    int ts = tag_size / 8;  // Make it bytes
     unsigned char *ciphertext;
-    unsigned char tag[14];
-    unsigned char *iv = (unsigned char *)"";
+    unsigned char *derived_key;
+    unsigned char tag[ts];  // Make it bytes
+    unsigned char *iv = nullptr;
+    unsigned char *salt = nullptr;
     unsigned char *additional = (unsigned char *)"";
     char* ret = NULL;
 
-    // Assuming plaintext will always be smaller than the sjcl cyphertext which includes the tag and padding and stuff
-    ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext));
+    iv = (unsigned char *) get_random_string(iv_len).c_str();
+    salt = (unsigned char *) get_random_string(salt_len).c_str();
+    derived_key = (unsigned char*) malloc(sizeof(unsigned char) * ks);
+
+    //* PBKDF2 Key derivation with SHA256 as SJCL does by default */
+    PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key);
+
+    // Assuming ciphertext will not be bigger that the plaintext length * 3
+    ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * 3);
 
     // Ensure plaintext ends up null terminated
     for (int i = 0; i < strlen(plaintext); i++) ciphertext[i] = '\0';
-    string s = string("The allocated string is: ") + string((char*)ciphertext);
 
-    int ret_code = encryptccm(reinterpret_cast<unsigned char *>(plaintext), strlen(plaintext), additional, strlen ((char *)additional), (unsigned char *) key.c_str(), iv, ciphertext, tag);
-    if (0 < ret_code) {
-        Datagram* ciphertext_base64 = BASE64::encode((unsigned char *) ciphertext, sizeof((unsigned char *) ciphertext));
-        ret = (char *) ciphertext_base64->data;
+    int ciphertext_len = encryptccm(reinterpret_cast<unsigned char *>(plaintext), strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
+    if (0 < ciphertext_len) {
+
+        char ciphertext_with_tag[ciphertext_len + ts];   // array to hold the result.
+
+        strcpy(ciphertext_with_tag, reinterpret_cast<const char *>(ciphertext)); // copy string one into the result.
+        strcat(ciphertext_with_tag, reinterpret_cast<const char *>(tag));
+
+        Datagram* ciphertext_base64 = BASE64::encode(
+                reinterpret_cast<const unsigned char *>(ciphertext_with_tag), ciphertext_len + ts);
+        Datagram* salt_base64 = BASE64::encode(salt, salt_len);
+        Datagram* iv_base64 = BASE64::encode(iv, iv_len);
+
+        using json = nlohmann::json;
+        json food;
+
+        food["iv"] = reinterpret_cast<char*>(iv_base64->data);
+        food["v"] = 1;
+        food["iter"] = iter;
+        food["ks"] = key_size;
+        food["ts"] = tag_size;
+        food["mode"] = "ccm";
+        food["adata"] = "";
+        food["cipher"] = "aes";
+        food["salt"] = reinterpret_cast<char*>(salt_base64->data);
+        food["ct"] = reinterpret_cast<char*>(ciphertext_base64->data);
+
+        ret = (char *) food.dump().c_str();
     }
 
     // Free up resources
