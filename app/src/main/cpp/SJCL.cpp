@@ -38,7 +38,6 @@ void handleErrors(const char* error){
 string get_random_string(int n){
     const int MAX_SIZE = 62;
 
-    srand(time(NULL));
     char letters[MAX_SIZE] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q',
                               'r','s','t','u','v','w','x','y','z',
                               'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
@@ -196,7 +195,7 @@ char* wstring_to_char(wstring str) {
 using namespace WLF::Crypto;
 
 char* SJCL::decrypt(string sjcl_json, string key) {
-    handleErrors("dec json:");
+    handleErrors("json to decode:");
     handleErrors(sjcl_json.c_str());
     JSONValue *data = JSON::Parse(sjcl_json.c_str());
 
@@ -230,7 +229,7 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     int cyphertext_data_length = cryptogram->length - tag_size;
 
     handleErrors(to_string(cyphertext_data_length).c_str());
-    handleErrors(to_string(strlen(cyphertext)).c_str());
+    handleErrors(to_string(cryptogram->length).c_str());
 
     Datagram* salt = BASE64::decode((unsigned char *) salt_64, strlen(salt_64));
     Datagram* iv_raw = BASE64::decode((unsigned char *) iv_64, strlen(iv_64));
@@ -277,12 +276,14 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     return ret;
 }
 
+
 char* SJCL::encrypt(char* plaintext, const string& key) {
     int iv_len = 8;    //8? (see 3.1 at https://tools.ietf.org/html/rfc4309#page-4)
     int salt_len = 12;  //can I use a random number here?
     int iter = 1000;
     int key_size = 256;
     int tag_size = 64;
+    int ciphertext_allocation_multiplicator = 30;
 
     int ks = key_size / 8;  // Make it bytes
     int ts = tag_size / 8;  // Make it bytes
@@ -294,36 +295,56 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     unsigned char *additional = (unsigned char *)"";
     char* ret = NULL;
 
-    iv = (unsigned char *) get_random_string(iv_len).c_str();
-    salt = (unsigned char *) get_random_string(salt_len).c_str();
+    srand(time(NULL));
+
+    //iv = (unsigned char *) get_random_string(iv_len).c_str();
+    std::string tmpiv = get_random_string(iv_len);
+    iv = (unsigned char *) tmpiv.c_str();
+    iv_len = tmpiv.length();
+
+    //salt = (unsigned char *) get_random_string(salt_len).c_str();
+    std::string tmpsalt = get_random_string(salt_len);
+    salt = (unsigned char *) tmpsalt.c_str();
+    salt_len = tmpsalt.length();
+
     derived_key = (unsigned char*) malloc(sizeof(unsigned char) * ks);
 
-    //* PBKDF2 Key derivation with SHA256 as SJCL does by default */
+    // PBKDF2 Key derivation with SHA256 as SJCL does by default
     PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key);
 
-    // Assuming ciphertext will not be bigger that the plaintext length * 3
-    ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * 3);
+    // Assuming ciphertext will not be bigger that the plaintext length * ciphertext_allocation_multiplicator
+    ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator);
 
-    // Ensure plaintext ends up null terminated
-    for (int i = 0; i < strlen(plaintext); i++) ciphertext[i] = '\0';
+    // Ensure ciphertext ends up null terminated (do I need this?)
+    //for (int i = 0; i < strlen(plaintext) * ciphertext_allocation_multiplicator; i++) ciphertext[i] = '\0';
 
     int ciphertext_len = encryptccm(reinterpret_cast<unsigned char *>(plaintext), strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
     if (0 < ciphertext_len) {
+        //char ciphertext_with_tag[ciphertext_len + ts];   // array to hold the result.
+        char *ciphertext_with_tag = (char *)malloc(ciphertext_len + ts);
 
-        char ciphertext_with_tag[ciphertext_len + ts];   // array to hold the result.
-
-        strcpy(ciphertext_with_tag, reinterpret_cast<const char *>(ciphertext)); // copy string one into the result.
-        strcat(ciphertext_with_tag, reinterpret_cast<const char *>(tag));
+        //strcpy(ciphertext_with_tag, reinterpret_cast<const char *>(ciphertext));
+        strncpy(ciphertext_with_tag, reinterpret_cast<const char *>(ciphertext), ciphertext_len);
+        //strcat(ciphertext_with_tag, reinterpret_cast<const char *>(tag));
+        strncat(ciphertext_with_tag, reinterpret_cast<const char *>(tag), ts);
 
         Datagram* ciphertext_base64 = BASE64::encode(
                 reinterpret_cast<const unsigned char *>(ciphertext_with_tag), ciphertext_len + ts);
+        char *tmpct64 = reinterpret_cast<char*>(ciphertext_base64->data);
+
         Datagram* salt_base64 = BASE64::encode(salt, salt_len);
+        char *tmpsalt64 = reinterpret_cast<char*>(salt_base64->data);
+
         Datagram* iv_base64 = BASE64::encode(iv, iv_len);
+        char *tmpiv64 = reinterpret_cast<char *>(iv_base64->data);
 
-        using json = nlohmann::json;
-        json food;
 
-        food["iv"] = reinterpret_cast<char*>(iv_base64->data);
+        nlohmann::json food;
+
+        food["ct"] = tmpct64;
+        food["salt"] = tmpsalt64;
+        food["iv"] = tmpiv64;
+
         food["v"] = 1;
         food["iter"] = iter;
         food["ks"] = key_size;
@@ -331,8 +352,6 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         food["mode"] = "ccm";
         food["adata"] = "";
         food["cipher"] = "aes";
-        food["salt"] = reinterpret_cast<char*>(salt_base64->data);
-        food["ct"] = reinterpret_cast<char*>(ciphertext_base64->data);
 
         ret = (char *) food.dump().c_str();
     }
