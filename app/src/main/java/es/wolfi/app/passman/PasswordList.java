@@ -71,9 +71,7 @@ public class PasswordList extends AppCompatActivity implements
     static boolean running = false;
 
     private AppCompatImageButton VaultLockButton;
-    //private AppCompatImageButton saveCredentialButton;
     private FloatingActionButton addCredentialsButton;
-    private static CredentialAdd currentCredentialAdd;
     private static String activatedBeforeRecreate = "";
 
     @Override
@@ -91,29 +89,6 @@ public class PasswordList extends AppCompatActivity implements
             ab.setHomeButtonEnabled(true);
             ab.setDisplayHomeAsUpEnabled(true);
         }
-
-        /*
-        this.saveCredentialButton = (AppCompatImageButton) findViewById(R.id.SaveCredentialButton);
-        this.saveCredentialButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Saving credentials not implemented yet", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                if (currentCredentialAdd == null){
-                    return;
-                }
-                currentCredentialAdd.save(getApplicationContext(), new FutureCallback<String>() {
-                    @Override
-                    public void onCompleted(Exception e, String result) {
-                        Snackbar.make(view, "Successfully saved: " + result, Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
-                });
-            }
-        });
-        this.saveCredentialButton.setVisibility(View.INVISIBLE);
-         */
 
         this.VaultLockButton = (AppCompatImageButton) findViewById(R.id.VaultLockButton);
         this.VaultLockButton.setOnClickListener(new View.OnClickListener() {
@@ -332,7 +307,9 @@ public class PasswordList extends AppCompatActivity implements
                 HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
                 vaults.put(vault.guid, result);
 
-                recreate();
+                CredentialItemFragment credentialItems = (CredentialItemFragment)
+                        getSupportFragmentManager().findFragmentById(R.id.content_password_list);
+                credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
             }
         });
     }

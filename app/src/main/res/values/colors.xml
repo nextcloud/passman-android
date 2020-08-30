@@ -17,4 +17,5 @@
     <color name="secondary_button_text_color">@color/black</color>
 
     <color name="transparent">#00000000</color>
+    <color name="danger">#FF0000</color>
 </resources>

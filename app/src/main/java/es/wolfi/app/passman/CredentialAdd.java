@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -53,6 +54,7 @@ import es.wolfi.passman.API.Vault;
 public class CredentialAdd extends Fragment implements View.OnClickListener {
     public static String CREDENTIAL = "credential";
 
+    @BindView(R.id.add_credential_label_header) TextView label_header;
     @BindView(R.id.add_credential_label) EditText label;
     @BindView(R.id.add_credential_user) EditText user;
     @BindView(R.id.add_credential_password) EditText password;
@@ -122,6 +124,10 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        if (label.getText().toString().equals("")){
+            label_header.setTextColor(getResources().getColor(R.color.danger));
+            return;
+        }
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
         this.credential.setPassword(password.getText().toString());
@@ -137,6 +143,10 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
                     //Log.v("Credential saved", result);
                     Snackbar.make(view, R.string.successfully_saved, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
+                    assert getFragmentManager() != null;
+                    Objects.requireNonNull(((PasswordList)getActivity())).refreshVault();
+                    //((PasswordList)getActivity()).refreshVault();
+                    getFragmentManager().popBackStack();
                 } else {
                     if(e != null && e.getMessage() != null){
                         e.printStackTrace();

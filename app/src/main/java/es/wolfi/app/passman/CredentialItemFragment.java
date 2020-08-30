@@ -55,6 +55,7 @@ public class CredentialItemFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
+    private RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -82,6 +83,34 @@ public class CredentialItemFragment extends Fragment {
         }
     }
 
+    public void loadCredentialList(View view){
+        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String searchText = searchInput.getText().toString().toLowerCase();
+                if(filterTask != null){
+                    filterTask.cancel(true);
+                }
+                filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
+                ArrayList<Credential> input [] = new ArrayList[]{v.getCredentials()};
+                filterTask.execute((Object[]) input);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,37 +120,13 @@ public class CredentialItemFragment extends Fragment {
         View credentialView = view.findViewById(R.id.list);
         if (credentialView instanceof RecyclerView) {
             Context context = credentialView.getContext();
-            final RecyclerView recyclerView = (RecyclerView) credentialView;
+            recyclerView = (RecyclerView) credentialView;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
-            searchInput.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    String searchText = searchInput.getText().toString().toLowerCase();
-                    if(filterTask != null){
-                        filterTask.cancel(true);
-                    }
-                    filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
-                    ArrayList<Credential> input [] = new ArrayList[]{v.getCredentials()};
-                    filterTask.execute((Object[]) input);
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-            recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+            loadCredentialList(view);
         }
         return view;
     }
