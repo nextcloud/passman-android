@@ -35,6 +35,7 @@ import com.koushikdutta.async.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -308,30 +309,26 @@ public class Credential extends Core implements Filterable {
     }
 
     public void save(Context c, final FutureCallback<String> cb){
-
-        String enc = vault.encryptString("test123");
-        //Log.e("enc test", enc);
-        String dec = vault.decryptString(enc);
-        //Log.e("dec test", dec);
-
-        /*HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, String> params = new HashMap<String, String>();
         params.put("vault_id", String.valueOf(getVaultId()));
         params.put("label", label);
         params.put("description", description);
+        params.put("created", null);
+        params.put("changed", null);
+        params.put("tags", tags);
         params.put("email", email);
-        params.put("username", getUsername());
+        params.put("username", username);
         params.put("password", password);
         params.put("url", url);
+        params.put("favicon", getFavicon());
+        params.put("renew_interval", String.valueOf(getRenewInterval()));
+        params.put("expire_time", String.valueOf(getExpireTime()));
+        params.put("delete_time", String.valueOf(getDeleteTime()));
+        params.put("files", files);
+        params.put("custom_fields", customFields);
+        params.put("otp", otp);
 
-        for(Map.Entry<String, String> entry : params.entrySet()){
-            Log.e("dbg cred "+entry.getKey(), "->" + entry.getValue() + "<-");
-        }*/
-
-        //Log.v("Credential label", label);
-        //Log.v("Credential user", username);
-        //Log.v("Credential pass", password);
-
-        //requestAPIPOST(c, "credentials", params, cb);
+        requestAPIPOST(c, "credentials", params, cb, true);
     }
 
     @Override

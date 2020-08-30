@@ -24,11 +24,13 @@ package es.wolfi.passman.API;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.async.http.NameValuePair;
 import com.koushikdutta.ion.Ion;
@@ -36,6 +38,7 @@ import com.koushikdutta.ion.Ion;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -52,6 +55,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -125,51 +129,40 @@ public abstract class Core {
         });
     }
 
-    private static String getPostDataString(HashMap<String, String> params) throws UnsupportedEncodingException {
-        StringBuilder result = new StringBuilder();
-        boolean first = true;
-        for(Map.Entry<String, String> entry : params.entrySet()){
-            if (first)
-                first = false;
-            else
-                result.append("&");
-
-            result.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
-            result.append("=");
-            result.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-        }
-
-        return result.toString();
-    }
-
-    public static void requestAPIPOST(Context c, String endpoint, HashMap<String, String> postDataParams, final FutureCallback<String> callback) {
+    public static void requestAPIPOST(Context c, String endpoint, HashMap<String, String> postDataParams, final FutureCallback<String> callback, boolean allowSelfInvocation) {
         String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
-        Log.v("Credential endpoint", host.concat(endpoint));
 
-        URL url;
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+
         String response = "";
         Exception ex = null;
         try {
-            url = new URL(host.concat(endpoint));
+            URL url = new URL(host.concat(endpoint));
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestProperty ("Authorization", auth);
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json, text/plain, */*");
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
+            Gson gson = new Gson();
+            String postData = gson.toJson(postDataParams);
 
-            OutputStream os = conn.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, StandardCharsets.UTF_8));
-            writer.write(getPostDataString(postDataParams));
+            OutputStream out = new BufferedOutputStream(conn.getOutputStream());
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
+
+            writer.write(postData);
 
             writer.flush();
             writer.close();
-            os.close();
-            int responseCode=conn.getResponseCode();
+            out.close();
+            int responseCode = conn.getResponseCode();
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
                 String line;
@@ -181,6 +174,15 @@ public abstract class Core {
             else {
                 response = "";
             }
+        } catch (SSLHandshakeException e) {
+            // sometimes the SSLHandshakeException can be resolved by doing the request twice
+            if (allowSelfInvocation){
+                requestAPIPOST(c, endpoint, postDataParams, callback, false);
+                return;
+            } else {
+                e.printStackTrace();
+                ex = e;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             ex = e;
@@ -189,7 +191,7 @@ public abstract class Core {
         if (!response.equals("") && JSONUtils.isJSONObject(response)) {
             try {
                 JSONObject o = new JSONObject(response);
-                if (o.getString("message").equals("Current user is not logged in")) {
+                if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
                     callback.onCompleted(new Exception("401"), null);
                     return;
                 }

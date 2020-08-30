@@ -37,6 +37,8 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.koushikdutta.async.future.FutureCallback;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
@@ -120,22 +122,31 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        Snackbar.make(view, "Saving credentials not implemented yet", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
         this.credential.setPassword(password.getText().toString());
         this.credential.setEmail(email.getText().toString());
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
+        this.credential.setOtp("{}");
 
         this.credential.save(view.getContext(), new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                Log.v("Credential saved", result);
-                Snackbar.make(view, "Successfully saved: " + result, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if (e == null && !result.equals("")){
+                    //Log.v("Credential saved", result);
+                    Snackbar.make(view, R.string.successfully_saved, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    if(e != null && e.getMessage() != null){
+                        e.printStackTrace();
+                        Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    } else {
+                        Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                }
             }
         });
     }

@@ -128,10 +128,6 @@ public class PasswordList extends AppCompatActivity implements
         this.addCredentialsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Adding credentials not implemented yet", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                //saveCredentialButton.setVisibility(View.VISIBLE);
                 addCredentialsButton.hide();
                 getSupportFragmentManager()
                         .beginTransaction()

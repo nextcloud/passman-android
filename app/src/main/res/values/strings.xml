@@ -26,4 +26,6 @@
     <string name="last_accessed">Last accessed:</string>
     <string name="search">Search</string>
     <string name="save">Save</string>
+    <string name="successfully_saved">Successfully saved</string>
+    <string name="error_occurred">An error occurred</string>
 </resources>
