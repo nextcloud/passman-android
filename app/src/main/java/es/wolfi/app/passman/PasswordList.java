@@ -146,10 +146,7 @@ public class PasswordList extends AppCompatActivity implements
         checkFragmentPosition(true);
         if (running) return;
 
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle("Loading");
-        progress.setMessage("Wait while loading...");
-        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        final ProgressDialog progress = getProgressDialog();
         progress.show();
 
         final AppCompatActivity self = this;
@@ -170,6 +167,15 @@ public class PasswordList extends AppCompatActivity implements
         });
 
         running = true;
+    }
+
+    private ProgressDialog getProgressDialog(){
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+
+        return progress;
     }
 
     public void showVaults() {
@@ -213,6 +219,8 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     public void showActiveVault() {
+        ProgressDialog progress = getProgressDialog();
+        progress.show();
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         if (vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
@@ -259,6 +267,7 @@ public class PasswordList extends AppCompatActivity implements
                 }
             });
         }
+        progress.dismiss();
     }
 
     void showUnlockVault() {
