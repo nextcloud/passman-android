@@ -25,25 +25,12 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.async.http.BasicNameValuePair;
-import com.koushikdutta.async.http.NameValuePair;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import es.wolfi.utils.Filterable;
 
@@ -73,6 +60,7 @@ public class Credential extends Core implements Filterable {
     protected String otp;
     protected boolean hidden;
     protected String sharedKey;
+    protected String compromised;
 
     protected Vault vault;
 
@@ -87,6 +75,7 @@ public class Credential extends Core implements Filterable {
             add("email");
             add("tags");
             add("url");
+            add("compromised");
         }
     };
 
@@ -246,6 +235,14 @@ public class Credential extends Core implements Filterable {
         this.sharedKey = sharedKey;
     }
 
+    public String getCompromised() {
+        return vault.decryptString(compromised);
+    }
+
+    public void setCompromised(String compromised) {
+        this.compromised = vault.encryptString(compromised);
+    }
+
     public Vault getVault() {
         return vault;
     }
@@ -309,26 +306,38 @@ public class Credential extends Core implements Filterable {
     }
 
     public void save(Context c, final FutureCallback<String> cb){
-        HashMap<String, String> params = new HashMap<String, String>();
-        params.put("vault_id", String.valueOf(getVaultId()));
-        params.put("label", label);
-        params.put("description", description);
-        params.put("created", null);
-        params.put("changed", null);
-        params.put("tags", tags);
-        params.put("email", email);
-        params.put("username", username);
-        params.put("password", password);
-        params.put("url", url);
-        params.put("favicon", getFavicon());
-        params.put("renew_interval", String.valueOf(getRenewInterval()));
-        params.put("expire_time", String.valueOf(getExpireTime()));
-        params.put("delete_time", String.valueOf(getDeleteTime()));
-        params.put("files", files);
-        params.put("custom_fields", customFields);
-        params.put("otp", otp);
+        JSONObject params = new JSONObject();
 
-        requestAPIPOST(c, "credentials", params, cb, true);
+        try {
+            JSONObject icon = new JSONObject();
+            icon.put("type", false);
+            icon.put("content", "");
+
+            params.put("vault_id", getVaultId());
+            params.put("label", label);
+            params.put("description", description);
+            params.put("created", getCreated());
+            params.put("changed", getChanged());
+            params.put("tags", tags);
+            params.put("email", email);
+            params.put("icon", icon);
+            params.put("username", username);
+            params.put("password", password);
+            params.put("url", url);
+            params.put("favicon", getFavicon());
+            params.put("renew_interval", getRenewInterval());
+            params.put("expire_time", getExpireTime());
+            params.put("delete_time", getDeleteTime());
+            params.put("files", files);
+            params.put("custom_fields", customFields);
+            params.put("otp", otp);
+            params.put("compromised", compromised);
+            params.put("hidden", isHidden());
+
+            requestAPIPOST(c, "credentials", params, cb, true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

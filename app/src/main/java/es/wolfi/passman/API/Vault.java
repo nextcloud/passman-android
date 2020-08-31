@@ -23,7 +23,6 @@
 package es.wolfi.passman.API;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -101,7 +100,7 @@ public class Vault extends Core implements Filterable{
     }
 
     public String encryptString(String plaintext) {
-        if (plaintext == null || plaintext.length() == 0){
+        if (plaintext == null){
             return "";
         }
         try {

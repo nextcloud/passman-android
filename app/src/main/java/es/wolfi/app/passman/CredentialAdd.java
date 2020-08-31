@@ -24,7 +24,6 @@ package es.wolfi.app.passman;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,6 +134,12 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
         this.credential.setOtp("{}");
+        this.credential.setFiles("");
+        this.credential.setCustomFields("");
+        this.credential.setTags("");
+        this.credential.setFavicon("");
+        this.credential.setCompromised("");
+        this.credential.setHidden(false);
 
         this.credential.save(view.getContext(), new FutureCallback<String>() {
             @Override
@@ -145,7 +150,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
                             .setAction("Action", null).show();
                     assert getFragmentManager() != null;
                     Objects.requireNonNull(((PasswordList)getActivity())).refreshVault();
-                    //((PasswordList)getActivity()).refreshVault();
+                    Objects.requireNonNull(((PasswordList)getActivity())).showAddCredentialsButton();
                     getFragmentManager().popBackStack();
                 } else {
                     if(e != null && e.getMessage() != null){

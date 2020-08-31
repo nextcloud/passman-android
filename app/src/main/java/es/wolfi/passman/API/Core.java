@@ -30,9 +30,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.async.http.NameValuePair;
 import com.koushikdutta.ion.Ion;
 
 import org.json.JSONException;
@@ -44,15 +42,10 @@ import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
@@ -129,7 +122,7 @@ public abstract class Core {
         });
     }
 
-    public static void requestAPIPOST(Context c, String endpoint, HashMap<String, String> postDataParams, final FutureCallback<String> callback, boolean allowSelfInvocation) {
+    public static void requestAPIPOST(Context c, String endpoint, JSONObject postDataParams, final FutureCallback<String> callback, boolean allowSelfInvocation) {
         String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -151,8 +144,7 @@ public abstract class Core {
             conn.setDoInput(true);
             conn.setDoOutput(true);
 
-            Gson gson = new Gson();
-            String postData = gson.toJson(postDataParams);
+            String postData = postDataParams.toString();
 
             OutputStream out = new BufferedOutputStream(conn.getOutputStream());
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));

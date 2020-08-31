@@ -343,6 +343,7 @@ public class PasswordList extends AppCompatActivity implements
         FragmentManager fm = getSupportFragmentManager();
         Fragment vaultFragment = fm.findFragmentByTag("vault");
         Fragment vaultsFragment = fm.findFragmentByTag("vaults");
+
         if (vaultFragment != null && vaultFragment.isVisible()) {
             refreshVault();
         } else if (vaultsFragment != null && vaultsFragment.isVisible()) {
@@ -373,6 +374,10 @@ public class PasswordList extends AppCompatActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void showAddCredentialsButton(){
+        addCredentialsButton.show();
     }
 
     private void showNotImplementedMessage() {
