@@ -63,6 +63,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
     private OnCredentialFragmentInteraction mListener;
     private Credential credential;
+    private boolean alreadySaving = false;
 
     public CredentialAdd() {
         // Required empty public constructor
@@ -123,10 +124,15 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+        if(alreadySaving){
+            return;
+        }
+
         if (label.getText().toString().equals("")){
             label_header.setTextColor(getResources().getColor(R.color.danger));
             return;
         }
+
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
         this.credential.setPassword(password.getText().toString());
@@ -141,6 +147,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         this.credential.setCompromised("");
         this.credential.setHidden(false);
 
+        alreadySaving = true;
         this.credential.save(view.getContext(), new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
@@ -151,6 +158,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
                     assert getFragmentManager() != null;
                     Objects.requireNonNull(((PasswordList)getActivity())).refreshVault();
                     Objects.requireNonNull(((PasswordList)getActivity())).showAddCredentialsButton();
+                    alreadySaving = false;
                     getFragmentManager().popBackStack();
                 } else {
                     if(e != null && e.getMessage() != null){
