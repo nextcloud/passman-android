@@ -190,7 +190,7 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     public void showActiveVault() {
-        ProgressDialog progress = getProgressDialog();
+        final ProgressDialog progress = getProgressDialog();
         progress.show();
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         if (vault.getCredentials() != null) {
@@ -238,7 +238,12 @@ public class PasswordList extends AppCompatActivity implements
                 }
             });
         }
-        progress.dismiss();
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progress.dismiss();
+            }
+        }, 100);
     }
 
     void showUnlockVault() {
