@@ -28,7 +28,7 @@ namespace WLF {
         class SJCL {
         public:
             static char* decrypt(string sjcl_json, string key);
-            static char* encrypt(char* message, const string& key);
+            static char* encrypt(unsigned char *bytearray, int len, const string& key);
         };
     }
 }

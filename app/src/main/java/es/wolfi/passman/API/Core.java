@@ -150,6 +150,7 @@ public abstract class Core {
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
 
             writer.write(postData);
+            Log.e("postData", postData);
 
             writer.flush();
             writer.close();

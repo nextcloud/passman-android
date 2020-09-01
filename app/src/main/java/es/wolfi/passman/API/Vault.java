@@ -104,7 +104,8 @@ public class Vault extends Core implements Filterable{
             return "";
         }
         try {
-            return SJCLCrypto.encryptString(plaintext, encryption_key);
+            plaintext = '"' + plaintext.replaceAll("\"","\\\"") + '"';
+            return SJCLCrypto.encryptString(plaintext.getBytes(), encryption_key);
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
             e.printStackTrace();
