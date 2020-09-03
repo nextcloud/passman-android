@@ -107,7 +107,7 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
     }
 }
 
-int encryptccm(unsigned char *plaintext, int plaintext_len,
+int encryptccm(uint16_t *plaintext, int plaintext_len,
                 unsigned char *aad, int aad_len,
                 unsigned char *key,
                 unsigned char *iv,
@@ -157,7 +157,8 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
      * Provide the message to be encrypted, and obtain the encrypted output.
      * EVP_EncryptUpdate can only be called once for this.
      */
-    if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
+    if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len,
+                              reinterpret_cast<const unsigned char *>(plaintext), plaintext_len))
         handleErrors("Error obtaining the encrypted output");
     ciphertext_len = len;
 
@@ -286,7 +287,7 @@ uint8_t* addQuotationmarksToUInt8(uint8_t *message){
     return newmessage;
 }
 
-char* SJCL::encrypt(unsigned char *original_plaintext, int plaintext_len_x, const string& key) {
+char* SJCL::encrypt(uint16_t *original_plaintext, int plaintext_len_x, const string& key) {
     //uint8_t *plaintext = addQuotationmarksToUInt8(original_plaintext);
 
     //int plaintext_len = sizeof(original_plaintext);
@@ -340,7 +341,7 @@ char* SJCL::encrypt(unsigned char *original_plaintext, int plaintext_len_x, cons
     //unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
     int ciphertext_len = encryptccm(original_plaintext, plaintext_len, additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
     if (0 < ciphertext_len) {
-        uint8_t *ciphertext_with_tag = static_cast<uint8_t *>(malloc(sizeof(char *) * (ciphertext_len + ts)));
+        uint16_t *ciphertext_with_tag = static_cast<uint16_t *>(malloc(sizeof(char *) * (ciphertext_len + ts)));
         memcpy(ciphertext_with_tag, ciphertext, ciphertext_len);
         memcpy(ciphertext_with_tag + ciphertext_len, tag, ts);
 

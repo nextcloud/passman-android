@@ -49,7 +49,7 @@ void throwJavaException(JNIEnv *env, const char *msg)
 
 extern "C" {
 
-jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptString(JNIEnv *env, jclass jthis, jstring cryptogram, jstring key) {
+jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclass jthis, jstring cryptogram, jstring key) {
     std::string dt = env->GetStringUTFChars(cryptogram, 0);
     std::string password = env->GetStringUTFChars(key, 0);
 
@@ -75,17 +75,17 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptString(JNIEnv *env, jclass j
     }
 
     throwJavaException(env, "Error decrypting");
-    return NULL;
+    return (jstring) "";
 }
 
-unsigned char* as_unsigned_char_array(JNIEnv *env, jbyteArray array) {
+uint16_t* as_unsigned_char_array(JNIEnv *env, jcharArray array) {
     int len = env->GetArrayLength (array);
-    unsigned char* buf = new unsigned char[len];
+    uint16_t *buf = new uint16_t[len];
     //__android_log_print(ANDROID_LOG_ERROR, "passman-lib", (const char*)"FUCK THIS SHIT GOT AN ERROR: %s", to_string(len).c_str());
-    env->GetByteArrayRegion (array, 0, len, reinterpret_cast<jbyte*>(buf));
+    env->GetCharArrayRegion(array, 0, len, reinterpret_cast<jchar*>(buf));
 
     if(len > 0){
-        unsigned char* buf2 = new unsigned char[len];
+        uint16_t* buf2 = new uint16_t[len];
         memcpy(buf2, buf, len);
         //__android_log_print(ANDROID_LOG_ERROR, "passman-lib", (const char*)"FUCK THIS SHIT GOT AN ERROR: %s", buf2);
         return buf2;
@@ -94,11 +94,11 @@ unsigned char* as_unsigned_char_array(JNIEnv *env, jbyteArray array) {
     return buf;
 }
 
-jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptString(JNIEnv *env, jclass jthis, jbyteArray plaintext_bytearray, jstring key) {
+jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jcharArray plaintext_bytearray, jstring key) {
     std::string password = env->GetStringUTFChars(key, 0);
 
     jsize len = env->GetArrayLength (plaintext_bytearray);
-    unsigned char *plaintext_unsigned_char = as_unsigned_char_array(env, plaintext_bytearray);
+    uint16_t *plaintext_unsigned_char = as_unsigned_char_array(env, plaintext_bytearray);
     //memcpy(plaintext_unsigned, plaintext_unsigned_char, plaintext_len);
     //jbyte* plaintext_jbyte = env->GetByteArrayElements(plaintext_bytearray, NULL);
     //jsize plaintext_jsize = env->GetArrayLength(plaintext_bytearray);

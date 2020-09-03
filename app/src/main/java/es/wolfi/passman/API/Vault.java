@@ -25,6 +25,9 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONArray;
@@ -63,7 +66,17 @@ public class Vault extends Core implements Filterable{
             return "";
         }
         try {
-            return SJCLCrypto.decryptString(cryptogram, encryption_key);
+            String decrypted = SJCLCrypto.decryptString(cryptogram, encryption_key);
+            if (decrypted.length() > 0){
+                try {
+                    Gson g = new Gson();
+                    Log.e("Gson input", decrypted);
+                    return g.fromJson(decrypted, String.class);
+                } catch (Exception egson){
+                    return decrypted;
+                }
+            }
+            return decrypted;
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
             e.printStackTrace();
@@ -104,8 +117,11 @@ public class Vault extends Core implements Filterable{
             return "";
         }
         try {
-            plaintext = '"' + plaintext.replaceAll("\"","\\\"") + '"';
-            return SJCLCrypto.encryptString(plaintext.getBytes(), encryption_key);
+            if (plaintext.length() > 0){
+                Gson g = new Gson();
+                plaintext = g.toJson(plaintext);
+            }
+            return SJCLCrypto.encryptString(plaintext, encryption_key);
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
             e.printStackTrace();
