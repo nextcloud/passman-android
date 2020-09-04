@@ -28,4 +28,6 @@
     <string name="save">Save</string>
     <string name="successfully_saved">Successfully saved</string>
     <string name="error_occurred">An error occurred</string>
+    <string name="update">Update</string>
+    <string name="successfully_updated">Successfully updated</string>
 </resources>

@@ -22,4 +22,8 @@
     <string name="last_accessed">Letzter Zugriff:</string>
     <string name="search">Suche</string>
     <string name="save">Speichern</string>
+    <string name="update">Aktualisieren</string>
+    <string name="successfully_updated">Erfolgreich aktualisiert</string>
+    <string name="successfully_saved">Erfolgreich gespeichert</string>
+    <string name="error_occurred">Es ist ein Fehler aufgetreten</string>
 </resources>

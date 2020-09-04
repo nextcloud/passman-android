@@ -122,7 +122,7 @@ public abstract class Core {
         });
     }
 
-    public static void requestAPIPOST(Context c, String endpoint, JSONObject postDataParams, final FutureCallback<String> callback, boolean allowSelfInvocation) {
+    public static void requestAPIPOST(Context c, String endpoint, JSONObject postDataParams, String requestType, final FutureCallback<String> callback, boolean allowSelfInvocation) {
         String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -138,7 +138,7 @@ public abstract class Core {
             conn.setRequestProperty ("Authorization", auth);
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
-            conn.setRequestMethod("POST");
+            conn.setRequestMethod(requestType);
             conn.setRequestProperty("Content-Type", "application/json; utf-8");
             conn.setRequestProperty("Accept", "application/json, text/plain, */*");
             conn.setDoInput(true);
@@ -170,7 +170,7 @@ public abstract class Core {
         } catch (SSLHandshakeException e) {
             // sometimes the SSLHandshakeException can be resolved by doing the request twice
             if (allowSelfInvocation){
-                requestAPIPOST(c, endpoint, postDataParams, callback, false);
+                requestAPIPOST(c, endpoint, postDataParams, requestType, callback, false);
                 return;
             } else {
                 e.printStackTrace();

@@ -71,9 +71,11 @@ public class PasswordList extends AppCompatActivity implements
     static boolean running = false;
 
     private AppCompatImageButton VaultLockButton;
+    private AppCompatImageButton CredentialEditButton;
     private FloatingActionButton addCredentialsButton;
     private static String activatedBeforeRecreate = "";
     private boolean isEncryptionSupported = true;
+    private String lastOpenedCredentialGuid = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +101,15 @@ public class PasswordList extends AppCompatActivity implements
             }
         });
         this.VaultLockButton.setVisibility(View.INVISIBLE);
+
+        this.CredentialEditButton = (AppCompatImageButton) findViewById(R.id.CredentialEditButton);
+        this.CredentialEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editCredential();
+            }
+        });
+        this.CredentialEditButton.setVisibility(View.INVISIBLE);
 
         this.addCredentialsButton = (FloatingActionButton) findViewById(R.id.addCredentialsButton);
         this.addCredentialsButton.setOnClickListener(new View.OnClickListener() {
@@ -317,11 +328,27 @@ public class PasswordList extends AppCompatActivity implements
                 HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
                 vaults.put(vault.guid, result);
 
-                CredentialItemFragment credentialItems = (CredentialItemFragment)
-                        getSupportFragmentManager().findFragmentById(R.id.content_password_list);
-                credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+                FragmentManager fm = getSupportFragmentManager();
+                Fragment vaultFragment = fm.findFragmentByTag("vault");
+
+                if (vaultFragment != null && vaultFragment.isVisible()){
+                    Log.e("refreshVault", "load credentials into content password list");
+                    CredentialItemFragment credentialItems = (CredentialItemFragment)
+                            getSupportFragmentManager().findFragmentById(R.id.content_password_list);
+                    credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+                }
             }
         });
+    }
+    
+    void editCredential() {
+        this.CredentialEditButton.setVisibility(View.INVISIBLE);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                .replace(R.id.content_password_list, CredentialEdit.newInstance(this.lastOpenedCredentialGuid), "credentialEdit")
+                .addToBackStack(null)
+                .commit();
     }
 
     void refreshVaults() {
@@ -406,6 +433,10 @@ public class PasswordList extends AppCompatActivity implements
     public void onListFragmentInteraction(Credential item) {
         this.VaultLockButton.setVisibility(View.INVISIBLE);
         this.addCredentialsButton.hide();
+        if (this.isEncryptionSupported) {
+            this.CredentialEditButton.setVisibility(View.VISIBLE);
+        }
+        this.lastOpenedCredentialGuid = item.getGuid();
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
@@ -430,10 +461,12 @@ public class PasswordList extends AppCompatActivity implements
         Fragment vaultFragment = fm.findFragmentByTag("vault");
         Fragment vaultsFragment = fm.findFragmentByTag("vaults");
         Fragment credentialFragment = fm.findFragmentByTag("credential");
+        Fragment credentialEditFragment = fm.findFragmentByTag("credentialEdit");
 
         if (positive) {
             if ((vaultFragment != null && vaultFragment.isVisible()) || (activatedBeforeRecreate.equals("vault"))) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
+                this.CredentialEditButton.setVisibility(View.INVISIBLE);
                 if (this.isEncryptionSupported) {
                     this.addCredentialsButton.show();
                 }
@@ -443,6 +476,8 @@ public class PasswordList extends AppCompatActivity implements
             } else if (credentialFragment != null && credentialFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.INVISIBLE);
                 this.addCredentialsButton.hide();
+            } else if (credentialEditFragment != null && credentialEditFragment.isVisible()) {
+                this.CredentialEditButton.setVisibility(View.INVISIBLE);
             } else if (vaultsFragment != null && vaultsFragment.isVisible()) {
                 running = true;
             }
@@ -450,8 +485,13 @@ public class PasswordList extends AppCompatActivity implements
             if (vaultFragment != null && vaultFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.INVISIBLE);
                 this.addCredentialsButton.hide();
+            } else if (credentialEditFragment != null && credentialEditFragment.isVisible()) {
+                if (this.isEncryptionSupported) {
+                    this.CredentialEditButton.setVisibility(View.VISIBLE);
+                }
             } else if (credentialFragment != null && credentialFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
+                this.CredentialEditButton.setVisibility(View.INVISIBLE);
                 if (this.isEncryptionSupported) {
                     this.addCredentialsButton.show();
                 }

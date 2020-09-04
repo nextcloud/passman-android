@@ -115,6 +115,10 @@ public class CredentialDisplay extends Fragment {
         };
     }
 
+    public String getGuid(){
+        return this.credential.getGuid();
+    }
+
     @Override
     public void onResume() {
         super.onResume();

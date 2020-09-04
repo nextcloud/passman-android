@@ -25,6 +25,7 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONException;
@@ -270,7 +271,11 @@ public class Credential extends Core implements Filterable {
         c.url = j.getString("url");
 
         try {
-            c.favicon = j.getString("favicon");
+            if (j.has("favicon")) {
+                c.favicon = j.getString("favicon");
+            } else if (j.has("icon")){
+                c.favicon = j.getString("icon");
+            }
         }
         catch (JSONException ex) {
             try {
@@ -334,7 +339,48 @@ public class Credential extends Core implements Filterable {
             params.put("compromised", compromised);
             params.put("hidden", isHidden());
 
-            requestAPIPOST(c, "credentials", params, cb, true);
+            requestAPIPOST(c, "credentials", params, "POST", cb, true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update(Context c, final FutureCallback<String> cb){
+        JSONObject params = new JSONObject();
+
+        try {
+            JSONObject icon = new JSONObject();
+            icon.put("type", false);
+            icon.put("content", "");
+
+            if (favicon != null) {
+                params.put("icon", favicon);
+            } else {
+                params.put("icon", icon);
+            }
+
+            params.put("vault_id", getVaultId());
+            params.put("credential_id", getId());
+            params.put("guid", getGuid());
+            params.put("label", label);
+            params.put("description", description);
+            params.put("created", getCreated());
+            params.put("changed", getChanged());
+            params.put("tags", tags);
+            params.put("email", email);
+            params.put("username", username);
+            params.put("password", password);
+            params.put("url", url);
+            params.put("renew_interval", getRenewInterval());
+            params.put("expire_time", getExpireTime());
+            params.put("delete_time", getDeleteTime());
+            params.put("files", files);
+            params.put("custom_fields", customFields);
+            params.put("otp", otp);
+            params.put("compromised", compromised);
+            params.put("hidden", isHidden());
+
+            requestAPIPOST(c, "credentials/" + this.getGuid(), params, "PATCH", cb, true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
