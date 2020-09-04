@@ -73,6 +73,7 @@ public class PasswordList extends AppCompatActivity implements
     private AppCompatImageButton VaultLockButton;
     private FloatingActionButton addCredentialsButton;
     private static String activatedBeforeRecreate = "";
+    private boolean isEncryptionSupported = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,8 @@ public class PasswordList extends AppCompatActivity implements
 
         checkFragmentPosition(true);
         if (running) return;
+
+        this.isEncryptionSupported = SJCLCrypto.isEncryptionSupported();
 
         final ProgressDialog progress = getProgressDialog();
         progress.show();
@@ -196,7 +199,9 @@ public class PasswordList extends AppCompatActivity implements
         if (vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
-                this.addCredentialsButton.show();
+                if (this.isEncryptionSupported) {
+                    this.addCredentialsButton.show();
+                }
                 activatedBeforeRecreate = "vault";
                 Log.v("Open vault", String.valueOf(vault.vault_id));
                 getSupportFragmentManager()
@@ -382,7 +387,9 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     public void showAddCredentialsButton(){
-        addCredentialsButton.show();
+        if (this.isEncryptionSupported) {
+            this.addCredentialsButton.show();
+        }
     }
 
     private void showNotImplementedMessage() {
@@ -427,7 +434,9 @@ public class PasswordList extends AppCompatActivity implements
         if (positive) {
             if ((vaultFragment != null && vaultFragment.isVisible()) || (activatedBeforeRecreate.equals("vault"))) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
-                this.addCredentialsButton.show();
+                if (this.isEncryptionSupported) {
+                    this.addCredentialsButton.show();
+                }
                 activatedBeforeRecreate = "";
             } else if (activatedBeforeRecreate.equals("unlockVault")) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
@@ -443,7 +452,9 @@ public class PasswordList extends AppCompatActivity implements
                 this.addCredentialsButton.hide();
             } else if (credentialFragment != null && credentialFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
-                this.addCredentialsButton.show();
+                if (this.isEncryptionSupported) {
+                    this.addCredentialsButton.show();
+                }
             } else if (vaultsFragment != null && vaultsFragment.isVisible()) {
                 running = false;
             }

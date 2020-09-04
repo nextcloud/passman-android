@@ -57,13 +57,18 @@ public class SJCLCrypto {
         try {
             output = decrypt_ccm(new String(android.util.Base64.decode(input, Base64.DEFAULT), StandardCharsets.UTF_8), password);
         } catch (Exception e) {
-            e.printStackTrace();
-           try {
-               Log.e("decrypt exception", "try to use the old c++ based decryption method");
+            if (e instanceof NoSuchAlgorithmException){
+                Log.e("NoSuchAlgorithm", e.getMessage());
+            } else {
+                e.printStackTrace();
+            }
+
+            try {
+               Log.e("decrypt exception", "try to use the c++ based decryption method");
                output = decryptStringCpp(input, password);
-           } catch (Exception ecpp){
+            } catch (Exception ecpp){
                ecpp.printStackTrace();
-           }
+            }
         }
 
         return output;
@@ -214,6 +219,16 @@ public class SJCLCrypto {
         KeySpec spec = new PBEKeySpec(password, salt, iterationCount, keyLength);
         SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
         return secret;
+    }
+
+    public static boolean isEncryptionSupported(){
+        try {
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            return true;
+        } catch (NoSuchAlgorithmException e) {
+            //e.printStackTrace();
+        }
+        return false;
     }
 
     static {
