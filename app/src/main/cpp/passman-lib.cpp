@@ -99,9 +99,6 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclas
 
     jsize len = env->GetArrayLength (plaintext_bytearray);
     uint16_t *plaintext_unsigned_char = as_unsigned_char_array(env, plaintext_bytearray);
-    //memcpy(plaintext_unsigned, plaintext_unsigned_char, plaintext_len);
-    //jbyte* plaintext_jbyte = env->GetByteArrayElements(plaintext_bytearray, NULL);
-    //jsize plaintext_jsize = env->GetArrayLength(plaintext_bytearray);
 
     //__android_log_print(ANDROID_LOG_ERROR, "passman-lib", (const char*)"FUCK THIS SHIT GOT AN ERROR: %s", to_string(len).c_str());
     char *result = WLF::Crypto::SJCL::encrypt(plaintext_unsigned_char, len, password);

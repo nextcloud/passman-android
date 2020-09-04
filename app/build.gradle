@@ -113,6 +113,6 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'commons-codec:commons-codec:1.10'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.58'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
 }

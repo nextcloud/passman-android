@@ -57,7 +57,13 @@ public class SJCLCrypto {
         try {
             output = decrypt_ccm(new String(android.util.Base64.decode(input, Base64.DEFAULT), StandardCharsets.UTF_8), password);
         } catch (Exception e) {
-           Log.e("error", Objects.requireNonNull(e.getMessage()));
+            e.printStackTrace();
+           try {
+               Log.e("decrypt exception", "try to use the old c++ based decryption method");
+               output = decryptStringCpp(input, password);
+           } catch (Exception ecpp){
+               ecpp.printStackTrace();
+           }
         }
 
         return output;
@@ -66,7 +72,8 @@ public class SJCLCrypto {
     public static String encryptString(String input, String password){
         String output = "";
         try {
-            output = android.util.Base64.encodeToString(encrypt_ccm(input, password).getBytes(), Base64.NO_WRAP);
+            String encrypted = encrypt_ccm(input, password);
+            output = android.util.Base64.encodeToString(encrypted.getBytes(), Base64.NO_WRAP | Base64.NO_PADDING);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -84,7 +91,7 @@ public class SJCLCrypto {
         JSONObject food = new JSONObject(input);
 
         if (food.length() <= 0){
-            return "Error parsing the SJCL JSON";
+            throw new JSONException("Error parsing the SJCL JSON");
         }
 
         int AES_KEY_SIZE = food.getInt("ks");
@@ -183,9 +190,9 @@ public class SJCLCrypto {
 
         JSONObject food = new JSONObject();
 
-        food.put("ct", android.util.Base64.encodeToString(cipherText, Base64.NO_WRAP));
-        food.put("salt", android.util.Base64.encodeToString(salt, Base64.NO_WRAP));
-        food.put("iv", android.util.Base64.encodeToString(IV, Base64.NO_WRAP));
+        food.put("ct", android.util.Base64.encodeToString(cipherText, Base64.NO_WRAP | Base64.NO_PADDING));
+        food.put("salt", android.util.Base64.encodeToString(salt, Base64.NO_WRAP | Base64.NO_PADDING));
+        food.put("iv", android.util.Base64.encodeToString(IV, Base64.NO_WRAP | Base64.NO_PADDING));
 
         food.put("v", 1);
         food.put("iter", AES_ITERATION_COUNT);
@@ -196,7 +203,7 @@ public class SJCLCrypto {
         food.put("adata", "");
         food.put("cipher", "aes");
 
-        return food.toString();
+        return food.toString().replaceAll("\\\\/", "/");
     }
 
     // AES key derived from a password
@@ -207,18 +214,6 @@ public class SJCLCrypto {
         KeySpec spec = new PBEKeySpec(password, salt, iterationCount, keyLength);
         SecretKey secret = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
         return secret;
-    }
-
-    public static String removeFirstAndLastCharacter(String str, String character) {
-        if ((str != null)) {
-            if(str.length() > 0 && str.endsWith(character)) {
-                str = str.substring(0, str.length() - 1);
-            }
-            if(str.length() > 0 && str.startsWith(character)) {
-                str = str.substring(1);
-            }
-        }
-        return str;
     }
 
     static {
