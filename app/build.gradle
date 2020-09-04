@@ -42,7 +42,7 @@ android {
 
         }
         ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
         }
     }
     buildTypes {
@@ -89,6 +89,9 @@ android {
             dimension("arm")
         }
         create("x86_64") {
+            dimension("x86")
+        }
+        create("x86") {
             dimension("x86")
         }
     }
