@@ -1,23 +1,22 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.passman.API;
@@ -27,17 +26,19 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.koushikdutta.async.future.FutureCallback;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import es.wolfi.utils.Filterable;
 
 public class Credential extends Core implements Filterable {
     public int id;
-
 
 
     protected String guid;
@@ -273,23 +274,20 @@ public class Credential extends Core implements Filterable {
         try {
             if (j.has("favicon")) {
                 c.favicon = j.getString("favicon");
-            } else if (j.has("icon")){
+            } else if (j.has("icon")) {
                 c.favicon = j.getString("icon");
             }
-        }
-        catch (JSONException ex) {
+        } catch (JSONException ex) {
             try {
                 c.favicon = j.getString("icon");
-            }
-            catch (JSONException ex2) {
+            } catch (JSONException ex2) {
                 Log.e("Credential parse", "error, it has no icon or favicon field!", ex2);
             }
         }
 
         if (j.isNull("renew_interval")) {
             c.renewInterval = 0;
-        }
-        else {
+        } else {
             c.renewInterval = j.getLong("renew_interval");
         }
 
@@ -310,8 +308,9 @@ public class Credential extends Core implements Filterable {
         return c;
     }
 
-    public void save(Context c, final FutureCallback<String> cb){
-        JSONObject params = new JSONObject();
+    public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(true);
 
         try {
             JSONObject icon = new JSONObject();
@@ -339,14 +338,15 @@ public class Credential extends Core implements Filterable {
             params.put("compromised", compromised);
             params.put("hidden", isHidden());
 
-            requestAPIPOST(c, "credentials", params, "POST", cb, true);
-        } catch (JSONException e) {
+            requestAPIPOST(c, "credentials", params, "POST", responseHandler);
+        } catch (JSONException | MalformedURLException e) {
             e.printStackTrace();
         }
     }
 
-    public void update(Context c, final FutureCallback<String> cb){
-        JSONObject params = new JSONObject();
+    public void update(Context c, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(true);
 
         try {
             JSONObject icon = new JSONObject();
@@ -380,8 +380,8 @@ public class Credential extends Core implements Filterable {
             params.put("compromised", compromised);
             params.put("hidden", isHidden());
 
-            requestAPIPOST(c, "credentials/" + this.getGuid(), params, "PATCH", cb, true);
-        } catch (JSONException e) {
+            requestAPIPOST(c, "credentials/" + this.getGuid(), params, "PATCH", responseHandler);
+        } catch (JSONException | MalformedURLException e) {
             e.printStackTrace();
         }
     }

@@ -340,7 +340,13 @@ public class PasswordList extends AppCompatActivity implements
             }
         });
     }
-    
+
+    void showCredentialEditButtonIfAvailable(){
+        if (this.isEncryptionSupported) {
+            this.CredentialEditButton.setVisibility(View.VISIBLE);
+        }
+    }
+
     void editCredential() {
         this.CredentialEditButton.setVisibility(View.INVISIBLE);
         getSupportFragmentManager()
@@ -433,9 +439,7 @@ public class PasswordList extends AppCompatActivity implements
     public void onListFragmentInteraction(Credential item) {
         this.VaultLockButton.setVisibility(View.INVISIBLE);
         this.addCredentialsButton.hide();
-        if (this.isEncryptionSupported) {
-            this.CredentialEditButton.setVisibility(View.VISIBLE);
-        }
+        this.showCredentialEditButtonIfAvailable();
         this.lastOpenedCredentialGuid = item.getGuid();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -486,9 +490,7 @@ public class PasswordList extends AppCompatActivity implements
                 this.VaultLockButton.setVisibility(View.INVISIBLE);
                 this.addCredentialsButton.hide();
             } else if (credentialEditFragment != null && credentialEditFragment.isVisible()) {
-                if (this.isEncryptionSupported) {
-                    this.CredentialEditButton.setVisibility(View.VISIBLE);
-                }
+                this.showCredentialEditButtonIfAvailable();
             } else if (credentialFragment != null && credentialFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
                 this.CredentialEditButton.setVisibility(View.INVISIBLE);

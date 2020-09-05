@@ -1,23 +1,22 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.app.passman;
@@ -40,10 +39,13 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.koushikdutta.async.future.FutureCallback;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import net.bierbaumer.otp_authenticator.TOTPHelper;
 
 import org.apache.commons.codec.binary.Base32;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -51,6 +53,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.JSONUtils;
 
 
 /**
@@ -61,13 +64,20 @@ import es.wolfi.passman.API.Vault;
 public class CredentialEdit extends Fragment implements View.OnClickListener {
     public static String CREDENTIAL = "credential";
 
-    @BindView(R.id.edit_credential_label_header) TextView label_header;
-    @BindView(R.id.edit_credential_label) EditText label;
-    @BindView(R.id.edit_credential_user) EditText user;
-    @BindView(R.id.edit_credential_password) EditText password;
-    @BindView(R.id.edit_credential_email) EditText email;
-    @BindView(R.id.edit_credential_url) EditText url;
-    @BindView(R.id.edit_credential_description) EditText description;
+    @BindView(R.id.edit_credential_label_header)
+    TextView label_header;
+    @BindView(R.id.edit_credential_label)
+    EditText label;
+    @BindView(R.id.edit_credential_user)
+    EditText user;
+    @BindView(R.id.edit_credential_password)
+    EditText password;
+    @BindView(R.id.edit_credential_email)
+    EditText email;
+    @BindView(R.id.edit_credential_url)
+    EditText url;
+    @BindView(R.id.edit_credential_description)
+    EditText description;
 
     private OnCredentialFragmentInteraction mListener;
     private Credential credential;
@@ -153,11 +163,11 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(alreadySaving){
+        if (alreadySaving) {
             return;
         }
 
-        if (label.getText().toString().equals("")){
+        if (label.getText().toString().equals("")) {
             label_header.setTextColor(getResources().getColor(R.color.danger));
             return;
         }
@@ -177,29 +187,56 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         this.credential.setHidden(false);
 
         alreadySaving = true;
-        this.credential.update(view.getContext(), new FutureCallback<String>() {
+
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
             @Override
-            public void onCompleted(Exception e, String result) {
-                if (e == null && !result.equals("")){
-                    //Log.v("Credential saved", result);
+            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
+                String result = new String(responseBody);
+                if (statusCode == 200 && !result.equals("")) {
                     Snackbar.make(view, R.string.successfully_updated, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     assert getFragmentManager() != null;
                     alreadySaving = false;
                     getFragmentManager().popBackStack();
-                    Objects.requireNonNull(((PasswordList)getActivity())).refreshVault();
-                } else {
-                    if(e != null && e.getMessage() != null){
-                        e.printStackTrace();
-                        Snackbar.make(view, e.getMessage(), Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    } else {
-                        Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
+                    Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
+                    Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButtonIfAvailable();
                 }
             }
-        });
+
+            @Override
+            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+                String response = new String(responseBody);
+
+                if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+                    try {
+                        JSONObject o = new JSONObject(response);
+                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                            Snackbar.make(view, o.getString("message"), Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            return;
+                        }
+                    } catch (JSONException e1) {
+                        //ex = e1;
+                    }
+                }
+
+                if (error != null && error.getMessage() != null) {
+                    error.printStackTrace();
+                    Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else {
+                    Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        };
+
+        this.credential.update(view.getContext(), responseHandler);
     }
 
     /**
@@ -215,6 +252,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     public interface OnCredentialFragmentInteraction {
         // TODO: Update argument type and name
         void onCredentialFragmentInteraction(Credential credential);
+
         void saveCredential(Credential credential, Context c, FutureCallback<String> cb);
     }
 }
