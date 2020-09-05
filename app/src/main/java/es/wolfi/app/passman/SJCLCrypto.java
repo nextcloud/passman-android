@@ -53,11 +53,10 @@ public class SJCLCrypto {
 
     public static native String encryptStringCpp(String plaintext, String key) throws Exception;
 
-    public static String decryptString(String input, String password) throws Exception {
+    public static String decryptString(String input, String password, boolean useJavaBasedEncryption) throws Exception {
         String output = "";
-        boolean useJava = false;
 
-        if (useJava && isJavaEncryptionSupported()) {
+        if (useJavaBasedEncryption && isJavaEncryptionSupported()) {
             output = decryptStringJava(input, password);
         } else {
             output = new String(android.util.Base64.decode(decryptStringCpp(input, password), Base64.DEFAULT), StandardCharsets.UTF_8);
@@ -75,14 +74,13 @@ public class SJCLCrypto {
         return output;
     }
 
-    public static String encryptString(String input, String password) throws Exception {
+    public static String encryptString(String input, String password, boolean useJavaBasedEncryption) throws Exception {
         String output = "";
-        boolean useJava = false;
 
         Gson g = new Gson();
         input = g.toJson(input);
 
-        if (useJava && isJavaEncryptionSupported()) {
+        if (useJavaBasedEncryption && isJavaEncryptionSupported()) {
             output = encryptStringJava(input, password);
         } else {
             output = encryptStringCpp(input, password);
@@ -104,7 +102,7 @@ public class SJCLCrypto {
 
             try {
                 Log.e("decrypt exception", "try to use the c++ based decryption method");
-                output = new String(android.util.Base64.decode(decryptString(input, password), Base64.DEFAULT), StandardCharsets.UTF_8);
+                output = new String(android.util.Base64.decode(decryptStringCpp(input, password), Base64.DEFAULT), StandardCharsets.UTF_8);
             } catch (Exception ecpp) {
                 ecpp.printStackTrace();
             }
