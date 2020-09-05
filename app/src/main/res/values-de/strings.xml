@@ -26,4 +26,6 @@
     <string name="successfully_updated">Erfolgreich aktualisiert</string>
     <string name="successfully_saved">Erfolgreich gespeichert</string>
     <string name="error_occurred">Es ist ein Fehler aufgetreten</string>
+    <string name="delete">Löschen</string>
+    <string name="successfully_deleted">Erfolgreich gelöscht</string>
 </resources>

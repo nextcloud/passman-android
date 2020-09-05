@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.koushikdutta.async.future.FutureCallback;
@@ -47,6 +48,7 @@ import org.apache.commons.codec.binary.Base32;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -113,6 +115,10 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         updateCredentialButton.setOnClickListener(this);
         updateCredentialButton.setVisibility(View.VISIBLE);
 
+        Button deleteCredentialButton = (Button) view.findViewById(R.id.DeleteCredentialButton);
+        deleteCredentialButton.setOnClickListener(this.getDeleteButtonListener());
+        deleteCredentialButton.setVisibility(View.VISIBLE);
+
         return view;
     }
 
@@ -161,6 +167,76 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
+    public View.OnClickListener getDeleteButtonListener(){
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (alreadySaving) {
+                    return;
+                }
+                Log.e("button action", "pressed DeleteButton");
+
+                AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
+                        String result = new String(responseBody);
+                        if (statusCode == 200 && !result.equals("")) {
+                            Snackbar.make(view, R.string.successfully_deleted, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            assert getFragmentManager() != null;
+                            alreadySaving = false;
+
+                            Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
+
+                            int backStackCount = getFragmentManager().getBackStackEntryCount();
+                            int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount-2).getId();
+                            getFragmentManager().popBackStack(backStackId,
+                                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+                        alreadySaving = false;
+                        String response = new String(responseBody);
+
+                        if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+                            try {
+                                JSONObject o = new JSONObject(response);
+                                if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                                    Snackbar.make(view, o.getString("message"), Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    return;
+                                }
+                            } catch (JSONException e1) {
+                                //ex = e1;
+                            }
+                        }
+
+                        if (error != null && error.getMessage() != null) {
+                            error.printStackTrace();
+                            Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        } else {
+                            Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        }
+                    }
+
+                    @Override
+                    public void onRetry(int retryNo) {
+                        // called when request is retried
+                    }
+                };
+
+                alreadySaving = true;
+                Date date= new Date();
+                credential.setDeleteTime(date.getTime());
+                credential.update(view.getContext(), responseHandler);
+            }
+        };
+    }
+
     @Override
     public void onClick(View view) {
         if (alreadySaving) {
@@ -205,6 +281,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+                alreadySaving = false;
                 String response = new String(responseBody);
 
                 if (!response.equals("") && JSONUtils.isJSONObject(response)) {

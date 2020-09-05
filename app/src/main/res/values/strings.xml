@@ -30,4 +30,6 @@
     <string name="error_occurred">An error occurred</string>
     <string name="update">Update</string>
     <string name="successfully_updated">Successfully updated</string>
+    <string name="delete">Delete</string>
+    <string name="successfully_deleted">Successfully deleted</string>
 </resources>

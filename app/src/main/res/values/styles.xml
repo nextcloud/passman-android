@@ -37,6 +37,11 @@
         <item name="android:textColor">@color/primary_button_text_color</item>
     </style>
 
+    <style name="Button.Danger" parent="Button">
+        <item name="colorButtonNormal">@color/danger</item>
+        <item name="android:textColor">@color/primary_button_text_color</item>
+    </style>
+
     <style name="Button.Login" parent="Button">
         <item name="colorButtonNormal">@color/white</item>
         <item name="android:textColor">@color/colorPrimary</item>

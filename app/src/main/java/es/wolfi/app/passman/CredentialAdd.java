@@ -178,6 +178,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+                alreadySaving = false;
                 String response = new String(responseBody);
 
                 if (!response.equals("") && JSONUtils.isJSONObject(response)) {
