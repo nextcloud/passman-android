@@ -148,8 +148,8 @@ public class PasswordList extends AppCompatActivity implements
 
     private ProgressDialog getProgressDialog() {
         final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle("Loading");
-        progress.setMessage("Wait while loading...");
+        progress.setTitle(getString(R.string.loading));
+        progress.setMessage(getString(R.string.wait_while_loading));
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
         return progress;
@@ -171,7 +171,10 @@ public class PasswordList extends AppCompatActivity implements
                     .replace(R.id.content_password_list, new VaultFragment(), "vaults")
                     .commit();
         } else {
+            final ProgressDialog progress = getProgressDialog();
+            progress.show();
             Vault.getVaults(this, (e, result) -> {
+                progress.dismiss();
                 if (e != null) {
                     // Not logged in, restart activity
                     if (Objects.equals(e.getMessage(), "401")) {
@@ -199,6 +202,7 @@ public class PasswordList extends AppCompatActivity implements
         final ProgressDialog progress = getProgressDialog();
         progress.show();
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        vault.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
         if (vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
@@ -214,10 +218,12 @@ public class PasswordList extends AppCompatActivity implements
             } else {
                 showUnlockVault();
             }
+            progress.dismiss();
         } else {
             Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
                 @Override
                 public void onCompleted(Exception e, Vault result) {
+                    progress.dismiss();
                     if (e != null) {
                         // Not logged in, restart activity
                         if (e.getMessage() != null && e.getMessage().equals("401")) {
@@ -244,18 +250,21 @@ public class PasswordList extends AppCompatActivity implements
                 }
             });
         }
+        /*
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
                 progress.dismiss();
             }
         }, 100);
+        */
     }
 
     void showUnlockVault() {
         activatedBeforeRecreate = "unlockVault";
         this.VaultLockButton.setVisibility(View.VISIBLE);
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        v.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
         if (v.unlock(settings.getString(v.guid, ""))) {
             showActiveVault();
             return;
@@ -310,6 +319,7 @@ public class PasswordList extends AppCompatActivity implements
                 }
 
                 result.setEncryptionKey(vault.getEncryptionKey());
+                result.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
                 ton.removeExtra(vault.guid);
                 ton.addExtra(vault.guid, result);
                 ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
@@ -360,6 +370,31 @@ public class PasswordList extends AppCompatActivity implements
         Runtime.getRuntime().exit(0);
     }
 
+    void applyNewSettings(boolean doRebirth) {
+        Toast.makeText(this, R.string.successfully_saved, Toast.LENGTH_SHORT).show();
+
+        if (doRebirth) {
+            triggerRebirth(this);
+        } else {
+            final ProgressDialog progress = getProgressDialog();
+            progress.show();
+            Core.checkLogin(this, false, new FutureCallback<Boolean>() {
+                @Override
+                public void onCompleted(Exception e, Boolean result) {
+                    progress.dismiss();
+
+                    if (result) {
+                        showVaults();
+                        return;
+                    }
+
+                    // If not logged in, show login form!
+                    LoginActivity.launch(getParent(), () -> showVaults());
+                }
+            });
+        }
+    }
+
     void refreshButtonPressed() {
         boolean atLeastOneFragmentIsVisible = false;
         for (Fragment x : getSupportFragmentManager().getFragments()) {
@@ -382,6 +417,19 @@ public class PasswordList extends AppCompatActivity implements
         }
     }
 
+    void settingsButtonPressed() {
+        this.CredentialEditButton.setVisibility(View.INVISIBLE);
+        this.addCredentialsButton.setVisibility(View.INVISIBLE);
+        this.VaultLockButton.setVisibility(View.INVISIBLE);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                .replace(R.id.content_password_list, Settings.newInstance(), "settings")
+                .addToBackStack(null)
+                .commit();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -394,7 +442,7 @@ public class PasswordList extends AppCompatActivity implements
         int id = item.getItemId();
         switch (id) {
             case R.id.action_settings:
-                showNotImplementedMessage();
+                settingsButtonPressed();
                 return true;
             case R.id.action_refresh:
                 refreshButtonPressed();
@@ -452,6 +500,7 @@ public class PasswordList extends AppCompatActivity implements
         Fragment vaultsFragment = fm.findFragmentByTag("vaults");
         Fragment credentialFragment = fm.findFragmentByTag("credential");
         Fragment credentialEditFragment = fm.findFragmentByTag("credentialEdit");
+        Fragment settingsFragment = fm.findFragmentByTag("settings");
 
         if (positive) {
             if ((vaultFragment != null && vaultFragment.isVisible()) || (activatedBeforeRecreate.equals("vault"))) {
@@ -481,6 +530,8 @@ public class PasswordList extends AppCompatActivity implements
                 this.addCredentialsButton.show();
             } else if (vaultsFragment != null && vaultsFragment.isVisible()) {
                 running = false;
+            } else if (settingsFragment != null && settingsFragment.isVisible()) {
+                this.checkFragmentPosition(true);
             }
         }
     }

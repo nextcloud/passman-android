@@ -28,4 +28,11 @@
     <string name="error_occurred">Es ist ein Fehler aufgetreten</string>
     <string name="delete">Löschen</string>
     <string name="successfully_deleted">Erfolgreich gelöscht</string>
+    <string name="encryption_implementation">Implementierung der Verschlüsselung</string>
+    <string name="encryption_implementation_description">Verwende die Java-basierte Verschlüsselung anstelle der nativen (schnelleren) C++ - Implementierung. (nicht empfohlen!)</string>
+    <string name="encryption_implementation_switch_text">Aktiviere die Java Implementierung</string>
+    <string name="nextcloud_connection_settings">NextCloud Verbindungseinstellungen</string>
+    <string name="app_settings">App Einstellungen</string>
+    <string name="loading">Wird geladen</string>
+    <string name="wait_while_loading">Warten Sie beim Laden ...</string>
 </resources>
