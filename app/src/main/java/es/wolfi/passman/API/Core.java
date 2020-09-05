@@ -86,7 +86,14 @@ public abstract class Core {
         Core.password = password;
     }
 
-    public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+    /**
+     * Old method (can do login after updating credentials with wrong values)
+     *
+     * @param c
+     * @param endpoint
+     * @param callback
+     */
+    public static void _requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
         String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
 
         Ion.with(c)
@@ -111,6 +118,52 @@ public abstract class Core {
                         callback.onCompleted(e, result);
                     }
                 });
+    }
+
+    public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
+                String result = new String(responseBody);
+                if (statusCode == 200 && !result.equals("")) {
+                    if (JSONUtils.isJSONObject(result)) {
+                        try {
+                            JSONObject o = new JSONObject(result);
+                            if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                                callback.onCompleted(new Exception("401"), null);
+                                return;
+                            }
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                }
+                callback.onCompleted(null, result);
+            }
+
+            @Override
+            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+                String errorMessage = error.getMessage();
+                if (errorMessage == null) {
+                    error.printStackTrace();
+                    errorMessage = "Unknown error";
+                }
+                if (statusCode == 401) {
+                    callback.onCompleted(new Exception("401"), null);
+                }
+                callback.onCompleted(new Exception(errorMessage), null);
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        };
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setBasicAuth(username, password);
+        client.addHeader("Content-Type", "application/json");
+        client.get(host.concat(endpoint), responseHandler);
     }
 
     public static void requestAPIPOST(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
@@ -143,7 +196,11 @@ public abstract class Core {
         requestAPIGET(c, "version", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                Log.d("getApiVersion", result);
+                if (result != null) {
+                    Log.d("getApiVersion", result);
+                } else {
+                    Log.d("getApiVersion", "Failure while getting api version");
+                }
             }
         });
     }
