@@ -268,18 +268,20 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
                 alreadySaving = false;
-                String response = new String(responseBody);
+                if (responseBody != null && responseBody.length > 0) {
+                    String response = new String(responseBody);
 
-                if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-                    try {
-                        JSONObject o = new JSONObject(response);
-                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                            Snackbar.make(view, o.getString("message"), Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                            return;
+                    if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+                        try {
+                            JSONObject o = new JSONObject(response);
+                            if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                                Snackbar.make(view, o.getString("message"), Snackbar.LENGTH_LONG)
+                                        .setAction("Action", null).show();
+                                return;
+                            }
+                        } catch (JSONException e1) {
+                            //ex = e1;
                         }
-                    } catch (JSONException e1) {
-                        //ex = e1;
                     }
                 }
 
