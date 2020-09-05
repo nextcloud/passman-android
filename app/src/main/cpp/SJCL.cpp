@@ -248,6 +248,9 @@ char* SJCL::decrypt(string sjcl_json, string key) {
                &cryptogram->data[cyphertext_data_length], derived_key, iv_raw->data, plaintext);
 
     if (0 < plaintext_len) {
+        Datagram* plaintext_base64 = BASE64::encode(plaintext, plaintext_len);
+        ret = reinterpret_cast<char *>(plaintext_base64->data);
+        /*
         // Try to make strings strings instead of json encoded strings
         JSONValue *result = JSON::Parse((char *) plaintext);
         if (result != NULL && result->IsString()) {
@@ -257,7 +260,7 @@ char* SJCL::decrypt(string sjcl_json, string key) {
         }
         else {
             ret = (char *) plaintext;
-        }
+        }*/
     }
 
     // Free up resources

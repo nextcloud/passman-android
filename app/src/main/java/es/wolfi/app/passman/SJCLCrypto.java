@@ -65,7 +65,7 @@ public class SJCLCrypto {
 
             try {
                Log.e("decrypt exception", "try to use the c++ based decryption method");
-               output = decryptStringCpp(input, password);
+               output = new String(android.util.Base64.decode(decryptStringCpp(input, password), Base64.DEFAULT), StandardCharsets.UTF_8);
             } catch (Exception ecpp){
                ecpp.printStackTrace();
             }
