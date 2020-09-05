@@ -24,8 +24,6 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 

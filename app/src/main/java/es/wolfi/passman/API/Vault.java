@@ -1,23 +1,22 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.passman.API;
@@ -25,7 +24,6 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONArray;
@@ -39,7 +37,7 @@ import java.util.HashMap;
 import es.wolfi.app.passman.SJCLCrypto;
 import es.wolfi.utils.Filterable;
 
-public class Vault extends Core implements Filterable{
+public class Vault extends Core implements Filterable {
     public int vault_id;
     public String guid;
     public String name;
@@ -57,23 +55,16 @@ public class Vault extends Core implements Filterable{
         encryption_key = k;
     }
 
-    public String getEncryptionKey() { return encryption_key; }
+    public String getEncryptionKey() {
+        return encryption_key;
+    }
 
     public String decryptString(String cryptogram) {
-        if (cryptogram == null){
+        if (cryptogram == null) {
             return "";
         }
         try {
-            String decrypted = SJCLCrypto.decryptString(cryptogram, encryption_key);
-            if (decrypted.length() > 0){
-                try {
-                    Gson g = new Gson();
-                    return g.fromJson(decrypted, String.class);
-                } catch (Exception egson){
-                    return decrypted;
-                }
-            }
-            return decrypted;
+            return SJCLCrypto.decryptString(cryptogram, encryption_key);
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
             e.printStackTrace();
@@ -110,12 +101,10 @@ public class Vault extends Core implements Filterable{
     }
 
     public String encryptString(String plaintext) {
-        if (plaintext == null){
+        if (plaintext == null) {
             return "";
         }
         try {
-            Gson g = new Gson();
-            plaintext = g.toJson(plaintext);
             return SJCLCrypto.encryptString(plaintext, encryption_key);
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
@@ -124,7 +113,7 @@ public class Vault extends Core implements Filterable{
         return "Error encrypting";
     }
 
-    public Date getCreatedTime(){
+    public Date getCreatedTime() {
         return new Date((long) created * 1000);
     }
 
@@ -133,7 +122,7 @@ public class Vault extends Core implements Filterable{
         return credentials.get(credential_guid.get(guid));
     }
 
-    public Date getLastAccessTime(){
+    public Date getLastAccessTime() {
         return new Date((long) last_access * 1000);
     }
 
@@ -142,7 +131,7 @@ public class Vault extends Core implements Filterable{
     }
 
     public static void getVaults(Context c, final FutureCallback<HashMap<String, Vault>> cb) {
-        Vault.requestAPIGET(c, "vaults",new FutureCallback<String>() {
+        Vault.requestAPIGET(c, "vaults", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
@@ -161,8 +150,7 @@ public class Vault extends Core implements Filterable{
                     }
 
                     cb.onCompleted(e, l);
-                }
-                catch (JSONException ex) {
+                } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
             }
@@ -170,7 +158,7 @@ public class Vault extends Core implements Filterable{
     }
 
     public static void getVault(Context c, String guid, final FutureCallback<Vault> cb) {
-        Vault.requestAPIGET(c, "vaults/".concat(guid),new FutureCallback<String>() {
+        Vault.requestAPIGET(c, "vaults/".concat(guid), new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
@@ -184,15 +172,14 @@ public class Vault extends Core implements Filterable{
                     Vault v = Vault.fromJSON(data);
 
                     cb.onCompleted(e, v);
-                }
-                catch (JSONException ex) {
+                } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
             }
         });
     }
 
-    protected static Vault fromJSON(JSONObject o) throws JSONException{
+    protected static Vault fromJSON(JSONObject o) throws JSONException {
         Vault v = new Vault();
 
         v.vault_id = o.getInt("vault_id");
@@ -202,21 +189,20 @@ public class Vault extends Core implements Filterable{
         v.public_sharing_key = o.getString("public_sharing_key");
         v.last_access = o.getDouble("last_access");
 
-        if (o.has("credentials")){
+        if (o.has("credentials")) {
             JSONArray j = o.getJSONArray("credentials");
             v.credentials = new ArrayList<Credential>();
             v.credential_guid = new HashMap<>();
 
             for (int i = 0; i < j.length(); i++) {
                 Credential c = Credential.fromJSON(j.getJSONObject(i), v);
-                if(c.getDeleteTime() == 0) {
+                if (c.getDeleteTime() == 0) {
                     v.credentials.add(c);
                     v.credential_guid.put(c.getGuid(), v.credentials.size() - 1);
                 }
             }
             v.challenge_password = v.credentials.get(0).password;
-        }
-        else {
+        } else {
             v.challenge_password = o.getString("challenge_password");
         }
 

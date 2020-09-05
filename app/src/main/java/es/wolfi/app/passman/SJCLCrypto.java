@@ -1,28 +1,29 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 package es.wolfi.app.passman;
 
 import android.util.Base64;
 import android.util.Log;
+
+import com.google.gson.Gson;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.json.JSONException;
@@ -36,7 +37,6 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-import java.util.Objects;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -50,31 +50,70 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class SJCLCrypto {
     public static native String decryptStringCpp(String cryptogram, String key) throws Exception;
-    public static native String encryptStringCpp(char[] plaintext_bytearray, String key) throws Exception;
 
-    public static String decryptString(String input, String password){
+    public static native String encryptStringCpp(String plaintext, String key) throws Exception;
+
+    public static String decryptString(String input, String password) throws Exception {
         String output = "";
-        try {
-            output = decrypt_ccm(new String(android.util.Base64.decode(input, Base64.DEFAULT), StandardCharsets.UTF_8), password);
-        } catch (Exception e) {
-            if (e instanceof NoSuchAlgorithmException){
-                Log.e("NoSuchAlgorithm", e.getMessage());
-            } else {
-                e.printStackTrace();
-            }
+        boolean useJava = false;
 
+        if (useJava && isJavaEncryptionSupported()) {
+            output = decryptStringJava(input, password);
+        } else {
+            output = new String(android.util.Base64.decode(decryptStringCpp(input, password), Base64.DEFAULT), StandardCharsets.UTF_8);
+        }
+
+        if (output.length() > 0) {
             try {
-               Log.e("decrypt exception", "try to use the c++ based decryption method");
-               output = new String(android.util.Base64.decode(decryptStringCpp(input, password), Base64.DEFAULT), StandardCharsets.UTF_8);
-            } catch (Exception ecpp){
-               ecpp.printStackTrace();
+                Gson g = new Gson();
+                return g.fromJson(output, String.class);
+            } catch (Exception egson) {
+                return output;
             }
         }
 
         return output;
     }
 
-    public static String encryptString(String input, String password){
+    public static String encryptString(String input, String password) throws Exception {
+        String output = "";
+        boolean useJava = false;
+
+        Gson g = new Gson();
+        input = g.toJson(input);
+
+        if (useJava && isJavaEncryptionSupported()) {
+            output = encryptStringJava(input, password);
+        } else {
+            output = encryptStringCpp(input, password);
+        }
+
+        return output;
+    }
+
+    public static String decryptStringJava(String input, String password) {
+        String output = "";
+        try {
+            output = decrypt_ccm(new String(android.util.Base64.decode(input, Base64.DEFAULT), StandardCharsets.UTF_8), password);
+        } catch (Exception e) {
+            if (e instanceof NoSuchAlgorithmException) {
+                Log.e("NoSuchAlgorithm", e.getMessage());
+            } else {
+                e.printStackTrace();
+            }
+
+            try {
+                Log.e("decrypt exception", "try to use the c++ based decryption method");
+                output = new String(android.util.Base64.decode(decryptString(input, password), Base64.DEFAULT), StandardCharsets.UTF_8);
+            } catch (Exception ecpp) {
+                ecpp.printStackTrace();
+            }
+        }
+
+        return output;
+    }
+
+    public static String encryptStringJava(String input, String password) {
         String output = "";
         try {
             String encrypted = encrypt_ccm(input, password);
@@ -95,7 +134,7 @@ public class SJCLCrypto {
 
         JSONObject food = new JSONObject(input);
 
-        if (food.length() <= 0){
+        if (food.length() <= 0) {
             throw new JSONException("Error parsing the SJCL JSON");
         }
 
@@ -119,13 +158,13 @@ public class SJCLCrypto {
         SecretKey derived_key = getAESKeyFromPassword(password.toCharArray(), salt, AES_ITERATION_COUNT, AES_KEY_SIZE);
         SecretKeySpec secretKeySpec = new SecretKeySpec(derived_key.getEncoded(), "AES");
 
-        if (iv.length > 13){
+        if (iv.length > 13) {
             int iv_len = 13;
-            if (ct.length >= 1<<16) iv_len--;
-            if (ct.length >= 1<<24) iv_len--;
+            if (ct.length >= 1 << 16) iv_len--;
+            if (ct.length >= 1 << 24) iv_len--;
 
             byte[] tmpiv = new byte[iv_len];
-            for (int i = 0; i < iv_len; i++){
+            for (int i = 0; i < iv_len; i++) {
                 tmpiv[i] = iv[i];
             }
             iv = tmpiv;
@@ -157,8 +196,8 @@ public class SJCLCrypto {
         int CCM_SALT_LENGTH = 12;
         int plaintext_len = input.length();
 
-        if (plaintext_len >= 1<<16) CCM_IV_LENGTH--;
-        if (plaintext_len >= 1<<24) CCM_IV_LENGTH--;
+        if (plaintext_len >= 1 << 16) CCM_IV_LENGTH--;
+        if (plaintext_len >= 1 << 24) CCM_IV_LENGTH--;
 
 
         byte[] plaintext = input.getBytes();
@@ -221,7 +260,7 @@ public class SJCLCrypto {
         return secret;
     }
 
-    public static boolean isEncryptionSupported(){
+    public static boolean isJavaEncryptionSupported() {
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             return true;

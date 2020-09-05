@@ -107,7 +107,7 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
     }
 }
 
-int encryptccm(uint16_t *plaintext, int plaintext_len,
+int encryptccm(unsigned char *plaintext, int plaintext_len,
                 unsigned char *aad, int aad_len,
                 unsigned char *key,
                 unsigned char *iv,
@@ -250,17 +250,20 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     if (0 < plaintext_len) {
         Datagram* plaintext_base64 = BASE64::encode(plaintext, plaintext_len);
         ret = reinterpret_cast<char *>(plaintext_base64->data);
-        /*
-        // Try to make strings strings instead of json encoded strings
-        JSONValue *result = JSON::Parse((char *) plaintext);
-        if (result != NULL && result->IsString()) {
-            ret =  wstring_to_char(result->AsString());
-            free(plaintext);
-            free(result);
-        }
-        else {
-            ret = (char *) plaintext;
-        }*/
+
+        /* do decoding now in the java part
+         *
+            // Try to make strings strings instead of json encoded strings
+            JSONValue *result = JSON::Parse((char *) plaintext);
+            if (result != NULL && result->IsString()) {
+                ret =  wstring_to_char(result->AsString());
+                free(plaintext);
+                free(result);
+            }
+            else {
+                ret = (char *) plaintext;
+            }
+        */
     }
 
     // Free up resources
@@ -274,28 +277,8 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     return ret;
 }
 
-char* addQuotationmarksToChar(char* message){
-    char *newmessage = (char *) malloc(sizeof(char *) * (strlen(message) + 2));
-    strcpy(newmessage, "\"");
-    strcat(newmessage, message);
-    strcat(newmessage, "\"");
-    return newmessage;
-}
-
-uint8_t* addQuotationmarksToUInt8(uint8_t *message){
-    uint8_t *newmessage = (uint8_t *) malloc(sizeof(uint8_t *) * (sizeof(message) + 2));
-    newmessage[0] = (uint8_t)'"';
-    memcpy(newmessage, message, sizeof(message));
-    newmessage[sizeof(message)+1] = (uint8_t)'"';
-    return newmessage;
-}
-
-char* SJCL::encrypt(uint16_t *original_plaintext, int plaintext_len_x, const string& key) {
-    //uint8_t *plaintext = addQuotationmarksToUInt8(original_plaintext);
-
-    //int plaintext_len = sizeof(original_plaintext);
-    int plaintext_len = plaintext_len_x;
-    //handleErrors(to_string(plaintext_len).c_str());
+char* SJCL::encrypt(char* plaintext, const string& key) {
+    int plaintext_len = strlen(plaintext);
     int iv_len = 13;    // use 13 because 15-lol (with initial lol=2) is hardcoded in the decryptccm implementation
 
     // strange iv_len calculation due to the decryptccm implementation
@@ -336,15 +319,15 @@ char* SJCL::encrypt(uint16_t *original_plaintext, int plaintext_len_x, const str
     PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key);
 
     // Assuming ciphertext will not be bigger that the plaintext length * ciphertext_allocation_multiplicator
-    ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * plaintext_len * ciphertext_allocation_multiplicator);
+    ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator);
 
     // Ensure ciphertext ends up null terminated (do I need this?)
-    for (int i = 0; i < (sizeof(unsigned char) * plaintext_len * ciphertext_allocation_multiplicator); i++) ciphertext[i] = '\0';
+    for (int i = 0; i < (sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator); i++) ciphertext[i] = '\0';
 
-    //unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
-    int ciphertext_len = encryptccm(original_plaintext, plaintext_len, additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
+    unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
+    int ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
     if (0 < ciphertext_len) {
-        uint16_t *ciphertext_with_tag = static_cast<uint16_t *>(malloc(sizeof(char *) * (ciphertext_len + ts)));
+        uint8_t *ciphertext_with_tag = static_cast<uint8_t *>(malloc(sizeof(char *) * (ciphertext_len + ts)));
         memcpy(ciphertext_with_tag, ciphertext, ciphertext_len);
         memcpy(ciphertext_with_tag + ciphertext_len, tag, ts);
 

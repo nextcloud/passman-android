@@ -32,25 +32,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.fragment.app.Fragment;
-import androidx.appcompat.widget.AppCompatImageButton;
-
 import android.util.Log;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.FragmentManager;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
 
 import java.util.HashMap;
@@ -74,7 +69,6 @@ public class PasswordList extends AppCompatActivity implements
     private AppCompatImageButton CredentialEditButton;
     private FloatingActionButton addCredentialsButton;
     private static String activatedBeforeRecreate = "";
-    private boolean isEncryptionSupported = true;
     private String lastOpenedCredentialGuid = "";
 
     @Override
@@ -129,8 +123,6 @@ public class PasswordList extends AppCompatActivity implements
         checkFragmentPosition(true);
         if (running) return;
 
-        this.isEncryptionSupported = SJCLCrypto.isEncryptionSupported();
-
         final ProgressDialog progress = getProgressDialog();
         progress.show();
 
@@ -154,7 +146,7 @@ public class PasswordList extends AppCompatActivity implements
         running = true;
     }
 
-    private ProgressDialog getProgressDialog(){
+    private ProgressDialog getProgressDialog() {
         final ProgressDialog progress = new ProgressDialog(this);
         progress.setTitle("Loading");
         progress.setMessage("Wait while loading...");
@@ -210,9 +202,7 @@ public class PasswordList extends AppCompatActivity implements
         if (vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
-                if (this.isEncryptionSupported) {
-                    this.addCredentialsButton.show();
-                }
+                this.addCredentialsButton.show();
                 activatedBeforeRecreate = "vault";
                 Log.v("Open vault", String.valueOf(vault.vault_id));
                 getSupportFragmentManager()
@@ -331,7 +321,7 @@ public class PasswordList extends AppCompatActivity implements
                 FragmentManager fm = getSupportFragmentManager();
                 Fragment vaultFragment = fm.findFragmentByTag("vault");
 
-                if (vaultFragment != null && vaultFragment.isVisible()){
+                if (vaultFragment != null && vaultFragment.isVisible()) {
                     Log.e("refreshVault", "load credentials into content password list");
                     CredentialItemFragment credentialItems = (CredentialItemFragment)
                             getSupportFragmentManager().findFragmentById(R.id.content_password_list);
@@ -341,10 +331,8 @@ public class PasswordList extends AppCompatActivity implements
         });
     }
 
-    void showCredentialEditButtonIfAvailable(){
-        if (this.isEncryptionSupported) {
-            this.CredentialEditButton.setVisibility(View.VISIBLE);
-        }
+    void showCredentialEditButton() {
+        this.CredentialEditButton.setVisibility(View.VISIBLE);
     }
 
     void editCredential() {
@@ -419,10 +407,8 @@ public class PasswordList extends AppCompatActivity implements
         }
     }
 
-    public void showAddCredentialsButton(){
-        if (this.isEncryptionSupported) {
-            this.addCredentialsButton.show();
-        }
+    public void showAddCredentialsButton() {
+        this.addCredentialsButton.show();
     }
 
     private void showNotImplementedMessage() {
@@ -439,7 +425,7 @@ public class PasswordList extends AppCompatActivity implements
     public void onListFragmentInteraction(Credential item) {
         this.VaultLockButton.setVisibility(View.INVISIBLE);
         this.addCredentialsButton.hide();
-        this.showCredentialEditButtonIfAvailable();
+        this.CredentialEditButton.setVisibility(View.VISIBLE);
         this.lastOpenedCredentialGuid = item.getGuid();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -471,9 +457,7 @@ public class PasswordList extends AppCompatActivity implements
             if ((vaultFragment != null && vaultFragment.isVisible()) || (activatedBeforeRecreate.equals("vault"))) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
                 this.CredentialEditButton.setVisibility(View.INVISIBLE);
-                if (this.isEncryptionSupported) {
-                    this.addCredentialsButton.show();
-                }
+                this.addCredentialsButton.show();
                 activatedBeforeRecreate = "";
             } else if (activatedBeforeRecreate.equals("unlockVault")) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
@@ -490,13 +474,11 @@ public class PasswordList extends AppCompatActivity implements
                 this.VaultLockButton.setVisibility(View.INVISIBLE);
                 this.addCredentialsButton.hide();
             } else if (credentialEditFragment != null && credentialEditFragment.isVisible()) {
-                this.showCredentialEditButtonIfAvailable();
+                this.CredentialEditButton.setVisibility(View.VISIBLE);
             } else if (credentialFragment != null && credentialFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
                 this.CredentialEditButton.setVisibility(View.INVISIBLE);
-                if (this.isEncryptionSupported) {
-                    this.addCredentialsButton.show();
-                }
+                this.addCredentialsButton.show();
             } else if (vaultsFragment != null && vaultsFragment.isVisible()) {
                 running = false;
             }

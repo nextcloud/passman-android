@@ -78,30 +78,13 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclas
     return (jstring) "";
 }
 
-uint16_t* as_unsigned_char_array(JNIEnv *env, jcharArray array) {
-    int len = env->GetArrayLength (array);
-    uint16_t *buf = new uint16_t[len];
-    //__android_log_print(ANDROID_LOG_ERROR, "passman-lib", (const char*)"FUCK THIS SHIT GOT AN ERROR: %s", to_string(len).c_str());
-    env->GetCharArrayRegion(array, 0, len, reinterpret_cast<jchar*>(buf));
-
-    if(len > 0){
-        uint16_t* buf2 = new uint16_t[len];
-        memcpy(buf2, buf, len);
-        //__android_log_print(ANDROID_LOG_ERROR, "passman-lib", (const char*)"FUCK THIS SHIT GOT AN ERROR: %s", buf2);
-        return buf2;
-    }
-
-    return buf;
-}
-
-jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jcharArray plaintext_bytearray, jstring key) {
+jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jstring plaintext, jstring key) {
+    std::string dt = env->GetStringUTFChars(plaintext, 0);
     std::string password = env->GetStringUTFChars(key, 0);
 
-    jsize len = env->GetArrayLength (plaintext_bytearray);
-    uint16_t *plaintext_unsigned_char = as_unsigned_char_array(env, plaintext_bytearray);
+    //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, dt.c_str());
 
-    //__android_log_print(ANDROID_LOG_ERROR, "passman-lib", (const char*)"FUCK THIS SHIT GOT AN ERROR: %s", to_string(len).c_str());
-    char *result = WLF::Crypto::SJCL::encrypt(plaintext_unsigned_char, len, password);
+    char *result = WLF::Crypto::SJCL::encrypt(const_cast<char *>(dt.c_str()), password);
     //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
 
     char *arr_result = &result[0];

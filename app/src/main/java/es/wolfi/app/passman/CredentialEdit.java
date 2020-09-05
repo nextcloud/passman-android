@@ -21,15 +21,12 @@
 
 package es.wolfi.app.passman;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -42,9 +39,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import net.bierbaumer.otp_authenticator.TOTPHelper;
-
-import org.apache.commons.codec.binary.Base32;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -147,13 +141,6 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        /*
-        super.onCreate(savedInstanceState);
-        Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-        this.credential = new Credential();
-        this.credential.setVault(v);
-         */
-
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
@@ -167,14 +154,13 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    public View.OnClickListener getDeleteButtonListener(){
+    public View.OnClickListener getDeleteButtonListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (alreadySaving) {
                     return;
                 }
-                Log.e("button action", "pressed DeleteButton");
 
                 AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
                     @Override
@@ -189,7 +175,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                             Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
 
                             int backStackCount = getFragmentManager().getBackStackEntryCount();
-                            int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount-2).getId();
+                            int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount - 2).getId();
                             getFragmentManager().popBackStack(backStackId,
                                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         }
@@ -230,7 +216,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                 };
 
                 alreadySaving = true;
-                Date date= new Date();
+                Date date = new Date();
                 credential.setDeleteTime(date.getTime());
                 credential.update(view.getContext(), responseHandler);
             }
@@ -275,7 +261,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                     alreadySaving = false;
                     getFragmentManager().popBackStack();
                     Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
-                    Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButtonIfAvailable();
+                    Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButton();
                 }
             }
 
