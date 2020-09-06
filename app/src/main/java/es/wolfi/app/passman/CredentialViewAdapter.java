@@ -55,7 +55,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mContentView.setText(mValues.get(position).getLabel());
+        holder.mContentView.setText(holder.mItem.getLabel());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +67,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
                 }
             }
         });
+        //if (holder.mItem.isHidden()) holder.mView.setVisibility(View.GONE);
     }
 
     @Override
