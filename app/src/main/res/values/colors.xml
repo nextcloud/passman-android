@@ -18,4 +18,5 @@
 
     <color name="transparent">#00000000</color>
     <color name="danger">#FF0000</color>
+    <color name="disabled">#7E4C819F</color>
 </resources>

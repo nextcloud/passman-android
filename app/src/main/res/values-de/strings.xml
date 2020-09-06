@@ -35,4 +35,5 @@
     <string name="app_settings">App Einstellungen</string>
     <string name="loading">Wird geladen</string>
     <string name="wait_while_loading">Warten Sie beim Laden ...</string>
+    <string name="outdated_version_options_hint">Einige Optionen sind aufgrund der veralteten Android Version deaktiviert</string>
 </resources>

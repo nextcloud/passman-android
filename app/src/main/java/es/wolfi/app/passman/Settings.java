@@ -24,6 +24,7 @@ package es.wolfi.app.passman;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -34,6 +35,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -68,6 +70,12 @@ public class Settings extends Fragment {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     @BindView(R.id.settings_encryption_implementation_switch)
     Switch settings_encryption_implementation_switch;
+
+    @BindView(R.id.encryption_implementation_label)
+    TextView encryption_implementation_label;
+
+    @BindView(R.id.encryption_implementation_description)
+    TextView encryption_implementation_description;
 
     SharedPreferences settings;
 
@@ -110,6 +118,18 @@ public class Settings extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // Hide encryption implementation switch
+            settings_encryption_implementation_switch.setClickable(false);
+            settings_encryption_implementation_switch.setActivated(false);
+
+            encryption_implementation_label.setTextColor(getResources().getColor(R.color.disabled));
+            encryption_implementation_description.setTextColor(getResources().getColor(R.color.disabled));
+            settings_encryption_implementation_switch.setTextColor(getResources().getColor(R.color.disabled));
+
+            Toast.makeText(getContext(), R.string.outdated_version_options_hint, Toast.LENGTH_LONG).show();
+        }
+
         settings_nextcloud_url.setText(settings.getString(SettingValues.HOST.toString(), null));
         settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
         settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
@@ -134,12 +154,13 @@ public class Settings extends Fragment {
             public void onClick(View view) {
                 SingleTon ton = SingleTon.getTon();
 
-                settings.edit().putBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), settings_encryption_implementation_switch.isChecked()).commit();
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    settings.edit().putBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), settings_encryption_implementation_switch.isChecked()).commit();
+                }
 
                 if (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
                         !settings.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
                         !settings.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {
-                    Log.e("update nc setting", "now");
                     ton.removeString(SettingValues.HOST.toString());
                     ton.removeString(SettingValues.USER.toString());
                     ton.removeString(SettingValues.PASSWORD.toString());
