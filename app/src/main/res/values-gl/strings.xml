@@ -7,7 +7,7 @@
     <string name="connect">Conectar</string>
     <string name="wrongNCUrl">Ou o URL da infraestrutura de Nexcloud é incorrecto ou non foi posíbel conectarse</string>
     <string name="wrongNCSettings">Axustes incorrectos</string>
-    <string name="net_error">Produciuse un erro de rede</string>
+    <string name="net_error">Produciuse un erro na rede</string>
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">O contrasinal da bóveda está trabucada</string>
     <string name="label">Etiqueta</string>
