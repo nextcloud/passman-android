@@ -24,12 +24,10 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -84,40 +82,6 @@ public abstract class Core {
 
     public static void setAPIPassword(String password) {
         Core.password = password;
-    }
-
-    /**
-     * Old method (can do login after updating credentials with wrong values)
-     *
-     * @param c
-     * @param endpoint
-     * @param callback
-     */
-    public static void _requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
-        String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
-
-        Ion.with(c)
-                .load(host.concat(endpoint))
-                .setHeader("Authorization", auth)                // set the header
-                .asString()
-                .setCallback(new FutureCallback<String>() {
-                    @Override
-                    public void onCompleted(Exception e, String result) {
-                        if (e == null && JSONUtils.isJSONObject(result)) {
-                            try {
-                                JSONObject o = new JSONObject(result);
-                                if (o.getString("message").equals("Current user is not logged in")) {
-                                    callback.onCompleted(new Exception("401"), null);
-                                    return;
-                                }
-                            } catch (JSONException e1) {
-
-                            }
-                        }
-
-                        callback.onCompleted(e, result);
-                    }
-                });
     }
 
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
