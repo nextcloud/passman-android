@@ -25,7 +25,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,21 +113,25 @@ public class CredentialDisplay extends Fragment {
         }
 
         handler = new Handler();
-        otp_refresh = new Runnable() {
-            @Override
-            public void run() {
-                int progress = (int) (System.currentTimeMillis() / 1000) % 30;
-                otp_progress.setProgress(progress * 100);
+        if (credential.getOtp().equals("{}")) {
+            otp_refresh = null;
+        } else {
+            otp_refresh = new Runnable() {
+                @Override
+                public void run() {
+                    int progress = (int) (System.currentTimeMillis() / 1000) % 30;
+                    otp_progress.setProgress(progress * 100);
 
-                ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
-                animation.setDuration(1000);
-                animation.setInterpolator(new LinearInterpolator());
-                animation.start();
+                    ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
+                    animation.setDuration(1000);
+                    animation.setInterpolator(new LinearInterpolator());
+                    animation.start();
 
-                otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
-                handler.postDelayed(this, 1000);
-            }
-        };
+                    otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
+                    handler.postDelayed(this, 1000);
+                }
+            };
+        }
     }
 
     public String getGuid() {
@@ -138,13 +141,17 @@ public class CredentialDisplay extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        handler.post(otp_refresh);
+        if (otp_refresh != null) {
+            handler.post(otp_refresh);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        handler.removeCallbacks(otp_refresh);
+        if (otp_refresh != null) {
+            handler.removeCallbacks(otp_refresh);
+        }
     }
 
     @Override
@@ -190,6 +197,10 @@ public class CredentialDisplay extends Fragment {
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
         otp.setEnabled(false);
+
+        if (otp_refresh == null) {
+            otp_progress.setProgress(0);
+        }
     }
 
     @Override
