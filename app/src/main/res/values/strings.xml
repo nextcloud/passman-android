@@ -40,7 +40,6 @@
     <string name="wait_while_loading">Wait while loading...</string>
     <string name="loading">Loading</string>
     <string name="outdated_version_options_hint">Some options are disabled due to the outdated android version</string>
-    <string name="no_external_storage">No external storage available</string>
     <string name="error_downloading_file">Error downloading the file</string>
     <string name="error_writing_file">Error writing the file</string>
     <string name="files">Files</string>

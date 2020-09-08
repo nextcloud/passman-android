@@ -21,6 +21,8 @@
 
 package es.wolfi.app.passman;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,6 +35,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
@@ -45,6 +48,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -56,8 +60,6 @@ import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -65,7 +67,6 @@ import es.wolfi.passman.API.Core;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.SimpleFileDialog;
 
 public class PasswordList extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
@@ -83,6 +84,13 @@ public class PasswordList extends AppCompatActivity implements
     private FloatingActionButton addCredentialsButton;
     private static String activatedBeforeRecreate = "";
     private String lastOpenedCredentialGuid = "";
+    private String intentFilecontent = "";
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -517,57 +525,101 @@ public class PasswordList extends AppCompatActivity implements
 
     @Override
     public void onListFragmentInteraction(File item) {
-        SimpleFileDialog FileSaveDialog =  new SimpleFileDialog(this, "FileSave",
-                new SimpleFileDialog.SimpleFileDialogListener() {
-                    @Override
-                    public void onChosenDir(String chosenDir, Context context) {
-                        Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
 
-                        final ProgressDialog progress = getProgressDialog();
-                        progress.show();
+        final ProgressDialog progress = getProgressDialog();
+        progress.show();
 
-                        FutureCallback<String> cb = new FutureCallback<String>() {
-                            @Override
-                            public void onCompleted(Exception e, String result) {
-                                if (result != null) {
-                                    try {
-                                        JSONObject o = new JSONObject(result);
-                                        if (o.has("file_data")){
-                                            String[] decryptedSplitString = v.decryptString(o.getString("file_data")).split(",");
-                                            if (decryptedSplitString.length == 2){
-                                                try {
-                                                    java.io.File file = new java.io.File(chosenDir);
+        FutureCallback<String> cb = new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                if (result != null) {
+                    try {
+                        JSONObject o = new JSONObject(result);
+                        if (o.has("file_data")) {
+                            String[] decryptedSplitString = v.decryptString(o.getString("file_data")).split(",");
+                            if (decryptedSplitString.length == 2) {
+                                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                                intent.putExtra(Intent.EXTRA_TITLE, item.getFilename());
+                                intent.setType(item.getMimetype());
 
-                                                    FileOutputStream fileOutputStream = new FileOutputStream(file);
-                                                    fileOutputStream.write(Base64.decode(decryptedSplitString[1], Base64.DEFAULT));
-                                                    fileOutputStream.close();
-                                                    Toast.makeText(context.getApplicationContext(), getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
-                                                } catch(IOException ioe) {
-                                                    Toast.makeText(context.getApplicationContext(), getString(R.string.error_writing_file), Toast.LENGTH_SHORT).show();
-                                                    Log.e("FileSave", getString(R.string.error_writing_file));
-                                                }
-                                            }
-                                        }
-                                    } catch (JSONException ex) {
-                                        ex.printStackTrace();
-                                    }
-                                } else {
-                                    Toast.makeText(context.getApplicationContext(), getString(R.string.error_downloading_file), Toast.LENGTH_SHORT).show();
-                                    Log.e("FileSave", getString(R.string.error_downloading_file));
-                                }
-                                progress.dismiss();
+                                // intent.putExtra and a later intent.getExtra seem not to work
+                                //intent.putExtra("custom_data", decryptedSplitString[1]);
+                                intentFilecontent = decryptedSplitString[1];
+
+                                // Optionally, specify a URI for the directory that should be opened in
+                                // the system file picker when your app creates the document.
+                                //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
+
+                                startActivityForResult(intent, 1);
                             }
-                        };
-                        item.download(getParent(), cb);
+                        }
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
                     }
-                });
+                } else {
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_downloading_file), Toast.LENGTH_SHORT).show();
+                    Log.e("FileSave", getString(R.string.error_downloading_file));
+                }
+                progress.dismiss();
+            }
+        };
+        item.download(getParent(), cb);
+    }
 
-        if (isExternalStorageAvailable()){
-            FileSaveDialog.Default_File_Name = item.filename;
-            FileSaveDialog.chooseFile_or_Dir();
-        } else {
-            Toast.makeText(getApplicationContext(), getString(R.string.no_external_storage), Toast.LENGTH_SHORT).show();
-            Log.e("FileSave", getString(R.string.no_external_storage));
+    /**
+     * Checks if the app has permission to write to device storage
+     * <p>
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != RESULT_OK)
+            return;
+
+        if (requestCode == 1) {
+            if (data != null) {
+                Uri uri = data.getData();
+
+                if (uri != null) {
+                    try {
+                        verifyStoragePermissions(this);
+
+                        byte[] filecontent = Base64.decode(intentFilecontent, Base64.DEFAULT);
+                        intentFilecontent = "";
+                        ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "w");
+                        if (pfd != null) {
+                            FileOutputStream fileOutputStream = new FileOutputStream(pfd.getFileDescriptor());
+                            fileOutputStream.write(filecontent);
+                            fileOutputStream.close();
+                            pfd.close();
+                            Toast.makeText(getApplicationContext(), getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            Toast.makeText(getApplicationContext(), getString(R.string.error_writing_file), Toast.LENGTH_SHORT).show();
         }
     }
 
