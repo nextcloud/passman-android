@@ -27,11 +27,13 @@ import android.util.Log;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import es.wolfi.utils.Filterable;
 
@@ -193,6 +195,23 @@ public class Credential extends Core implements Filterable {
 
     public void setDeleteTime(long deleteTime) {
         this.deleteTime = deleteTime;
+    }
+
+    public List<File> getFilesList() {
+        String fileString = this.getFiles();
+        List<File> fileList = new ArrayList<File>();
+
+        try {
+            JSONArray files = new JSONArray(fileString);
+            for (int i = 0; i < files.length(); i++) {
+                JSONObject o = files.getJSONObject(i);
+                fileList.add(new File(o));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return fileList;
     }
 
     public String getFiles() {

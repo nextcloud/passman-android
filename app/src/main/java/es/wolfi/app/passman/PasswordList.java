@@ -27,11 +27,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,18 +51,28 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Objects;
 
 import es.wolfi.passman.API.Core;
 import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.SimpleFileDialog;
 
 public class PasswordList extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
         CredentialItemFragment.OnListFragmentInteractionListener,
         VaultLockScreen.VaultUnlockInteractionListener,
-        CredentialDisplay.OnCredentialFragmentInteraction {
+        CredentialDisplay.OnCredentialFragmentInteraction,
+        CredentialDisplay.OnListFragmentInteractionListener {
     SharedPreferences settings;
     SingleTon ton;
 
@@ -492,6 +505,70 @@ public class PasswordList extends AppCompatActivity implements
     @Override
     public void onCredentialFragmentInteraction(Credential credential) {
         this.addCredentialsButton.hide();
+    }
+
+    private static boolean isExternalStorageAvailable() {
+        String extStorageState = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(extStorageState)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onListFragmentInteraction(File item) {
+        SimpleFileDialog FileSaveDialog =  new SimpleFileDialog(this, "FileSave",
+                new SimpleFileDialog.SimpleFileDialogListener() {
+                    @Override
+                    public void onChosenDir(String chosenDir, Context context) {
+                        Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+
+                        final ProgressDialog progress = getProgressDialog();
+                        progress.show();
+
+                        FutureCallback<String> cb = new FutureCallback<String>() {
+                            @Override
+                            public void onCompleted(Exception e, String result) {
+                                if (result != null) {
+                                    try {
+                                        JSONObject o = new JSONObject(result);
+                                        if (o.has("file_data")){
+                                            String[] decryptedSplitString = v.decryptString(o.getString("file_data")).split(",");
+                                            if (decryptedSplitString.length == 2){
+                                                try {
+                                                    java.io.File file = new java.io.File(chosenDir);
+
+                                                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+                                                    fileOutputStream.write(Base64.decode(decryptedSplitString[1], Base64.DEFAULT));
+                                                    fileOutputStream.close();
+                                                    Toast.makeText(context.getApplicationContext(), getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
+                                                } catch(IOException ioe) {
+                                                    Toast.makeText(context.getApplicationContext(), getString(R.string.error_writing_file), Toast.LENGTH_SHORT).show();
+                                                    Log.e("FileSave", getString(R.string.error_writing_file));
+                                                }
+                                            }
+                                        }
+                                    } catch (JSONException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                } else {
+                                    Toast.makeText(context.getApplicationContext(), getString(R.string.error_downloading_file), Toast.LENGTH_SHORT).show();
+                                    Log.e("FileSave", getString(R.string.error_downloading_file));
+                                }
+                                progress.dismiss();
+                            }
+                        };
+                        item.download(getParent(), cb);
+                    }
+                });
+
+        if (isExternalStorageAvailable()){
+            FileSaveDialog.Default_File_Name = item.filename;
+            FileSaveDialog.chooseFile_or_Dir();
+        } else {
+            Toast.makeText(getApplicationContext(), getString(R.string.no_external_storage), Toast.LENGTH_SHORT).show();
+            Log.e("FileSave", getString(R.string.no_external_storage));
+        }
     }
 
     private void checkFragmentPosition(boolean positive) {
