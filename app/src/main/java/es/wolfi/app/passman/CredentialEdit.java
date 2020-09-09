@@ -23,7 +23,6 @@ package es.wolfi.app.passman;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.koushikdutta.async.future.FutureCallback;
@@ -74,10 +75,13 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     EditText url;
     @BindView(R.id.edit_credential_description)
     EditText description;
+    @BindView(R.id.filelist)
+    RecyclerView filelist;
 
     private OnCredentialFragmentInteraction mListener;
     private Credential credential;
     private boolean alreadySaving = false;
+    private FileEditAdapter fed;
 
     public CredentialEdit() {
         // Required empty public constructor
@@ -113,6 +117,8 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         deleteCredentialButton.setOnClickListener(this.getDeleteButtonListener());
         deleteCredentialButton.setVisibility(View.VISIBLE);
 
+        fed = new FileEditAdapter(credential);
+
         return view;
     }
 
@@ -130,6 +136,11 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.filelist);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(fed);
 
         label.setText(this.credential.getLabel());
         user.setText(this.credential.getUsername());
@@ -240,6 +251,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         this.credential.setEmail(email.getText().toString());
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
+        this.credential.setFiles(fed.getFilesString());
 
         alreadySaving = true;
 

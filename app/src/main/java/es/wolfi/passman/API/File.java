@@ -70,6 +70,18 @@ public class File extends Core {
         return mimetype;
     }
 
+    public JSONObject getAsJSONObject() throws JSONException {
+        JSONObject fileObject = new JSONObject();
+        fileObject.put("file_id", file_id);
+        fileObject.put("filename", filename);
+        fileObject.put("guid", guid);
+        fileObject.put("size", size);
+        fileObject.put("created", created);
+        fileObject.put("mimetype", mimetype);
+
+        return fileObject;
+    }
+
     public void download(Context context, FutureCallback<String> cb) {
         requestAPIGET(context, "file/" + file_id, cb);
     }

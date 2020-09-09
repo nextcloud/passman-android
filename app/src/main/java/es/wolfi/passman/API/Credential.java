@@ -221,6 +221,9 @@ public class Credential extends Core implements Filterable {
     }
 
     public void setFiles(String files) {
+        if (files.equals("[]")){
+            files = "";
+        }
         this.files = vault.encryptString(files);
     }
 
@@ -357,7 +360,7 @@ public class Credential extends Core implements Filterable {
             params.put("compromised", compromised);
             params.put("hidden", isHidden());
 
-            requestAPIPOST(c, "credentials", params, "POST", responseHandler);
+            requestAPI(c, "credentials", params, "POST", responseHandler);
         } catch (JSONException | MalformedURLException e) {
             e.printStackTrace();
         }
@@ -399,8 +402,17 @@ public class Credential extends Core implements Filterable {
             params.put("compromised", compromised);
             params.put("hidden", isHidden());
 
-            requestAPIPOST(c, "credentials/" + getGuid(), params, "PATCH", responseHandler);
+            requestAPI(c, "credentials/" + getGuid(), params, "PATCH", responseHandler);
         } catch (JSONException | MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendFileDeleteRequest(Context c, int file_id, final AsyncHttpResponseHandler responseHandler){
+        RequestParams params = new RequestParams();
+        try {
+            requestAPI(c, "file/" + file_id, params, "DELETE", responseHandler);
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
     }

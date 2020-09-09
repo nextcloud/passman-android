@@ -130,7 +130,7 @@ public abstract class Core {
         client.get(host.concat(endpoint), responseHandler);
     }
 
-    public static void requestAPIPOST(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
+    public static void requestAPI(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
             throws MalformedURLException {
 
         URL url = new URL(host.concat(endpoint));
@@ -147,6 +147,8 @@ public abstract class Core {
             client.post(url.toString(), postDataParams, responseHandler);
         } else if (requestType.equals("PATCH")) {
             client.patch(url.toString(), postDataParams, responseHandler);
+        } else if (requestType.equals("DELETE")) {
+            client.delete(url.toString(), postDataParams, responseHandler);
         }
     }
 
