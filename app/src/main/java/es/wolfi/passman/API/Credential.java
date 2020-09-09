@@ -201,14 +201,16 @@ public class Credential extends Core implements Filterable {
         String fileString = this.getFiles();
         List<File> fileList = new ArrayList<File>();
 
-        try {
-            JSONArray files = new JSONArray(fileString);
-            for (int i = 0; i < files.length(); i++) {
-                JSONObject o = files.getJSONObject(i);
-                fileList.add(new File(o));
+        if (fileString != null && !fileString.equals("[]") && !fileString.equals("")){
+            try {
+                JSONArray files = new JSONArray(fileString);
+                for (int i = 0; i < files.length(); i++) {
+                    JSONObject o = files.getJSONObject(i);
+                    fileList.add(new File(o));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
 
         return fileList;
@@ -397,7 +399,7 @@ public class Credential extends Core implements Filterable {
             params.put("compromised", compromised);
             params.put("hidden", isHidden());
 
-            requestAPIPOST(c, "credentials/" + this.getGuid(), params, "PATCH", responseHandler);
+            requestAPIPOST(c, "credentials/" + getGuid(), params, "PATCH", responseHandler);
         } catch (JSONException | MalformedURLException e) {
             e.printStackTrace();
         }
