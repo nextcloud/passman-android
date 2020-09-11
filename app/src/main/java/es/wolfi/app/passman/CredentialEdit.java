@@ -21,14 +21,20 @@
 
 package es.wolfi.app.passman;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -49,6 +55,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
 
@@ -82,6 +89,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     private Credential credential;
     private boolean alreadySaving = false;
     private FileEditAdapter fed;
+    private RecyclerView recyclerView;
 
     public CredentialEdit() {
         // Required empty public constructor
@@ -117,6 +125,10 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         deleteCredentialButton.setOnClickListener(this.getDeleteButtonListener());
         deleteCredentialButton.setVisibility(View.VISIBLE);
 
+        Button addFileButton = (Button) view.findViewById(R.id.AddFileButton);
+        addFileButton.setOnClickListener(this.getAddFileButtonListener());
+        addFileButton.setVisibility(View.VISIBLE);
+
         fed = new FileEditAdapter(credential);
 
         return view;
@@ -128,7 +140,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         if (context instanceof OnCredentialFragmentInteraction) {
             mListener = (OnCredentialFragmentInteraction) context;
         } else {
-            //throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -137,7 +149,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.filelist);
+        recyclerView = (RecyclerView) view.findViewById(R.id.filelist);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(fed);
@@ -163,6 +175,69 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize) throws JSONException {
+        Context context = getContext();
+        final ProgressDialog progress = new ProgressDialog(context);
+        progress.setTitle(context.getString(R.string.loading));
+        progress.setMessage(context.getString(R.string.wait_while_loading));
+        progress.setCancelable(false);
+        progress.show();
+
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
+                String result = new String(responseBody);
+                if (statusCode == 200 && !result.equals("")) {
+                    try {
+                        JSONObject fileObject = new JSONObject(result);
+                        if (fileObject.has("message") && fileObject.getString("message").equals("Current user is not logged in")) {
+                            return;
+                        }
+                        if (fileObject.has("file_id") && fileObject.has("filename") && fileObject.has("guid")
+                                && fileObject.has("size") && fileObject.has("created") && fileObject.has("mimetype")) {
+                            fileObject.put("filename", fileName);
+                            File file = new File(fileObject);
+                            fed.addFile(file);
+                            fed.notifyDataSetChanged();
+                        }
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                progress.dismiss();
+            }
+
+            @Override
+            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+                error.printStackTrace();
+                progress.dismiss();
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        };
+
+        // Start encryption a little later so that the main thread does not get stuck in the file selection dialog and it can close.
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler);
+            }
+        }, 100);
+    }
+
+    public View.OnClickListener getAddFileButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.selectFileToAdd();
+                //((PasswordList)getActivity()).selectFileToAdd();
+            }
+        };
     }
 
     public View.OnClickListener getDeleteButtonListener() {
@@ -320,9 +395,6 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnCredentialFragmentInteraction {
-        // TODO: Update argument type and name
-        void onCredentialFragmentInteraction(Credential credential);
-
-        void saveCredential(Credential credential, Context c, FutureCallback<String> cb);
+        void selectFileToAdd();
     }
 }

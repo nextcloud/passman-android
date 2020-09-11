@@ -110,7 +110,20 @@ public class Vault extends Core implements Filterable {
             return "";
         }
         try {
-            return SJCLCrypto.encryptString(plaintext, encryption_key, useJavaBasedEncryption);
+            return SJCLCrypto.encryptString(plaintext, encryption_key, useJavaBasedEncryption, true);
+        } catch (Exception e) {
+            Log.e("Vault", e.getMessage());
+            e.printStackTrace();
+        }
+        return "Error encrypting";
+    }
+
+    public String encryptRawStringData(String plaintext) {
+        if (plaintext == null) {
+            return "";
+        }
+        try {
+            return SJCLCrypto.encryptString(plaintext, encryption_key, useJavaBasedEncryption, false);
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
             e.printStackTrace();

@@ -74,11 +74,13 @@ public class SJCLCrypto {
         return output;
     }
 
-    public static String encryptString(String input, String password, boolean useJavaBasedEncryption) throws Exception {
+    public static String encryptString(String input, String password, boolean useJavaBasedEncryption, boolean asJsonString) throws Exception {
         String output = "";
 
-        Gson g = new Gson();
-        input = g.toJson(input);
+        if (asJsonString) {
+            Gson g = new Gson();
+            input = g.toJson(input);
+        }
 
         if (useJavaBasedEncryption && isJavaEncryptionSupported()) {
             output = encryptStringJava(input, password);

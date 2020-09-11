@@ -201,7 +201,7 @@ public class Credential extends Core implements Filterable {
         String fileString = this.getFiles();
         List<File> fileList = new ArrayList<File>();
 
-        if (fileString != null && !fileString.equals("[]") && !fileString.equals("")){
+        if (fileString != null && !fileString.equals("[]") && !fileString.equals("")) {
             try {
                 JSONArray files = new JSONArray(fileString);
                 for (int i = 0; i < files.length(); i++) {
@@ -221,10 +221,11 @@ public class Credential extends Core implements Filterable {
     }
 
     public void setFiles(String files) {
-        if (files.equals("[]")){
-            files = "";
+        if (files.equals("[]") || files.equals("")) {
+            this.files = vault.encryptString("");
+            return;
         }
-        this.files = vault.encryptString(files);
+        this.files = vault.encryptRawStringData(files);
     }
 
     public String getCustomFields() {
@@ -408,10 +409,25 @@ public class Credential extends Core implements Filterable {
         }
     }
 
-    public void sendFileDeleteRequest(Context c, int file_id, final AsyncHttpResponseHandler responseHandler){
+    public void sendFileDeleteRequest(Context c, int file_id, final AsyncHttpResponseHandler responseHandler) {
         RequestParams params = new RequestParams();
         try {
             requestAPI(c, "file/" + file_id, params, "DELETE", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(true);
+
+        try {
+            params.put("filename", vault.encryptString(fileName));
+            params.put("data", vault.encryptRawStringData(encodedFile));
+            params.put("mimetype", mimeType);
+            params.put("size", fileSize);
+            requestAPI(c, "file", params, "POST", responseHandler);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

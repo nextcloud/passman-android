@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
+import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -58,6 +60,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -67,13 +70,15 @@ import es.wolfi.passman.API.Core;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.FileUtils;
 
 public class PasswordList extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
         CredentialItemFragment.OnListFragmentInteractionListener,
         VaultLockScreen.VaultUnlockInteractionListener,
         CredentialDisplay.OnCredentialFragmentInteraction,
-        CredentialDisplay.OnListFragmentInteractionListener {
+        CredentialDisplay.OnListFragmentInteractionListener,
+        CredentialEdit.OnCredentialFragmentInteraction {
     SharedPreferences settings;
     SingleTon ton;
 
@@ -271,14 +276,6 @@ public class PasswordList extends AppCompatActivity implements
                 }
             });
         }
-        /*
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                progress.dismiss();
-            }
-        }, 100);
-        */
     }
 
     void showUnlockVault() {
@@ -568,6 +565,19 @@ public class PasswordList extends AppCompatActivity implements
         item.download(getParent(), cb);
     }
 
+    @Override
+    public void selectFileToAdd(){
+        //new Intent("android.intent.action.GET_CONTENT").addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
+
+        // Optionally, specify a URI for the directory that should be opened in
+        // the system file picker when your app creates the document.
+        //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
+
+        startActivityForResult(intent, 2);
+    }
+
     /**
      * Checks if the app has permission to write to device storage
      * <p>
@@ -595,7 +605,7 @@ public class PasswordList extends AppCompatActivity implements
         if (resultCode != RESULT_OK)
             return;
 
-        if (requestCode == 1) {
+        if (requestCode == 1) { //download file
             if (data != null) {
                 Uri uri = data.getData();
 
@@ -620,6 +630,52 @@ public class PasswordList extends AppCompatActivity implements
                 }
             }
             Toast.makeText(getApplicationContext(), getString(R.string.error_writing_file), Toast.LENGTH_SHORT).show();
+        }
+
+        if (requestCode == 2) { //add file
+            if (data != null) {
+                Uri uri = data.getData();
+
+                if (uri != null) {
+                    try {
+                        verifyStoragePermissions(this);
+
+                        ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
+                        if (pfd != null) {
+                            FileInputStream fileInputStream = new FileInputStream(pfd.getFileDescriptor());
+                            int fileSize = (int)fileInputStream.available();
+                            byte[] fileContent = new byte[fileSize];
+
+                            int num = fileInputStream.read(fileContent);
+                            fileInputStream.close();
+                            String realEncodedFile = Base64.encodeToString(fileContent, Base64.DEFAULT | Base64.NO_WRAP);
+                            pfd.close();
+
+                            CredentialEdit credentialEditFragment = (CredentialEdit) getSupportFragmentManager().findFragmentByTag("credentialEdit");
+                            if (credentialEditFragment != null) {
+                                String mimeType = getContentResolver().getType(uri);
+                                String fileName = "unknown";
+                                String filePathFromUri = FileUtils.getPath(this, uri);
+                                if (filePathFromUri != null){
+                                    java.io.File file = new java.io.File(filePathFromUri);
+                                    fileName = file.getName();
+                                }
+
+                                try {
+                                    String encodedFile = String.format("data:%s;base64,%s", mimeType, realEncodedFile);
+                                    credentialEditFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize);
+                                    return;
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
         }
     }
 

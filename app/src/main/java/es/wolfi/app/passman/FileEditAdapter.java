@@ -65,7 +65,11 @@ public class FileEditAdapter extends RecyclerView.Adapter<FileEditAdapter.ViewHo
             }
         }
 
-        return files.toString();
+        return files.toString().replaceAll("\\\\/", "/");
+    }
+
+    public boolean addFile(File file) {
+        return mValues.add(file);
     }
 
     @Override
