@@ -21,6 +21,7 @@
 
 package es.wolfi.app.passman;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -145,6 +146,13 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             return;
         }
 
+        Context context = getContext();
+        final ProgressDialog progress = new ProgressDialog(context);
+        progress.setTitle(context.getString(R.string.loading));
+        progress.setMessage(context.getString(R.string.wait_while_loading));
+        progress.setCancelable(false);
+        progress.show();
+
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
         this.credential.setPassword(password.getText().toString());
@@ -172,6 +180,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
                     Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
                     Objects.requireNonNull(((PasswordList) getActivity())).showAddCredentialsButton();
                     alreadySaving = false;
+                    progress.dismiss();
                     getFragmentManager().popBackStack();
                 }
             }
@@ -179,6 +188,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
                 alreadySaving = false;
+                progress.dismiss();
                 String response = new String(responseBody);
 
                 if (!response.equals("") && JSONUtils.isJSONObject(response)) {
@@ -211,7 +221,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             }
         };
 
-        this.credential.save(view.getContext(), responseHandler);
+        this.credential.save(context, responseHandler);
     }
 
     /**

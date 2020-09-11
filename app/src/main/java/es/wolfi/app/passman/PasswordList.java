@@ -29,7 +29,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Bundle;
@@ -38,7 +37,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
-import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
@@ -77,8 +75,7 @@ public class PasswordList extends AppCompatActivity implements
         CredentialItemFragment.OnListFragmentInteractionListener,
         VaultLockScreen.VaultUnlockInteractionListener,
         CredentialDisplay.OnCredentialFragmentInteraction,
-        CredentialDisplay.OnListFragmentInteractionListener,
-        CredentialEdit.OnCredentialFragmentInteraction {
+        CredentialDisplay.OnListFragmentInteractionListener {
     SharedPreferences settings;
     SingleTon ton;
 
@@ -565,8 +562,7 @@ public class PasswordList extends AppCompatActivity implements
         item.download(getParent(), cb);
     }
 
-    @Override
-    public void selectFileToAdd(){
+    public void selectFileToAdd() {
         //new Intent("android.intent.action.GET_CONTENT").addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
@@ -643,7 +639,7 @@ public class PasswordList extends AppCompatActivity implements
                         ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
                         if (pfd != null) {
                             FileInputStream fileInputStream = new FileInputStream(pfd.getFileDescriptor());
-                            int fileSize = (int)fileInputStream.available();
+                            int fileSize = (int) fileInputStream.available();
                             byte[] fileContent = new byte[fileSize];
 
                             int num = fileInputStream.read(fileContent);
@@ -656,7 +652,7 @@ public class PasswordList extends AppCompatActivity implements
                                 String mimeType = getContentResolver().getType(uri);
                                 String fileName = "unknown";
                                 String filePathFromUri = FileUtils.getPath(this, uri);
-                                if (filePathFromUri != null){
+                                if (filePathFromUri != null) {
                                     java.io.File file = new java.io.File(filePathFromUri);
                                     fileName = file.getName();
                                 }

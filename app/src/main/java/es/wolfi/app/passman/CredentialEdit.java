@@ -23,18 +23,15 @@ package es.wolfi.app.passman;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -43,7 +40,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -85,7 +81,6 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     @BindView(R.id.filelist)
     RecyclerView filelist;
 
-    private OnCredentialFragmentInteraction mListener;
     private Credential credential;
     private boolean alreadySaving = false;
     private FileEditAdapter fed;
@@ -137,11 +132,6 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnCredentialFragmentInteraction) {
-            mListener = (OnCredentialFragmentInteraction) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -174,7 +164,6 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize) throws JSONException {
@@ -234,8 +223,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.selectFileToAdd();
-                //((PasswordList)getActivity()).selectFileToAdd();
+                ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd();
             }
         };
     }
@@ -320,6 +308,13 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             return;
         }
 
+        Context context = getContext();
+        final ProgressDialog progress = new ProgressDialog(context);
+        progress.setTitle(context.getString(R.string.loading));
+        progress.setMessage(context.getString(R.string.wait_while_loading));
+        progress.setCancelable(false);
+        progress.show();
+
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
         this.credential.setPassword(password.getText().toString());
@@ -339,6 +334,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                             .setAction("Action", null).show();
                     assert getFragmentManager() != null;
                     alreadySaving = false;
+                    progress.dismiss();
                     getFragmentManager().popBackStack();
                     Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
                     Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButton();
@@ -348,6 +344,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
                 alreadySaving = false;
+                progress.dismiss();
                 if (responseBody != null && responseBody.length > 0) {
                     String response = new String(responseBody);
 
@@ -381,20 +378,6 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             }
         };
 
-        this.credential.update(view.getContext(), responseHandler);
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnCredentialFragmentInteraction {
-        void selectFileToAdd();
+        this.credential.update(context, responseHandler);
     }
 }
