@@ -96,13 +96,15 @@ public class Vault extends Core implements Filterable {
     public boolean is_unlocked() {
         try {
             if (!encryption_key.isEmpty()) {
-                SJCLCrypto.decryptString(challenge_password, encryption_key, useJavaBasedEncryption);
-                return true;
+                String result = SJCLCrypto.decryptString(challenge_password, encryption_key, useJavaBasedEncryption);
+                if (!result.equals("")){
+                    return true;
+                }
             }
-            return false;
         } catch (Exception e) {
             return false;
         }
+        return false;
     }
 
     public String encryptString(String plaintext) {

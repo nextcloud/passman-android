@@ -31,6 +31,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -225,7 +226,8 @@ public class PasswordList extends AppCompatActivity implements
         final ProgressDialog progress = getProgressDialog();
         progress.show();
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        vault.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
+        vault.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(),
+                (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SJCLCrypto.isJavaEncryptionSupported())));
         if (vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
@@ -279,7 +281,8 @@ public class PasswordList extends AppCompatActivity implements
         activatedBeforeRecreate = "unlockVault";
         this.VaultLockButton.setVisibility(View.VISIBLE);
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        v.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
+        v.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(),
+                (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SJCLCrypto.isJavaEncryptionSupported())));
         if (v.unlock(settings.getString(v.guid, ""))) {
             showActiveVault();
             return;
@@ -334,7 +337,8 @@ public class PasswordList extends AppCompatActivity implements
                 }
 
                 result.setEncryptionKey(vault.getEncryptionKey());
-                result.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
+                result.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(),
+                        (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SJCLCrypto.isJavaEncryptionSupported())));
                 ton.removeExtra(vault.guid);
                 ton.addExtra(vault.guid, result);
                 ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
