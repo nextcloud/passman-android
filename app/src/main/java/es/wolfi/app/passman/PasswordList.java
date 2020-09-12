@@ -88,6 +88,7 @@ public class PasswordList extends AppCompatActivity implements
     private static String activatedBeforeRecreate = "";
     private String lastOpenedCredentialGuid = "";
     private String intentFilecontent = "";
+    HashMap<String, Integer> visibleButtonsBeforeEnterSettings = new HashMap<String, Integer>();
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -354,6 +355,7 @@ public class PasswordList extends AppCompatActivity implements
                     Log.e("refreshVault", "load credentials into content password list");
                     CredentialItemFragment credentialItems = (CredentialItemFragment)
                             getSupportFragmentManager().findFragmentById(R.id.content_password_list);
+                    assert credentialItems != null;
                     credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
                 }
             }
@@ -437,6 +439,10 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     void settingsButtonPressed() {
+        visibleButtonsBeforeEnterSettings.put("credentialEditButton", this.CredentialEditButton.getVisibility());
+        visibleButtonsBeforeEnterSettings.put("addCredentialsButton", this.addCredentialsButton.getVisibility());
+        visibleButtonsBeforeEnterSettings.put("VaultLockButton", this.VaultLockButton.getVisibility());
+
         this.CredentialEditButton.setVisibility(View.INVISIBLE);
         this.addCredentialsButton.setVisibility(View.INVISIBLE);
         this.VaultLockButton.setVisibility(View.INVISIBLE);
@@ -513,14 +519,6 @@ public class PasswordList extends AppCompatActivity implements
         this.addCredentialsButton.hide();
     }
 
-    private static boolean isExternalStorageAvailable() {
-        String extStorageState = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(extStorageState)) {
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void onListFragmentInteraction(File item) {
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
@@ -583,7 +581,7 @@ public class PasswordList extends AppCompatActivity implements
      * <p>
      * If the app does not has permission then the user will be prompted to grant permissions
      *
-     * @param activity
+     * @param activity The current activity
      */
     public static void verifyStoragePermissions(Activity activity) {
         // Check if we have write permission
@@ -643,7 +641,7 @@ public class PasswordList extends AppCompatActivity implements
                         ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
                         if (pfd != null) {
                             FileInputStream fileInputStream = new FileInputStream(pfd.getFileDescriptor());
-                            int fileSize = (int) fileInputStream.available();
+                            int fileSize = fileInputStream.available();
                             byte[] fileContent = new byte[fileSize];
 
                             int num = fileInputStream.read(fileContent);
@@ -716,7 +714,15 @@ public class PasswordList extends AppCompatActivity implements
             } else if (vaultsFragment != null && vaultsFragment.isVisible()) {
                 running = false;
             } else if (settingsFragment != null && settingsFragment.isVisible()) {
-                this.checkFragmentPosition(true);
+                if (visibleButtonsBeforeEnterSettings.containsKey("credentialEditButton")) {
+                    this.CredentialEditButton.setVisibility(visibleButtonsBeforeEnterSettings.get("credentialEditButton"));
+                }
+                if (visibleButtonsBeforeEnterSettings.containsKey("addCredentialsButton")) {
+                    this.addCredentialsButton.setVisibility(visibleButtonsBeforeEnterSettings.get("addCredentialsButton"));
+                }
+                if (visibleButtonsBeforeEnterSettings.containsKey("VaultLockButton")) {
+                    this.VaultLockButton.setVisibility(visibleButtonsBeforeEnterSettings.get("VaultLockButton"));
+                }
             }
         }
     }

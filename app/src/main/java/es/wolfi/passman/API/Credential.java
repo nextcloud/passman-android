@@ -373,10 +373,15 @@ public class Credential extends Core implements Filterable {
         try {
             JSONObject icon;
 
-            if (favicon == null || favicon.equals("null")) {
+            if (favicon == null || favicon.equals("") || favicon.equals("null")) {
                 icon = null;
             } else {
-                icon = new JSONObject(favicon);
+                try {
+                    icon = new JSONObject(favicon);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    icon = null;
+                }
             }
 
             params.put("vault_id", getVaultId());
@@ -402,7 +407,7 @@ public class Credential extends Core implements Filterable {
             params.put("hidden", isHidden());
 
             requestAPI(c, "credentials/" + getGuid(), params, "PATCH", responseHandler);
-        } catch (JSONException | MalformedURLException e) {
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
     }
