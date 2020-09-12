@@ -351,7 +351,6 @@ public class Credential extends Core implements Filterable {
             params.put("username", username);
             params.put("password", password);
             params.put("url", url);
-            params.put("favicon", getFavicon());
             params.put("renew_interval", getRenewInterval());
             params.put("expire_time", getExpireTime());
             params.put("delete_time", getDeleteTime());
@@ -372,14 +371,12 @@ public class Credential extends Core implements Filterable {
         params.setUseJsonStreamer(true);
 
         try {
-            JSONObject icon = new JSONObject();
-            icon.put("type", false);
-            icon.put("content", "");
+            JSONObject icon;
 
-            if (favicon != null) {
-                params.put("icon", favicon);
+            if (favicon == null || favicon.equals("null")) {
+                icon = null;
             } else {
-                params.put("icon", icon);
+                icon = new JSONObject(favicon);
             }
 
             params.put("vault_id", getVaultId());
@@ -391,6 +388,7 @@ public class Credential extends Core implements Filterable {
             params.put("changed", getChanged());
             params.put("tags", tags);
             params.put("email", email);
+            params.put("icon", icon);
             params.put("username", username);
             params.put("password", password);
             params.put("url", url);
