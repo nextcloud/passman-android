@@ -160,8 +160,8 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
         this.credential.setOtp("{}");
-        this.credential.setFiles("");
-        this.credential.setCustomFields("");
+        this.credential.setFiles("[]");
+        this.credential.setCustomFields("[]");
         this.credential.setTags("");
         this.credential.setFavicon("");
         this.credential.setCompromised("");

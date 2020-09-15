@@ -221,8 +221,8 @@ public class Credential extends Core implements Filterable {
     }
 
     public void setFiles(String files) {
-        if (files.equals("[]") || files.equals("")) {
-            this.files = vault.encryptString("");
+        if (files.equals("")) {
+            this.files = vault.encryptString(files);
             return;
         }
         this.files = vault.encryptRawStringData(files);
@@ -233,7 +233,11 @@ public class Credential extends Core implements Filterable {
     }
 
     public void setCustomFields(String customFields) {
-        this.customFields = vault.encryptString(customFields);
+        if (customFields.equals("")) {
+            this.customFields = vault.encryptString(customFields);
+            return;
+        }
+        this.customFields = vault.encryptRawStringData(customFields);
     }
 
     public String getOtp() {
