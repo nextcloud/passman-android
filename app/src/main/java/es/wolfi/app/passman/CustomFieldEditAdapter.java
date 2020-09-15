@@ -24,8 +24,10 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -266,8 +268,15 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             mLabelEdit.setVisibility(View.VISIBLE);
 
             WindowManager vm = (WindowManager) mView.getContext().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-            final Rect bounds = vm.getCurrentWindowMetrics().getBounds();
-            mValueEdit.setMaxWidth(bounds.width() - deleteButton.getWidth() - 200);
+
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                final Rect bounds = vm.getCurrentWindowMetrics().getBounds();
+                mValueEdit.setMaxWidth(bounds.width() - deleteButton.getWidth() - 200);
+            } else {
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                vm.getDefaultDisplay().getMetrics(displayMetrics);
+                mValueEdit.setMaxWidth(displayMetrics.widthPixels - deleteButton.getWidth() - 200);
+            }
         }
     }
 }
