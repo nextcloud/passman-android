@@ -44,4 +44,6 @@
     <string name="error_writing_file">Error writing the file</string>
     <string name="files">Files</string>
     <string name="custom_fields">Custom fields</string>
+    <string name="add_file">Add file</string>
+    <string name="add_custom_field">Add custom field</string>
 </resources>

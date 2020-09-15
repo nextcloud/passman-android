@@ -78,6 +78,10 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
         return customFields.toString().replaceAll("\\\\/", "/");
     }
 
+    public boolean addCustomField(CustomField customField) {
+        return mValues.add(customField);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())

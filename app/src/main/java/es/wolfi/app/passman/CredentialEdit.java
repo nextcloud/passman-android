@@ -26,11 +26,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -51,6 +53,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
@@ -82,6 +85,8 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     RecyclerView filesList;
     @BindView(R.id.customFieldsList)
     RecyclerView customFieldsList;
+    @BindView(R.id.customFieldType)
+    Spinner customFieldType;
 
     private Credential credential;
     private boolean alreadySaving = false;
@@ -127,6 +132,10 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         Button addFileButton = (Button) view.findViewById(R.id.AddFileButton);
         addFileButton.setOnClickListener(this.getAddFileButtonListener());
         addFileButton.setVisibility(View.VISIBLE);
+
+        Button addCustomFieldButton = (Button) view.findViewById(R.id.AddCustomFieldButton);
+        addCustomFieldButton.setOnClickListener(this.getAddCustomFieldButtonListener());
+        addCustomFieldButton.setVisibility(View.VISIBLE);
 
         fed = new FileEditAdapter(credential);
         cfed = new CustomFieldEditAdapter(credential);
@@ -176,7 +185,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         super.onDetach();
     }
 
-    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize) throws JSONException {
+    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) throws JSONException {
         Context context = getContext();
         final ProgressDialog progress = new ProgressDialog(context);
         progress.setTitle(context.getString(R.string.loading));
@@ -198,8 +207,22 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                                 && fileObject.has("size") && fileObject.has("created") && fileObject.has("mimetype")) {
                             fileObject.put("filename", fileName);
                             File file = new File(fileObject);
-                            fed.addFile(file);
-                            fed.notifyDataSetChanged();
+
+                            if (requestCode == 2) {
+                                fed.addFile(file);
+                                fed.notifyDataSetChanged();
+                            }
+                            if (requestCode == 3) {
+                                JSONObject customFieldJSONObject = new JSONObject();
+                                customFieldJSONObject.put("label", "newLabel" + cfed.getItemCount() + 1);
+                                customFieldJSONObject.put("secret", false);
+                                customFieldJSONObject.put("field_type", "file");
+                                customFieldJSONObject.put("value", file.getAsJSONObject());
+
+                                CustomField cf = new CustomField(customFieldJSONObject);
+                                cfed.addCustomField(cf);
+                                cfed.notifyDataSetChanged();
+                            }
                         }
                     } catch (JSONException e1) {
                         e1.printStackTrace();
@@ -233,7 +256,32 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd();
+                ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd(2);
+            }
+        };
+    }
+
+    public View.OnClickListener getAddCustomFieldButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (customFieldType.getSelectedItem().toString().equals("File")) {
+                    ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd(3);
+                } else {
+                    try {
+                        JSONObject customFieldJSONObject = new JSONObject();
+                        customFieldJSONObject.put("label", "newLabel" + (cfed.getItemCount() + 1));
+                        customFieldJSONObject.put("secret", customFieldType.getSelectedItem().toString().toLowerCase().equals("password"));
+                        customFieldJSONObject.put("field_type", customFieldType.getSelectedItem().toString().toLowerCase());
+                        customFieldJSONObject.put("value", "");
+
+                        CustomField cf = new CustomField(customFieldJSONObject);
+                        cfed.addCustomField(cf);
+                        cfed.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         };
     }
