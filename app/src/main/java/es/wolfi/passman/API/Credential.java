@@ -228,6 +228,25 @@ public class Credential extends Core implements Filterable {
         this.files = vault.encryptRawStringData(files);
     }
 
+    public List<CustomField> getCustomFieldsList() {
+        String customFieldsString = this.getCustomFields();
+        List<CustomField> customFieldsList = new ArrayList<CustomField>();
+
+        if (customFieldsString != null && !customFieldsString.equals("[]") && !customFieldsString.equals("")) {
+            try {
+                JSONArray customFields = new JSONArray(customFieldsString);
+                for (int i = 0; i < customFields.length(); i++) {
+                    JSONObject o = customFields.getJSONObject(i);
+                    customFieldsList.add(new CustomField(o));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return customFieldsList;
+    }
+
     public String getCustomFields() {
         return vault.decryptString(customFields);
     }

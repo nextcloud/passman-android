@@ -72,8 +72,10 @@ public class CredentialDisplay extends Fragment {
     CopyTextItem otp;
     @BindView(R.id.credential_otp_progress)
     ProgressBar otp_progress;
-    @BindView(R.id.filelist)
-    RecyclerView filelist;
+    @BindView(R.id.filesList)
+    RecyclerView filesList;
+    @BindView(R.id.customFieldsList)
+    RecyclerView customFieldsList;
 
     private Credential credential;
     private Handler handler;
@@ -183,10 +185,15 @@ public class CredentialDisplay extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.filelist);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+        RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+        filesListRecyclerView.setHasFixedSize(true);
+        filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+
+        RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+        customFieldsListRecyclerView.setHasFixedSize(true);
+        customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
 
         label.setText(credential.getLabel());
         user.setText(credential.getUsername());
