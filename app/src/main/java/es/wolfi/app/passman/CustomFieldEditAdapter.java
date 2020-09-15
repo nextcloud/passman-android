@@ -102,7 +102,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         CustomField customField = mValues.get(position);
-        holder.mLabelView.setText(customField.getLabel());
+        holder.mLabelEdit.setText(customField.getLabel());
 
         if (customField.getFieldType().equals("file")) {
             holder.mValueEdit.setEnabled(false);
@@ -117,6 +117,39 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             holder.mValueEdit.setText(customField.getValue());
         }
 
+        holder.mLabelEdit.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            private Timer timer = new Timer();
+            private final long DELAY = 100; // milliseconds
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                // you will probably need to use runOnUiThread(Runnable action) for some specific actions (e.g. manipulating views)
+                                int itemIndex = mValues.indexOf(holder.mItem);
+                                holder.mItem.setLabel(s.toString());
+                                mValues.set(itemIndex, holder.mItem);
+                            }
+                        },
+                        DELAY
+                );
+            }
+        });
+
         holder.mValueEdit.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -129,7 +162,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             }
 
             private Timer timer = new Timer();
-            private final long DELAY = 200; // milliseconds
+            private final long DELAY = 100; // milliseconds
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -165,7 +198,6 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
                     AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                            String result = new String(responseBody);
                             if (statusCode == 200) {
                                 mValues.remove(holder.mItem);
                                 notifyDataSetChanged();
@@ -208,6 +240,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mLabelView;
+        public final EditText mLabelEdit;
         public final EditText mValueEdit;
         public final AppCompatImageButton deleteButton;
         public final LinearLayout displayCustomFieldLayout;
@@ -219,6 +252,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             super(view);
             mView = view;
             mLabelView = (TextView) view.findViewById(R.id.customFieldLabel);
+            mLabelEdit = (EditText) view.findViewById(R.id.customFieldEditLabel);
             mValueEdit = (EditText) view.findViewById(R.id.customFieldEditValue);
             deleteButton = (AppCompatImageButton) view.findViewById(R.id.deleteCustomFieldButton);
             displayCustomFieldLayout = (LinearLayout) view.findViewById(R.id.displayCustomFieldLayout);
@@ -228,6 +262,8 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             displayCustomFieldLayout.setVisibility(View.INVISIBLE);
             editCustomFieldLayout.setVisibility(View.VISIBLE);
             mValueEdit.setVisibility(View.VISIBLE);
+            mLabelView.setVisibility(View.INVISIBLE);
+            mLabelEdit.setVisibility(View.VISIBLE);
 
             WindowManager vm = (WindowManager) mView.getContext().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
             final Rect bounds = vm.getCurrentWindowMetrics().getBounds();
