@@ -26,7 +26,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -305,6 +304,8 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                             alreadySaving = false;
 
                             Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
+                            Objects.requireNonNull(((PasswordList) getActivity())).showAddCredentialsButton();
+                            Objects.requireNonNull(((PasswordList) getActivity())).showLockVaultButton();
 
                             int backStackCount = getFragmentManager().getBackStackEntryCount();
                             int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount - 2).getId();

@@ -138,7 +138,7 @@ public class PasswordList extends AppCompatActivity implements
                 getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .replace(R.id.content_password_list, CredentialAdd.newInstance(), "credential")
+                        .replace(R.id.content_password_list, CredentialAdd.newInstance(), "credentialAdd")
                         .addToBackStack(null)
                         .commit();
             }
@@ -484,6 +484,10 @@ public class PasswordList extends AppCompatActivity implements
         this.addCredentialsButton.show();
     }
 
+    public void showLockVaultButton() {
+        this.VaultLockButton.setVisibility(View.VISIBLE);
+    }
+
     private void showNotImplementedMessage() {
         Toast.makeText(this, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show();
     }
@@ -573,7 +577,12 @@ public class PasswordList extends AppCompatActivity implements
         // the system file picker when your app creates the document.
         //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
-        // activityRequestCode: 2 = file for credential; 3 = file for custom field
+        /* activityRequestCode:
+           2 = file for credential edit
+           3 = file for custom field in credential edit
+           4 = file for credential add
+           5 = file for custom field in credential add
+         */
         startActivityForResult(intent, activityRequestCode);
     }
 
@@ -631,7 +640,7 @@ public class PasswordList extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), getString(R.string.error_writing_file), Toast.LENGTH_SHORT).show();
         }
 
-        if (requestCode == 2 || requestCode == 3) { //add file
+        if (requestCode >= 2 && requestCode <= 5) { //add file
             if (data != null) {
                 Uri uri = data.getData();
 
@@ -650,23 +659,31 @@ public class PasswordList extends AppCompatActivity implements
                             String realEncodedFile = Base64.encodeToString(fileContent, Base64.DEFAULT | Base64.NO_WRAP);
                             pfd.close();
 
-                            CredentialEdit credentialEditFragment = (CredentialEdit) getSupportFragmentManager().findFragmentByTag("credentialEdit");
-                            if (credentialEditFragment != null) {
-                                String mimeType = getContentResolver().getType(uri);
-                                String fileName = "unknown";
-                                String filePathFromUri = FileUtils.getPath(this, uri);
-                                if (filePathFromUri != null) {
-                                    java.io.File file = new java.io.File(filePathFromUri);
-                                    fileName = file.getName();
-                                }
+                            String mimeType = getContentResolver().getType(uri);
+                            String fileName = "unknown";
+                            String filePathFromUri = FileUtils.getPath(this, uri);
+                            if (filePathFromUri != null) {
+                                java.io.File file = new java.io.File(filePathFromUri);
+                                fileName = file.getName();
+                            }
 
-                                try {
-                                    String encodedFile = String.format("data:%s;base64,%s", mimeType, realEncodedFile);
-                                    credentialEditFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
-                                    return;
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                            try {
+                                String encodedFile = String.format("data:%s;base64,%s", mimeType, realEncodedFile);
+                                if (requestCode == 2 || requestCode == 3) {
+                                    CredentialEdit credentialEditFragment = (CredentialEdit) getSupportFragmentManager().findFragmentByTag("credentialEdit");
+                                    if (credentialEditFragment != null) {
+                                        credentialEditFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
+                                    }
                                 }
+                                if (requestCode == 4 || requestCode == 5) {
+                                    CredentialAdd credentialAddFragment = (CredentialAdd) getSupportFragmentManager().findFragmentByTag("credentialAdd");
+                                    if (credentialAddFragment != null) {
+                                        credentialAddFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
+                                    }
+                                }
+                                return;
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         }
                     } catch (IOException e) {
