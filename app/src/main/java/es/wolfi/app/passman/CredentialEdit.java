@@ -78,13 +78,17 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     EditText url;
     @BindView(R.id.edit_credential_description)
     EditText description;
-    @BindView(R.id.filelist)
-    RecyclerView filelist;
+    @BindView(R.id.filesList)
+    RecyclerView filesList;
+    @BindView(R.id.customFieldsList)
+    RecyclerView customFieldsList;
 
     private Credential credential;
     private boolean alreadySaving = false;
     private FileEditAdapter fed;
-    private RecyclerView recyclerView;
+    private CustomFieldEditAdapter cfed;
+    private RecyclerView filesListRecyclerView;
+    private RecyclerView customFieldsListRecyclerView;
 
     public CredentialEdit() {
         // Required empty public constructor
@@ -125,6 +129,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         addFileButton.setVisibility(View.VISIBLE);
 
         fed = new FileEditAdapter(credential);
+        cfed = new CustomFieldEditAdapter(credential);
 
         return view;
     }
@@ -139,10 +144,15 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.filelist);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(fed);
+        filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+        filesListRecyclerView.setHasFixedSize(true);
+        filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        filesListRecyclerView.setAdapter(fed);
+
+        customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+        customFieldsListRecyclerView.setHasFixedSize(true);
+        customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        customFieldsListRecyclerView.setAdapter(cfed);
 
         label.setText(this.credential.getLabel());
         user.setText(this.credential.getUsername());
@@ -322,6 +332,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
         this.credential.setFiles(fed.getFilesString());
+        this.credential.setCustomFields(cfed.getCustomFieldsString());
 
         alreadySaving = true;
 

@@ -51,8 +51,16 @@ public class CustomField extends Core {
         return value;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     public JSONObject getJvalue() {
         return jvalue;
+    }
+
+    public void setJValue(JSONObject jvalue) {
+        this.jvalue = jvalue;
     }
 
     public boolean isSecret() {
