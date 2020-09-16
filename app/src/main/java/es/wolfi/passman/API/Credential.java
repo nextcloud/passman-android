@@ -316,6 +316,7 @@ public class Credential extends Core implements Filterable {
         c.username = j.getString("username");
         c.password = j.getString("password");
         c.url = j.getString("url");
+        c.compromised = j.getString("compromised");
 
         try {
             if (j.has("favicon")) {

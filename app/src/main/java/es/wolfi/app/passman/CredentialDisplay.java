@@ -195,6 +195,11 @@ public class CredentialDisplay extends Fragment {
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
 
+        if (credential.getCompromised().equals("true")) {
+            TextView passwordLabel = view.findViewById(R.id.credential_password_label);
+            passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
+        }
+
         label.setText(credential.getLabel());
         user.setText(credential.getUsername());
         password.setModePassword();
