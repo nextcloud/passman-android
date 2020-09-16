@@ -553,6 +553,7 @@ public class PasswordList extends AppCompatActivity implements
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
 
         final ProgressDialog progress = getProgressDialog();
+        progress.setMessage(getString(R.string.wait_while_downloading));
         progress.show();
 
         FutureCallback<String> cb = new FutureCallback<String>() {
@@ -562,6 +563,7 @@ public class PasswordList extends AppCompatActivity implements
                     try {
                         JSONObject o = new JSONObject(result);
                         if (o.has("file_data")) {
+                            progress.setMessage(getString(R.string.wait_while_decrypting));
                             String[] decryptedSplitString = v.decryptString(o.getString("file_data")).split(",");
                             if (decryptedSplitString.length == 2) {
                                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);

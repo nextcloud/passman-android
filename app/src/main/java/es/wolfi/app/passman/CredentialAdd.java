@@ -235,7 +235,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler);
+                credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler, progress);
             }
         }, 100);
     }

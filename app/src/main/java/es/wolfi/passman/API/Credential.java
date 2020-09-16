@@ -21,6 +21,7 @@
 
 package es.wolfi.passman.API;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
@@ -35,6 +36,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.wolfi.app.passman.R;
 import es.wolfi.utils.Filterable;
 
 public class Credential extends Core implements Filterable {
@@ -445,15 +447,17 @@ public class Credential extends Core implements Filterable {
         }
     }
 
-    public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler) {
+    public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler, ProgressDialog progress) {
         RequestParams params = new RequestParams();
         params.setUseJsonStreamer(true);
 
+        progress.setMessage(c.getString(R.string.wait_while_encrypting));
         try {
             params.put("filename", vault.encryptString(fileName));
             params.put("data", vault.encryptRawStringData(encodedFile));
             params.put("mimetype", mimeType);
             params.put("size", fileSize);
+            progress.setMessage(c.getString(R.string.wait_while_uploading));
             requestAPI(c, "file", params, "POST", responseHandler);
         } catch (MalformedURLException e) {
             e.printStackTrace();
