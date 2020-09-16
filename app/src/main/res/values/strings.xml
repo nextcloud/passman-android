@@ -46,4 +46,8 @@
     <string name="custom_fields">Custom fields</string>
     <string name="add_file">Add file</string>
     <string name="add_custom_field">Add custom field</string>
+    <string name="unlock_passman">Unlock Passman</string>
+    <string name="unlock_passman_message_device_auth">Authenticate yourself with your default device locking mechanism</string>
+    <string name="app_start_password">App start password</string>
+    <string name="app_start_password_android_auth_description">Enable android user authentication on app start?</string>
 </resources>

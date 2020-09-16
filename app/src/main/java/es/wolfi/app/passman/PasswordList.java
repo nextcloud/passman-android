@@ -23,6 +23,7 @@ package es.wolfi.app.passman;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -148,27 +149,43 @@ public class PasswordList extends AppCompatActivity implements
         checkFragmentPosition(true);
         if (running) return;
 
-        final ProgressDialog progress = getProgressDialog();
-        progress.show();
+        initialAuthentication(false);
+    }
 
-        final AppCompatActivity self = this;
-        Core.checkLogin(this, false, new FutureCallback<Boolean>() {
-            @Override
-            public void onCompleted(Exception e, Boolean result) {
-                // To dismiss the dialog
-                progress.dismiss();
+    private void initialAuthentication(boolean skipKeyguard) {
+        if (!skipKeyguard && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP &&
+                settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false)) {
+            KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
 
-                if (result) {
-                    showVaults();
-                    return;
-                }
-
-                // If not logged in, show login form!
-                LoginActivity.launch(self, () -> showVaults());
+            if (km.isKeyguardSecure()) {
+                Intent authIntent = km.createConfirmDeviceCredentialIntent(getString(R.string.unlock_passman), getString(R.string.unlock_passman_message_device_auth));
+                startActivityForResult(authIntent, 0);
+            } else {
+                initialAuthentication(true);
             }
-        });
+        } else {
+            final ProgressDialog progress = getProgressDialog();
+            progress.show();
 
-        running = true;
+            final AppCompatActivity self = this;
+            Core.checkLogin(this, false, new FutureCallback<Boolean>() {
+                @Override
+                public void onCompleted(Exception e, Boolean result) {
+                    // To dismiss the dialog
+                    progress.dismiss();
+
+                    if (result) {
+                        showVaults();
+                        return;
+                    }
+
+                    // If not logged in, show login form!
+                    LoginActivity.launch(self, () -> showVaults());
+                }
+            });
+
+            running = true;
+        }
     }
 
     private ProgressDialog getProgressDialog() {
@@ -465,6 +482,12 @@ public class PasswordList extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        if (!running) {
+            initialAuthentication(false);
+            return false;
+        }
+
         switch (id) {
             case R.id.action_settings:
                 settingsButtonPressed();
@@ -617,6 +640,11 @@ public class PasswordList extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != RESULT_OK)
             return;
+
+        if (requestCode == 0) { //initial authentication
+            Log.e("initial authentication", "successful");
+            initialAuthentication(true);
+        }
 
         if (requestCode == 1) { //download file
             if (data != null) {

@@ -68,6 +68,10 @@ public class Settings extends Fragment {
     EditText settings_nextcloud_password;
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
+    @BindView(R.id.settings_app_start_password_switch)
+    Switch settings_app_start_password_switch;
+
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
     @BindView(R.id.settings_encryption_implementation_switch)
     Switch settings_encryption_implementation_switch;
 
@@ -135,6 +139,7 @@ public class Settings extends Fragment {
         settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
         settings_encryption_implementation_switch.setChecked(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(),
                 (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SJCLCrypto.isJavaEncryptionSupported())));
+        settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
     }
 
     @Override
@@ -158,6 +163,8 @@ public class Settings extends Fragment {
                 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     settings.edit().putBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), settings_encryption_implementation_switch.isChecked()).commit();
                 }
+
+                settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
 
                 if (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
                         !settings.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||

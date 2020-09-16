@@ -106,6 +106,22 @@
 
         <TextView
             style="@style/Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_start_password"/>
+
+        <Switch
+            android:id="@+id/settings_app_start_password_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="56dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/app_start_password_android_auth_description"
+            android:checked="false"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <TextView
+            style="@style/Label"
             android:id="@+id/encryption_implementation_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
