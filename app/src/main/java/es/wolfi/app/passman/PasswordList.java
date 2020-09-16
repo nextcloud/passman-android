@@ -244,8 +244,7 @@ public class PasswordList extends AppCompatActivity implements
         final ProgressDialog progress = getProgressDialog();
         progress.show();
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        vault.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(),
-                (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SJCLCrypto.isJavaEncryptionSupported())));
+        vault.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
         if (vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
@@ -299,8 +298,7 @@ public class PasswordList extends AppCompatActivity implements
         activatedBeforeRecreate = "unlockVault";
         this.VaultLockButton.setVisibility(View.VISIBLE);
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        v.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(),
-                (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SJCLCrypto.isJavaEncryptionSupported())));
+        v.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
         if (v.unlock(settings.getString(v.guid, ""))) {
             showActiveVault();
             return;
@@ -355,8 +353,7 @@ public class PasswordList extends AppCompatActivity implements
                 }
 
                 result.setEncryptionKey(vault.getEncryptionKey());
-                result.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(),
-                        (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SJCLCrypto.isJavaEncryptionSupported())));
+                result.setUseJavaBasedEncryption(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
                 ton.removeExtra(vault.guid);
                 ton.addExtra(vault.guid, result);
                 ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());

@@ -137,8 +137,7 @@ public class Settings extends Fragment {
         settings_nextcloud_url.setText(settings.getString(SettingValues.HOST.toString(), null));
         settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
         settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
-        settings_encryption_implementation_switch.setChecked(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(),
-                (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && SJCLCrypto.isJavaEncryptionSupported())));
+        settings_encryption_implementation_switch.setChecked(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
     }
 

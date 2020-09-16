@@ -33,7 +33,7 @@
     <string name="delete">Delete</string>
     <string name="successfully_deleted">Successfully deleted</string>
     <string name="encryption_implementation">Encryption implementation</string>
-    <string name="encryption_implementation_description">Use Java based encryption instead of the native (slower) c++ implementation. (highly recommended!)</string>
+    <string name="encryption_implementation_description">Use Java based encryption instead of the native C implementation. (not recommended)</string>
     <string name="encryption_implementation_switch_text">Enable Java implementation</string>
     <string name="nextcloud_connection_settings">NextCloud connection settings</string>
     <string name="app_settings">App settings</string>
