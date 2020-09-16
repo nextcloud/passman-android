@@ -31,6 +31,7 @@ import android.widget.TextView;
 import es.wolfi.passman.API.Credential;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the
@@ -59,7 +60,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
         holder.mItem = mValues.get(position);
         holder.mContentView.setText(mValues.get(position).getLabel());
 
-        if (holder.mItem.getCompromised().equals("true")) {
+        if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
             holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
         }
 
