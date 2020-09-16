@@ -492,6 +492,11 @@ public class PasswordList extends AppCompatActivity implements
         Toast.makeText(this, R.string.not_implemented_yet, Toast.LENGTH_SHORT).show();
     }
 
+    public void openExternalURL(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
+    }
+
     @Override
     public void onListFragmentInteraction(Vault item) {
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), item);

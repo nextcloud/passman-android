@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.webkit.URLUtil;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -65,7 +66,7 @@ public class CredentialDisplay extends Fragment {
     @BindView(R.id.credential_email)
     CopyTextItem email;
     @BindView(R.id.credential_url)
-    TextView url;
+    CopyTextItem url;
     @BindView(R.id.credential_description)
     TextView description;
     @BindView(R.id.credential_otp)
@@ -209,6 +210,10 @@ public class CredentialDisplay extends Fragment {
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
         otp.setEnabled(false);
+
+        if (URLUtil.isValidUrl(credential.getUrl())) {
+            url.setModeURL();
+        }
 
         if (otp_refresh == null) {
             otp_progress.setProgress(0);
