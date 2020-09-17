@@ -637,13 +637,18 @@ public class PasswordList extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != RESULT_OK)
-            return;
 
         if (requestCode == 0) { //initial authentication
+            if (resultCode != RESULT_OK) {
+                finishAffinity();
+                return;
+            }
             Log.e("initial authentication", "successful");
             initialAuthentication(true);
         }
+
+        if (resultCode != RESULT_OK)
+            return;
 
         if (requestCode == 1) { //download file
             if (data != null) {
