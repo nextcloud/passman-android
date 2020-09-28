@@ -36,7 +36,6 @@ import es.wolfi.passman.API.File;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File} and makes a call to the
  * specified {@link CredentialDisplay.OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> {
 

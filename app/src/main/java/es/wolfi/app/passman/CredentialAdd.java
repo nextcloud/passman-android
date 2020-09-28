@@ -85,9 +85,8 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment CredentialDisplay.
+     * @return A new instance of fragment CredentialAdd.
      */
-    // TODO: Rename and change types and number of parameters
     public static CredentialAdd newInstance() {
         return new CredentialAdd();
     }

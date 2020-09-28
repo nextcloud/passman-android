@@ -77,7 +77,6 @@ public class VaultLockScreen extends Fragment {
      * @param vault The vault
      * @return A new instance of fragment VaultLockScreen.
      */
-    // TODO: Rename and change types and number of parameters
     public static VaultLockScreen newInstance(Vault vault) {
         VaultLockScreen fragment = new VaultLockScreen();
         fragment.vault = vault;

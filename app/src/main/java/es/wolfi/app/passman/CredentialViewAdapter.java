@@ -33,7 +33,6 @@ import java.util.List;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the
  * specified {@link CredentialItemFragment.OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAdapter.ViewHolder> {
 

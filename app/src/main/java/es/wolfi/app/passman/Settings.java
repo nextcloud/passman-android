@@ -86,9 +86,8 @@ public class Settings extends Fragment {
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment CredentialDisplay.
+     * @return A new instance of fragment Settings.
      */
-    // TODO: Rename and change types and number of parameters
     public static Settings newInstance() {
         Settings fragment = new Settings();
 
