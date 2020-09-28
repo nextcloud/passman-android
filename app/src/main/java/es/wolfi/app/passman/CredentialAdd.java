@@ -109,8 +109,6 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         super.onAttach(context);
         if (context instanceof OnCredentialFragmentInteraction) {
             mListener = (OnCredentialFragmentInteraction) context;
-        } else {
-            //throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -163,7 +161,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         this.credential.setCustomFields("[]");
         this.credential.setTags("");
         this.credential.setFavicon("");
-        this.credential.setCompromised("");
+        this.credential.setCompromised(false);
         this.credential.setHidden(false);
 
         alreadySaving = true;
