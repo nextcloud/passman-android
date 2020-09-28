@@ -214,17 +214,20 @@ public abstract class Core {
 
                 if (e != null) {
                     if (e.getMessage().equals("401")) {
-                        if (toast)
+                        if (toast) {
                             Toast.makeText(c, c.getString(R.string.wrongNCSettings), Toast.LENGTH_LONG).show();
+                        }
                         ret = false;
                     } else if (e.getMessage().contains("Unable to resolve host") || e.getMessage().contains("Invalid URI")) {
-                        if (toast)
+                        if (toast) {
                             Toast.makeText(c, c.getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
+                        }
                         ret = false;
                     } else {
                         Log.e(LOG_TAG, "Error: " + e.getMessage(), e);
-                        if (toast)
+                        if (toast) {
                             Toast.makeText(c, c.getString(R.string.net_error) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                         ret = false;
                     }
                 }
