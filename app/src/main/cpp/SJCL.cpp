@@ -321,9 +321,6 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     // Assuming ciphertext will not be bigger that the plaintext length * ciphertext_allocation_multiplicator
     ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator);
 
-    // Ensure ciphertext ends up null terminated (do I need this?)
-    for (int i = 0; i < (sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator); i++) ciphertext[i] = '\0';
-
     unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
     int ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
     if (0 < ciphertext_len) {
