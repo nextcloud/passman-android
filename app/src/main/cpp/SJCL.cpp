@@ -22,6 +22,7 @@
 
 #include "SJCL.h"
 #include <openssl/evp.h>
+#include <openssl/rand.h>
 #include <JSON.h>
 #include "json.hpp"
 #include "base64.h"
@@ -33,20 +34,6 @@
 
 void handleErrors(const char* error){
     __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, (const char*)"FUCK THIS SHIT GOT AN ERROR: %s", error);
-}
-
-string get_random_string(int n){
-    const int MAX_SIZE = 62;
-
-    char letters[MAX_SIZE] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q',
-                              'r','s','t','u','v','w','x','y','z',
-                              'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-                              'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-                              '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    string ran = "";
-    for (int i=0;i<n;i++)
-        ran = ran + letters[rand() % MAX_SIZE];
-    return ran;
 }
 
 int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad,
@@ -131,10 +118,7 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
     if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL))
         handleErrors("Error setting crypto mode");
 
-    /*
-     * Setting IV len to 7. Not strictly necessary as this is the default
-     * but shown here for the purposes of this example.
-     */
+    /* Set IV length */
     if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, iv_len, NULL))
         handleErrors("Error setting IV Length");
 
@@ -296,33 +280,23 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     unsigned char *ciphertext;
     unsigned char *derived_key;
     unsigned char tag[ts];
-    unsigned char *iv = nullptr;
-    unsigned char *salt = nullptr;
+    unsigned char *iv;
+    unsigned char *salt;
     unsigned char *additional = (unsigned char *)"";
     char* ret = NULL;
 
-    srand(time(NULL));
+    iv = (unsigned char *) malloc(sizeof(unsigned char) * iv_len);
+    salt = (unsigned char *) malloc(sizeof(unsigned char) * salt_len);
+    derived_key = (unsigned char *) malloc(sizeof(unsigned char) * ks);
 
-    //iv = (unsigned char *) get_random_string(iv_len).c_str();
-    std::string tmpiv = get_random_string(iv_len);
-    iv = (unsigned char *) tmpiv.c_str();
-    iv_len = tmpiv.length();
-
-    //salt = (unsigned char *) get_random_string(salt_len).c_str();
-    std::string tmpsalt = get_random_string(salt_len);
-    salt = (unsigned char *) tmpsalt.c_str();
-    salt_len = tmpsalt.length();
-
-    derived_key = (unsigned char*) malloc(sizeof(unsigned char) * ks);
+    RAND_bytes(iv, iv_len);
+    RAND_bytes(salt, salt_len);
 
     // PBKDF2 Key derivation with SHA256 as SJCL does by default
     PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key);
 
     // Assuming ciphertext will not be bigger that the plaintext length * ciphertext_allocation_multiplicator
     ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator);
-
-    // Ensure ciphertext ends up null terminated (do I need this?)
-    for (int i = 0; i < (sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator); i++) ciphertext[i] = '\0';
 
     unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
     int ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);

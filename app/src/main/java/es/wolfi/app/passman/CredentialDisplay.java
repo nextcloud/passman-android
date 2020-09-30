@@ -96,7 +96,6 @@ public class CredentialDisplay extends Fragment {
      * @param credentialGUID The guid of the credential to display.
      * @return A new instance of fragment CredentialDisplay.
      */
-    // TODO: Rename and change types and number of parameters
     public static CredentialDisplay newInstance(String credentialGUID) {
         CredentialDisplay fragment = new CredentialDisplay();
 

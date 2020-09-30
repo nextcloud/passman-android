@@ -101,9 +101,8 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment CredentialDisplay.
+     * @return A new instance of fragment CredentialEdit.
      */
-    // TODO: Rename and change types and number of parameters
     public static CredentialEdit newInstance(String credentialGUID) {
         CredentialEdit fragment = new CredentialEdit();
 

@@ -292,8 +292,8 @@ public class Credential extends Core implements Filterable {
         return "false";
     }
 
-    public void setCompromised(String compromised) {
-        this.compromised = vault.encryptString(compromised);
+    public void setCompromised(boolean compromised) {
+        this.compromised = vault.encryptRawStringData(compromised ? "true" : "false");
     }
 
     public Vault getVault() {
