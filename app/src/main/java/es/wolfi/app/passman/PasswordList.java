@@ -329,6 +329,24 @@ public class PasswordList extends AppCompatActivity implements
         onBackPressed();
     }
 
+    void addCredentialToCurrentLocalVaultList(Credential credential) {
+        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        v.addCredential(credential);
+
+        ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
+        ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+
+        Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
+
+        if (vaultFragment != null && vaultFragment.isVisible()) {
+            Log.e("refreshVault", "load credentials into content password list");
+            CredentialItemFragment credentialItems = (CredentialItemFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.content_password_list);
+            assert credentialItems != null;
+            credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+        }
+    }
+
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {

@@ -97,7 +97,7 @@ public class Vault extends Core implements Filterable {
         try {
             if (!encryption_key.isEmpty()) {
                 String result = SJCLCrypto.decryptString(challenge_password, encryption_key, useJavaBasedEncryption);
-                if (!result.equals("")){
+                if (!result.equals("")) {
                     return true;
                 }
             }
@@ -227,6 +227,11 @@ public class Vault extends Core implements Filterable {
         }
 
         return v;
+    }
+
+    public void addCredential(Credential credential) {
+        credentials.add(credential);
+        credential_guid.put(credential.getGuid(), credentials.size() - 1);
     }
 
     @Override

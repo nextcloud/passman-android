@@ -310,14 +310,30 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
                 String result = new String(responseBody);
                 if (statusCode == 200 && !result.equals("")) {
-                    Snackbar.make(view, R.string.successfully_saved, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    assert getFragmentManager() != null;
-                    Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
-                    Objects.requireNonNull(((PasswordList) getActivity())).showAddCredentialsButton();
+                    try {
+                        JSONObject credentialObject = new JSONObject(result);
+                        Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                        if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
+                            Credential currentCredential = Credential.fromJSON(credentialObject, v);
+
+                            Snackbar.make(view, R.string.successfully_saved, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            assert getFragmentManager() != null;
+                            Objects.requireNonNull(((PasswordList) getActivity())).addCredentialToCurrentLocalVaultList(currentCredential);
+                            Objects.requireNonNull(((PasswordList) getActivity())).showAddCredentialsButton();
+                            alreadySaving = false;
+                            progress.dismiss();
+                            getFragmentManager().popBackStack();
+                            return;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     alreadySaving = false;
                     progress.dismiss();
-                    getFragmentManager().popBackStack();
+                    Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             }
 
