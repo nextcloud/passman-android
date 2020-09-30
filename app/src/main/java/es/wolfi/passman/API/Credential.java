@@ -305,6 +305,56 @@ public class Credential extends Core implements Filterable {
         vaultId = vault.vault_id;
     }
 
+    public RequestParams getAsRequestParams(boolean forUpdate, boolean useJsonStreamer) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(useJsonStreamer);
+
+        JSONObject icon = null;
+
+        if (forUpdate) {
+            params.put("credential_id", getId());
+            params.put("guid", getGuid());
+
+            if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
+                try {
+                    icon = new JSONObject(favicon);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            try {
+                icon = new JSONObject();
+                icon.put("type", false);
+                icon.put("content", "");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        params.put("vault_id", getVaultId());
+        params.put("label", label);
+        params.put("description", description);
+        params.put("created", getCreated());
+        params.put("changed", getChanged());
+        params.put("tags", tags);
+        params.put("email", email);
+        params.put("icon", icon);
+        params.put("username", username);
+        params.put("password", password);
+        params.put("url", url);
+        params.put("renew_interval", getRenewInterval());
+        params.put("expire_time", getExpireTime());
+        params.put("delete_time", getDeleteTime());
+        params.put("files", files);
+        params.put("custom_fields", customFields);
+        params.put("otp", otp);
+        params.put("compromised", compromised);
+        params.put("hidden", isHidden());
+
+        return params;
+    }
+
     public static Credential fromJSON(JSONObject j) throws JSONException {
         Credential c = new Credential();
 
@@ -361,81 +411,16 @@ public class Credential extends Core implements Filterable {
     }
 
     public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(true);
-
         try {
-            JSONObject icon = new JSONObject();
-            icon.put("type", false);
-            icon.put("content", "");
-
-            params.put("vault_id", getVaultId());
-            params.put("label", label);
-            params.put("description", description);
-            params.put("created", getCreated());
-            params.put("changed", getChanged());
-            params.put("tags", tags);
-            params.put("email", email);
-            params.put("icon", icon);
-            params.put("username", username);
-            params.put("password", password);
-            params.put("url", url);
-            params.put("renew_interval", getRenewInterval());
-            params.put("expire_time", getExpireTime());
-            params.put("delete_time", getDeleteTime());
-            params.put("files", files);
-            params.put("custom_fields", customFields);
-            params.put("otp", otp);
-            params.put("compromised", compromised);
-            params.put("hidden", isHidden());
-
-            requestAPI(c, "credentials", params, "POST", responseHandler);
-        } catch (JSONException | MalformedURLException e) {
+            requestAPI(c, "credentials", getAsRequestParams(false, true), "POST", responseHandler);
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
     }
 
     public void update(Context c, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(true);
-
         try {
-            JSONObject icon;
-
-            if (favicon == null || favicon.equals("") || favicon.equals("null")) {
-                icon = null;
-            } else {
-                try {
-                    icon = new JSONObject(favicon);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    icon = null;
-                }
-            }
-
-            params.put("vault_id", getVaultId());
-            params.put("credential_id", getId());
-            params.put("guid", getGuid());
-            params.put("label", label);
-            params.put("description", description);
-            params.put("created", getCreated());
-            params.put("changed", getChanged());
-            params.put("tags", tags);
-            params.put("email", email);
-            params.put("icon", icon);
-            params.put("username", username);
-            params.put("password", password);
-            params.put("url", url);
-            params.put("renew_interval", getRenewInterval());
-            params.put("expire_time", getExpireTime());
-            params.put("delete_time", getDeleteTime());
-            params.put("files", files);
-            params.put("custom_fields", customFields);
-            params.put("otp", otp);
-            params.put("compromised", compromised);
-            params.put("hidden", isHidden());
-
-            requestAPI(c, "credentials/" + getGuid(), params, "PATCH", responseHandler);
+            requestAPI(c, "credentials/" + getGuid(), getAsRequestParams(true, true), "PATCH", responseHandler);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

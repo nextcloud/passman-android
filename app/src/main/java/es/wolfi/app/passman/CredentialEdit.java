@@ -374,7 +374,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         progress.show();
 
         if (!this.credential.getPassword().equals(password.getText().toString())) {
-            this.credential.setCompromised("false");
+            this.credential.setCompromised(false);
         }
 
         this.credential.setLabel(label.getText().toString());
