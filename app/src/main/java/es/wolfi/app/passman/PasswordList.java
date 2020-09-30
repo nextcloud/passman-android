@@ -347,6 +347,44 @@ public class PasswordList extends AppCompatActivity implements
         }
     }
 
+    void editCredentialInCurrentLocalVaultList(Credential credential) {
+        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        v.updateCredential(credential);
+
+        ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
+        ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
+        ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+
+        Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
+
+        if (vaultFragment != null && vaultFragment.isVisible()) {
+            Log.e("refreshVault", "load credentials into content password list");
+            CredentialItemFragment credentialItems = (CredentialItemFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.content_password_list);
+            assert credentialItems != null;
+            credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+        }
+    }
+
+    void deleteCredentialInCurrentLocalVaultList(Credential credential) {
+        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        v.deleteCredential(credential);
+
+        ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
+        ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
+        ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+
+        Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
+
+        if (vaultFragment != null && vaultFragment.isVisible()) {
+            Log.e("refreshVault", "remove credential from content password list");
+            CredentialItemFragment credentialItems = (CredentialItemFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.content_password_list);
+            assert credentialItems != null;
+            credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+        }
+    }
+
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {

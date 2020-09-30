@@ -297,19 +297,33 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
                         String result = new String(responseBody);
                         if (statusCode == 200 && !result.equals("")) {
-                            Snackbar.make(view, R.string.successfully_deleted, Snackbar.LENGTH_LONG)
+                            try {
+                                JSONObject credentialObject = new JSONObject(result);
+                                Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
+                                    Credential currentCredential = Credential.fromJSON(credentialObject, v);
+
+                                    Snackbar.make(view, R.string.successfully_deleted, Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    assert getFragmentManager() != null;
+                                    Objects.requireNonNull(((PasswordList) getActivity())).deleteCredentialInCurrentLocalVaultList(currentCredential);
+                                    Objects.requireNonNull(((PasswordList) getActivity())).showAddCredentialsButton();
+                                    Objects.requireNonNull(((PasswordList) getActivity())).showLockVaultButton();
+
+                                    int backStackCount = getFragmentManager().getBackStackEntryCount();
+                                    int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount - 2).getId();
+                                    alreadySaving = false;
+                                    getFragmentManager().popBackStack(backStackId,
+                                            FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                    return;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
-                            assert getFragmentManager() != null;
                             alreadySaving = false;
-
-                            Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
-                            Objects.requireNonNull(((PasswordList) getActivity())).showAddCredentialsButton();
-                            Objects.requireNonNull(((PasswordList) getActivity())).showLockVaultButton();
-
-                            int backStackCount = getFragmentManager().getBackStackEntryCount();
-                            int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount - 2).getId();
-                            getFragmentManager().popBackStack(backStackId,
-                                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         }
                     }
 
@@ -393,14 +407,30 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
                 String result = new String(responseBody);
                 if (statusCode == 200 && !result.equals("")) {
-                    Snackbar.make(view, R.string.successfully_updated, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    assert getFragmentManager() != null;
+                    try {
+                        JSONObject credentialObject = new JSONObject(result);
+                        Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                        if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
+                            Credential currentCredential = Credential.fromJSON(credentialObject, v);
+
+                            Snackbar.make(view, R.string.successfully_updated, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            assert getFragmentManager() != null;
+                            Objects.requireNonNull(((PasswordList) getActivity())).editCredentialInCurrentLocalVaultList(currentCredential);
+                            Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButton();
+                            alreadySaving = false;
+                            progress.dismiss();
+                            getFragmentManager().popBackStack();
+                            return;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     alreadySaving = false;
                     progress.dismiss();
-                    getFragmentManager().popBackStack();
-                    Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
-                    Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButton();
+                    Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             }
 
