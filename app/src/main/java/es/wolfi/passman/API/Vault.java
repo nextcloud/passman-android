@@ -45,7 +45,6 @@ public class Vault extends Core implements Filterable {
     public String public_sharing_key;
     public double last_access;
     public String challenge_password;
-    public boolean useJavaBasedEncryption = false;
 
     ArrayList<Credential> credentials;
     HashMap<String, Integer> credential_guid;
@@ -60,16 +59,12 @@ public class Vault extends Core implements Filterable {
         return encryption_key;
     }
 
-    public void setUseJavaBasedEncryption(boolean useJavaBasedEncryption) {
-        this.useJavaBasedEncryption = useJavaBasedEncryption;
-    }
-
     public String decryptString(String cryptogram) {
         if (cryptogram == null) {
             return "";
         }
         try {
-            return SJCLCrypto.decryptString(cryptogram, encryption_key, useJavaBasedEncryption);
+            return SJCLCrypto.decryptString(cryptogram, encryption_key);
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
             e.printStackTrace();
@@ -96,7 +91,7 @@ public class Vault extends Core implements Filterable {
     public boolean is_unlocked() {
         try {
             if (!encryption_key.isEmpty()) {
-                String result = SJCLCrypto.decryptString(challenge_password, encryption_key, useJavaBasedEncryption);
+                String result = SJCLCrypto.decryptString(challenge_password, encryption_key);
                 if (!result.equals("")) {
                     return true;
                 }
@@ -112,7 +107,7 @@ public class Vault extends Core implements Filterable {
             return "";
         }
         try {
-            return SJCLCrypto.encryptString(plaintext, encryption_key, useJavaBasedEncryption, true);
+            return SJCLCrypto.encryptString(plaintext, encryption_key, true);
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
             e.printStackTrace();
@@ -125,7 +120,7 @@ public class Vault extends Core implements Filterable {
             return "";
         }
         try {
-            return SJCLCrypto.encryptString(plaintext, encryption_key, useJavaBasedEncryption, false);
+            return SJCLCrypto.encryptString(plaintext, encryption_key, false);
         } catch (Exception e) {
             Log.e("Vault", e.getMessage());
             e.printStackTrace();

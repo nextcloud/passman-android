@@ -71,16 +71,6 @@ public class Settings extends Fragment {
     @BindView(R.id.settings_app_start_password_switch)
     Switch settings_app_start_password_switch;
 
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    @BindView(R.id.settings_encryption_implementation_switch)
-    Switch settings_encryption_implementation_switch;
-
-    @BindView(R.id.encryption_implementation_label)
-    TextView encryption_implementation_label;
-
-    @BindView(R.id.encryption_implementation_description)
-    TextView encryption_implementation_description;
-
     SharedPreferences settings;
 
     public Settings() {
@@ -121,22 +111,9 @@ public class Settings extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            // Hide encryption implementation switch
-            settings_encryption_implementation_switch.setClickable(false);
-            settings_encryption_implementation_switch.setActivated(false);
-
-            encryption_implementation_label.setTextColor(getResources().getColor(R.color.disabled));
-            encryption_implementation_description.setTextColor(getResources().getColor(R.color.disabled));
-            settings_encryption_implementation_switch.setTextColor(getResources().getColor(R.color.disabled));
-
-            Toast.makeText(getContext(), R.string.outdated_version_options_hint, Toast.LENGTH_LONG).show();
-        }
-
         settings_nextcloud_url.setText(settings.getString(SettingValues.HOST.toString(), null));
         settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
         settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
-        settings_encryption_implementation_switch.setChecked(settings.getBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), false));
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
     }
 
@@ -157,10 +134,6 @@ public class Settings extends Fragment {
             @Override
             public void onClick(View view) {
                 SingleTon ton = SingleTon.getTon();
-
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    settings.edit().putBoolean(SettingValues.JAVA_CRYPTO_IMPLEMENTATION.toString(), settings_encryption_implementation_switch.isChecked()).commit();
-                }
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
 
