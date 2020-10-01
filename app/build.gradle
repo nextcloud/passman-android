@@ -115,7 +115,6 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'commons-codec:commons-codec:1.10'
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.58'
     implementation 'com.loopj.android:android-async-http:1.4.9'
     testImplementation 'junit:junit:4.13'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
