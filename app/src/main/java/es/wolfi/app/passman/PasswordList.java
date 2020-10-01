@@ -669,27 +669,6 @@ public class PasswordList extends AppCompatActivity implements
         startActivityForResult(intent, activityRequestCode);
     }
 
-    /**
-     * Checks if the app has permission to write to device storage
-     * <p>
-     * If the app does not has permission then the user will be prompted to grant permissions
-     *
-     * @param activity The current activity
-     */
-    public static void verifyStoragePermissions(Activity activity) {
-        // Check if we have write permission
-        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
-        if (permission != PackageManager.PERMISSION_GRANTED) {
-            // We don't have permission so prompt the user
-            ActivityCompat.requestPermissions(
-                    activity,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-            );
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -712,8 +691,6 @@ public class PasswordList extends AppCompatActivity implements
 
                 if (uri != null) {
                     try {
-                        verifyStoragePermissions(this);
-
                         byte[] filecontent = Base64.decode(intentFilecontent, Base64.DEFAULT);
                         intentFilecontent = "";
                         ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "w");
@@ -739,8 +716,6 @@ public class PasswordList extends AppCompatActivity implements
 
                 if (uri != null) {
                     try {
-                        verifyStoragePermissions(this);
-
                         ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
                         if (pfd != null) {
                             FileInputStream fileInputStream = new FileInputStream(pfd.getFileDescriptor());
