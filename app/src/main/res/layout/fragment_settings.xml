@@ -104,30 +104,6 @@
             android:layout_marginTop="4dp"
             android:background="#8A8A8A"/>
 
-        <TextView
-            style="@style/Label"
-            android:id="@+id/encryption_implementation_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/encryption_implementation"/>
-
-        <TextView
-            android:id="@+id/encryption_implementation_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/encryption_implementation_description"/>
-
-        <Switch
-            android:id="@+id/settings_encryption_implementation_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:switchMinWidth="56dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/encryption_implementation_switch_text"
-            android:checked="false"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
-
         <Button
             android:id="@+id/settings_save_button"
             android:layout_width="wrap_content"

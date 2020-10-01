@@ -32,14 +32,10 @@
     <string name="successfully_updated">Successfully updated</string>
     <string name="delete">Delete</string>
     <string name="successfully_deleted">Successfully deleted</string>
-    <string name="encryption_implementation">Encryption implementation</string>
-    <string name="encryption_implementation_description">Use Java based encryption instead of the native (slower) c++ implementation. (highly recommended!)</string>
-    <string name="encryption_implementation_switch_text">Enable Java implementation</string>
     <string name="nextcloud_connection_settings">NextCloud connection settings</string>
     <string name="app_settings">App settings</string>
     <string name="wait_while_loading">Wait while loading...</string>
     <string name="loading">Loading</string>
-    <string name="outdated_version_options_hint">Some options are disabled due to the outdated android version</string>
     <string name="error_downloading_file">Error downloading the file</string>
     <string name="error_writing_file">Error writing the file</string>
     <string name="files">Files</string>

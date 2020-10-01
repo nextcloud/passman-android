@@ -28,7 +28,6 @@ public enum SettingValues {
     PASSWORD("password"),
     VAULTS("vaults"),
     ACTIVE_VAULT("active_vault"),
-    JAVA_CRYPTO_IMPLEMENTATION("java_crypto_implementation"),
     ;
     private final String name;
 
