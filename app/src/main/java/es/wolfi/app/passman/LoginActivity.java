@@ -34,6 +34,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
 
@@ -84,7 +85,8 @@ public class LoginActivity extends AppCompatActivity {
             String protocolonly = uri.getProtocol();
             input_protocol.setPrompt(protocolonly.toUpperCase());
         } catch (MalformedURLException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
         }
 
         input_user.setText(settings.getString(SettingValues.USER.toString(), null));

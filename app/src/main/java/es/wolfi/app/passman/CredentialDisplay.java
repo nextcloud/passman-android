@@ -77,7 +77,7 @@ public class CredentialDisplay extends Fragment {
 
     private Credential credential;
     private Handler handler;
-    private Runnable otp_refresh;
+    private Runnable otp_refresh = null;
 
     private OnCredentialFragmentInteraction mListener;
     private OnListFragmentInteractionListener filelistListener;
@@ -112,9 +112,7 @@ public class CredentialDisplay extends Fragment {
         }
 
         handler = new Handler();
-        if (credential.getOtp().equals("{}")) {
-            otp_refresh = null;
-        } else {
+        if (credential.getOtp().length() > 4) {
             otp_refresh = new Runnable() {
                 @Override
                 public void run() {

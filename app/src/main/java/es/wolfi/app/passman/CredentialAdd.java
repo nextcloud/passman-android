@@ -197,7 +197,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
                             return;
                         }
                     } catch (JSONException e1) {
-                        //ex = e1;
+                        e1.printStackTrace();
                     }
                 }
 
