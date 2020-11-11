@@ -40,6 +40,7 @@ import java.util.List;
 
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
+import es.wolfi.utils.FileUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File}.
@@ -78,19 +79,10 @@ public class FileEditAdapter extends RecyclerView.Adapter<FileEditAdapter.ViewHo
         return new ViewHolder(view);
     }
 
-    @SuppressLint("DefaultLocale")
-    public static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-    }
-
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        String filenameToPrint = String.format("%s (%s)", mValues.get(position).getFilename(), humanReadableByteCount((Double.valueOf(mValues.get(position).getSize())).longValue(), true));
+        String filenameToPrint = String.format("%s (%s)", mValues.get(position).getFilename(), FileUtils.humanReadableByteCount((Double.valueOf(mValues.get(position).getSize())).longValue(), true));
         holder.mContentView.setText(filenameToPrint);
 
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {

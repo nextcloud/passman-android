@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import es.wolfi.passman.API.File;
+import es.wolfi.utils.FileUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File} and makes a call to the
@@ -66,7 +67,7 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        String filenameToPrint = String.format("%s (%s)", mValues.get(position).getFilename(), humanReadableByteCount((Double.valueOf(mValues.get(position).getSize())).longValue(), true));
+        String filenameToPrint = String.format("%s (%s)", mValues.get(position).getFilename(), FileUtils.humanReadableByteCount((Double.valueOf(mValues.get(position).getSize())).longValue(), true));
         holder.mContentView.setText(filenameToPrint);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
