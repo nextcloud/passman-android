@@ -20,8 +20,6 @@
  */
 package es.wolfi.app.passman;
 
-import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,15 +51,6 @@ public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHo
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_credential_file_item, parent, false);
         return new ViewHolder(view);
-    }
-
-    @SuppressLint("DefaultLocale")
-    public static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     @Override

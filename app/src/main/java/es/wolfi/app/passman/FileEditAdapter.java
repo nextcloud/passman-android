@@ -20,7 +20,6 @@
  */
 package es.wolfi.app.passman;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
