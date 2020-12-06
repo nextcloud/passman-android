@@ -5,6 +5,7 @@
     <string name="username">Kasutajanimi</string>
     <string name="password">Parool</string>
     <string name="connect">Ühenda</string>
+    <string name="label">Silt</string>
     <string name="email">E-post</string>
     <string name="URL">URL</string>
     <string name="description">Kirjeldus</string>
