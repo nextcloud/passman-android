@@ -1,11 +1,11 @@
 <resources>
     <string name="action_settings">Einstellungen</string>
-    <string name="action_refresh">Aktuallisieren</string>
+    <string name="action_refresh">Aktualisieren</string>
     <string name="nchost">Serveradresse</string>
     <string name="username">Benutzername</string>
     <string name="password">Passwort</string>
     <string name="connect">Verbinden</string>
-    <string name="wrongNCUrl">Fehlerhafte Nexcloud Backend URL oder Verbindungsfehler</string>
+    <string name="wrongNCUrl">Fehlerhafte Nextcloud Backend URL oder Verbindungsfehler</string>
     <string name="wrongNCSettings">Einstellungen falsch</string>
     <string name="net_error">Netzwerkfehler</string>
     <string name="unlock">Öffnen</string>
