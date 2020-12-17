@@ -1,18 +1,19 @@
 package es.wolfi.utils;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.material.snackbar.Snackbar;
 
 public class GeneralUtils {
 
     private static Toast lastToast;
 
-    private static void showtoast(Context c, @NonNull CharSequence message)
-    {
+    private static void showtoast(Context c, @NonNull CharSequence message) {
         Log.d("GeneralUtils", message.toString());
         if (lastToast != null)
             lastToast.setText(message);
@@ -23,7 +24,7 @@ public class GeneralUtils {
     }
 
     public static void debug(@NonNull String message) {
-        Log.d("GeneralUtils",message.toString());
+        Log.d("GeneralUtils", message.toString());
     }
 
     public static void toast(Context c, @NonNull CharSequence message) {
@@ -61,14 +62,14 @@ public class GeneralUtils {
         }
     }
 
-    public static void debugAndToast(boolean toast, Context c,  int resId) {
+    public static void debugAndToast(boolean toast, Context c, int resId) {
         debug(c.getString(resId));
         if (toast) {
             toast(c, c.getString(resId));
         }
     }
 
-    public static void debugAndToast(boolean toast, View v,  int resId) {
+    public static void debugAndToast(boolean toast, View v, int resId) {
         debug(v.getContext().getString(resId));
         if (toast) {
             toast(v, resId);

@@ -1,9 +1,6 @@
 <resources>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
-    <string name="action_autofill">Enable Autofill</string>
-    <string name="action_clearsavedcreds">Clear Saved Vault Creds</string>
-    <string name="action_lockvaults">Lock Vaults</string>
     <string name="nchost">Server address</string>
     <string name="username">Username</string>
     <string name="password">Password</string>

@@ -35,6 +35,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import es.wolfi.app.passman.SJCLCrypto;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.Filterable;
 
 public class Vault extends Core implements Filterable {
@@ -244,6 +246,19 @@ public class Vault extends Core implements Filterable {
                 credentials.remove(credential);
             }
         }
+    }
+
+    public static Vault getVaultByGuid(String guid) {
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
+
+        if (vaults != null) {
+            return vaults.get(guid);
+        }
+        return null;
+    }
+
+    public static Vault getActiveVault() {
+        return (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
     }
 
     @Override
