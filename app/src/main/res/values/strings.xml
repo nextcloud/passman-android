@@ -3,6 +3,9 @@
     <string name="app_name_alpha" translatable="false">Passman - Alpha</string>
     <string name="action_settings">Settings</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_autofill">Enable Autofill</string>
+    <string name="action_clearsavedcreds">Clear Saved Vault Creds</string>
+    <string name="action_lockvaults">Lock Vaults</string>
     <string name="title_activity_login" translatable="false">Passman - Login</string>
     <string name="nchost">Server address</string>
     <string name="username">Username</string>
@@ -50,4 +53,26 @@
     <string name="wait_while_decrypting">Wait while decrypting...</string>
     <string name="wait_while_uploading">Wait while uploading...</string>
     <string name="wait_while_downloading">Wait while downloading...</string>
+    <string name="autofill_noactivevault">No active vault</string>
+    <string name="autofill_vaultlocked">Vault needs to be unlocked</string>
+    <string name="autofill_vaultempty">No credentials in vault</string>
+    <string name="autofill_passwordfor">Password for</string>
+    <string name="autofill_createdbyautofillservice">Created by autofill service</string>
+    <string name="autofill_alreadyenabled">Already enabled</string>
+    <string name="autofill_notsupported">Not supported</string>
+    <string name="vaultslocked">Vaults locked.</string>
+    <string name="credentialscleared">Credentials cleared</string>
+    <string name="progresstext">Refreshing</string>
+    <string name="loadingactivevault">Loading active vault</string>
+    <string name="refreshingdisplay">Refreshing display</string>
+    <string name="vault_state">State:</string>
+    <string name="vaultactiveandunlocked">Active/Unlocked</string>
+    <string name="menu_link_app">Link App</string>
+    <string name="linkedapp">Linked App Package</string>
+    <string name="channel_name">Passman Android</string>
+    <string name="channel_description">Credential Copy Notification</string>
+    <string name="notification_dismiss">Dismiss</string>
+    <string name="notification_copyusername">Username</string>
+    <string name="notification_copyemail">Email</string>
+    <string name="notification_copypassword">Password</string>
 </resources>
