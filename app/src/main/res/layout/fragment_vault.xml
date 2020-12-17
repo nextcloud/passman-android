@@ -87,25 +87,6 @@
                     android:textSize="12sp"
                     tools:text="21/01/1990"/>
             </TableRow>
-
-            <TableRow>
-
-                <TextView
-                    android:id="@+id/vault_state_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:text="@string/vault_state"
-                    android:paddingRight="8dp" />
-
-                <TextView
-                    android:id="@+id/vault_state"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    tools:text="Locked"/>
-            </TableRow>
-
         </TableLayout>
 
     </LinearLayout>

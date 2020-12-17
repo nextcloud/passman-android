@@ -3,6 +3,7 @@ package es.wolfi.app.passman.autofill;
 import android.app.assist.AssistStructure;
 import android.app.assist.AssistStructure.ViewNode;
 import android.content.pm.ApplicationInfo;
+import android.os.Build;
 import android.os.CancellationSignal;
 import android.service.autofill.AutofillService;
 import android.service.autofill.Dataset;
@@ -13,7 +14,6 @@ import android.service.autofill.FillResponse;
 import android.service.autofill.SaveCallback;
 import android.service.autofill.SaveInfo;
 import android.service.autofill.SaveRequest;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -21,18 +21,14 @@ import android.view.autofill.AutofillId;
 import android.view.autofill.AutofillValue;
 import android.widget.RemoteViews;
 
-import com.koushikdutta.async.future.FutureCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.SettingValues;
-import es.wolfi.app.passman.SingleTon;
-import es.wolfi.passman.API.Credential;
-import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.GeneralUtils;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -40,8 +36,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.GeneralUtils;
+import es.wolfi.utils.JSONUtils;
+
 import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
 
+@RequiresApi(api = Build.VERSION_CODES.O)
 public final class CredentialAutofillService extends AutofillService {
 
     private static final String TAG = "CredentialAutofillSvc";
@@ -63,7 +68,6 @@ public final class CredentialAutofillService extends AutofillService {
                 fillContexts.get(fillContexts.size() - 1).getStructure();
 
         // Find autofillable fields
-
         AutofillFieldCollection fields = getAutofillableFields(latestAssistStructure, false);
 
         final String packageName = getApplicationContext().getPackageName();
@@ -71,7 +75,6 @@ public final class CredentialAutofillService extends AutofillService {
         final String requesterPackageName = latestAssistStructure.getActivityComponent().getPackageName();
 
         Log.d(TAG, "autofillable fields for: " + requesterPackageName + ": " + fields);
-
         // We don't have any fields to work with
         if (fields.isEmpty()) {
             Log.d(TAG, "No autofillable fields for: " + requesterPackageName);
@@ -84,7 +87,6 @@ public final class CredentialAutofillService extends AutofillService {
         FillResponse.Builder response = new FillResponse.Builder();
 
         // Open Vault
-
         final Vault v = Vault.getActiveVault();
 
         if (v == null) {
@@ -298,37 +300,79 @@ public final class CredentialAutofillService extends AutofillService {
         Log.d(TAG, "onSaveRequest(), building Credential");
 
         Credential newCred = new Credential();
-        newCred
-                .setVault(v)
-                .setDescription(getString(R.string.autofill_createdbyautofillservice))
-                .setEmail(email)
-                .setLabel(requesterApplicationLabel)
-                .setCustomFields(customFieldString)
-                .setUsername(username)
-                .setPassword(password)
-                .setFiles((new JSONArray()).toString())
-                .setTags((new JSONArray()).toString())
-                .setOtp((new JSONObject()).toString())
-                .setUrl(requesterDomainName);
+        newCred.setVault(v);
+        newCred.setDescription(getString(R.string.autofill_createdbyautofillservice));
+        newCred.setEmail(email);
+        newCred.setLabel(requesterApplicationLabel);
+        newCred.setCustomFields(customFieldString);
+        newCred.setUsername(username);
+        newCred.setPassword(password);
+        newCred.setFiles((new JSONArray()).toString());
+        newCred.setTags((new JSONArray()).toString());
+        newCred.setOtp((new JSONObject()).toString());
+        newCred.setUrl(requesterDomainName);
 
         Log.d(TAG, "onSaveRequest(), saving Credential");
 
-        Vault.addCredential(
-                true,
-                this,
-                v,
-                newCred,
-                new FutureCallback<Credential>() {
-                    @Override
-                    public void onCompleted(Exception e, Credential result) {
-                        if (e != null) {
-                            Log.d(TAG, "onSaveRequest(), failed to save: " + e.toString());
-                            GeneralUtils.debugAndToast(true, getApplicationContext(), "Failed to save: " + e.toString());
-                        } else {
-                            GeneralUtils.debugAndToast(true, getApplicationContext(), "Saved");
+
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
+                String result = new String(responseBody);
+                if (statusCode == 200 && !result.equals("")) {
+                    try {
+                        JSONObject credentialObject = new JSONObject(result);
+                        Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                        if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
+                            Credential currentCredential = Credential.fromJSON(credentialObject, v);
+
+                            GeneralUtils.debugAndToast(true, getApplicationContext(), R.string.successfully_saved);
+                            return;
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+
+                    Log.d(TAG, "onSaveRequest(), failed to save: " + R.string.error_occurred);
+                    GeneralUtils.debugAndToast(true, getApplicationContext(), "Failed to save: " + R.string.error_occurred);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+                String response = new String(responseBody);
+
+                if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+                    try {
+                        JSONObject o = new JSONObject(response);
+                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                            Log.d(TAG, "onSaveRequest(), failed to save: " + o.getString("message"));
+                            GeneralUtils.debugAndToast(true, getApplicationContext(), "Failed to save: " + o.getString("message"));
+                            return;
+                        }
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                if (error != null && error.getMessage() != null) {
+                    error.printStackTrace();
+                    Log.e("async http response", new String(responseBody));
+                    GeneralUtils.debugAndToast(true, getApplicationContext(), error.getMessage());
+                } else {
+                    GeneralUtils.debugAndToast(true, getApplicationContext(), R.string.error_occurred);
+                }
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        };
+
+        newCred.save(getApplicationContext(), responseHandler);
+        v.addCredential(newCred);
+
         Log.d(TAG, "onSaveRequest() finished");
         GeneralUtils.debug("onSaveRequest finished");
         callback.onSuccess();
@@ -401,7 +445,7 @@ public final class CredentialAutofillService extends AutofillService {
 
             try {
                 String thisCredCustomFieldsString = thisCred.getCustomFields();
-                if(thisCredCustomFieldsString != null) {
+                if (thisCredCustomFieldsString != null) {
                     JSONArray thisCredCustomFields = new JSONArray(thisCredCustomFieldsString);
                     for (int i = 0; i < thisCredCustomFields.length(); i++) {
                         JSONObject thisCredCustomField = thisCredCustomFields.getJSONObject(i);
