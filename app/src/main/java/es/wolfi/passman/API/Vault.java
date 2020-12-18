@@ -257,10 +257,6 @@ public class Vault extends Core implements Filterable {
         return null;
     }
 
-    public static Vault getActiveVault() {
-        return (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-    }
-
     @Override
     public String getFilterableAttribute() {
         return this.name.toLowerCase();

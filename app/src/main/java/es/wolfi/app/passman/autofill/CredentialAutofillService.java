@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,7 +77,8 @@ public final class CredentialAutofillService extends AutofillService {
 
         Log.d(TAG, "autofillable fields for: " + requesterPackageName + ": " + fields);
         // We don't have any fields to work with
-        if (fields.isEmpty()) {
+        // Passman should not authenticate itself
+        if (fields.isEmpty() || requesterPackageName.startsWith("es.wolfi.app.passman")) {
             Log.d(TAG, "No autofillable fields for: " + requesterPackageName);
             callback.onSuccess(null);
             return;
@@ -87,7 +89,8 @@ public final class CredentialAutofillService extends AutofillService {
         FillResponse.Builder response = new FillResponse.Builder();
 
         // Open Vault
-        final Vault v = Vault.getActiveVault();
+        SingleTon ton = SingleTon.getTon();
+        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
 
         if (v == null) {
             GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_noactivevault));
@@ -245,8 +248,8 @@ public final class CredentialAutofillService extends AutofillService {
         }
 
         // Open Vault
-
-        final Vault v = Vault.getActiveVault();
+        SingleTon ton = SingleTon.getTon();
+        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
 
         if (v == null) {
             GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_noactivevault));
@@ -284,6 +287,13 @@ public final class CredentialAutofillService extends AutofillService {
         String email = AutofillField.toStringValue(bestEmail);
         String password = AutofillField.toStringValue(bestPassword);
 
+        if (email.equals("true") || email.equals("false")) {
+            email = "";
+        }
+        if (username.equals("true") || username.equals("false")) {
+            username = "";
+        }
+
         String customFieldString = "";
         try {
             JSONArray customFields = new JSONArray();
@@ -295,6 +305,7 @@ public final class CredentialAutofillService extends AutofillService {
             customFields.put(customField);
             customFieldString = customFields.toString();
         } catch (JSONException e) {
+            Log.e(TAG, "onSaveRequest(), error creating customField");
         }
 
         Log.d(TAG, "onSaveRequest(), building Credential");
@@ -325,6 +336,9 @@ public final class CredentialAutofillService extends AutofillService {
                         Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
                         if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
                             Credential currentCredential = Credential.fromJSON(credentialObject, v);
+                            v.addCredential(currentCredential);
+                            ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
+                            ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
 
                             GeneralUtils.debugAndToast(true, getApplicationContext(), R.string.successfully_saved);
                             return;
@@ -371,7 +385,6 @@ public final class CredentialAutofillService extends AutofillService {
         };
 
         newCred.save(getApplicationContext(), responseHandler);
-        v.addCredential(newCred);
 
         Log.d(TAG, "onSaveRequest() finished");
         GeneralUtils.debug("onSaveRequest finished");

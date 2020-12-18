@@ -46,8 +46,7 @@
         <receiver
             android:name=".PassmanReceiver"
             android:enabled="true"
-            android:exported="true"
-            android:permission="true">
+            android:exported="true">
         </receiver>
     </application>
 
