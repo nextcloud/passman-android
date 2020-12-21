@@ -54,4 +54,6 @@
     <string name="autofill_vaultlocked">Vault needs to be unlocked</string>
     <string name="autofill_vaultempty">No credentials in vault</string>
     <string name="autofill_createdbyautofillservice">Created by autofill service</string>
+    <string name="default_autofill_vault">Default autofill vault</string>
+    <string name="automatically">automatically</string>
 </resources>

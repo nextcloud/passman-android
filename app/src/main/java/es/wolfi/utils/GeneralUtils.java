@@ -1,6 +1,7 @@
 package es.wolfi.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -8,6 +9,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONException;
+
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.passman.API.Vault;
 
 public class GeneralUtils {
 
@@ -73,6 +79,18 @@ public class GeneralUtils {
         debug(v.getContext().getString(resId));
         if (toast) {
             toast(v, resId);
+        }
+    }
+
+    public static void updateAutofillVault(Vault vault, SharedPreferences settings) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").equals(vault.guid)) {
+                try {
+                    settings.edit().putString(SettingValues.AUTOFILL_VAULT.toString(), Vault.asJson(vault)).apply();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
