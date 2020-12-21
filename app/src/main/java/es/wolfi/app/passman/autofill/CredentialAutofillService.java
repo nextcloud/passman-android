@@ -275,14 +275,17 @@ public final class CredentialAutofillService extends AutofillService {
 
         if (TextUtils.isEmpty(requesterApplicationLabel)) {
             requesterApplicationLabel = requesterPackageName;
-
-            if (!requesterDomainName.equals("")) {
-                requesterApplicationLabel += " - " + getDomainName(requesterDomainName);
-            }
         }
 
         Log.d(TAG, "onSaveRequest(): Application: " + requesterApplicationLabel);
 
+        if (!requesterDomainName.equals("")) {
+            String parsedDomain = getDomainName(requesterDomainName);
+            if (parsedDomain.equals("")) {
+                parsedDomain = requesterDomainName;
+            }
+            requesterApplicationLabel += " - " + parsedDomain;
+        }
 
         // simplify into a function
         AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
@@ -438,7 +441,9 @@ public final class CredentialAutofillService extends AutofillService {
 
         String domain = "";
         if (uri != null) {
-            domain = uri.getHost();
+            if (uri.getHost() != null) {
+                domain = uri.getHost();
+            }
         }
         return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
@@ -458,7 +463,8 @@ public final class CredentialAutofillService extends AutofillService {
             @NonNull ArrayList<Credential> credentialArrayList,
             @NonNull String packageName,
             @NonNull CredentialAutofillService.WebDomainResult domain) {
-        ArrayList<Credential> matchingCred = new ArrayList<>();
+        ArrayList<Credential> matchingDomainCred = new ArrayList<>();
+        ArrayList<Credential> matchingPackageCred = new ArrayList<>();
 
         for (Credential thisCred : credentialArrayList) {
             String credUri = null;
@@ -477,9 +483,18 @@ public final class CredentialAutofillService extends AutofillService {
             }
 
             if (credUri != null && domain.firstDomain != null) {
-                if (credUri.equals(domain.firstDomain)) {
+                Log.d("in credurl", thisCred.getUrl());
+                Log.d("from autofill", domain.firstDomain);
+                if (credUri.equals(domain.firstDomain) || thisCred.getUrl().equals(domain.firstDomain)) {
                     GeneralUtils.debug("Matching cred on domain: " + domain.firstDomain);
-                    matchingCred.add(thisCred);
+                    matchingDomainCred.add(thisCred);
+                }
+            } else if (thisCred.getUrl() != null && domain.firstDomain != null) {
+                Log.d("in url", thisCred.getUrl());
+                Log.d("from autofill", domain.firstDomain);
+                if (thisCred.getUrl().equals(domain.firstDomain)) {
+                    GeneralUtils.debug("Matching cred on url: " + domain.firstDomain);
+                    matchingDomainCred.add(thisCred);
                 }
             }
 
@@ -504,7 +519,7 @@ public final class CredentialAutofillService extends AutofillService {
                                 credPackageName);
                         */
                             if (packageName.equalsIgnoreCase(credPackageName)) {
-                                matchingCred.add(thisCred);
+                                matchingPackageCred.add(thisCred);
                                 break;
                             }
                         }
@@ -514,11 +529,17 @@ public final class CredentialAutofillService extends AutofillService {
                 Log.d(TAG, "Cannot decode custom fields: " + ex.toString());
             }
 
-            if (matchingCred.size() >= MAX_DATASETS) {
-                return matchingCred;
+            if (matchingDomainCred.size() >= MAX_DATASETS) {
+                return matchingDomainCred;
+            }
+            if (matchingPackageCred.size() >= MAX_DATASETS && matchingDomainCred.size() == 0) {
+                return matchingPackageCred;
             }
         }
-        return matchingCred;
+        if (matchingDomainCred.size() > 0) {
+            return matchingDomainCred;
+        }
+        return matchingPackageCred;
     }
 
     @NonNull
