@@ -33,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -274,6 +275,10 @@ public final class CredentialAutofillService extends AutofillService {
 
         if (TextUtils.isEmpty(requesterApplicationLabel)) {
             requesterApplicationLabel = requesterPackageName;
+
+            if (!requesterDomainName.equals("")) {
+                requesterApplicationLabel += " - " + getDomainName(requesterDomainName);
+            }
         }
 
         Log.d(TAG, "onSaveRequest(): Application: " + requesterApplicationLabel);
@@ -421,6 +426,21 @@ public final class CredentialAutofillService extends AutofillService {
             }
         }
 
+    }
+
+    private String getDomainName(String url) {
+        URI uri = null;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        String domain = "";
+        if (uri != null) {
+            domain = uri.getHost();
+        }
+        return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
     @NonNull
