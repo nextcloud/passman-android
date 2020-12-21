@@ -2,9 +2,11 @@ package es.wolfi.app.passman.autofill;
 
 import android.app.assist.AssistStructure;
 import android.app.assist.AssistStructure.ViewNode;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.CancellationSignal;
+import android.preference.PreferenceManager;
 import android.service.autofill.AutofillService;
 import android.service.autofill.Dataset;
 import android.service.autofill.FillCallback;
@@ -51,7 +53,6 @@ import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE
 public final class CredentialAutofillService extends AutofillService {
 
     private static final String TAG = "CredentialAutofillSvc";
-
     private static final int MAX_DATASETS = 4;
 
     @Override
@@ -90,7 +91,7 @@ public final class CredentialAutofillService extends AutofillService {
 
         // Open Vault
         SingleTon ton = SingleTon.getTon();
-        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        final Vault v = getAutofillVault(ton);
 
         if (v == null) {
             GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_noactivevault));
@@ -249,7 +250,7 @@ public final class CredentialAutofillService extends AutofillService {
 
         // Open Vault
         SingleTon ton = SingleTon.getTon();
-        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        final Vault v = getAutofillVault(ton);
 
         if (v == null) {
             GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_noactivevault));
@@ -333,12 +334,15 @@ public final class CredentialAutofillService extends AutofillService {
                 if (statusCode == 200 && !result.equals("")) {
                     try {
                         JSONObject credentialObject = new JSONObject(result);
-                        Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                        Vault v = getAutofillVault(ton);
                         if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
                             Credential currentCredential = Credential.fromJSON(credentialObject, v);
                             v.addCredential(currentCredential);
                             ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
-                            ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+                            Vault activeVault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                            if (v.guid.equals(activeVault.guid)) {
+                                ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+                            }
 
                             GeneralUtils.debugAndToast(true, getApplicationContext(), R.string.successfully_saved);
                             return;
@@ -571,4 +575,21 @@ public final class CredentialAutofillService extends AutofillService {
         }
     }
 
+    private Vault getAutofillVault(SingleTon ton) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null) != null) {
+            String autofill_vault_guid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
+            if (!autofill_vault_guid.equals("")) {
+                try {
+                    Vault requestedVault = Vault.fromJSON(new JSONObject(settings.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
+                    requestedVault.unlock(settings.getString(autofill_vault_guid, ""));
+                    return requestedVault;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+    }
 }
