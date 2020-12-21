@@ -66,6 +66,7 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.GeneralUtils;
 
 public class PasswordList extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
@@ -277,6 +278,8 @@ public class PasswordList extends AppCompatActivity implements
 
                     ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
                     showActiveVault();
+
+                    GeneralUtils.updateAutofillVault(result, settings);
                 }
             });
         }
@@ -322,6 +325,7 @@ public class PasswordList extends AppCompatActivity implements
 
         ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+        GeneralUtils.updateAutofillVault(v, settings);
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -341,6 +345,7 @@ public class PasswordList extends AppCompatActivity implements
         ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+        GeneralUtils.updateAutofillVault(v, settings);
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -360,6 +365,7 @@ public class PasswordList extends AppCompatActivity implements
         ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+        GeneralUtils.updateAutofillVault(v, settings);
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -400,6 +406,7 @@ public class PasswordList extends AppCompatActivity implements
                 ton.addExtra(vault.guid, result);
                 ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
                 ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
+                GeneralUtils.updateAutofillVault(result, settings);
 
                 HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
                 vaults.put(vault.guid, result);

@@ -288,10 +288,10 @@ public final class CredentialAutofillService extends AutofillService {
         String email = AutofillField.toStringValue(bestEmail);
         String password = AutofillField.toStringValue(bestPassword);
 
-        if (email.equals("true") || email.equals("false")) {
+        if (email == null || email.equals("true") || email.equals("false")) {
             email = "";
         }
-        if (username.equals("true") || username.equals("false")) {
+        if (username == null || username.equals("true") || username.equals("false")) {
             username = "";
         }
 
@@ -343,6 +343,9 @@ public final class CredentialAutofillService extends AutofillService {
                             if (v.guid.equals(activeVault.guid)) {
                                 ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
                             }
+
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                            GeneralUtils.updateAutofillVault(v, settings);
 
                             GeneralUtils.debugAndToast(true, getApplicationContext(), R.string.successfully_saved);
                             return;
