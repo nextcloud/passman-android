@@ -35,34 +35,36 @@ public class AutofillField implements Comparable {
     private int discoveryTypes;
 
 
-    // constructors
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     public AutofillField(AutofillId id, AssistStructure.ViewNode viewNode) throws Exception {
-        if (id == null || viewNode == null)
+        if (id == null || viewNode == null) {
             throw new NullPointerException("id and viewNode must be non null");
+        }
 
         autofillid = id;
         focused = viewNode.isFocused();
         hints = new HashSet<>();
         getHints(viewNode);
 
-        if (discoveryTypes == AUTOFILL_DISCOVERY_TYPE_NONE || hints.isEmpty())
+        if (discoveryTypes == AUTOFILL_DISCOVERY_TYPE_NONE || hints.isEmpty()) {
             throw new Exception("Not autofillable.");
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public AutofillField(AutofillValue value, AssistStructure.ViewNode viewNode) throws Exception {
-        if (value == null || viewNode == null)
+        if (value == null || viewNode == null) {
             throw new NullPointerException("value and viewNode must be non null");
+        }
 
         autofillValue = value;
         focused = viewNode.isFocused();
         hints = new HashSet<>();
         getHints(viewNode);
 
-        if ((discoveryTypes == AUTOFILL_DISCOVERY_TYPE_NONE) || hints.isEmpty())
+        if ((discoveryTypes == AUTOFILL_DISCOVERY_TYPE_NONE) || hints.isEmpty()) {
             throw new Exception("Not autofillable.");
+        }
     }
 
     public boolean isFocused() {
@@ -81,16 +83,12 @@ public class AutofillField implements Comparable {
     }
 
     public boolean hasDiscoveryType(int discoveryType) {
-        if ((discoveryTypes & discoveryType) == discoveryType) {
-            return true;
-        }
-        return false;
+        return (discoveryTypes & discoveryType) == discoveryType;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean hasValidHint() {
-        return hasHint(View.AUTOFILL_HINT_EMAIL_ADDRESS) ||
-                hasHint(View.AUTOFILL_HINT_USERNAME) ||
-                hasHint(View.AUTOFILL_HINT_PASSWORD);
+        return hasHint(View.AUTOFILL_HINT_EMAIL_ADDRESS) || hasHint(View.AUTOFILL_HINT_USERNAME) || hasHint(View.AUTOFILL_HINT_PASSWORD);
     }
 
     public HashSet<String> getHints() {
@@ -131,9 +129,8 @@ public class AutofillField implements Comparable {
     public int compareTo(Object o) {
         AutofillField otherAF = (AutofillField) o;
 
-        int comparison = (this.calculateSortValue()) - (otherAF.calculateSortValue());
-        // lowest value is best, highest worst
-        return comparison;
+        // calculate comparison; lowest value is best, highest worst
+        return (this.calculateSortValue()) - (otherAF.calculateSortValue());
     }
 
     // Following based on:
@@ -143,8 +140,7 @@ public class AutofillField implements Comparable {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void getHints(@NonNull AssistStructure.ViewNode node) {
 
-        // If real autofill hints are defined, use them
-        // and skip the heuristics below
+        // If real autofill hints are defined, use them and skip the heuristics below
 
         String[] androidhints = node.getAutofillHints();
 
@@ -221,6 +217,7 @@ public class AutofillField implements Comparable {
      *
      * @return standard autofill hint, or {@code null} when it could not be inferred.
      */
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Nullable
     private String inferHint(AssistStructure.ViewNode node, @Nullable String actualHint) {
         if (actualHint == null) return null;
@@ -231,13 +228,15 @@ public class AutofillField implements Comparable {
             return null;
         }
 
-        if (hint.contains("password")) return View.AUTOFILL_HINT_PASSWORD;
-        if (hint.contains("username")
-                || (hint.contains("login") && hint.contains("id"))
-                || (hint.contains("login") && hint.contains("user")))
+        if (hint.contains("password")) {
+            return View.AUTOFILL_HINT_PASSWORD;
+        }
+        if (hint.contains("username") || (hint.contains("login") && hint.contains("id")) || (hint.contains("login") && hint.contains("user"))) {
             return View.AUTOFILL_HINT_USERNAME;
-        if (hint.contains("email")) return View.AUTOFILL_HINT_EMAIL_ADDRESS;
-
+        }
+        if (hint.contains("email")) {
+            return View.AUTOFILL_HINT_EMAIL_ADDRESS;
+        }
 
         return null;
     }

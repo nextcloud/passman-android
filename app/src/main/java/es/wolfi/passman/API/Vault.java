@@ -22,6 +22,7 @@
 package es.wolfi.passman.API;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -283,6 +284,18 @@ public class Vault extends Core implements Filterable {
             obj.put("challenge_password", vault.challenge_password);
         }
         return obj.toString();
+    }
+
+    public static void updateAutofillVault(Vault vault, SharedPreferences settings) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").equals(vault.guid)) {
+                try {
+                    settings.edit().putString(SettingValues.AUTOFILL_VAULT.toString(), Vault.asJson(vault)).apply();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

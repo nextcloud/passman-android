@@ -49,7 +49,6 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.GeneralUtils;
 
 
 public class Settings extends Fragment {
@@ -184,7 +183,7 @@ public class Settings extends Fragment {
                                         if (e != null) {
                                             return;
                                         }
-                                        GeneralUtils.updateAutofillVault(result, settings);
+                                        Vault.updateAutofillVault(result, settings);
                                     }
                                 });
 
