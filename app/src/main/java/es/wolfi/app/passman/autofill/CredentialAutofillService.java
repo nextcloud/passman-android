@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.autofill.AutofillId;
 import android.view.autofill.AutofillValue;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -45,7 +46,6 @@ import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.GeneralUtils;
 import es.wolfi.utils.JSONUtils;
 
 import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
@@ -95,13 +95,15 @@ public final class CredentialAutofillService extends AutofillService {
         final Vault v = getAutofillVault(ton);
 
         if (v == null) {
-            GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_noactivevault));
+            Toast.makeText(getApplicationContext(), getString(R.string.autofill_noactivevault), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, getString(R.string.autofill_noactivevault));
             callback.onSuccess(null);
             return;
         }
 
         if (!v.is_unlocked()) {
-            GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_vaultlocked));
+            Toast.makeText(getApplicationContext(), getString(R.string.autofill_vaultlocked), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, getString(R.string.autofill_vaultlocked));
             callback.onSuccess(null);
             return;
         }
@@ -115,7 +117,8 @@ public final class CredentialAutofillService extends AutofillService {
         ArrayList<Credential> allCred = v.getCredentials();
 
         if (allCred.isEmpty()) {
-            GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_vaultempty));
+            Toast.makeText(getApplicationContext(), getString(R.string.autofill_vaultempty), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, getString(R.string.autofill_vaultempty));
             callback.onSuccess(null);
             return;
         }
@@ -187,12 +190,10 @@ public final class CredentialAutofillService extends AutofillService {
                 tempFields.add(bestPassword.getAutofillid());
             }
 
-            //Log.d(TAG, "Added to dataset");
             response.addDataset(dataset.build());
         }
 
-        /* Let android know we want to save any credentials
-         * Manually entered by the user
+        /* Let android know we want to save any credentials manually entered by the user
          * We will save usernames, passwords and email addresses
          */
 
@@ -249,25 +250,25 @@ public final class CredentialAutofillService extends AutofillService {
             return;
         }
 
-        // Open Vault
         SingleTon ton = SingleTon.getTon();
         final Vault v = getAutofillVault(ton);
 
         if (v == null) {
-            GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_noactivevault));
+            Toast.makeText(getApplicationContext(), getString(R.string.autofill_noactivevault), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, getString(R.string.autofill_noactivevault));
             callback.onSuccess();
             return;
         }
 
         if (!v.is_unlocked()) {
-            GeneralUtils.debugAndToast(true, getApplicationContext(), getString(R.string.autofill_vaultlocked));
+            Toast.makeText(getApplicationContext(), getString(R.string.autofill_vaultlocked), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, getString(R.string.autofill_vaultlocked));
             callback.onSuccess();
             return;
         }
 
         try {
             ApplicationInfo requesterAppInfo = getPackageManager().getApplicationInfo(requesterPackageName, 0);
-
             requesterApplicationLabel = getPackageManager().getApplicationLabel(requesterAppInfo).toString();
         } catch (Exception ex) {
             Log.d(TAG, "Couldn't read application label for: " + requesterPackageName);
@@ -287,7 +288,6 @@ public final class CredentialAutofillService extends AutofillService {
             requesterApplicationLabel += " - " + parsedDomain;
         }
 
-        // simplify into a function
         AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
         AutofillField bestEmail = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
         AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
@@ -354,17 +354,18 @@ public final class CredentialAutofillService extends AutofillService {
                             }
 
                             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                            GeneralUtils.updateAutofillVault(v, settings);
+                            Vault.updateAutofillVault(v, settings);
 
-                            GeneralUtils.debugAndToast(true, getApplicationContext(), R.string.successfully_saved);
+                            Toast.makeText(getApplicationContext(), getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, getString(R.string.successfully_saved));
                             return;
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onSaveRequest(), failed to save: " + R.string.error_occurred);
-                    GeneralUtils.debugAndToast(true, getApplicationContext(), "Failed to save: " + R.string.error_occurred);
                 }
             }
 
@@ -376,8 +377,9 @@ public final class CredentialAutofillService extends AutofillService {
                     try {
                         JSONObject o = new JSONObject(response);
                         if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+
+                            Toast.makeText(getApplicationContext(), o.getString("message"), Toast.LENGTH_LONG).show();
                             Log.d(TAG, "onSaveRequest(), failed to save: " + o.getString("message"));
-                            GeneralUtils.debugAndToast(true, getApplicationContext(), "Failed to save: " + o.getString("message"));
                             return;
                         }
                     } catch (JSONException e1) {
@@ -388,22 +390,23 @@ public final class CredentialAutofillService extends AutofillService {
                 if (error != null && error.getMessage() != null) {
                     error.printStackTrace();
                     Log.e("async http response", new String(responseBody));
-                    GeneralUtils.debugAndToast(true, getApplicationContext(), error.getMessage());
+                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, error.getMessage());
                 } else {
-                    GeneralUtils.debugAndToast(true, getApplicationContext(), R.string.error_occurred);
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, getString(R.string.error_occurred));
                 }
             }
 
             @Override
             public void onRetry(int retryNo) {
-                // called when request is retried
+                // called when request is retried; no retry
             }
         };
 
         newCred.save(getApplicationContext(), responseHandler);
 
         Log.d(TAG, "onSaveRequest() finished");
-        GeneralUtils.debug("onSaveRequest finished");
         callback.onSuccess();
     }
 
@@ -413,7 +416,7 @@ public final class CredentialAutofillService extends AutofillService {
 
         public WebDomainResult() {
             allDomains = new HashSet();
-            GeneralUtils.debug("Web Domain Result constructed");
+            Log.d(TAG, "Web Domain Result constructed");
         }
 
         public void addDomain(String domain) {
@@ -422,14 +425,12 @@ public final class CredentialAutofillService extends AutofillService {
             }
 
             domain = domain.toLowerCase();
-
             allDomains.add(domain);
 
             if (firstDomain == null) {
                 firstDomain = domain;
             }
         }
-
     }
 
     private String getDomainName(String url) {
@@ -480,21 +481,17 @@ public final class CredentialAutofillService extends AutofillService {
                     }
                 }
             } catch (Exception ex) {
-                GeneralUtils.debug("Couldn't decode Cred URL to host part:" + ex.toString());
+                Log.d(TAG, "Couldn't decode Cred URL to host part:" + ex.toString());
             }
 
             if (credUri != null && domain.firstDomain != null) {
-                Log.d("in credurl", thisCred.getUrl());
-                Log.d("from autofill", domain.firstDomain);
                 if (credUri.equals(domain.firstDomain) || thisCred.getUrl().equals(domain.firstDomain)) {
-                    GeneralUtils.debug("Matching cred on domain: " + domain.firstDomain);
+                    Log.d(TAG, "Matching cred on domain: " + domain.firstDomain);
                     matchingDomainCred.add(thisCred);
                 }
             } else if (thisCred.getUrl() != null && domain.firstDomain != null) {
-                Log.d("in url", thisCred.getUrl());
-                Log.d("from autofill", domain.firstDomain);
                 if (thisCred.getUrl().equals(domain.firstDomain)) {
-                    GeneralUtils.debug("Matching cred on url: " + domain.firstDomain);
+                    Log.d(TAG, "Matching cred on url: " + domain.firstDomain);
                     matchingDomainCred.add(thisCred);
                 }
             }
@@ -506,19 +503,10 @@ public final class CredentialAutofillService extends AutofillService {
                     for (int i = 0; i < thisCredCustomFields.length(); i++) {
                         JSONObject thisCredCustomField = thisCredCustomFields.getJSONObject(i);
 
-                        String customFieldLabel =
-                                thisCredCustomField.getString("label");
+                        String customFieldLabel = thisCredCustomField.getString("label");
 
                         if (customFieldLabel.equalsIgnoreCase("androidCredPackageName")) {
-
                             String credPackageName = thisCredCustomField.getString("value");
-
-                        /*
-                            Log.d(TAG, "Checking custom fields: " +
-                                packageName +
-                                " vs " +
-                                credPackageName);
-                        */
                             if (packageName.equalsIgnoreCase(credPackageName)) {
                                 matchingPackageCred.add(thisCred);
                                 break;
@@ -554,7 +542,7 @@ public final class CredentialAutofillService extends AutofillService {
                 getNodeDomain(viewNode, res);
             }
         }
-        GeneralUtils.debug("Returning, found :" + String.valueOf(res.allDomains.size()) + " domains.");
+        Log.d(TAG, "Returning, found :" + String.valueOf(res.allDomains.size()) + " domains.");
         return res;
     }
 
@@ -571,8 +559,7 @@ public final class CredentialAutofillService extends AutofillService {
     @NonNull
     static RemoteViews newDatasetPresentation(@NonNull String packageName,
                                               @NonNull CharSequence text) {
-        RemoteViews presentation =
-                new RemoteViews(packageName, R.layout.autofill_list_item);
+        RemoteViews presentation = new RemoteViews(packageName, R.layout.autofill_list_item);
         presentation.setTextViewText(R.id.autofilltext, text);
         return presentation;
     }
@@ -584,7 +571,6 @@ public final class CredentialAutofillService extends AutofillService {
                                         @NonNull String displayValue) {
         RemoteViews presentation = newDatasetPresentation(packageName, displayValue);
         dataset.setValue(field.getAutofillid(), AutofillValue.forText(value), presentation);
-        //Log.d(TAG, "Added to presentation: " + displayValue);
     }
 
     @NonNull
@@ -611,7 +597,7 @@ public final class CredentialAutofillService extends AutofillService {
             }
             fields.add(thisField);
         } catch (Exception ex) {
-            //Log.d(TAG, "Couldn't add node to fields: " + ex.toString());
+            Log.d(TAG, "Couldn't add node to fields: " + ex.toString());
         }
 
         int childrenSize = node.getChildCount();

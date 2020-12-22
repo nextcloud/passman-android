@@ -5,12 +5,12 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationManagerCompat;
 
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.GeneralUtils;
 
 public class PassmanReceiver extends BroadcastReceiver {
 
@@ -58,7 +58,7 @@ public class PassmanReceiver extends BroadcastReceiver {
         ClipData clip = ClipData.newPlainText(label, text);
         clipboard.setPrimaryClip(clip);
 
-        GeneralUtils.toast(c.getApplicationContext(), c.getApplicationContext().getString(R.string.copied_to_clipboard) + ": " + label);
+        Toast.makeText(c, c.getApplicationContext().getString(R.string.copied_to_clipboard) + ": " + label, Toast.LENGTH_SHORT).show();
     }
 
 }
