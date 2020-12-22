@@ -387,7 +387,12 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         progress.setCancelable(false);
         progress.show();
 
-        if (!this.credential.getPassword().equals(password.getText().toString())) {
+        if (this.credential.getCompromised().equals("true") && !this.credential.getPassword().equals(password.getText().toString())) {
+            this.credential.setCompromised(false);
+        }
+
+        // fix sometimes wrong saved compromised field
+        if (!this.credential.getCompromised().equals("true")) {
             this.credential.setCompromised(false);
         }
 

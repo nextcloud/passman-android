@@ -331,6 +331,7 @@ public final class CredentialAutofillService extends AutofillService {
         newCred.setTags((new JSONArray()).toString());
         newCred.setOtp((new JSONObject()).toString());
         newCred.setUrl(requesterDomainName);
+        newCred.setCompromised(false);
 
         Log.d(TAG, "onSaveRequest(), saving Credential");
 
