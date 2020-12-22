@@ -287,7 +287,10 @@ public class Credential extends Core implements Filterable {
 
     public String getCompromised() {
         if (compromised != null && !compromised.equals("null")) {
-            return vault.decryptString(compromised);
+            String decryptedCompromised = vault.decryptString(compromised);
+            if (decryptedCompromised != null && !decryptedCompromised.equals("")) {
+                return decryptedCompromised;
+            }
         }
         return "false";
     }
