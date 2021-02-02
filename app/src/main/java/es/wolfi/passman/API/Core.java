@@ -1,23 +1,22 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.passman.API;
@@ -25,18 +24,20 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
-import java.util.logging.Logger;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -44,7 +45,7 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.JSONUtils;
 
 public abstract class Core {
-    protected static final String LOG_TAG    = "API_LIB";
+    protected static final String LOG_TAG = "API_LIB";
 
     protected static String host;
     protected static String username;
@@ -84,30 +85,71 @@ public abstract class Core {
     }
 
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
-        String auth = "Basic ".concat(Base64.encodeToString(username.concat(":").concat(password).getBytes(), Base64.NO_WRAP));
-
-        Ion.with(c)
-        .load(host.concat(endpoint))
-        .setHeader("Authorization", auth)                // set the header
-        .asString()
-        .setCallback(new FutureCallback<String>() {
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
             @Override
-            public void onCompleted(Exception e, String result) {
-                if (e == null && JSONUtils.isJSONObject(result)) {
-                    try {
-                        JSONObject o = new JSONObject(result);
-                        if (o.getString("message").equals("Current user is not logged in")) {
-                            callback.onCompleted(new Exception("401"), null);
-                            return;
+            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
+                String result = new String(responseBody);
+                if (statusCode == 200 && !result.equals("")) {
+                    if (JSONUtils.isJSONObject(result)) {
+                        try {
+                            JSONObject o = new JSONObject(result);
+                            if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                                callback.onCompleted(new Exception("401"), null);
+                                return;
+                            }
+                        } catch (JSONException e1) {
+                            e1.printStackTrace();
                         }
-                    } catch (JSONException e1) {
-
                     }
                 }
-
-                callback.onCompleted(e, result);
+                callback.onCompleted(null, result);
             }
-        });
+
+            @Override
+            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+                String errorMessage = error.getMessage();
+                if (errorMessage == null) {
+                    error.printStackTrace();
+                    errorMessage = "Unknown error";
+                }
+                if (statusCode == 401) {
+                    callback.onCompleted(new Exception("401"), null);
+                }
+                callback.onCompleted(new Exception(errorMessage), null);
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // called when request is retried
+            }
+        };
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setBasicAuth(username, password);
+        client.addHeader("Content-Type", "application/json");
+        client.get(host.concat(endpoint), responseHandler);
+    }
+
+    public static void requestAPI(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
+            throws MalformedURLException {
+
+        URL url = new URL(host.concat(endpoint));
+
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setBasicAuth(username, password);
+        client.setConnectTimeout(15000);
+        client.setResponseTimeout(15000);
+        //client.addHeader("Content-Type", "application/json; utf-8");
+        client.addHeader("Accept", "application/json, text/plain, */*");
+
+
+        if (requestType.equals("POST")) {
+            client.post(url.toString(), postDataParams, responseHandler);
+        } else if (requestType.equals("PATCH")) {
+            client.patch(url.toString(), postDataParams, responseHandler);
+        } else if (requestType.equals("DELETE")) {
+            client.delete(url.toString(), postDataParams, responseHandler);
+        }
     }
 
     // TODO Test this method once the server response works!
@@ -120,13 +162,18 @@ public abstract class Core {
         requestAPIGET(c, "version", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                Log.d("getApiVersion", result);
+                if (result != null) {
+                    Log.d("getApiVersion", result);
+                } else {
+                    Log.d("getApiVersion", "Failure while getting api version");
+                }
             }
         });
     }
 
     /**
      * Check if the user has logged in, also sets up the API
+     *
      * @param c     The context where this should be run
      * @param toast Whether we want or not a toast! Yum!
      * @param cb    The callback
@@ -156,7 +203,8 @@ public abstract class Core {
         Toast.makeText(c, host, Toast.LENGTH_LONG).show();
         Log.d(LOG_TAG, "Host: " + host);
         Log.d(LOG_TAG, "User: " + user);
-        Log.d(LOG_TAG, "Pass: " + pass);
+        //Log.d(LOG_TAG, "Pass: " + pass);
+        Log.d(LOG_TAG, "Pass: " + pass.replaceAll("(?s).", "*"));
 
         Vault.setUpAPI(host, user, pass);
         Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {
@@ -166,16 +214,20 @@ public abstract class Core {
 
                 if (e != null) {
                     if (e.getMessage().equals("401")) {
-                        if (toast) Toast.makeText(c, c.getString(R.string.wrongNCSettings), Toast.LENGTH_LONG).show();
+                        if (toast) {
+                            Toast.makeText(c, c.getString(R.string.wrongNCSettings), Toast.LENGTH_LONG).show();
+                        }
                         ret = false;
-                    }
-                    else if (e.getMessage().contains("Unable to resolve host") || e.getMessage().contains("Invalid URI")) {
-                        if (toast) Toast.makeText(c, c.getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
+                    } else if (e.getMessage().contains("Unable to resolve host") || e.getMessage().contains("Invalid URI")) {
+                        if (toast) {
+                            Toast.makeText(c, c.getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
+                        }
                         ret = false;
-                    }
-                    else {
+                    } else {
                         Log.e(LOG_TAG, "Error: " + e.getMessage(), e);
-                        if (toast) Toast.makeText(c, c.getString(R.string.net_error) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        if (toast) {
+                            Toast.makeText(c, c.getString(R.string.net_error) + ": " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                         ret = false;
                     }
                 }

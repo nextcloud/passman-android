@@ -49,7 +49,7 @@ void throwJavaException(JNIEnv *env, const char *msg)
 
 extern "C" {
 
-jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptString(JNIEnv *env, jobject jthis, jstring cryptogram, jstring key) {
+jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclass jthis, jstring cryptogram, jstring key) {
     std::string dt = env->GetStringUTFChars(cryptogram, 0);
     std::string password = env->GetStringUTFChars(key, 0);
 
@@ -59,7 +59,7 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptString(JNIEnv *env, jobject 
     std::string json = (char *) t->data;
     free(t);
 
-//    __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, json.c_str());
+    //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, json.c_str());
 
     char *result = WLF::Crypto::SJCL::decrypt(json, password);
 
@@ -75,6 +75,37 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptString(JNIEnv *env, jobject 
     }
 
     throwJavaException(env, "Error decrypting");
+    return (jstring) "";
+}
+
+jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jstring plaintext, jstring key) {
+    std::string dt = env->GetStringUTFChars(plaintext, 0);
+    std::string password = env->GetStringUTFChars(key, 0);
+
+    //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, dt.c_str());
+
+    char *result = WLF::Crypto::SJCL::encrypt(const_cast<char *>(dt.c_str()), password);
+    //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
+
+    char *arr_result = &result[0];
+    std::string lengthAsString = to_string(strlen(arr_result));
+
+    if (result == NULL) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "error encrypting");
+    }
+    else {
+        //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "WHOOP!");
+        //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
+        WLF::Crypto::Datagram *t = WLF::Crypto::BASE64::encode((const unsigned char *) result,
+                                                               strlen(arr_result));
+
+        jstring str = env->NewStringUTF((char *) t->data);
+
+        free(t);
+        return str;
+    }
+
+    throwJavaException(env, "Error encrypting");
     return NULL;
 }
 
