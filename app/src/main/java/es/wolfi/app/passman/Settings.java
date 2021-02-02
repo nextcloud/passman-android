@@ -67,6 +67,10 @@ public class Settings extends Fragment {
     @BindView(R.id.settings_nextcloud_password)
     EditText settings_nextcloud_password;
 
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    @BindView(R.id.settings_app_start_password_switch)
+    Switch settings_app_start_password_switch;
+
     SharedPreferences settings;
 
     public Settings() {
@@ -110,6 +114,7 @@ public class Settings extends Fragment {
         settings_nextcloud_url.setText(settings.getString(SettingValues.HOST.toString(), null));
         settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
         settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
+        settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
     }
 
     @Override
@@ -129,6 +134,8 @@ public class Settings extends Fragment {
             @Override
             public void onClick(View view) {
                 SingleTon ton = SingleTon.getTon();
+
+                settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
 
                 if (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
                         !settings.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||

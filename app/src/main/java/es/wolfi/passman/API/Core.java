@@ -137,8 +137,8 @@ public abstract class Core {
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.setBasicAuth(username, password);
-        client.setConnectTimeout(15000);
-        client.setResponseTimeout(15000);
+        client.setConnectTimeout(1000*15);      // 15s connect timeout
+        client.setResponseTimeout(1000*120);    // 120s response timeout
         //client.addHeader("Content-Type", "application/json; utf-8");
         client.addHeader("Accept", "application/json, text/plain, */*");
 

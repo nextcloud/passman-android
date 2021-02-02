@@ -31,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -51,6 +52,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
@@ -78,13 +80,19 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     EditText url;
     @BindView(R.id.edit_credential_description)
     EditText description;
-    @BindView(R.id.filelist)
-    RecyclerView filelist;
+    @BindView(R.id.filesList)
+    RecyclerView filesList;
+    @BindView(R.id.customFieldsList)
+    RecyclerView customFieldsList;
+    @BindView(R.id.customFieldType)
+    Spinner customFieldType;
 
     private Credential credential;
     private boolean alreadySaving = false;
     private FileEditAdapter fed;
-    private RecyclerView recyclerView;
+    private CustomFieldEditAdapter cfed;
+    private RecyclerView filesListRecyclerView;
+    private RecyclerView customFieldsListRecyclerView;
 
     public CredentialEdit() {
         // Required empty public constructor
@@ -123,7 +131,12 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         addFileButton.setOnClickListener(this.getAddFileButtonListener());
         addFileButton.setVisibility(View.VISIBLE);
 
+        Button addCustomFieldButton = (Button) view.findViewById(R.id.AddCustomFieldButton);
+        addCustomFieldButton.setOnClickListener(this.getAddCustomFieldButtonListener());
+        addCustomFieldButton.setVisibility(View.VISIBLE);
+
         fed = new FileEditAdapter(credential);
+        cfed = new CustomFieldEditAdapter(credential);
 
         return view;
     }
@@ -138,10 +151,15 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.filelist);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(fed);
+        filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+        filesListRecyclerView.setHasFixedSize(true);
+        filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        filesListRecyclerView.setAdapter(fed);
+
+        customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+        customFieldsListRecyclerView.setHasFixedSize(true);
+        customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        customFieldsListRecyclerView.setAdapter(cfed);
 
         label.setText(this.credential.getLabel());
         user.setText(this.credential.getUsername());
@@ -165,7 +183,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         super.onDetach();
     }
 
-    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize) throws JSONException {
+    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) throws JSONException {
         Context context = getContext();
         final ProgressDialog progress = new ProgressDialog(context);
         progress.setTitle(context.getString(R.string.loading));
@@ -187,8 +205,22 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                                 && fileObject.has("size") && fileObject.has("created") && fileObject.has("mimetype")) {
                             fileObject.put("filename", fileName);
                             File file = new File(fileObject);
-                            fed.addFile(file);
-                            fed.notifyDataSetChanged();
+
+                            if (requestCode == 2) {
+                                fed.addFile(file);
+                                fed.notifyDataSetChanged();
+                            }
+                            if (requestCode == 3) {
+                                JSONObject customFieldJSONObject = new JSONObject();
+                                customFieldJSONObject.put("label", "newLabel" + cfed.getItemCount() + 1);
+                                customFieldJSONObject.put("secret", false);
+                                customFieldJSONObject.put("field_type", "file");
+                                customFieldJSONObject.put("value", file.getAsJSONObject());
+
+                                CustomField cf = new CustomField(customFieldJSONObject);
+                                cfed.addCustomField(cf);
+                                cfed.notifyDataSetChanged();
+                            }
                         }
                     } catch (JSONException e1) {
                         e1.printStackTrace();
@@ -213,7 +245,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler);
+                credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler, progress);
             }
         }, 100);
     }
@@ -222,7 +254,32 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd();
+                ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd(2);
+            }
+        };
+    }
+
+    public View.OnClickListener getAddCustomFieldButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (customFieldType.getSelectedItem().toString().equals("File")) {
+                    ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd(3);
+                } else {
+                    try {
+                        JSONObject customFieldJSONObject = new JSONObject();
+                        customFieldJSONObject.put("label", "newLabel" + (cfed.getItemCount() + 1));
+                        customFieldJSONObject.put("secret", customFieldType.getSelectedItem().toString().toLowerCase().equals("password"));
+                        customFieldJSONObject.put("field_type", customFieldType.getSelectedItem().toString().toLowerCase());
+                        customFieldJSONObject.put("value", "");
+
+                        CustomField cf = new CustomField(customFieldJSONObject);
+                        cfed.addCustomField(cf);
+                        cfed.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         };
     }
@@ -240,17 +297,33 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
                         String result = new String(responseBody);
                         if (statusCode == 200 && !result.equals("")) {
-                            Snackbar.make(view, R.string.successfully_deleted, Snackbar.LENGTH_LONG)
+                            try {
+                                JSONObject credentialObject = new JSONObject(result);
+                                Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
+                                    Credential currentCredential = Credential.fromJSON(credentialObject, v);
+
+                                    Snackbar.make(view, R.string.successfully_deleted, Snackbar.LENGTH_LONG)
+                                            .setAction("Action", null).show();
+                                    assert getFragmentManager() != null;
+                                    Objects.requireNonNull(((PasswordList) getActivity())).deleteCredentialInCurrentLocalVaultList(currentCredential);
+                                    Objects.requireNonNull(((PasswordList) getActivity())).showAddCredentialsButton();
+                                    Objects.requireNonNull(((PasswordList) getActivity())).showLockVaultButton();
+
+                                    int backStackCount = getFragmentManager().getBackStackEntryCount();
+                                    int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount - 2).getId();
+                                    alreadySaving = false;
+                                    getFragmentManager().popBackStack(backStackId,
+                                            FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                    return;
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
-                            assert getFragmentManager() != null;
                             alreadySaving = false;
-
-                            Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
-
-                            int backStackCount = getFragmentManager().getBackStackEntryCount();
-                            int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount - 2).getId();
-                            getFragmentManager().popBackStack(backStackId,
-                                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         }
                     }
 
@@ -314,6 +387,10 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         progress.setCancelable(false);
         progress.show();
 
+        if (!this.credential.getPassword().equals(password.getText().toString())) {
+            this.credential.setCompromised(false);
+        }
+
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
         this.credential.setPassword(password.getText().toString());
@@ -321,6 +398,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
         this.credential.setFiles(fed.getFilesString());
+        this.credential.setCustomFields(cfed.getCustomFieldsString());
 
         alreadySaving = true;
 
@@ -329,14 +407,30 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
                 String result = new String(responseBody);
                 if (statusCode == 200 && !result.equals("")) {
-                    Snackbar.make(view, R.string.successfully_updated, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    assert getFragmentManager() != null;
+                    try {
+                        JSONObject credentialObject = new JSONObject(result);
+                        Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                        if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
+                            Credential currentCredential = Credential.fromJSON(credentialObject, v);
+
+                            Snackbar.make(view, R.string.successfully_updated, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            assert getFragmentManager() != null;
+                            Objects.requireNonNull(((PasswordList) getActivity())).editCredentialInCurrentLocalVaultList(currentCredential);
+                            Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButton();
+                            alreadySaving = false;
+                            progress.dismiss();
+                            getFragmentManager().popBackStack();
+                            return;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
                     alreadySaving = false;
                     progress.dismiss();
-                    getFragmentManager().popBackStack();
-                    Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
-                    Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButton();
+                    Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
             }
 

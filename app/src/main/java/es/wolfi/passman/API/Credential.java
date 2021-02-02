@@ -21,6 +21,7 @@
 
 package es.wolfi.passman.API;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 
@@ -35,6 +36,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.wolfi.app.passman.R;
 import es.wolfi.utils.Filterable;
 
 public class Credential extends Core implements Filterable {
@@ -228,6 +230,25 @@ public class Credential extends Core implements Filterable {
         this.files = vault.encryptRawStringData(files);
     }
 
+    public List<CustomField> getCustomFieldsList() {
+        String customFieldsString = this.getCustomFields();
+        List<CustomField> customFieldsList = new ArrayList<CustomField>();
+
+        if (customFieldsString != null && !customFieldsString.equals("[]") && !customFieldsString.equals("")) {
+            try {
+                JSONArray customFields = new JSONArray(customFieldsString);
+                for (int i = 0; i < customFields.length(); i++) {
+                    JSONObject o = customFields.getJSONObject(i);
+                    customFieldsList.add(new CustomField(o));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return customFieldsList;
+    }
+
     public String getCustomFields() {
         return vault.decryptString(customFields);
     }
@@ -265,7 +286,10 @@ public class Credential extends Core implements Filterable {
     }
 
     public String getCompromised() {
-        return vault.decryptString(compromised);
+        if (compromised != null && !compromised.equals("null")) {
+            return vault.decryptString(compromised);
+        }
+        return "false";
     }
 
     public void setCompromised(boolean compromised) {
@@ -279,6 +303,56 @@ public class Credential extends Core implements Filterable {
     public void setVault(Vault v) {
         vault = v;
         vaultId = vault.vault_id;
+    }
+
+    public RequestParams getAsRequestParams(boolean forUpdate, boolean useJsonStreamer) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(useJsonStreamer);
+
+        JSONObject icon = null;
+
+        if (forUpdate) {
+            params.put("credential_id", getId());
+            params.put("guid", getGuid());
+
+            if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
+                try {
+                    icon = new JSONObject(favicon);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            try {
+                icon = new JSONObject();
+                icon.put("type", false);
+                icon.put("content", "");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        params.put("vault_id", getVaultId());
+        params.put("label", label);
+        params.put("description", description);
+        params.put("created", getCreated());
+        params.put("changed", getChanged());
+        params.put("tags", tags);
+        params.put("email", email);
+        params.put("icon", icon);
+        params.put("username", username);
+        params.put("password", password);
+        params.put("url", url);
+        params.put("renew_interval", getRenewInterval());
+        params.put("expire_time", getExpireTime());
+        params.put("delete_time", getDeleteTime());
+        params.put("files", files);
+        params.put("custom_fields", customFields);
+        params.put("otp", otp);
+        params.put("compromised", compromised);
+        params.put("hidden", isHidden());
+
+        return params;
     }
 
     public static Credential fromJSON(JSONObject j) throws JSONException {
@@ -297,6 +371,7 @@ public class Credential extends Core implements Filterable {
         c.username = j.getString("username");
         c.password = j.getString("password");
         c.url = j.getString("url");
+        c.compromised = j.getString("compromised");
 
         try {
             if (j.has("favicon")) {
@@ -336,81 +411,16 @@ public class Credential extends Core implements Filterable {
     }
 
     public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(true);
-
         try {
-            JSONObject icon = new JSONObject();
-            icon.put("type", false);
-            icon.put("content", "");
-
-            params.put("vault_id", getVaultId());
-            params.put("label", label);
-            params.put("description", description);
-            params.put("created", getCreated());
-            params.put("changed", getChanged());
-            params.put("tags", tags);
-            params.put("email", email);
-            params.put("icon", icon);
-            params.put("username", username);
-            params.put("password", password);
-            params.put("url", url);
-            params.put("renew_interval", getRenewInterval());
-            params.put("expire_time", getExpireTime());
-            params.put("delete_time", getDeleteTime());
-            params.put("files", files);
-            params.put("custom_fields", customFields);
-            params.put("otp", otp);
-            params.put("compromised", compromised);
-            params.put("hidden", isHidden());
-
-            requestAPI(c, "credentials", params, "POST", responseHandler);
-        } catch (JSONException | MalformedURLException e) {
+            requestAPI(c, "credentials", getAsRequestParams(false, true), "POST", responseHandler);
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
     }
 
     public void update(Context c, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(true);
-
         try {
-            JSONObject icon;
-
-            if (favicon == null || favicon.equals("") || favicon.equals("null")) {
-                icon = null;
-            } else {
-                try {
-                    icon = new JSONObject(favicon);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    icon = null;
-                }
-            }
-
-            params.put("vault_id", getVaultId());
-            params.put("credential_id", getId());
-            params.put("guid", getGuid());
-            params.put("label", label);
-            params.put("description", description);
-            params.put("created", getCreated());
-            params.put("changed", getChanged());
-            params.put("tags", tags);
-            params.put("email", email);
-            params.put("icon", icon);
-            params.put("username", username);
-            params.put("password", password);
-            params.put("url", url);
-            params.put("renew_interval", getRenewInterval());
-            params.put("expire_time", getExpireTime());
-            params.put("delete_time", getDeleteTime());
-            params.put("files", files);
-            params.put("custom_fields", customFields);
-            params.put("otp", otp);
-            params.put("compromised", compromised);
-            params.put("hidden", isHidden());
-
-            requestAPI(c, "credentials/" + getGuid(), params, "PATCH", responseHandler);
+            requestAPI(c, "credentials/" + getGuid(), getAsRequestParams(true, true), "PATCH", responseHandler);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -425,15 +435,17 @@ public class Credential extends Core implements Filterable {
         }
     }
 
-    public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler) {
+    public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler, ProgressDialog progress) {
         RequestParams params = new RequestParams();
         params.setUseJsonStreamer(true);
 
+        progress.setMessage(c.getString(R.string.wait_while_encrypting));
         try {
             params.put("filename", vault.encryptString(fileName));
             params.put("data", vault.encryptRawStringData(encodedFile));
             params.put("mimetype", mimeType);
             params.put("size", fileSize);
+            progress.setMessage(c.getString(R.string.wait_while_uploading));
             requestAPI(c, "file", params, "POST", responseHandler);
         } catch (MalformedURLException e) {
             e.printStackTrace();

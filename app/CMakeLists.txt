@@ -11,6 +11,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 add_compile_options(
     -UANDROID
+    -O3
 )
 
 add_library( # Sets the name of the library.
