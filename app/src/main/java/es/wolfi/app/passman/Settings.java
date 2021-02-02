@@ -24,38 +24,31 @@ package es.wolfi.app.passman;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.koushikdutta.async.future.FutureCallback;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.JSONUtils;
 
 
 public class Settings extends Fragment {
@@ -70,6 +63,11 @@ public class Settings extends Fragment {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     @BindView(R.id.settings_app_start_password_switch)
     Switch settings_app_start_password_switch;
+
+    @BindView(R.id.default_autofill_vault_title)
+    TextView default_autofill_vault_title;
+    @BindView(R.id.default_autofill_vault)
+    Spinner default_autofill_vault;
 
     SharedPreferences settings;
 
@@ -115,6 +113,37 @@ public class Settings extends Fragment {
         settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
         settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            String last_selected_guid = "";
+            if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null) != null) {
+                last_selected_guid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
+            }
+            Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
+            String[] vault_names = new String[vaults.size() + 1];
+            vault_names[0] = getContext().getString(R.string.automatically);
+            int i = 1;
+            int selection_id = 0;
+            for (Map.Entry<String, Vault> vault_entry : vaults) {
+                if (last_selected_guid.equals(vault_entry.getValue().guid)) {
+                    selection_id = i;
+                }
+                vault_names[i] = vault_entry.getValue().name;
+                i++;
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, vault_names);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            default_autofill_vault.setAdapter(adapter);
+            default_autofill_vault.setSelection(selection_id);
+        } else {
+            default_autofill_vault.setVisibility(View.INVISIBLE);
+            default_autofill_vault_title.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private Set<Map.Entry<String, Vault>> getVaultsEntrySet() {
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
+        return vaults.entrySet();
     }
 
     @Override
@@ -136,6 +165,33 @@ public class Settings extends Fragment {
                 SingleTon ton = SingleTon.getTon();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    if (default_autofill_vault.getSelectedItem().toString().equals(getContext().getString(R.string.automatically))) {
+                        ton.removeExtra(SettingValues.AUTOFILL_VAULT_GUID.toString());
+                        settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").commit();
+                    } else {
+                        Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
+                        for (Map.Entry<String, Vault> vault_entry : vaults) {
+                            if (vault_entry.getValue().name.equals(default_autofill_vault.getSelectedItem().toString())) {
+                                ton.addExtra(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid);
+                                settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid).commit();
+
+                                Vault.getVault(getContext(), vault_entry.getValue().guid, new FutureCallback<Vault>() {
+                                    @Override
+                                    public void onCompleted(Exception e, Vault result) {
+                                        if (e != null) {
+                                            return;
+                                        }
+                                        Vault.updateAutofillVault(result, settings);
+                                    }
+                                });
+
+                                break;
+                            }
+                        }
+                    }
+                }
 
                 if (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
                         !settings.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||

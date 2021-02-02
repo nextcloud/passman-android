@@ -287,7 +287,10 @@ public class Credential extends Core implements Filterable {
 
     public String getCompromised() {
         if (compromised != null && !compromised.equals("null")) {
-            return vault.decryptString(compromised);
+            String decryptedCompromised = vault.decryptString(compromised);
+            if (decryptedCompromised != null && !decryptedCompromised.equals("")) {
+                return decryptedCompromised;
+            }
         }
         return "false";
     }
@@ -303,6 +306,46 @@ public class Credential extends Core implements Filterable {
     public void setVault(Vault v) {
         vault = v;
         vaultId = vault.vault_id;
+    }
+
+    public JSONObject getAsJSONObject() throws JSONException {
+        JSONObject params = new JSONObject();
+
+        JSONObject icon = null;
+
+        try {
+            icon = new JSONObject();
+            icon.put("type", false);
+            icon.put("content", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        params.put("user_id", getUserId());
+        params.put("credential_id", getId());
+        params.put("guid", getGuid());
+        params.put("shared_key", getSharedKey());
+        params.put("vault_id", getVaultId());
+        params.put("label", label);
+        params.put("description", description);
+        params.put("created", getCreated());
+        params.put("changed", getChanged());
+        params.put("tags", tags);
+        params.put("email", email);
+        params.put("icon", icon);
+        params.put("username", username);
+        params.put("password", password);
+        params.put("url", url);
+        params.put("renew_interval", getRenewInterval());
+        params.put("expire_time", getExpireTime());
+        params.put("delete_time", getDeleteTime());
+        params.put("files", files);
+        params.put("custom_fields", customFields);
+        params.put("otp", otp);
+        params.put("compromised", compromised);
+        params.put("hidden", isHidden() ? 1 : 0);
+
+        return params;
     }
 
     public RequestParams getAsRequestParams(boolean forUpdate, boolean useJsonStreamer) {

@@ -29,6 +29,25 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar.Login" />
+
+        <service
+            android:name=".autofill.CredentialAutofillService"
+            android:label="Passman Credential Autofill Service"
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+            <meta-data
+                android:name="android.autofill"
+                android:resource="@xml/autofill_service" />
+
+            <intent-filter>
+                <action android:name="android.service.autofill.AutofillService" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".PassmanReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
     </application>
 
 </manifest>

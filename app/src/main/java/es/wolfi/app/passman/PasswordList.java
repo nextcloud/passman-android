@@ -277,6 +277,8 @@ public class PasswordList extends AppCompatActivity implements
 
                     ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
                     showActiveVault();
+
+                    Vault.updateAutofillVault(result, settings);
                 }
             });
         }
@@ -322,6 +324,7 @@ public class PasswordList extends AppCompatActivity implements
 
         ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+        Vault.updateAutofillVault(v, settings);
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -341,6 +344,7 @@ public class PasswordList extends AppCompatActivity implements
         ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+        Vault.updateAutofillVault(v, settings);
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -360,6 +364,7 @@ public class PasswordList extends AppCompatActivity implements
         ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
+        Vault.updateAutofillVault(v, settings);
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -400,6 +405,7 @@ public class PasswordList extends AppCompatActivity implements
                 ton.addExtra(vault.guid, result);
                 ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
                 ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
+                Vault.updateAutofillVault(result, settings);
 
                 HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
                 vaults.put(vault.guid, result);

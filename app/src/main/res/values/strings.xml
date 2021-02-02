@@ -50,4 +50,10 @@
     <string name="wait_while_decrypting">Wait while decrypting...</string>
     <string name="wait_while_uploading">Wait while uploading...</string>
     <string name="wait_while_downloading">Wait while downloading...</string>
+    <string name="autofill_noactivevault">No active vault</string>
+    <string name="autofill_vaultlocked">Vault needs to be unlocked</string>
+    <string name="autofill_vaultempty">No credentials in vault</string>
+    <string name="autofill_createdbyautofillservice">Created by autofill service</string>
+    <string name="default_autofill_vault">Default autofill vault</string>
+    <string name="automatically">automatically</string>
 </resources>
