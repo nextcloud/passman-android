@@ -22,7 +22,7 @@
 
 package es.wolfi.app.passman;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,7 +41,6 @@ import es.wolfi.utils.ColorUtils;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Vault} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.ViewHolder> {
     private static final String TAG = VaultViewAdapter.class.getSimpleName();

@@ -23,8 +23,8 @@
 package es.wolfi.utils;
 
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 

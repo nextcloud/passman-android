@@ -26,9 +26,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,7 +37,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,7 +77,6 @@ public class VaultLockScreen extends Fragment {
      * @param vault The vault
      * @return A new instance of fragment VaultLockScreen.
      */
-    // TODO: Rename and change types and number of parameters
     public static VaultLockScreen newInstance(Vault vault) {
         VaultLockScreen fragment = new VaultLockScreen();
         fragment.vault = vault;

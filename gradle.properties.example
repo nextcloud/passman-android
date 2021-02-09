@@ -23,3 +23,5 @@ RELEASE_STORE=/path/to/release/store
 RELEASE_STORE_PASSWORD=release store password
 RELEASE_KEY_ALIAS=release
 RELEASE_KEY_PASSWORD=release store key
+android.useAndroidX=true
+android.enableJetifier=true
