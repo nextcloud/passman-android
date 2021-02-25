@@ -5,13 +5,20 @@
     <string name="username">使用者名稱</string>
     <string name="password">密碼</string>
     <string name="connect">連線</string>
+    <string name="wrongNCUrl">不正確的Nextcloud後端URL或無法連接</string>
     <string name="wrongNCSettings">設定不正確</string>
+    <string name="net_error">網路異常</string>
     <string name="unlock">解鎖</string>
+    <string name="wrong_vault_pw">保險庫密碼錯誤</string>
     <string name="label">標籤</string>
     <string name="email">電子郵件</string>
     <string name="URL">網址URL</string>
     <string name="description">描述</string>
+    <string name="copied_to_clipboard">文字複製至剪貼簿中</string>
     <string name="vault_password">空間密碼</string>
+    <string name="vault_password_save">保存庫密碼</string>
+    <string name="not_implemented_yet">尚未實施</string>
     <string name="created">建立：</string>
+    <string name="last_accessed">上次訪問時間：</string>
     <string name="search">搜尋</string>
 </resources>
