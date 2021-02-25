@@ -45,7 +45,8 @@ add_library(
 )
 
 include_directories (
-    src/main/cpplibs/openssl/include/
+    #src/main/cpplibs/openssl/include/
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/cpplibs/openssl/build/${CMAKE_ANDROID_ARCH_ABI}/include
     src/main/cpplibs/SimpleJSON/src/
 )
 
