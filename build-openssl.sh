@@ -19,12 +19,12 @@ if [ ! -d "$OPENSSL_SUBMODULE_PATH" ]; then
 fi
 
 
-ln -s $OPENSSL_SUBMODULE_PATH openssl
-mkdir -p build/openssl
-cd openssl
+cd $OPENSSL_SUBMODULE_PATH
 
 export TOOLCHAIN=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$HOST_TAG
 PATH=$TOOLCHAIN/bin:$PATH
+
+./config no-asm -Wl,--enable-new-dtags,-rpath,'$(LIBRPATH)'
 
 # arm64
 export TARGET_HOST=aarch64-linux-android
@@ -32,11 +32,9 @@ export TARGET_HOST=aarch64-linux-android
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/arm64-v8a
 
-make -j4
+make -j"$THREADS"
 make install_sw
 make clean
-mkdir -p ../build/openssl/arm64-v8a
-cp -R $PWD/build/arm64-v8a ../build/openssl/
 
 # arm
 export TARGET_HOST=armv7a-linux-androideabi
@@ -44,11 +42,9 @@ export TARGET_HOST=armv7a-linux-androideabi
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/armeabi-v7a
 
-make -j4
+make -j"$THREADS"
 make install_sw
 make clean
-mkdir -p ../build/openssl/armeabi-v7a
-cp -R $PWD/build/armeabi-v7a ../build/openssl/
 
 # x86
 export TARGET_HOST=i686-linux-android
@@ -56,11 +52,9 @@ export TARGET_HOST=i686-linux-android
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/x86
 
-make -j4
+make -j"$THREADS"
 make install_sw
 make clean
-mkdir -p ../build/openssl/x86
-cp -R $PWD/build/x86 ../build/openssl/
 
 # x64
 export TARGET_HOST=x86_64-linux-android
@@ -68,16 +62,6 @@ export TARGET_HOST=x86_64-linux-android
  -D__ANDROID_API__=$MIN_SDK_VERSION \
  --prefix=$PWD/build/x86_64
 
-make -j4
+make -j"$THREADS"
 make install_sw
 make clean
-mkdir -p ../build/openssl/x86_64
-cp -R $PWD/build/x86_64 ../build/openssl/
-
-cd ..
-rm openssl
-
-cd $OPENSSL_SUBMODULE_PATH
-./config no-asm -Wl,--enable-new-dtags,-rpath,'$(LIBRPATH)'
-make
-cd -
