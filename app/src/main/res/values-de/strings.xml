@@ -21,4 +21,18 @@
     <string name="created">Erstellt:</string>
     <string name="last_accessed">Letzter Zugriff:</string>
     <string name="search">Suche</string>
-    </resources>
+    <string name="save">Speichern</string>
+    <string name="successfully_saved">Gespeichert</string>
+    <string name="error_occurred">Es ist ein Fehler aufgetreten</string>
+    <string name="update">Aktualisieren</string>
+    <string name="successfully_updated">Aktualisiert.</string>
+    <string name="delete">Löschen</string>
+    <string name="successfully_deleted">Gelöscht</string>
+    <string name="nextcloud_connection_settings">Verbindungseinstellungen von Nextcloud</string>
+    <string name="app_settings">App-Einstellungen</string>
+    <string name="wait_while_loading">Warte während des Ladens …</string>
+    <string name="loading">Laden</string>
+    <string name="error_downloading_file">Fehler beim Laden der Datei</string>
+    <string name="error_writing_file">Fehler beim Schreiben der Datei</string>
+    <string name="files">Dateien</string>
+</resources>
