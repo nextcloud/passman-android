@@ -30,9 +30,9 @@
     <string name="successfully_deleted">Excluído com sucesso</string>
     <string name="nextcloud_connection_settings">Configurações de conexão do NextCloud</string>
     <string name="app_settings">Configurações do aplicativo</string>
-    <string name="wait_while_loading">Esperar enquanto carrega...</string>
+    <string name="wait_while_loading">Aguarde enquanto carrega...</string>
     <string name="loading">Carregando</string>
-    <string name="error_downloading_file">Erro baixando o arquivo</string>
-    <string name="error_writing_file">Erro escrevendo o arquivo</string>
+    <string name="error_downloading_file">Erro ao baixar o arquivo</string>
+    <string name="error_writing_file">Erro ao gravar o arquivo</string>
     <string name="files">Arquivos</string>
 </resources>
