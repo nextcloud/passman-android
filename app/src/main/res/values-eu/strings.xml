@@ -21,4 +21,10 @@
     <string name="created">Sortua:</string>
     <string name="last_accessed">Azkenekoz atzitua:</string>
     <string name="search">Bilatu</string>
-    </resources>
+    <string name="save">Gorde</string>
+    <string name="error_occurred">Errore bat gertatu da</string>
+    <string name="update">Eguneratu</string>
+    <string name="delete">Ezabatu</string>
+    <string name="loading">Kargatzen</string>
+    <string name="files">Fitxategiak</string>
+</resources>
