@@ -28,9 +28,9 @@
     <string name="successfully_updated">Úspěšně aktualizováno</string>
     <string name="delete">Vymazat</string>
     <string name="successfully_deleted">Úspěšně vymazáno</string>
-    <string name="nextcloud_connection_settings">Nastavení připojení k NextCloudu</string>
+    <string name="nextcloud_connection_settings">Nastavení připojení k NextCloud</string>
     <string name="app_settings">Nastavení aplikace</string>
-    <string name="wait_while_loading">Čekání na dokončení načítání...</string>
+    <string name="wait_while_loading">Vyčkejte dokončení načítání…</string>
     <string name="loading">Načítání</string>
     <string name="error_downloading_file">Chyba při stahování souboru</string>
     <string name="error_writing_file">Chyba při zápisu do souboru</string>

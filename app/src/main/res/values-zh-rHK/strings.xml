@@ -14,7 +14,7 @@
     <string name="email">電郵地址</string>
     <string name="URL">網址URL</string>
     <string name="description">描述</string>
-    <string name="copied_to_clipboard">文字複製至剪貼簿中</string>
+    <string name="copied_to_clipboard">已複製文字至剪貼板</string>
     <string name="vault_password">保險庫密碼</string>
     <string name="vault_password_save">保存保險庫密碼</string>
     <string name="not_implemented_yet">尚未實施</string>
