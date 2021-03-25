@@ -23,21 +23,37 @@ package es.wolfi.passman.API;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.gson.GsonBuilder;
 import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.nextcloud.android.sso.aidl.NextcloudRequest;
+import com.nextcloud.android.sso.api.NextcloudAPI;
+import com.nextcloud.android.sso.api.Response;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -47,17 +63,25 @@ import es.wolfi.utils.JSONUtils;
 public abstract class Core {
     protected static final String LOG_TAG = "API_LIB";
 
+    protected static SingleSignOnAccount ssoAccount;
     protected static String host;
     protected static String username;
     protected static String password;
     protected static String version_name;
+    protected static String API_URL = "/index.php/apps/passman/api/v2/";
     protected static int version_number = 0;
 
 
-    public static void setUpAPI(String host, String username, String password) {
+    public static void setUpAPI(Context c, String host, String username, String password) {
         Core.setAPIHost(host);
         Core.username = username;
         Core.password = password;
+
+        try {
+            Core.ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(c);
+        } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getAPIHost() {
@@ -65,7 +89,7 @@ public abstract class Core {
     }
 
     public static void setAPIHost(String host) {
-        Core.host = host.concat("/index.php/apps/passman/api/v2/");
+        Core.host = host.concat(API_URL);
     }
 
     public static String getAPIUsername() {
@@ -124,10 +148,22 @@ public abstract class Core {
             }
         };
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setBasicAuth(username, password);
-        client.addHeader("Content-Type", "application/json");
-        client.get(host.concat(endpoint), responseHandler);
+        if (ssoAccount != null) {
+            final Map<String, List<String>> header = new HashMap<>();
+            header.put("Content-Type", Collections.singletonList("application/json"));
+
+            NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
+                    .setMethod("GET")
+                    .setUrl(API_URL.concat(endpoint))
+                    .setHeader(header)
+                    .build();
+            new SyncedRequestTask(nextcloudRequest, ssoAccount, callback, c).execute();
+        } else {
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.setBasicAuth(username, password);
+            client.addHeader("Content-Type", "application/json");
+            client.get(host.concat(endpoint), responseHandler);
+        }
     }
 
     public static void requestAPI(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
@@ -137,8 +173,8 @@ public abstract class Core {
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.setBasicAuth(username, password);
-        client.setConnectTimeout(1000*15);      // 15s connect timeout
-        client.setResponseTimeout(1000*120);    // 120s response timeout
+        client.setConnectTimeout(1000 * 15);      // 15s connect timeout
+        client.setResponseTimeout(1000 * 120);    // 120s response timeout
         //client.addHeader("Content-Type", "application/json; utf-8");
         client.addHeader("Accept", "application/json, text/plain, */*");
 
@@ -206,7 +242,7 @@ public abstract class Core {
         //Log.d(LOG_TAG, "Pass: " + pass);
         Log.d(LOG_TAG, "Pass: " + pass.replaceAll("(?s).", "*"));
 
-        Vault.setUpAPI(host, user, pass);
+        Vault.setUpAPI(c, host, user, pass);
         Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {
             @Override
             public void onCompleted(Exception e, HashMap<String, Vault> result) {
@@ -235,5 +271,57 @@ public abstract class Core {
                 cb.onCompleted(e, ret);
             }
         });
+    }
+
+    private static class SyncedRequestTask extends AsyncTask<Void, Void, Boolean> {
+
+        private NextcloudRequest nextcloudRequest;
+        private NextcloudAPI mNextcloudAPI;
+        private FutureCallback<String> callback;
+
+        SyncedRequestTask(@NonNull NextcloudRequest nextcloudRequest, @NonNull SingleSignOnAccount ssoAccount, final FutureCallback<String> callback, Context c) {
+            this.nextcloudRequest = nextcloudRequest;
+            this.mNextcloudAPI = new NextcloudAPI(c.getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
+            this.callback = callback;
+            Log.d("SyncedRequestTask", ssoAccount.name + " → " + nextcloudRequest.getMethod() + " " + nextcloudRequest.getUrl() + " ");
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                Log.d("doInBackground", "before request");
+                Response response = mNextcloudAPI.performNetworkRequestV2(nextcloudRequest);
+                Log.d("doInBackground", "NextcloudRequest: " + nextcloudRequest.toString());
+                StringBuilder textBuilder = new StringBuilder();
+                final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getBody()));
+                String line;
+                while ((line = rd.readLine()) != null) {
+                    textBuilder.append(line);
+                }
+                response.getBody().close();
+                Log.d("response string:", textBuilder.toString());
+                callback.onCompleted(null, textBuilder.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("error msg:", e.getMessage());
+            }
+
+            return true;
+        }
+
+        private NextcloudAPI.ApiConnectedListener apiCallback = new NextcloudAPI.ApiConnectedListener() {
+            @Override
+            public void onConnected() {
+                // ignore this one… see 5)
+                Log.i("NextcloudAPI", "SSO API connected");
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                Log.i("NextcloudAPI", "SSO API ERROR");
+                ex.printStackTrace();
+                // TODO handle errors
+            }
+        };
     }
 }
