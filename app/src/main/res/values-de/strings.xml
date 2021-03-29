@@ -5,7 +5,7 @@
     <string name="username">Benutzername</string>
     <string name="password">Passwort</string>
     <string name="connect">Verbinden</string>
-    <string name="wrongNCUrl">Fehlerhafte Nexcloud Backend URL oder Verbindungsfehler</string>
+    <string name="wrongNCUrl">Falsche Nextcloud-Backend-URL oder keine Verbindung möglich</string>
     <string name="wrongNCSettings">Einstellungen falsch</string>
     <string name="net_error">Netzwerkfehler</string>
     <string name="unlock">Öffnen</string>
