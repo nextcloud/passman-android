@@ -30,8 +30,8 @@
     <string name="successfully_deleted">成功刪除</string>
     <string name="nextcloud_connection_settings">NextCloud 連接設定</string>
     <string name="app_settings">應用程式設定</string>
-    <string name="wait_while_loading">加載中，請稍候。。。</string>
-    <string name="loading">加載中。。。</string>
+    <string name="wait_while_loading">加載中，請稍候...</string>
+    <string name="loading">加載中...</string>
     <string name="error_downloading_file">下載檔案時出錯</string>
     <string name="error_writing_file">寫入檔案時出錯</string>
     <string name="files">檔案</string>
