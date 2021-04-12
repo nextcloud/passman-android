@@ -52,6 +52,7 @@ import java.util.TimerTask;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
+import es.wolfi.utils.FileUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File}.
@@ -91,15 +92,6 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
         return new ViewHolder(view);
     }
 
-    @SuppressLint("DefaultLocale")
-    public static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-    }
-
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -110,7 +102,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             holder.mValueEdit.setEnabled(false);
             try {
                 File file = new File(customField.getJvalue());
-                String filenameToPrint = String.format("%s (%s)", file.getFilename(), humanReadableByteCount((Double.valueOf(file.getSize())).longValue(), true));
+                String filenameToPrint = String.format("%s (%s)", file.getFilename(), FileUtils.humanReadableByteCount((Double.valueOf(file.getSize())).longValue(), true));
                 holder.mValueEdit.setText(filenameToPrint);
             } catch (JSONException e) {
                 e.printStackTrace();
