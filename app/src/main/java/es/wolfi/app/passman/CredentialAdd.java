@@ -198,13 +198,12 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
                                 fed.notifyDataSetChanged();
                             }
                             if (requestCode == 5) {
-                                JSONObject customFieldJSONObject = new JSONObject();
-                                customFieldJSONObject.put("label", "newLabel" + cfed.getItemCount() + 1);
-                                customFieldJSONObject.put("secret", false);
-                                customFieldJSONObject.put("field_type", "file");
-                                customFieldJSONObject.put("value", file.getAsJSONObject());
+                                CustomField cf = new CustomField();
+                                cf.setLabel("newLabel" + cfed.getItemCount() + 1);
+                                cf.setSecret(false);
+                                cf.setFieldType("file");
+                                cf.setJValue(file.getAsJSONObject());
 
-                                CustomField cf = new CustomField(customFieldJSONObject);
                                 cfed.addCustomField(cf);
                                 cfed.notifyDataSetChanged();
                             }
@@ -241,7 +240,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd(4);
+                ((PasswordList) requireActivity()).selectFileToAdd(4);
             }
         };
     }
@@ -251,21 +250,16 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd(5);
+                    ((PasswordList) requireActivity()).selectFileToAdd(5);
                 } else {
-                    try {
-                        JSONObject customFieldJSONObject = new JSONObject();
-                        customFieldJSONObject.put("label", "newLabel" + (cfed.getItemCount() + 1));
-                        customFieldJSONObject.put("secret", customFieldType.getSelectedItem().toString().toLowerCase().equals("password"));
-                        customFieldJSONObject.put("field_type", customFieldType.getSelectedItem().toString().toLowerCase());
-                        customFieldJSONObject.put("value", "");
+                    CustomField cf = new CustomField();
+                    cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
+                    cf.setSecret(customFieldType.getSelectedItem().toString().toLowerCase().equals("password"));
+                    cf.setFieldType(customFieldType.getSelectedItem().toString().toLowerCase());
+                    cf.setValue("");
 
-                        CustomField cf = new CustomField(customFieldJSONObject);
-                        cfed.addCustomField(cf);
-                        cfed.notifyDataSetChanged();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    cfed.addCustomField(cf);
+                    cfed.notifyDataSetChanged();
                 }
             }
         };
