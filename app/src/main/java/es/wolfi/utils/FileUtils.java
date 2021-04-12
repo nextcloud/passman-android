@@ -12,13 +12,21 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.text.TextUtils;
 import android.util.Log;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileUtils {
     private static Uri contentUri = null;
+    public static final Map<String, Integer> activityRequestFileCodes = new HashMap<String, Integer>() {{
+        put("credentialEditFile", 2);
+        put("credentialEditCustomFieldFile", 3);
+        put("credentialAddFile", 4);
+        put("credentialAddCustomFieldFile", 5);
+    }};
 
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access
@@ -154,13 +162,11 @@ public class FileUtils {
             if (isGoogleDriveUri(uri)) {
                 return getDriveFilePath(uri, context);
             }
-            if( Build.VERSION.SDK_INT == Build.VERSION_CODES.N)
-            {
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N) {
                 // return getFilePathFromURI(context,uri);
                 return getMediaFilePathForN(uri, context);
                 // return getRealPathFromURI(context,uri);
-            }else
-            {
+            } else {
 
                 return getDataColumn(context, uri, null, null);
             }

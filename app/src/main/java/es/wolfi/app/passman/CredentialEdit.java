@@ -55,6 +55,7 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.FileUtils;
 import es.wolfi.utils.JSONUtils;
 
 
@@ -206,11 +207,11 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                             fileObject.put("filename", fileName);
                             File file = new File(fileObject);
 
-                            if (requestCode == 2) {
+                            if (requestCode == FileUtils.activityRequestFileCodes.get("credentialEditFile")) {
                                 fed.addFile(file);
                                 fed.notifyDataSetChanged();
                             }
-                            if (requestCode == 3) {
+                            if (requestCode == FileUtils.activityRequestFileCodes.get("credentialEditCustomFieldFile")) {
                                 CustomField cf = new CustomField();
                                 cf.setLabel("newLabel" + cfed.getItemCount() + 1);
                                 cf.setSecret(false);
@@ -253,7 +254,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) requireActivity()).selectFileToAdd(2);
+                ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCodes.get("credentialEditFile"));
             }
         };
     }
@@ -263,7 +264,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordList) requireActivity()).selectFileToAdd(3);
+                    ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCodes.get("credentialEditCustomFieldFile"));
                 } else {
                     CustomField cf = new CustomField();
                     cf.setLabel("newLabel" + (cfed.getItemCount() + 1));

@@ -643,7 +643,7 @@ public class PasswordList extends AppCompatActivity implements
         item.download(getParent(), cb);
     }
 
-    public void selectFileToAdd(int activityRequestCode) {
+    public void selectFileToAdd(int activityRequestFileCode) {
         //new Intent("android.intent.action.GET_CONTENT").addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
@@ -652,13 +652,7 @@ public class PasswordList extends AppCompatActivity implements
         // the system file picker when your app creates the document.
         //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
-        /* activityRequestCode:
-           2 = file for credential edit
-           3 = file for custom field in credential edit
-           4 = file for credential add
-           5 = file for custom field in credential add
-         */
-        startActivityForResult(intent, activityRequestCode);
+        startActivityForResult(intent, activityRequestFileCode);
     }
 
     @Override
@@ -702,7 +696,7 @@ public class PasswordList extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), getString(R.string.error_writing_file), Toast.LENGTH_SHORT).show();
         }
 
-        if (requestCode >= 2 && requestCode <= 5) { //add file
+        if (requestCode >= FileUtils.activityRequestFileCodes.get("credentialEditFile") && requestCode <= FileUtils.activityRequestFileCodes.get("credentialAddCustomFieldFile")) { //add file
             if (data != null) {
                 Uri uri = data.getData();
 
@@ -729,13 +723,13 @@ public class PasswordList extends AppCompatActivity implements
 
                             try {
                                 String encodedFile = String.format("data:%s;base64,%s", mimeType, realEncodedFile);
-                                if (requestCode == 2 || requestCode == 3) {
+                                if (requestCode == FileUtils.activityRequestFileCodes.get("credentialEditFile") || requestCode == FileUtils.activityRequestFileCodes.get("credentialEditCustomFieldFile")) {
                                     CredentialEdit credentialEditFragment = (CredentialEdit) getSupportFragmentManager().findFragmentByTag("credentialEdit");
                                     if (credentialEditFragment != null) {
                                         credentialEditFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
                                     }
                                 }
-                                if (requestCode == 4 || requestCode == 5) {
+                                if (requestCode == FileUtils.activityRequestFileCodes.get("credentialAddFile") || requestCode == FileUtils.activityRequestFileCodes.get("credentialAddCustomFieldFile")) {
                                     CredentialAdd credentialAddFragment = (CredentialAdd) getSupportFragmentManager().findFragmentByTag("credentialAdd");
                                     if (credentialAddFragment != null) {
                                         credentialAddFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
