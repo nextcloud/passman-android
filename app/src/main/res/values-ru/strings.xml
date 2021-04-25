@@ -21,4 +21,18 @@
     <string name="created">Создано:</string>
     <string name="last_accessed">Посл. доступ:</string>
     <string name="search">Поиск</string>
-    </resources>
+    <string name="save">Сохранить</string>
+    <string name="successfully_saved">Успешно сохранено</string>
+    <string name="error_occurred">Произошла ошибка</string>
+    <string name="update">Обновить</string>
+    <string name="successfully_updated">Успешно обновлено</string>
+    <string name="delete">Удалить</string>
+    <string name="successfully_deleted">Успешно удалено</string>
+    <string name="nextcloud_connection_settings">Настройки подключения NextCloud</string>
+    <string name="app_settings">Настройки приложения</string>
+    <string name="wait_while_loading">Подождите, пока загружается...</string>
+    <string name="loading">Загрузка</string>
+    <string name="error_downloading_file">Ошибка при загрузке файла</string>
+    <string name="error_writing_file">Ошибка записи файла</string>
+    <string name="files">Файлы</string>
+</resources>
