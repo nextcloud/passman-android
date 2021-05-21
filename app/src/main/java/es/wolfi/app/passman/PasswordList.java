@@ -318,7 +318,7 @@ public class PasswordList extends AppCompatActivity implements
         onBackPressed();
     }
 
-    void addCredentialToCurrentLocalVaultList(Credential credential) {
+    public void addCredentialToCurrentLocalVaultList(Credential credential) {
         final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
         v.addCredential(credential);
 
