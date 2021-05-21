@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.wolfi.app.passman.CustomFieldEditAdapter;
 import es.wolfi.app.passman.FileEditAdapter;
@@ -65,7 +66,7 @@ public class ResponseHandlerManager {
         return progress;
     }
 
-    public static AsyncHttpResponseHandler getCredentialAddResponseHandler(ProgressDialog progress, Boolean[] alreadySaving, View view, PasswordList passwordListActivity, FragmentManager fragmentManager) {
+    public static AsyncHttpResponseHandler getCredentialAddResponseHandler(ProgressDialog progress, AtomicBoolean alreadySaving, View view, PasswordList passwordListActivity, FragmentManager fragmentManager) {
         return new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
@@ -82,7 +83,7 @@ public class ResponseHandlerManager {
 
                             Objects.requireNonNull(passwordListActivity).addCredentialToCurrentLocalVaultList(currentCredential);
                             Objects.requireNonNull(passwordListActivity).showAddCredentialsButton();
-                            alreadySaving[0] = false;
+                            alreadySaving.set(false);
                             progress.dismiss();
                             fragmentManager.popBackStack();
                             return;
@@ -91,7 +92,7 @@ public class ResponseHandlerManager {
                         e.printStackTrace();
                     }
 
-                    alreadySaving[0] = false;
+                    alreadySaving.set(false);
                     progress.dismiss();
                     Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
@@ -100,7 +101,7 @@ public class ResponseHandlerManager {
 
             @Override
             public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                alreadySaving[0] = false;
+                alreadySaving.set(false);
                 progress.dismiss();
                 String response = new String(responseBody);
 

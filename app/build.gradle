@@ -61,7 +61,7 @@ android {
         }
         alpha {
             minifyEnabled true
-            debuggable true
+            debuggable false
             applicationIdSuffix ".alpha"
             versionNameSuffix '-NIGHTLY'
             manifestPlaceholders = [appName: "Alpha"]

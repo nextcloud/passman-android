@@ -42,6 +42,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
@@ -86,7 +88,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
     private CustomFieldEditAdapter cfed;
     private RecyclerView filesListRecyclerView;
     private RecyclerView customFieldsListRecyclerView;
-    private Boolean[] alreadySaving = {false};
+    private AtomicBoolean alreadySaving = new AtomicBoolean(false);
 
     public CredentialAdd() {
         // Required empty public constructor
@@ -208,7 +210,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (alreadySaving[0]) {
+        if (alreadySaving.get()) {
             return;
         }
 
@@ -231,7 +233,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         this.credential.setCompromised(false);
         this.credential.setHidden(false);
 
-        alreadySaving[0] = true;
+        alreadySaving.set(true);
 
         Context context = getContext();
         final ProgressDialog progress = ResponseHandlerManager.showLoadingSequence(context);
