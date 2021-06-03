@@ -46,11 +46,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
+import es.wolfi.app.ResponseHandlers.CredentialAddResponseHandler;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
-import es.wolfi.utils.ResponseHandlerManager;
+import es.wolfi.utils.ProgressUtils;
 
 
 /**
@@ -167,8 +169,8 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
     public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) {
         Context context = getContext();
-        final ProgressDialog progress = ResponseHandlerManager.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = ResponseHandlerManager.getCredentialAddFileResponseHandler(progress, fileName, requestCode, fed, cfed);
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+        final AsyncHttpResponseHandler responseHandler = new CredentialAddFileResponseHandler(progress, fileName, requestCode, fed, cfed);
 
         // Start encryption a little later so that the main thread does not get stuck in the file selection dialog and it can close.
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -236,8 +238,8 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         alreadySaving.set(true);
 
         Context context = getContext();
-        final ProgressDialog progress = ResponseHandlerManager.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = ResponseHandlerManager.getCredentialAddResponseHandler(progress, alreadySaving, view, (PasswordList) getActivity(), getFragmentManager());
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+        final AsyncHttpResponseHandler responseHandler = new CredentialAddResponseHandler(progress, alreadySaving, view, (PasswordList) getActivity(), getFragmentManager());
 
         this.credential.save(context, responseHandler);
     }
