@@ -23,19 +23,21 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
 
-public class CredentialAddResponseHandler extends AsyncHttpResponseHandler {
+public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
 
-    private final ProgressDialog progress;
     private final AtomicBoolean alreadySaving;
+    private final boolean updateCredential;
+    private final ProgressDialog progress;
     private final View view;
     private final PasswordList passwordListActivity;
     private final FragmentManager fragmentManager;
 
-    public CredentialAddResponseHandler(ProgressDialog progress, AtomicBoolean alreadySaving, View view, PasswordList passwordListActivity, FragmentManager fragmentManager) {
+    public CredentialSaveResponseHandler(AtomicBoolean alreadySaving, boolean updateCredential, ProgressDialog progress, View view, PasswordList passwordListActivity, FragmentManager fragmentManager) {
         super();
 
-        this.progress = progress;
         this.alreadySaving = alreadySaving;
+        this.updateCredential = updateCredential;
+        this.progress = progress;
         this.view = view;
         this.passwordListActivity = passwordListActivity;
         this.fragmentManager = fragmentManager;
@@ -54,8 +56,14 @@ public class CredentialAddResponseHandler extends AsyncHttpResponseHandler {
                     Snackbar.make(view, R.string.successfully_saved, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
 
-                    Objects.requireNonNull(passwordListActivity).addCredentialToCurrentLocalVaultList(currentCredential);
-                    Objects.requireNonNull(passwordListActivity).showAddCredentialsButton();
+                    if (updateCredential) {
+                        Objects.requireNonNull(passwordListActivity).editCredentialInCurrentLocalVaultList(currentCredential);
+                        Objects.requireNonNull(passwordListActivity).showCredentialEditButton();
+                    } else {
+                        Objects.requireNonNull(passwordListActivity).addCredentialToCurrentLocalVaultList(currentCredential);
+                        Objects.requireNonNull(passwordListActivity).showAddCredentialsButton();
+                    }
+
                     alreadySaving.set(false);
                     progress.dismiss();
                     fragmentManager.popBackStack();

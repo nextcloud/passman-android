@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
-import es.wolfi.app.ResponseHandlers.CredentialAddResponseHandler;
+import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
@@ -239,7 +239,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = new CredentialAddResponseHandler(progress, alreadySaving, view, (PasswordList) getActivity(), getFragmentManager());
+        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordList) getActivity(), getFragmentManager());
 
         this.credential.save(context, responseHandler);
     }
