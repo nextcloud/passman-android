@@ -170,7 +170,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
     public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) {
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = new CredentialAddFileResponseHandler(progress, fileName, requestCode, fed, cfed);
+        final AsyncHttpResponseHandler responseHandler = new CredentialAddFileResponseHandler(progress, getView(), fileName, requestCode, fed, cfed);
 
         // Start encryption a little later so that the main thread does not get stuck in the file selection dialog and it can close.
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {

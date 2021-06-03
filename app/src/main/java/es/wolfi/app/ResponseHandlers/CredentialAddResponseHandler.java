@@ -44,7 +44,7 @@ public class CredentialAddResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         String result = new String(responseBody);
-        if (statusCode == 200 && !result.equals("")) {
+        if (statusCode == 200) {
             try {
                 JSONObject credentialObject = new JSONObject(result);
                 Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
@@ -64,12 +64,12 @@ public class CredentialAddResponseHandler extends AsyncHttpResponseHandler {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            alreadySaving.set(false);
-            progress.dismiss();
-            Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
         }
+
+        alreadySaving.set(false);
+        progress.dismiss();
+        Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 
     @Override
