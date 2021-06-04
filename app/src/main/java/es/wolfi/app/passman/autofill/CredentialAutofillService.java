@@ -190,7 +190,9 @@ public final class CredentialAutofillService extends AutofillService {
                 tempFields.add(bestPassword.getAutofillid());
             }
 
-            response.addDataset(dataset.build());
+            if (bestUsername != null || bestEmail != null || bestPassword != null) {
+                response.addDataset(dataset.build());
+            }
         }
 
         /* Let android know we want to save any credentials manually entered by the user
