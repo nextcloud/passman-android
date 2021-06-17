@@ -696,7 +696,7 @@ public class PasswordList extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), getString(R.string.error_writing_file), Toast.LENGTH_SHORT).show();
         }
 
-        if (requestCode >= FileUtils.activityRequestFileCodes.get("credentialEditFile") && requestCode <= FileUtils.activityRequestFileCodes.get("credentialAddCustomFieldFile")) { //add file
+        if (requestCode >= FileUtils.activityRequestFileCode.credentialEditFile.ordinal() && requestCode <= FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) { //add file
             if (data != null) {
                 Uri uri = data.getData();
 
@@ -723,20 +723,20 @@ public class PasswordList extends AppCompatActivity implements
 
                             try {
                                 String encodedFile = String.format("data:%s;base64,%s", mimeType, realEncodedFile);
-                                if (requestCode == FileUtils.activityRequestFileCodes.get("credentialEditFile") || requestCode == FileUtils.activityRequestFileCodes.get("credentialEditCustomFieldFile")) {
+                                if (requestCode == FileUtils.activityRequestFileCode.credentialEditFile.ordinal() || requestCode == FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal()) {
                                     CredentialEdit credentialEditFragment = (CredentialEdit) getSupportFragmentManager().findFragmentByTag("credentialEdit");
 
                                     // generalize requestCode for usage with generalized ResponseHandler instances
-                                    if (requestCode == FileUtils.activityRequestFileCodes.get("credentialEditCustomFieldFile")) {
-                                        requestCode = FileUtils.activityRequestFileCodes.get("credentialAddCustomFieldFile");
+                                    if (requestCode == FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal()) {
+                                        requestCode = FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal();
                                     } else {
-                                        requestCode = FileUtils.activityRequestFileCodes.get("credentialAddFile");
+                                        requestCode = FileUtils.activityRequestFileCode.credentialAddFile.ordinal();
                                     }
 
                                     if (credentialEditFragment != null) {
                                         credentialEditFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
                                     }
-                                } else if (requestCode == FileUtils.activityRequestFileCodes.get("credentialAddFile") || requestCode == FileUtils.activityRequestFileCodes.get("credentialAddCustomFieldFile")) {
+                                } else if (requestCode == FileUtils.activityRequestFileCode.credentialAddFile.ordinal() || requestCode == FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) {
                                     CredentialAdd credentialAddFragment = (CredentialAdd) getSupportFragmentManager().findFragmentByTag("credentialAdd");
                                     if (credentialAddFragment != null) {
                                         credentialAddFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);

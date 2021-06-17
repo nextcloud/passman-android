@@ -201,7 +201,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCodes.get("credentialEditFile"));
+                ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditFile.ordinal());
             }
         };
     }
@@ -211,7 +211,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCodes.get("credentialEditCustomFieldFile"));
+                    ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal());
                 } else {
                     CustomField cf = new CustomField();
                     cf.setLabel("newLabel" + (cfed.getItemCount() + 1));

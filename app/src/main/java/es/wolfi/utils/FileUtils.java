@@ -16,17 +16,22 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FileUtils {
     private static Uri contentUri = null;
-    public static final Map<String, Integer> activityRequestFileCodes = new HashMap<String, Integer>() {{
-        put("credentialEditFile", 2);
-        put("credentialEditCustomFieldFile", 3);
-        put("credentialAddFile", 4);
-        put("credentialAddCustomFieldFile", 5);
-    }};
+
+    /**
+     * activityRequestFileCode:
+     * description                      code
+     * <p>
+     * credentialEditFile               2
+     * credentialEditCustomFieldFile    3
+     * credentialAddFile                4
+     * credentialAddCustomFieldFile     5
+     */
+    public enum activityRequestFileCode {
+        padding0, padding1, credentialEditFile, credentialEditCustomFieldFile, credentialAddFile, credentialAddCustomFieldFile
+    }
 
     /**
      * Get a file path from a Uri. This will get the the path for Storage Access

@@ -48,11 +48,11 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
                 fileObject.put("filename", fileName);
                 File file = new File(fileObject);
 
-                if (requestCode == FileUtils.activityRequestFileCodes.get("credentialAddFile")) {
+                if (requestCode == FileUtils.activityRequestFileCode.credentialAddFile.ordinal()) {
                     fed.addFile(file);
                     fed.notifyDataSetChanged();
                 }
-                if (requestCode == FileUtils.activityRequestFileCodes.get("credentialAddCustomFieldFile")) {
+                if (requestCode == FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) {
                     CustomField cf = new CustomField();
                     cf.setLabel("newLabel" + cfed.getItemCount() + 1);
                     cf.setSecret(false);
