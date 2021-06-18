@@ -20,7 +20,6 @@
  */
 package es.wolfi.app.passman;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Rect;
@@ -49,10 +48,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import es.wolfi.app.ResponseHandlers.CustomFieldFileDeleteResponseHandler;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.ProgressUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File}.
@@ -177,39 +178,15 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             }
         });
 
+        CustomFieldEditAdapter self = this;
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 Context context = holder.mView.getContext();
 
                 if (holder.mItem.getFieldType().equals("file")) {
-                    final ProgressDialog progress = new ProgressDialog(context);
-                    progress.setTitle(context.getString(R.string.loading));
-                    progress.setMessage(context.getString(R.string.wait_while_loading));
-                    progress.setCancelable(false);
-                    progress.show();
-
-                    AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                            if (statusCode == 200) {
-                                mValues.remove(holder.mItem);
-                                notifyDataSetChanged();
-                            }
-                            progress.dismiss();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                            error.printStackTrace();
-                            progress.dismiss();
-                        }
-
-                        @Override
-                        public void onRetry(int retryNo) {
-                            // called when request is retried
-                        }
-                    };
+                    final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                    final AsyncHttpResponseHandler responseHandler = new CustomFieldFileDeleteResponseHandler(progress, holder, mValues, self);
 
                     try {
                         File file = new File(holder.mItem.getJvalue());

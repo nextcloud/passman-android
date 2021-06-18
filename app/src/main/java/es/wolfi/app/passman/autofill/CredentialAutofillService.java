@@ -36,17 +36,16 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import es.wolfi.app.ResponseHandlers.AutofillCredentialSaveResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.JSONUtils;
 
 import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
 
@@ -337,75 +336,7 @@ public final class CredentialAutofillService extends AutofillService {
 
         Log.d(TAG, "onSaveRequest(), saving Credential");
 
-
-        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                String result = new String(responseBody);
-                if (statusCode == 200 && !result.equals("")) {
-                    try {
-                        JSONObject credentialObject = new JSONObject(result);
-                        Vault v = getAutofillVault(ton);
-                        if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
-                            Credential currentCredential = Credential.fromJSON(credentialObject, v);
-                            v.addCredential(currentCredential);
-                            ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
-                            Vault activeVault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-                            if (v.guid.equals(activeVault.guid)) {
-                                ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
-                            }
-
-                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                            Vault.updateAutofillVault(v, settings);
-
-                            Toast.makeText(getApplicationContext(), getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, getString(R.string.successfully_saved));
-                            return;
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onSaveRequest(), failed to save: " + R.string.error_occurred);
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                String response = new String(responseBody);
-
-                if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-                    try {
-                        JSONObject o = new JSONObject(response);
-                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-
-                            Toast.makeText(getApplicationContext(), o.getString("message"), Toast.LENGTH_LONG).show();
-                            Log.d(TAG, "onSaveRequest(), failed to save: " + o.getString("message"));
-                            return;
-                        }
-                    } catch (JSONException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-
-                if (error != null && error.getMessage() != null) {
-                    error.printStackTrace();
-                    Log.e("async http response", new String(responseBody));
-                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, error.getMessage());
-                } else {
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, getString(R.string.error_occurred));
-                }
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried; no retry
-            }
-        };
-
+        final AsyncHttpResponseHandler responseHandler = new AutofillCredentialSaveResponseHandler(getAutofillVault(ton), getBaseContext(), getApplicationContext(), ton, TAG);
         newCred.save(getApplicationContext(), responseHandler);
 
         Log.d(TAG, "onSaveRequest() finished");
