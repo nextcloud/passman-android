@@ -63,6 +63,10 @@ public class Vault extends Core implements Filterable {
     }
 
     public String decryptString(String cryptogram) {
+        return decryptString(cryptogram, this.encryption_key);
+    }
+
+    public String decryptString(String cryptogram, String encryption_key) {
         if (cryptogram == null) {
             return "";
         }
@@ -106,6 +110,10 @@ public class Vault extends Core implements Filterable {
     }
 
     public String encryptString(String plaintext) {
+        return encryptString(plaintext, this.encryption_key);
+    }
+
+    public String encryptString(String plaintext, String encryption_key) {
         if (plaintext == null) {
             return "";
         }
@@ -119,6 +127,10 @@ public class Vault extends Core implements Filterable {
     }
 
     public String encryptRawStringData(String plaintext) {
+        return encryptRawStringData(plaintext, this.encryption_key);
+    }
+
+    public String encryptRawStringData(String plaintext, String encryption_key) {
         if (plaintext == null) {
             return "";
         }
