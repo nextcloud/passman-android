@@ -87,7 +87,6 @@
                     android:textSize="12sp"
                     tools:text="21/01/1990"/>
             </TableRow>
-
         </TableLayout>
 
     </LinearLayout>

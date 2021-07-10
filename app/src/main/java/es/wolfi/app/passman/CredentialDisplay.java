@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.webkit.URLUtil;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -65,15 +66,17 @@ public class CredentialDisplay extends Fragment {
     @BindView(R.id.credential_email)
     CopyTextItem email;
     @BindView(R.id.credential_url)
-    TextView url;
+    CopyTextItem url;
     @BindView(R.id.credential_description)
     TextView description;
     @BindView(R.id.credential_otp)
     CopyTextItem otp;
     @BindView(R.id.credential_otp_progress)
     ProgressBar otp_progress;
-    @BindView(R.id.filelist)
-    RecyclerView filelist;
+    @BindView(R.id.filesList)
+    RecyclerView filesList;
+    @BindView(R.id.customFieldsList)
+    RecyclerView customFieldsList;
 
     private Credential credential;
     private Handler handler;
@@ -180,10 +183,20 @@ public class CredentialDisplay extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.filelist);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+        RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+        filesListRecyclerView.setHasFixedSize(true);
+        filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+
+        RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+        customFieldsListRecyclerView.setHasFixedSize(true);
+        customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
+
+        if (credential.getCompromised().equals("true")) {
+            TextView passwordLabel = view.findViewById(R.id.credential_password_label);
+            passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
+        }
 
         label.setText(credential.getLabel());
         user.setText(credential.getUsername());
@@ -194,6 +207,10 @@ public class CredentialDisplay extends Fragment {
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
         otp.setEnabled(false);
+
+        if (URLUtil.isValidUrl(credential.getUrl())) {
+            url.setModeURL();
+        }
 
         if (otp_refresh == null) {
             otp_progress.setProgress(0);

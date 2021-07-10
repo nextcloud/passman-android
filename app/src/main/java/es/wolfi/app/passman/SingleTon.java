@@ -21,22 +21,22 @@
  */
 package es.wolfi.app.passman;
 import android.view.View;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class SingleTon {
     protected final static SingleTon _ton = new SingleTon();
 
-    protected HashMap<String, View.OnClickListener> _click;
-    protected HashMap<String, Object>               _extra;
-    protected HashMap<String, String>               _string;
-    protected HashMap<String, ICallback>            _callback;
+    protected ConcurrentHashMap<String, View.OnClickListener> _click;
+    protected ConcurrentHashMap<String, Object>               _extra;
+    protected ConcurrentHashMap<String, String>               _string;
+    protected ConcurrentHashMap<String, ICallback>            _callback;
 
     public SingleTon(){
-        _callback   = new HashMap<String, ICallback>();
-        _string     = new HashMap<String, String>();
-        _click      = new HashMap<String, View.OnClickListener>();
-        _extra      = new HashMap<String, Object>();
+        _callback   = new ConcurrentHashMap<String, ICallback>();
+        _string     = new ConcurrentHashMap<String, String>();
+        _click      = new ConcurrentHashMap<String, View.OnClickListener>();
+        _extra      = new ConcurrentHashMap<String, Object>();
     }
 
     public void addClickListener(String name, View.OnClickListener action){
