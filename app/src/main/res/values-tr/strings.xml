@@ -2,7 +2,7 @@
     <string name="action_settings">Ayarlar</string>
     <string name="action_refresh">Yenile</string>
     <string name="nchost">Sunucu adresi</string>
-    <string name="username">Kullanıcı Adı</string>
+    <string name="username">Kullanıcı adı</string>
     <string name="password">Parola</string>
     <string name="connect">Bağlan</string>
     <string name="wrongNCUrl">Nextcloud yönetim bölümü adresi yanlış ya da bağlanılamıyor</string>
@@ -21,4 +21,18 @@
     <string name="created">Oluşturulma:</string>
     <string name="last_accessed">Son erişilme:</string>
     <string name="search">Arama</string>
-    </resources>
+    <string name="save">Kaydet</string>
+    <string name="successfully_saved">Kaydedildi</string>
+    <string name="error_occurred">Bir sorun çıktı</string>
+    <string name="update">Güncelle</string>
+    <string name="successfully_updated">Güncellendi</string>
+    <string name="delete">Sil</string>
+    <string name="successfully_deleted">Silindi</string>
+    <string name="nextcloud_connection_settings">NextCloud bağlantı ayarları</string>
+    <string name="app_settings">Uygulama ayarları</string>
+    <string name="wait_while_loading">Yüklenirken bekleyin...</string>
+    <string name="loading">Yükleniyor</string>
+    <string name="error_downloading_file">Dosya indirilirken sorun çıktı</string>
+    <string name="error_writing_file">Dosya yazılırken sorun çıktı</string>
+    <string name="files">Dosyalar</string>
+</resources>

@@ -32,9 +32,9 @@
     <string name="successfully_updated">Successfully updated</string>
     <string name="delete">Delete</string>
     <string name="successfully_deleted">Successfully deleted</string>
-    <string name="nextcloud_connection_settings">NextCloud connection settings</string>
+    <string name="nextcloud_connection_settings">Nextcloud connection settings</string>
     <string name="app_settings">App settings</string>
-    <string name="wait_while_loading">Wait while loading...</string>
+    <string name="wait_while_loading">Wait while loading …</string>
     <string name="loading">Loading</string>
     <string name="error_downloading_file">Error downloading the file</string>
     <string name="error_writing_file">Error writing the file</string>

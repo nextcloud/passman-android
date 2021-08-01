@@ -21,4 +21,18 @@
     <string name="created">Creado:</string>
     <string name="last_accessed">Último o acceso:</string>
     <string name="search">Buscar</string>
-    </resources>
+    <string name="save">Gardar</string>
+    <string name="successfully_saved">Gardado satisfactoriamente</string>
+    <string name="error_occurred">Produciuse un erro</string>
+    <string name="update">Actualizar</string>
+    <string name="successfully_updated">Actualizado satisfactoriamente</string>
+    <string name="delete">Eliminar</string>
+    <string name="successfully_deleted">Eliminado satisfactoriamente</string>
+    <string name="nextcloud_connection_settings">Axustes da conexión de Nextcloud</string>
+    <string name="app_settings">Axustes da apli</string>
+    <string name="wait_while_loading">Agardando mentres se carga…</string>
+    <string name="loading">Cargando</string>
+    <string name="error_downloading_file">Produciuse un erro ao descargar o ficheiro</string>
+    <string name="error_writing_file">Produciuse un erro ao gravar o ficheiro</string>
+    <string name="files">Ficheiros</string>
+</resources>

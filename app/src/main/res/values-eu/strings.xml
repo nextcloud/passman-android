@@ -21,4 +21,18 @@
     <string name="created">Sortua:</string>
     <string name="last_accessed">Azkenekoz atzitua:</string>
     <string name="search">Bilatu</string>
-    </resources>
+    <string name="save">Gorde</string>
+    <string name="successfully_saved">Behar bezala gorde da</string>
+    <string name="error_occurred">Errore bat gertatu da</string>
+    <string name="update">Eguneratu</string>
+    <string name="successfully_updated">Behar bezala eguneratu da</string>
+    <string name="delete">Ezabatu</string>
+    <string name="successfully_deleted">Behar bezala ezabatu da</string>
+    <string name="nextcloud_connection_settings">NextCloud konexio-ezarpenak</string>
+    <string name="app_settings">Aplikazioaren ezarpenak</string>
+    <string name="wait_while_loading">Itxaron kargatzen ari den bitartean ...</string>
+    <string name="loading">Kargatzen</string>
+    <string name="error_downloading_file">Errorea fitxategia deskargatzean</string>
+    <string name="error_writing_file">Errorea fitxategia idaztean</string>
+    <string name="files">Fitxategiak</string>
+</resources>
