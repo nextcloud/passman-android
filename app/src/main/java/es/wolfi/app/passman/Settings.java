@@ -29,6 +29,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -136,8 +137,8 @@ public class Settings extends Fragment {
             default_autofill_vault.setAdapter(adapter);
             default_autofill_vault.setSelection(selection_id);
         } else {
-            default_autofill_vault.setVisibility(View.INVISIBLE);
-            default_autofill_vault_title.setVisibility(View.INVISIBLE);
+            ((ViewManager)default_autofill_vault.getParent()).removeView(default_autofill_vault);
+            ((ViewManager)default_autofill_vault_title.getParent()).removeView(default_autofill_vault_title);
         }
     }
 
