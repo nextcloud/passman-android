@@ -37,9 +37,11 @@ import org.json.JSONException;
 
 import java.util.List;
 
+import es.wolfi.app.ResponseHandlers.FileDeleteResponseHandler;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.ProgressUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File}.
@@ -86,37 +88,10 @@ public class FileEditAdapter extends RecyclerView.Adapter<FileEditAdapter.ViewHo
 
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 Context context = holder.mView.getContext();
-                final ProgressDialog progress = new ProgressDialog(context);
-                progress.setTitle(context.getString(R.string.loading));
-                progress.setMessage(context.getString(R.string.wait_while_loading));
-                progress.setCancelable(false);
-                progress.show();
-
-                AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                        String result = new String(responseBody);
-                        if (statusCode == 200) {
-                            mValues.remove(holder.mItem);
-                            holder.mContentView.setTextColor(v.getResources().getColor(R.color.disabled));
-                            holder.deleteButton.setVisibility(View.INVISIBLE);
-                        }
-                        progress.dismiss();
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                        error.printStackTrace();
-                        progress.dismiss();
-                    }
-
-                    @Override
-                    public void onRetry(int retryNo) {
-                        // called when request is retried
-                    }
-                };
+                final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                final AsyncHttpResponseHandler responseHandler = new FileDeleteResponseHandler(progress, holder, mValues, view);
 
                 credential.sendFileDeleteRequest(context, holder.mItem.getFileId(), responseHandler);
             }
