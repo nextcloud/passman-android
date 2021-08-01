@@ -21,4 +21,18 @@
     <string name="created">创建于：</string>
     <string name="last_accessed">上次访问：</string>
     <string name="search">搜索</string>
-    </resources>
+    <string name="save">保存</string>
+    <string name="successfully_saved">保存成功</string>
+    <string name="error_occurred">发生了一个错误</string>
+    <string name="update">更新</string>
+    <string name="successfully_updated">更新成功</string>
+    <string name="delete">删除</string>
+    <string name="successfully_deleted">删除成功</string>
+    <string name="nextcloud_connection_settings">NextCloud 连接设置</string>
+    <string name="app_settings">应用程序设置</string>
+    <string name="wait_while_loading">加载时等待...</string>
+    <string name="loading">加载中</string>
+    <string name="error_downloading_file">下载文件时出错</string>
+    <string name="error_writing_file">写入文件时出错</string>
+    <string name="files">文件</string>
+</resources>

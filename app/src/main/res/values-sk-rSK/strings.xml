@@ -21,4 +21,18 @@
     <string name="created">Vytvorené:</string>
     <string name="last_accessed">Posledný prístup:</string>
     <string name="search">Hľadať</string>
-    </resources>
+    <string name="save">Uložiť</string>
+    <string name="successfully_saved">Úspešne uložené</string>
+    <string name="error_occurred">Vyskytla sa chyba</string>
+    <string name="update">Aktualizovať</string>
+    <string name="successfully_updated">Úspešne uložené</string>
+    <string name="delete">Zmazať</string>
+    <string name="successfully_deleted">Úspešne zmazané</string>
+    <string name="nextcloud_connection_settings">Nastavenie pripojenia k Nextcloud</string>
+    <string name="app_settings">Nastavenia Aplikácie</string>
+    <string name="wait_while_loading">Čakajte pokiaľ sa nahráva...</string>
+    <string name="loading">Nahrávam</string>
+    <string name="error_downloading_file">Chyba pri sťahovaní súboru</string>
+    <string name="error_writing_file">Chyba pri zápise súboru</string>
+    <string name="files">Súbory</string>
+</resources>
