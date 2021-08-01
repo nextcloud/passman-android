@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,7 @@ import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.JSONUtils;
 
 import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
 
