@@ -26,11 +26,14 @@ import org.json.JSONObject;
 
 public class CustomField extends Core {
 
-    public String label;
-    public String value = null;
-    public JSONObject jvalue = null;
-    public boolean secret;
-    public String field_type;
+    private String label;
+    private String value = null;
+    private JSONObject jvalue = null;
+    private boolean secret;
+    private String field_type;
+
+    public CustomField() {
+    }
 
     public CustomField(JSONObject o) throws JSONException {
         label = o.getString("label");
@@ -71,8 +74,16 @@ public class CustomField extends Core {
         return secret;
     }
 
+    public void setSecret(boolean secret) {
+        this.secret = secret;
+    }
+
     public String getFieldType() {
         return field_type;
+    }
+
+    public void setFieldType(String field_type) {
+        this.field_type = field_type;
     }
 
     public JSONObject getAsJSONObject() throws JSONException {
