@@ -41,9 +41,6 @@ android {
             }
 
         }
-        ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
-        }
     }
     buildTypes {
         release {
@@ -76,23 +73,12 @@ android {
         }
     }
 
-    flavorDimensions "arm"
-
-    productFlavors {
-        create("armabi") {
-            dimension("arm")
-        }
-        create("armeabi-v7a") {
-            dimension("arm")
-        }
-        create("arm64-v8a") {
-            dimension("arm")
-        }
-        create("x86_64") {
-            dimension("x86")
-        }
-        create("x86") {
-            dimension("x86")
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
+            universalApk false
         }
     }
 
@@ -104,7 +90,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.2.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -115,8 +101,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'commons-codec:commons-codec:1.10'
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.58'
     implementation 'com.loopj.android:android-async-http:1.4.9'
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 }

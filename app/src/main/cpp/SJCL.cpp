@@ -261,6 +261,11 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     return ret;
 }
 
+int getInsecureRandomNumber(int min, int max) {
+    srand(time(NULL));
+    return (rand() % (max - min + 1)) + min;
+}
+
 char* SJCL::encrypt(char* plaintext, const string& key) {
     int plaintext_len = strlen(plaintext);
     int iv_len = 13;    // use 13 because 15-lol (with initial lol=2) is hardcoded in the decryptccm implementation
@@ -269,7 +274,7 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     if (plaintext_len >= 1<<16) iv_len--;
     if (plaintext_len >= 1<<24) iv_len--;
 
-    int salt_len = 12;  //can I use a random number here?
+    int salt_len = getInsecureRandomNumber(12, 24);
     int iter = 1000;
     int key_size = 256;
     int tag_size = 64;
