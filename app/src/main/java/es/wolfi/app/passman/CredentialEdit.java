@@ -31,29 +31,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
+import es.wolfi.app.ResponseHandlers.CredentialDeleteResponseHandler;
+import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
 import es.wolfi.passman.API.Credential;
-import es.wolfi.passman.API.File;
+import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.JSONUtils;
+import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.ProgressUtils;
 
 
 /**
@@ -78,13 +80,19 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     EditText url;
     @BindView(R.id.edit_credential_description)
     EditText description;
-    @BindView(R.id.filelist)
-    RecyclerView filelist;
+    @BindView(R.id.filesList)
+    RecyclerView filesList;
+    @BindView(R.id.customFieldsList)
+    RecyclerView customFieldsList;
+    @BindView(R.id.customFieldType)
+    Spinner customFieldType;
 
     private Credential credential;
-    private boolean alreadySaving = false;
+    private AtomicBoolean alreadySaving = new AtomicBoolean(false);
     private FileEditAdapter fed;
-    private RecyclerView recyclerView;
+    private CustomFieldEditAdapter cfed;
+    private RecyclerView filesListRecyclerView;
+    private RecyclerView customFieldsListRecyclerView;
 
     public CredentialEdit() {
         // Required empty public constructor
@@ -123,7 +131,12 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         addFileButton.setOnClickListener(this.getAddFileButtonListener());
         addFileButton.setVisibility(View.VISIBLE);
 
+        Button addCustomFieldButton = (Button) view.findViewById(R.id.AddCustomFieldButton);
+        addCustomFieldButton.setOnClickListener(this.getAddCustomFieldButtonListener());
+        addCustomFieldButton.setVisibility(View.VISIBLE);
+
         fed = new FileEditAdapter(credential);
+        cfed = new CustomFieldEditAdapter(credential);
 
         return view;
     }
@@ -138,10 +151,15 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.filelist);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(fed);
+        filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+        filesListRecyclerView.setHasFixedSize(true);
+        filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        filesListRecyclerView.setAdapter(fed);
+
+        customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+        customFieldsListRecyclerView.setHasFixedSize(true);
+        customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        customFieldsListRecyclerView.setAdapter(cfed);
 
         label.setText(this.credential.getLabel());
         user.setText(this.credential.getUsername());
@@ -165,55 +183,16 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         super.onDetach();
     }
 
-    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize) throws JSONException {
+    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) throws JSONException {
         Context context = getContext();
-        final ProgressDialog progress = new ProgressDialog(context);
-        progress.setTitle(context.getString(R.string.loading));
-        progress.setMessage(context.getString(R.string.wait_while_loading));
-        progress.setCancelable(false);
-        progress.show();
-
-        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                String result = new String(responseBody);
-                if (statusCode == 200 && !result.equals("")) {
-                    try {
-                        JSONObject fileObject = new JSONObject(result);
-                        if (fileObject.has("message") && fileObject.getString("message").equals("Current user is not logged in")) {
-                            return;
-                        }
-                        if (fileObject.has("file_id") && fileObject.has("filename") && fileObject.has("guid")
-                                && fileObject.has("size") && fileObject.has("created") && fileObject.has("mimetype")) {
-                            fileObject.put("filename", fileName);
-                            File file = new File(fileObject);
-                            fed.addFile(file);
-                            fed.notifyDataSetChanged();
-                        }
-                    } catch (JSONException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-                progress.dismiss();
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                error.printStackTrace();
-                progress.dismiss();
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        };
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+        final AsyncHttpResponseHandler responseHandler = new CredentialAddFileResponseHandler(progress, getView(), fileName, requestCode, fed, cfed);
 
         // Start encryption a little later so that the main thread does not get stuck in the file selection dialog and it can close.
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler);
+                credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler, progress);
             }
         }, 100);
     }
@@ -222,7 +201,27 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd();
+                ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditFile.ordinal());
+            }
+        };
+    }
+
+    public View.OnClickListener getAddCustomFieldButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (customFieldType.getSelectedItem().toString().equals("File")) {
+                    ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal());
+                } else {
+                    CustomField cf = new CustomField();
+                    cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
+                    cf.setSecret(customFieldType.getSelectedItem().toString().toLowerCase().equals("password"));
+                    cf.setFieldType(customFieldType.getSelectedItem().toString().toLowerCase());
+                    cf.setValue("");
+
+                    cfed.addCustomField(cf);
+                    cfed.notifyDataSetChanged();
+                }
             }
         };
     }
@@ -231,64 +230,16 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (alreadySaving) {
+                if (alreadySaving.get()) {
                     return;
                 }
 
-                AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                        String result = new String(responseBody);
-                        if (statusCode == 200 && !result.equals("")) {
-                            Snackbar.make(view, R.string.successfully_deleted, Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                            assert getFragmentManager() != null;
-                            alreadySaving = false;
+                alreadySaving.set(true);
 
-                            Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
+                Context context = getContext();
+                final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                final AsyncHttpResponseHandler responseHandler = new CredentialDeleteResponseHandler(alreadySaving, progress, view, (PasswordList) getActivity(), getFragmentManager());
 
-                            int backStackCount = getFragmentManager().getBackStackEntryCount();
-                            int backStackId = getFragmentManager().getBackStackEntryAt(backStackCount - 2).getId();
-                            getFragmentManager().popBackStack(backStackId,
-                                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                        alreadySaving = false;
-                        String response = new String(responseBody);
-
-                        if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-                            try {
-                                JSONObject o = new JSONObject(response);
-                                if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                                    Snackbar.make(view, o.getString("message"), Snackbar.LENGTH_LONG)
-                                            .setAction("Action", null).show();
-                                    return;
-                                }
-                            } catch (JSONException e1) {
-                                //ex = e1;
-                            }
-                        }
-
-                        if (error != null && error.getMessage() != null) {
-                            error.printStackTrace();
-                            Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        } else {
-                            Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }
-                    }
-
-                    @Override
-                    public void onRetry(int retryNo) {
-                        // called when request is retried
-                    }
-                };
-
-                alreadySaving = true;
                 Date date = new Date();
                 credential.setDeleteTime(date.getTime());
                 credential.update(view.getContext(), responseHandler);
@@ -298,7 +249,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (alreadySaving) {
+        if (alreadySaving.get()) {
             return;
         }
 
@@ -307,12 +258,14 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             return;
         }
 
-        Context context = getContext();
-        final ProgressDialog progress = new ProgressDialog(context);
-        progress.setTitle(context.getString(R.string.loading));
-        progress.setMessage(context.getString(R.string.wait_while_loading));
-        progress.setCancelable(false);
-        progress.show();
+        if (this.credential.getCompromised().equals("true") && !this.credential.getPassword().equals(password.getText().toString())) {
+            this.credential.setCompromised(false);
+        }
+
+        // fix sometimes wrong saved compromised field
+        if (!this.credential.getCompromised().equals("true")) {
+            this.credential.setCompromised(false);
+        }
 
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
@@ -321,61 +274,13 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
         this.credential.setFiles(fed.getFilesString());
+        this.credential.setCustomFields(cfed.getCustomFieldsString());
 
-        alreadySaving = true;
+        alreadySaving.set(true);
 
-        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                String result = new String(responseBody);
-                if (statusCode == 200 && !result.equals("")) {
-                    Snackbar.make(view, R.string.successfully_updated, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                    assert getFragmentManager() != null;
-                    alreadySaving = false;
-                    progress.dismiss();
-                    getFragmentManager().popBackStack();
-                    Objects.requireNonNull(((PasswordList) getActivity())).refreshVault();
-                    Objects.requireNonNull(((PasswordList) getActivity())).showCredentialEditButton();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                alreadySaving = false;
-                progress.dismiss();
-                if (responseBody != null && responseBody.length > 0) {
-                    String response = new String(responseBody);
-
-                    if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-                        try {
-                            JSONObject o = new JSONObject(response);
-                            if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                                Snackbar.make(view, o.getString("message"), Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show();
-                                return;
-                            }
-                        } catch (JSONException e1) {
-                            //ex = e1;
-                        }
-                    }
-                }
-
-                if (error != null && error.getMessage() != null) {
-                    error.printStackTrace();
-                    Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                } else {
-                    Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        };
+        Context context = getContext();
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, true, progress, view, (PasswordList) getActivity(), getFragmentManager());
 
         this.credential.update(context, responseHandler);
     }
