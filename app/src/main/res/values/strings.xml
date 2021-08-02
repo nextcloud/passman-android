@@ -58,4 +58,5 @@
     <string name="automatically">automatically</string>
     <string name="request_connect_timeout">Request connect timeout (in seconds)</string>
     <string name="request_response_timeout">Request response timeout (in seconds)</string>
+    <string name="expert_settings">Expert settings</string>
 </resources>
