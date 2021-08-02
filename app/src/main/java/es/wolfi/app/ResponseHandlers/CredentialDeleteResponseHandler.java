@@ -61,6 +61,7 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
                     int backStackCount = fragmentManager.getBackStackEntryCount();
                     int backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
                     alreadySaving.set(false);
+                    progress.dismiss();
                     fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     return;
                 }
