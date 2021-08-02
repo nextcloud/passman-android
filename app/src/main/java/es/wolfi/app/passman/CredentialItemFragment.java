@@ -109,14 +109,16 @@ public class CredentialItemFragment extends Fragment {
         toggleSortButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateToggleSortButtonImage(toggleSortButton);
                 sortMethod = (++sortMethod % 3);
+                updateToggleSortButtonImage(toggleSortButton);
 
                 v.sort(sortMethod);
                 applyFilters(v, searchInput);
             }
         });
+        v.sort(sortMethod);
         recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+        updateToggleSortButtonImage(toggleSortButton);
     }
 
     public void applyFilters(Vault vault, EditText searchInput) {
@@ -131,14 +133,14 @@ public class CredentialItemFragment extends Fragment {
 
     public void updateToggleSortButtonImage(AppCompatImageButton toggleSortButton) {
         if (sortMethod == 0) {
-            // set az ascending
-            toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
+            // set default image
+            toggleSortButton.setImageResource(R.drawable.ic_baseline_list_24);
         } else if (sortMethod == 1) {
-            // set az descending
+            // set az ascending image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
         } else if (sortMethod == 2) {
-            // set default
-            toggleSortButton.setImageResource(R.drawable.ic_baseline_list_24);
+            // set az descending image
+            toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
         }
     }
 
