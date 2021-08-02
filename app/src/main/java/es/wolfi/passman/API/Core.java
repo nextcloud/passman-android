@@ -48,7 +48,9 @@ public abstract class Core {
     protected static String username;
     protected static String password;
     protected static String version_name;
-    protected static int version_number = 0;
+    protected static int versionNumber = 0;
+    protected static int connectTimeout = 15000;    // 15s connect timeout
+    protected static int responseTimeout = 120000;  // 120s response timeout
 
 
     public static void setUpAPI(String host, String username, String password) {
@@ -82,9 +84,15 @@ public abstract class Core {
     }
 
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+        requestAPIGET(c, endpoint, callback, connectTimeout);
+    }
+
+    public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback, int connectTimeout) {
         final AsyncHttpResponseHandler responseHandler = new CoreAPIGETResponseHandler(callback);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setBasicAuth(username, password);
+        client.setConnectTimeout(connectTimeout);
+        client.setResponseTimeout(responseTimeout);
         client.addHeader("Content-Type", "application/json");
         client.get(host.concat(endpoint), responseHandler);
     }
@@ -96,8 +104,8 @@ public abstract class Core {
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.setBasicAuth(username, password);
-        client.setConnectTimeout(15000);      // 15s connect timeout
-        client.setResponseTimeout(120000);    // 120s response timeout
+        client.setConnectTimeout(connectTimeout);
+        client.setResponseTimeout(responseTimeout);
         //client.addHeader("Content-Type", "application/json; utf-8");
         client.addHeader("Accept", "application/json, text/plain, */*");
 
@@ -113,8 +121,8 @@ public abstract class Core {
 
     // TODO Test this method once the server response works!
     public static void getAPIVersion(final Context c, FutureCallback<Integer> cb) {
-        if (version_number != 0) {
-            cb.onCompleted(null, version_number);
+        if (versionNumber != 0) {
+            cb.onCompleted(null, versionNumber);
             return;
         }
 
@@ -127,7 +135,7 @@ public abstract class Core {
                     Log.d("getApiVersion", "Failure while getting api version");
                 }
             }
-        });
+        }, 10000);  // 10s connect timeout
     }
 
     /**
