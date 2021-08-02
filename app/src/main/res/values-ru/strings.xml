@@ -28,11 +28,9 @@
     <string name="successfully_updated">Успешно обновлено</string>
     <string name="delete">Удалить</string>
     <string name="successfully_deleted">Успешно удалено</string>
-    <string name="nextcloud_connection_settings">Настройки подключения NextCloud</string>
     <string name="app_settings">Настройки приложения</string>
-    <string name="wait_while_loading">Подождите, пока загружается...</string>
     <string name="loading">Загрузка</string>
     <string name="error_downloading_file">Ошибка при загрузке файла</string>
     <string name="error_writing_file">Ошибка записи файла</string>
     <string name="files">Файлы</string>
-</resources>
+    </resources>

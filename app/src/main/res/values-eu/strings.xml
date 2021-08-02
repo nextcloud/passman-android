@@ -28,11 +28,9 @@
     <string name="successfully_updated">Behar bezala eguneratu da</string>
     <string name="delete">Ezabatu</string>
     <string name="successfully_deleted">Behar bezala ezabatu da</string>
-    <string name="nextcloud_connection_settings">NextCloud konexio-ezarpenak</string>
     <string name="app_settings">Aplikazioaren ezarpenak</string>
-    <string name="wait_while_loading">Itxaron kargatzen ari den bitartean ...</string>
     <string name="loading">Kargatzen</string>
     <string name="error_downloading_file">Errorea fitxategia deskargatzean</string>
     <string name="error_writing_file">Errorea fitxategia idaztean</string>
     <string name="files">Fitxategiak</string>
-</resources>
+    </resources>
