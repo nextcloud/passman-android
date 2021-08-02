@@ -5,9 +5,9 @@
     <string name="username">Nome de usuario</string>
     <string name="password">Contrasinal</string>
     <string name="connect">Conectar</string>
-    <string name="wrongNCUrl">O URL da infraestrutura de Nexcloud é incorrecta ou non foi posíbel conectarse</string>
+    <string name="wrongNCUrl">Ou o URL da infraestrutura de Nexcloud é incorrecto ou non foi posíbel conectarse</string>
     <string name="wrongNCSettings">Axustes incorrectos</string>
-    <string name="net_error">Produciuse un erro de rede</string>
+    <string name="net_error">Produciuse un erro na rede</string>
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">O contrasinal da bóveda está trabucada</string>
     <string name="label">Etiqueta</string>
@@ -16,8 +16,21 @@
     <string name="description">Descrición</string>
     <string name="copied_to_clipboard">O texto foi copiado no portapapeis.</string>
     <string name="vault_password">Contrasinal da bóveda</string>
-    <string name="vault_password_save">Gardar contrasinal da bóveda</string>
+    <string name="vault_password_save">Gardar o contrasinal da bóveda</string>
     <string name="not_implemented_yet">Aínda non está implementado</string>
     <string name="created">Creado:</string>
     <string name="last_accessed">Último o acceso:</string>
-</resources>
+    <string name="search">Buscar</string>
+    <string name="save">Gardar</string>
+    <string name="successfully_saved">Gardado satisfactoriamente</string>
+    <string name="error_occurred">Produciuse un erro</string>
+    <string name="update">Actualizar</string>
+    <string name="successfully_updated">Actualizado satisfactoriamente</string>
+    <string name="delete">Eliminar</string>
+    <string name="successfully_deleted">Eliminado satisfactoriamente</string>
+    <string name="app_settings">Axustes da apli</string>
+    <string name="loading">Cargando</string>
+    <string name="error_downloading_file">Produciuse un erro ao descargar o ficheiro</string>
+    <string name="error_writing_file">Produciuse un erro ao gravar o ficheiro</string>
+    <string name="files">Ficheiros</string>
+    </resources>

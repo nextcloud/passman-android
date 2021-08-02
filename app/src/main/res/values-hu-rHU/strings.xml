@@ -1,11 +1,11 @@
 <resources>
     <string name="action_settings">Beállítások</string>
     <string name="action_refresh">Frissítés</string>
-    <string name="nchost">A kiszolgáló címe</string>
+    <string name="nchost">Kiszolgálócím</string>
     <string name="username">Felhasználónév</string>
     <string name="password">Jelszó</string>
     <string name="connect">Kapcsolódás</string>
-    <string name="wrongNCUrl">Hibás Nextcloud háttércím vagy sikertelen kapcsolódás</string>
+    <string name="wrongNCUrl">Hibás Nextcloud háttérszolgáltatás URL vagy sikertelen kapcsolódás</string>
     <string name="wrongNCSettings">Hibás beállítások</string>
     <string name="net_error">Hálózati hiba</string>
     <string name="unlock">Feloldás</string>
@@ -14,10 +14,23 @@
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Leírás</string>
-    <string name="copied_to_clipboard">Szöveg másolva a vágólapra</string>
+    <string name="copied_to_clipboard">Szöveg a vágólapra másolva</string>
     <string name="vault_password">Széf jelszó</string>
     <string name="vault_password_save">Széf jelszó mentése</string>
-    <string name="not_implemented_yet">Még nincs lefejlesztve</string>
+    <string name="not_implemented_yet">Még nincs megvalósítva</string>
     <string name="created">Létrehozva:</string>
     <string name="last_accessed">Utoljára hozzáférve:</string>
-</resources>
+    <string name="search">Keresés</string>
+    <string name="save">Mentés</string>
+    <string name="successfully_saved">Sikeresen mentve</string>
+    <string name="error_occurred">Hiba történt</string>
+    <string name="update">Frissítés</string>
+    <string name="successfully_updated">Sikeresen frissítve</string>
+    <string name="delete">Törlés</string>
+    <string name="successfully_deleted">Sikeresen törölve</string>
+    <string name="app_settings">Alkalmazás beállítások</string>
+    <string name="loading">Betöltés</string>
+    <string name="error_downloading_file">Hiba fájl letöltése közben</string>
+    <string name="error_writing_file">Hiba a fájl írása írása közben</string>
+    <string name="files">Fájlok</string>
+    </resources>

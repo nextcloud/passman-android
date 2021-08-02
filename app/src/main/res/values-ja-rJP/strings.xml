@@ -14,10 +14,16 @@
     <string name="email">メール</string>
     <string name="URL">URL</string>
     <string name="description">説明</string>
-    <string name="copied_to_clipboard">クリップボードにコピーされました</string>
+    <string name="copied_to_clipboard">クリップボードにコピーしました</string>
     <string name="vault_password">保管庫パスワード</string>
     <string name="vault_password_save">保管庫パスワードを保存</string>
     <string name="not_implemented_yet">未実装です</string>
     <string name="created">作成:</string>
     <string name="last_accessed">最終アクセス：</string>
-</resources>
+    <string name="search">検索</string>
+    <string name="save">保存</string>
+    <string name="delete">削除</string>
+    <string name="app_settings">アプリ設定</string>
+    <string name="loading">読み込み中</string>
+    <string name="files">ファイル</string>
+    </resources>

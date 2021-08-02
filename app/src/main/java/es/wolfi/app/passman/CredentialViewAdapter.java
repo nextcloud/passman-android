@@ -1,39 +1,41 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 package es.wolfi.app.passman;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import es.wolfi.passman.API.Credential;
+
 import java.util.List;
+import java.util.Objects;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the
  * specified {@link CredentialItemFragment.OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAdapter.ViewHolder> {
 
@@ -57,6 +59,10 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
         holder.mItem = mValues.get(position);
         holder.mContentView.setText(holder.mItem.getLabel());
 
+        if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
+            holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
+        }
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,12 +84,14 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mContentView;
+        public final LinearLayout contentLayout;
         public Credential mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mContentView = (TextView) view.findViewById(R.id.content);
+            contentLayout = (LinearLayout) view.findViewById(R.id.contentLayout);
         }
 
         @Override

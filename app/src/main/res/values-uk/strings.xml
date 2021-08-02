@@ -1,0 +1,24 @@
+<resources>
+    <string name="action_settings">Налаштування</string>
+    <string name="action_refresh">Оновити</string>
+    <string name="nchost">Адреса сервера</string>
+    <string name="username">Логін</string>
+    <string name="password">Пароль</string>
+    <string name="connect">Підключення</string>
+    <string name="wrongNCUrl">Невірна адреса Nextcloud сервера або не вдається з\'єднатися</string>
+    <string name="wrongNCSettings">Параметри неправильні</string>
+    <string name="net_error">Помилка мережі</string>
+    <string name="unlock">Розблокувати</string>
+    <string name="wrong_vault_pw">Невірний пароль сховища</string>
+    <string name="label">Мітка</string>
+    <string name="email">Електронна пошта</string>
+    <string name="URL">URL-адреса</string>
+    <string name="description">Опис</string>
+    <string name="copied_to_clipboard">Текст скопійовано в буфер обміну</string>
+    <string name="vault_password">Пароль для сховища</string>
+    <string name="vault_password_save">Зберегти пароль сховища</string>
+    <string name="not_implemented_yet">Ще не реалізовано</string>
+    <string name="created">Створено:</string>
+    <string name="last_accessed">Останній доступ:</string>
+    <string name="search">Пошук</string>
+    </resources>

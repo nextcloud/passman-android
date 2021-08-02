@@ -1,0 +1,36 @@
+<resources>
+    <string name="action_settings">Nastavitve</string>
+    <string name="action_refresh">Osveži</string>
+    <string name="nchost">Naslov strežnika</string>
+    <string name="username">Uporabniško ime</string>
+    <string name="password">Geslo</string>
+    <string name="connect">Poveži</string>
+    <string name="wrongNCUrl">Napačen naslov URL ozadnjega program Nextcloud ali pa povezava ni mogoča.</string>
+    <string name="wrongNCSettings">Nepravilne nastavitve</string>
+    <string name="net_error">Omrežna napaka</string>
+    <string name="unlock">Odkleni</string>
+    <string name="wrong_vault_pw">Napačno geslo trezorja</string>
+    <string name="label">Oznaka</string>
+    <string name="email">Elektronski naslov</string>
+    <string name="URL">Naslov URL</string>
+    <string name="description">Opis</string>
+    <string name="copied_to_clipboard">Besedilo je kopirano v odložišče</string>
+    <string name="vault_password">Geslo trezorja</string>
+    <string name="vault_password_save">Shrani geslo trezorja</string>
+    <string name="not_implemented_yet">Možnost še ni dodana</string>
+    <string name="created">Ustvarjeno:</string>
+    <string name="last_accessed">Zadnji dostop:</string>
+    <string name="search">Poišči</string>
+    <string name="save">Shrani</string>
+    <string name="successfully_saved">Uspešno shranjeno</string>
+    <string name="error_occurred">Prišlo je do napake.</string>
+    <string name="update">Posodobi</string>
+    <string name="successfully_updated">Uspešno posodobljeno</string>
+    <string name="delete">Izbriši</string>
+    <string name="successfully_deleted">Uspešno izbrisano</string>
+    <string name="app_settings">Nastavitve programa</string>
+    <string name="loading">Nalaganje</string>
+    <string name="error_downloading_file">Prišlo je do napake med prejemanjem datotek</string>
+    <string name="error_writing_file">Napaka zapisovanja datoteke</string>
+    <string name="files">Datoteke</string>
+    </resources>

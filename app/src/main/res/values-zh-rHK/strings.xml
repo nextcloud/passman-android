@@ -1,0 +1,36 @@
+<resources>
+    <string name="action_settings">設定</string>
+    <string name="action_refresh">重新整理</string>
+    <string name="nchost">伺服器位址</string>
+    <string name="username">用戶名稱</string>
+    <string name="password">密碼</string>
+    <string name="connect">連線</string>
+    <string name="wrongNCUrl">不正確的Nextcloud後端URL或無法連接</string>
+    <string name="wrongNCSettings">設定不正確</string>
+    <string name="net_error">網絡異常</string>
+    <string name="unlock">解鎖</string>
+    <string name="wrong_vault_pw">保險庫密碼錯誤</string>
+    <string name="label">標籤</string>
+    <string name="email">電郵地址</string>
+    <string name="URL">網址URL</string>
+    <string name="description">描述</string>
+    <string name="copied_to_clipboard">已複製文字至剪貼板</string>
+    <string name="vault_password">保險庫密碼</string>
+    <string name="vault_password_save">保存保險庫密碼</string>
+    <string name="not_implemented_yet">尚未實施</string>
+    <string name="created">建立：</string>
+    <string name="last_accessed">上次存取時間：</string>
+    <string name="search">搜尋</string>
+    <string name="save">保存</string>
+    <string name="successfully_saved">成功保存</string>
+    <string name="error_occurred">發生錯誤</string>
+    <string name="update">更新</string>
+    <string name="successfully_updated">成功更新</string>
+    <string name="delete">刪除</string>
+    <string name="successfully_deleted">成功刪除</string>
+    <string name="app_settings">應用程式設定</string>
+    <string name="loading">加載中...</string>
+    <string name="error_downloading_file">下載檔案時出錯</string>
+    <string name="error_writing_file">寫入檔案時出錯</string>
+    <string name="files">檔案</string>
+    </resources>

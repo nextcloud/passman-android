@@ -1,0 +1,23 @@
+<resources>
+    <string name="action_settings">Настройки</string>
+    <string name="action_refresh">Опресняване</string>
+    <string name="nchost">Адрес на сървъра</string>
+    <string name="username">Потребител</string>
+    <string name="password">Парола</string>
+    <string name="connect">Свързване</string>
+    <string name="wrongNCUrl">URL адреса на Nextcloud сървъра е грешен или не може да се осъществи връзка</string>
+    <string name="wrongNCSettings">Настройките са грешни</string>
+    <string name="net_error">Мрежова грешка</string>
+    <string name="unlock">Отключване</string>
+    <string name="wrong_vault_pw">Грешна парола за хранилището</string>
+    <string name="label">Етикет</string>
+    <string name="email">Имейл</string>
+    <string name="URL">URL</string>
+    <string name="description">Описание</string>
+    <string name="copied_to_clipboard">Текста е копиран</string>
+    <string name="vault_password">Парола на хранилището</string>
+    <string name="vault_password_save">Запомни паролата</string>
+    <string name="created">Създадено:</string>
+    <string name="last_accessed">Последно вписване:</string>
+    <string name="search">Търсене</string>
+    </resources>

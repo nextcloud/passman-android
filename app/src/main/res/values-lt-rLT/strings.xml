@@ -8,11 +8,15 @@
     <string name="wrongNCSettings">Nustatymai neteisingi</string>
     <string name="net_error">Tinklo klaida</string>
     <string name="unlock">Atrakinti</string>
+    <string name="wrong_vault_pw">Neteisingas slėptuvės slaptažodis</string>
     <string name="label">Etiketė</string>
     <string name="email">El. paštas</string>
     <string name="URL">URL</string>
     <string name="description">Aprašas</string>
     <string name="copied_to_clipboard">Tekstas nukopijuotas į iškarpinę</string>
-    <string name="vault_password_save">Išsaugokite saugyklos slaptažodį</string>
+    <string name="vault_password">Slėptuvės slaptažodis</string>
+    <string name="vault_password_save">Įsirašykite slėptuvės slaptažodį</string>
     <string name="not_implemented_yet">Kol kas neįgyvendinta</string>
+    <string name="created">Sukurta:</string>
+    <string name="search">Ieškoti</string>
     </resources>

@@ -9,7 +9,7 @@
     <string name="wrongNCSettings">Configurações incorretas</string>
     <string name="net_error">Erro de rede</string>
     <string name="unlock">Desbloquear</string>
-    <string name="wrong_vault_pw">Senha do cofre errada</string>
+    <string name="wrong_vault_pw">Senha do cofre incorreta</string>
     <string name="label">Etiqueta</string>
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
@@ -20,4 +20,17 @@
     <string name="not_implemented_yet">Não implementado ainda</string>
     <string name="created">Criado:</string>
     <string name="last_accessed">Último acesso:</string>
-</resources>
+    <string name="search">Pesquisar</string>
+    <string name="save">Salvar</string>
+    <string name="successfully_saved">Salvo com sucesso</string>
+    <string name="error_occurred">Ocorreu um erro</string>
+    <string name="update">Atualização</string>
+    <string name="successfully_updated">Atualizado com sucesso</string>
+    <string name="delete">Excluír</string>
+    <string name="successfully_deleted">Excluído com sucesso</string>
+    <string name="app_settings">Configurações do aplicativo</string>
+    <string name="loading">Carregando</string>
+    <string name="error_downloading_file">Erro ao baixar o arquivo</string>
+    <string name="error_writing_file">Erro ao gravar o arquivo</string>
+    <string name="files">Arquivos</string>
+    </resources>

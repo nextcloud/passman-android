@@ -1,47 +1,51 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.app.passman;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
+import android.webkit.URLUtil;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import org.apache.commons.codec.binary.Base32;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import net.bierbaumer.otp_authenticator.TOTPHelper;
+
+import org.apache.commons.codec.binary.Base32;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 
 
@@ -53,20 +57,33 @@ import es.wolfi.passman.API.Vault;
 public class CredentialDisplay extends Fragment {
     public static String CREDENTIAL = "credential";
 
-    @BindView(R.id.credential_label) TextView label;
-    @BindView(R.id.credential_user) CopyTextItem user;
-    @BindView(R.id.credential_password) CopyTextItem password;
-    @BindView(R.id.credential_email) CopyTextItem email;
-    @BindView(R.id.credential_url) TextView url;
-    @BindView(R.id.credential_description) TextView description;
-    @BindView(R.id.credential_otp) CopyTextItem otp;
-    @BindView(R.id.credential_otp_progress) ProgressBar otp_progress;
+    @BindView(R.id.credential_label)
+    TextView label;
+    @BindView(R.id.credential_user)
+    CopyTextItem user;
+    @BindView(R.id.credential_password)
+    CopyTextItem password;
+    @BindView(R.id.credential_email)
+    CopyTextItem email;
+    @BindView(R.id.credential_url)
+    CopyTextItem url;
+    @BindView(R.id.credential_description)
+    TextView description;
+    @BindView(R.id.credential_otp)
+    CopyTextItem otp;
+    @BindView(R.id.credential_otp_progress)
+    ProgressBar otp_progress;
+    @BindView(R.id.filesList)
+    RecyclerView filesList;
+    @BindView(R.id.customFieldsList)
+    RecyclerView customFieldsList;
 
     private Credential credential;
     private Handler handler;
-    private Runnable otp_refresh;
+    private Runnable otp_refresh = null;
 
     private OnCredentialFragmentInteraction mListener;
+    private OnListFragmentInteractionListener filelistListener;
 
     public CredentialDisplay() {
         // Required empty public constructor
@@ -79,7 +96,6 @@ public class CredentialDisplay extends Fragment {
      * @param credentialGUID The guid of the credential to display.
      * @return A new instance of fragment CredentialDisplay.
      */
-    // TODO: Rename and change types and number of parameters
     public static CredentialDisplay newInstance(String credentialGUID) {
         CredentialDisplay fragment = new CredentialDisplay();
 
@@ -99,33 +115,43 @@ public class CredentialDisplay extends Fragment {
         }
 
         handler = new Handler();
-        otp_refresh = new Runnable() {
-            @Override
-            public void run() {
-                int progress =  (int) (System.currentTimeMillis() / 1000) % 30 ;
-                otp_progress.setProgress(progress*100);
+        if (credential.getOtp().length() > 4) {
+            otp_refresh = new Runnable() {
+                @Override
+                public void run() {
+                    int progress = (int) (System.currentTimeMillis() / 1000) % 30;
+                    otp_progress.setProgress(progress * 100);
 
-                ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress+1)*100);
-                animation.setDuration(1000);
-                animation.setInterpolator(new LinearInterpolator());
-                animation.start();
+                    ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
+                    animation.setDuration(1000);
+                    animation.setInterpolator(new LinearInterpolator());
+                    animation.start();
 
-                otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
-                handler.postDelayed(this, 1000);
-            }
-        };
+                    otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
+                    handler.postDelayed(this, 1000);
+                }
+            };
+        }
+    }
+
+    public String getGuid() {
+        return this.credential.getGuid();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        handler.post(otp_refresh);
+        if (otp_refresh != null) {
+            handler.post(otp_refresh);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        handler.removeCallbacks(otp_refresh);
+        if (otp_refresh != null) {
+            handler.removeCallbacks(otp_refresh);
+        }
     }
 
     @Override
@@ -144,12 +170,33 @@ public class CredentialDisplay extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+        if (context instanceof OnListFragmentInteractionListener) {
+            filelistListener = (OnListFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+        filesListRecyclerView.setHasFixedSize(true);
+        filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+
+        RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+        customFieldsListRecyclerView.setHasFixedSize(true);
+        customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
+
+        if (credential.getCompromised().equals("true")) {
+            TextView passwordLabel = view.findViewById(R.id.credential_password_label);
+            passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
+        }
 
         label.setText(credential.getLabel());
         user.setText(credential.getUsername());
@@ -160,12 +207,21 @@ public class CredentialDisplay extends Fragment {
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
         otp.setEnabled(false);
+
+        if (URLUtil.isValidUrl(credential.getUrl())) {
+            url.setModeURL();
+        }
+
+        if (otp_refresh == null) {
+            otp_progress.setProgress(0);
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        filelistListener = null;
     }
 
     /**
@@ -181,5 +237,10 @@ public class CredentialDisplay extends Fragment {
     public interface OnCredentialFragmentInteraction {
         // TODO: Update argument type and name
         void onCredentialFragmentInteraction(Credential credential);
+    }
+
+    public interface OnListFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onListFragmentInteraction(File item);
     }
 }

@@ -1,0 +1,36 @@
+<resources>
+    <string name="action_settings">Ezarpenak</string>
+    <string name="action_refresh">Berritu</string>
+    <string name="nchost">Zerbitzariaren helbidea</string>
+    <string name="username">Erabiltzaile-izena</string>
+    <string name="password">Pasahitza</string>
+    <string name="connect">Konektatu</string>
+    <string name="wrongNCUrl">Nextcloud instantziaren helbidea ez da zuzena edo ezin da konektatu</string>
+    <string name="wrongNCSettings">Ezarpen okerrak</string>
+    <string name="net_error">Sare errorea</string>
+    <string name="unlock">Desblokeatu</string>
+    <string name="wrong_vault_pw">Gordailuaren pasahitza ez da zuzena</string>
+    <string name="label">Etiketa</string>
+    <string name="email">E-maila</string>
+    <string name="URL">URLa</string>
+    <string name="description">Deskripzioa</string>
+    <string name="copied_to_clipboard">Testua arbelera kopiatua</string>
+    <string name="vault_password">Gordailuaren pasahitza</string>
+    <string name="vault_password_save">Gordailuaren pasahitza gorde</string>
+    <string name="not_implemented_yet">Oraindik ezarri gabe</string>
+    <string name="created">Sortua:</string>
+    <string name="last_accessed">Azkenekoz atzitua:</string>
+    <string name="search">Bilatu</string>
+    <string name="save">Gorde</string>
+    <string name="successfully_saved">Behar bezala gorde da</string>
+    <string name="error_occurred">Errore bat gertatu da</string>
+    <string name="update">Eguneratu</string>
+    <string name="successfully_updated">Behar bezala eguneratu da</string>
+    <string name="delete">Ezabatu</string>
+    <string name="successfully_deleted">Behar bezala ezabatu da</string>
+    <string name="app_settings">Aplikazioaren ezarpenak</string>
+    <string name="loading">Kargatzen</string>
+    <string name="error_downloading_file">Errorea fitxategia deskargatzean</string>
+    <string name="error_writing_file">Errorea fitxategia idaztean</string>
+    <string name="files">Fitxategiak</string>
+    </resources>

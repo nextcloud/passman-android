@@ -1,7 +1,7 @@
 [submodule "app/src/main/cpplibs/openssl"]
 	path = app/src/main/cpplibs/openssl
 	url = https://github.com/openssl/openssl.git
-	branch = OpenSSL_1_0_2-stable
+	branch = OpenSSL_1_1_1-stable
 [submodule "app/src/main/cpplibs/SimpleJSON"]
 	path = app/src/main/cpplibs/SimpleJSON
 	url = https://github.com/MJPA/SimpleJSON.git

@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">Није још имплементирано</string>
     <string name="created">Направљен:</string>
     <string name="last_accessed">Последњи приступ:</string>
-</resources>
+    <string name="search">Тражи</string>
+    </resources>

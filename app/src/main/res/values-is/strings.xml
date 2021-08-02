@@ -20,4 +20,5 @@
     <string name="not_implemented_yet">Ekki útfært ennþá</string>
     <string name="created">Búið til:</string>
     <string name="last_accessed">Síðast notað:</string>
-</resources>
+    <string name="search">Leita</string>
+    </resources>

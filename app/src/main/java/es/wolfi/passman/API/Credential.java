@@ -1,37 +1,46 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.passman.API;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.util.Log;
 
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import es.wolfi.app.passman.R;
 import es.wolfi.utils.Filterable;
 
 public class Credential extends Core implements Filterable {
     public int id;
-
 
 
     protected String guid;
@@ -55,8 +64,24 @@ public class Credential extends Core implements Filterable {
     protected String otp;
     protected boolean hidden;
     protected String sharedKey;
+    protected String compromised;
 
     protected Vault vault;
+
+    private ArrayList<String> _encryptedFields = new ArrayList<String>() {
+        {
+            add("description");
+            add("username");
+            add("password");
+            add("files");
+            add("custom_fields");
+            add("otp");
+            add("email");
+            add("tags");
+            add("url");
+            add("compromised");
+        }
+    };
 
     public int getId() {
         return id;
@@ -174,12 +199,54 @@ public class Credential extends Core implements Filterable {
         this.deleteTime = deleteTime;
     }
 
+    public List<File> getFilesList() {
+        String fileString = this.getFiles();
+        List<File> fileList = new ArrayList<File>();
+
+        if (fileString != null && !fileString.equals("[]") && !fileString.equals("")) {
+            try {
+                JSONArray files = new JSONArray(fileString);
+                for (int i = 0; i < files.length(); i++) {
+                    JSONObject o = files.getJSONObject(i);
+                    fileList.add(new File(o));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return fileList;
+    }
+
     public String getFiles() {
         return vault.decryptString(files);
     }
 
     public void setFiles(String files) {
-        this.files = vault.encryptString(files);
+        if (files.equals("")) {
+            this.files = vault.encryptString(files);
+            return;
+        }
+        this.files = vault.encryptRawStringData(files);
+    }
+
+    public List<CustomField> getCustomFieldsList() {
+        String customFieldsString = this.getCustomFields();
+        List<CustomField> customFieldsList = new ArrayList<CustomField>();
+
+        if (customFieldsString != null && !customFieldsString.equals("[]") && !customFieldsString.equals("")) {
+            try {
+                JSONArray customFields = new JSONArray(customFieldsString);
+                for (int i = 0; i < customFields.length(); i++) {
+                    JSONObject o = customFields.getJSONObject(i);
+                    customFieldsList.add(new CustomField(o));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return customFieldsList;
     }
 
     public String getCustomFields() {
@@ -187,7 +254,11 @@ public class Credential extends Core implements Filterable {
     }
 
     public void setCustomFields(String customFields) {
-        this.customFields = vault.encryptString(customFields);
+        if (customFields.equals("")) {
+            this.customFields = vault.encryptString(customFields);
+            return;
+        }
+        this.customFields = vault.encryptRawStringData(customFields);
     }
 
     public String getOtp() {
@@ -214,12 +285,117 @@ public class Credential extends Core implements Filterable {
         this.sharedKey = sharedKey;
     }
 
+    public String getCompromised() {
+        if (compromised != null && !compromised.equals("null")) {
+            String decryptedCompromised = vault.decryptString(compromised);
+            if (decryptedCompromised != null && !decryptedCompromised.equals("")) {
+                return decryptedCompromised;
+            }
+        }
+        return "false";
+    }
+
+    public void setCompromised(boolean compromised) {
+        this.compromised = vault.encryptRawStringData(compromised ? "true" : "false");
+    }
+
     public Vault getVault() {
         return vault;
     }
 
     public void setVault(Vault v) {
         vault = v;
+        vaultId = vault.vault_id;
+    }
+
+    public JSONObject getAsJSONObject() throws JSONException {
+        JSONObject params = new JSONObject();
+
+        JSONObject icon = null;
+
+        try {
+            icon = new JSONObject();
+            icon.put("type", false);
+            icon.put("content", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        params.put("user_id", getUserId());
+        params.put("credential_id", getId());
+        params.put("guid", getGuid());
+        params.put("shared_key", getSharedKey());
+        params.put("vault_id", getVaultId());
+        params.put("label", label);
+        params.put("description", description);
+        params.put("created", getCreated());
+        params.put("changed", getChanged());
+        params.put("tags", tags);
+        params.put("email", email);
+        params.put("icon", icon);
+        params.put("username", username);
+        params.put("password", password);
+        params.put("url", url);
+        params.put("renew_interval", getRenewInterval());
+        params.put("expire_time", getExpireTime());
+        params.put("delete_time", getDeleteTime());
+        params.put("files", files);
+        params.put("custom_fields", customFields);
+        params.put("otp", otp);
+        params.put("compromised", compromised);
+        params.put("hidden", isHidden() ? 1 : 0);
+
+        return params;
+    }
+
+    public RequestParams getAsRequestParams(boolean forUpdate, boolean useJsonStreamer) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(useJsonStreamer);
+
+        JSONObject icon = null;
+
+        if (forUpdate) {
+            params.put("credential_id", getId());
+            params.put("guid", getGuid());
+
+            if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
+                try {
+                    icon = new JSONObject(favicon);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            try {
+                icon = new JSONObject();
+                icon.put("type", false);
+                icon.put("content", "");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        params.put("vault_id", getVaultId());
+        params.put("label", label);
+        params.put("description", description);
+        params.put("created", getCreated());
+        params.put("changed", getChanged());
+        params.put("tags", tags);
+        params.put("email", email);
+        params.put("icon", icon);
+        params.put("username", username);
+        params.put("password", password);
+        params.put("url", url);
+        params.put("renew_interval", getRenewInterval());
+        params.put("expire_time", getExpireTime());
+        params.put("delete_time", getDeleteTime());
+        params.put("files", files);
+        params.put("custom_fields", customFields);
+        params.put("otp", otp);
+        params.put("compromised", compromised);
+        params.put("hidden", isHidden());
+
+        return params;
     }
 
     public static Credential fromJSON(JSONObject j) throws JSONException {
@@ -238,12 +414,25 @@ public class Credential extends Core implements Filterable {
         c.username = j.getString("username");
         c.password = j.getString("password");
         c.url = j.getString("url");
-        c.favicon = j.getString("favicon");
+        c.compromised = j.getString("compromised");
+
+        try {
+            if (j.has("favicon")) {
+                c.favicon = j.getString("favicon");
+            } else if (j.has("icon")) {
+                c.favicon = j.getString("icon");
+            }
+        } catch (JSONException ex) {
+            try {
+                c.favicon = j.getString("icon");
+            } catch (JSONException ex2) {
+                Log.e("Credential parse", "error, it has no icon or favicon field!", ex2);
+            }
+        }
 
         if (j.isNull("renew_interval")) {
             c.renewInterval = 0;
-        }
-        else {
+        } else {
             c.renewInterval = j.getLong("renew_interval");
         }
 
@@ -262,6 +451,48 @@ public class Credential extends Core implements Filterable {
         Credential c = Credential.fromJSON(j);
         c.setVault(v);
         return c;
+    }
+
+    public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
+        try {
+            requestAPI(c, "credentials", getAsRequestParams(false, true), "POST", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void update(Context c, final AsyncHttpResponseHandler responseHandler) {
+        try {
+            requestAPI(c, "credentials/" + getGuid(), getAsRequestParams(true, true), "PATCH", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendFileDeleteRequest(Context c, int file_id, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams params = new RequestParams();
+        try {
+            requestAPI(c, "file/" + file_id, params, "DELETE", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler, ProgressDialog progress) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(true);
+
+        progress.setMessage(c.getString(R.string.wait_while_encrypting));
+        try {
+            params.put("filename", vault.encryptString(fileName));
+            params.put("data", vault.encryptRawStringData(encodedFile));
+            params.put("mimetype", mimeType);
+            params.put("size", fileSize);
+            progress.setMessage(c.getString(R.string.wait_while_uploading));
+            requestAPI(c, "file", params, "POST", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

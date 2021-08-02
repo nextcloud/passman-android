@@ -1,0 +1,36 @@
+<resources>
+    <string name="action_settings">Postavke</string>
+    <string name="action_refresh">Osvježi</string>
+    <string name="nchost">Adresa poslužitelja</string>
+    <string name="username">Korisničko ime</string>
+    <string name="password">Zaporka</string>
+    <string name="connect">Poveži</string>
+    <string name="wrongNCUrl">Netočan pozadinski URL Nextclouda ili se ne može uspostaviti veza</string>
+    <string name="wrongNCSettings">Postavke nisu ispravne</string>
+    <string name="net_error">Pogreška mreže</string>
+    <string name="unlock">Otključaj</string>
+    <string name="wrong_vault_pw">Pogrešna zaporka trezora</string>
+    <string name="label">Oznaka</string>
+    <string name="email">E-pošta</string>
+    <string name="URL">URL</string>
+    <string name="description">Opis</string>
+    <string name="copied_to_clipboard">Tekst kopiran u međuspremnik</string>
+    <string name="vault_password">Zaporka trezora</string>
+    <string name="vault_password_save">Spremi zaporku trezora</string>
+    <string name="not_implemented_yet">Još nije implementirano</string>
+    <string name="created">Stvoreno:</string>
+    <string name="last_accessed">Posljednji pristup:</string>
+    <string name="search">Traži</string>
+    <string name="save">Spremi</string>
+    <string name="successfully_saved">Uspješno spremljeno</string>
+    <string name="error_occurred">Došlo je do pogreške</string>
+    <string name="update">Ažuriraj</string>
+    <string name="successfully_updated">Uspješno ažurirano</string>
+    <string name="delete">Izbriši</string>
+    <string name="successfully_deleted">Uspješno izbrisano</string>
+    <string name="app_settings">Postavke aplikacije</string>
+    <string name="loading">Učitavanje</string>
+    <string name="error_downloading_file">Pogreška pri preuzimanju datoteke</string>
+    <string name="error_writing_file">Pogreška pisanja datoteke</string>
+    <string name="files">Datoteke</string>
+    </resources>

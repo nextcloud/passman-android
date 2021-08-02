@@ -20,4 +20,17 @@
     <string name="not_implemented_yet">Еще не реализовано</string>
     <string name="created">Создано:</string>
     <string name="last_accessed">Посл. доступ:</string>
-</resources>
+    <string name="search">Поиск</string>
+    <string name="save">Сохранить</string>
+    <string name="successfully_saved">Успешно сохранено</string>
+    <string name="error_occurred">Произошла ошибка</string>
+    <string name="update">Обновить</string>
+    <string name="successfully_updated">Успешно обновлено</string>
+    <string name="delete">Удалить</string>
+    <string name="successfully_deleted">Успешно удалено</string>
+    <string name="app_settings">Настройки приложения</string>
+    <string name="loading">Загрузка</string>
+    <string name="error_downloading_file">Ошибка при загрузке файла</string>
+    <string name="error_writing_file">Ошибка записи файла</string>
+    <string name="files">Файлы</string>
+    </resources>

@@ -1,0 +1,24 @@
+<resources>
+    <string name="action_settings">Setări</string>
+    <string name="action_refresh">Reîmprospătează</string>
+    <string name="nchost">Adresă server</string>
+    <string name="username">Nume utilizator</string>
+    <string name="password">Parolă</string>
+    <string name="connect">Conectare</string>
+    <string name="wrongNCUrl">URL incorect către backend Nextcloud sau imposibil de conectat</string>
+    <string name="wrongNCSettings">Setări incorecte</string>
+    <string name="net_error">Eroare de rețea</string>
+    <string name="unlock">Deblochează</string>
+    <string name="wrong_vault_pw">Parolă de seif incorectă</string>
+    <string name="label">Etichetă</string>
+    <string name="email">E-mail</string>
+    <string name="URL">URL</string>
+    <string name="description">Descriere</string>
+    <string name="copied_to_clipboard">Text copiat în clipboard</string>
+    <string name="vault_password">Parolă seif</string>
+    <string name="vault_password_save">Salvează parola seifului</string>
+    <string name="not_implemented_yet">Neimplementat încă</string>
+    <string name="created">Creat:</string>
+    <string name="last_accessed">Ultima accesare:</string>
+    <string name="search">Caută</string>
+    </resources>
