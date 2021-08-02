@@ -133,6 +133,36 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"/>
 
+        <TextView
+            style="@style/Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/request_connect_timeout"/>
+
+        <EditText
+            android:id="@+id/request_connect_timeout_value"
+            style="@style/FormText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="LabelFor"
+            android:digits="0123456789"
+            android:inputType="number" />
+
+        <TextView
+            style="@style/Label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/request_response_timeout"/>
+
+        <EditText
+            android:id="@+id/request_response_timeout_value"
+            style="@style/FormText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="LabelFor"
+            android:digits="0123456789"
+            android:inputType="number" />
+
         <Button
             android:id="@+id/settings_save_button"
             android:layout_width="wrap_content"
