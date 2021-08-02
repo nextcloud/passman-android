@@ -28,11 +28,9 @@
     <string name="successfully_updated">Güncellendi</string>
     <string name="delete">Sil</string>
     <string name="successfully_deleted">Silindi</string>
-    <string name="nextcloud_connection_settings">NextCloud bağlantı ayarları</string>
     <string name="app_settings">Uygulama ayarları</string>
-    <string name="wait_while_loading">Yüklenirken bekleyin...</string>
     <string name="loading">Yükleniyor</string>
     <string name="error_downloading_file">Dosya indirilirken sorun çıktı</string>
     <string name="error_writing_file">Dosya yazılırken sorun çıktı</string>
     <string name="files">Dosyalar</string>
-</resources>
+    </resources>

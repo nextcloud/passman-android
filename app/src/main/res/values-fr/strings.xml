@@ -28,7 +28,6 @@
     <string name="successfully_updated">Mis à jour avec succès</string>
     <string name="delete">Supprimer</string>
     <string name="successfully_deleted">Suppression réussie</string>
-    <string name="nextcloud_connection_settings">Paramètres de connexion NextCloud</string>
     <string name="loading">Chargement</string>
     <string name="files">Fichiers</string>
-</resources>
+    </resources>
