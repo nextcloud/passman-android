@@ -218,19 +218,23 @@ public class Vault extends Core implements Filterable {
                 Credential c = Credential.fromJSON(j.getJSONObject(i), v);
                 if (c.getDeleteTime() == 0) {
                     v.credentials.add(c);
-                    // v.credential_guid.put(c.getGuid(), v.credentials.size() - 1);
+                    v.credential_guid.put(c.getGuid(), v.credentials.size() - 1);
                 }
             }
             v.challenge_password = v.credentials.get(0).password;
-            Collections.sort(v.credentials, new CredentialLabelSort());
-            for (int i = 0; i < v.credentials.size(); i++) {
-                v.credential_guid.put(v.credentials.get(i).getGuid(), i);
-            }
         } else {
             v.challenge_password = o.getString("challenge_password");
         }
 
         return v;
+    }
+
+    public void sort(int method) {
+        credential_guid.clear();
+        Collections.sort(credentials, new CredentialLabelSort(method));
+        for (int i = 0; i < credentials.size(); i++) {
+            credential_guid.put(credentials.get(i).getGuid(), i);
+        }
     }
 
     public void addCredential(Credential credential) {
