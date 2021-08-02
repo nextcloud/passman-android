@@ -19,171 +19,186 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
     *
 -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="es.wolfi.app.passman.CredentialDisplay">
+        android:layout_height="wrap_content">
 
-        <TextView
-            style="@style/TextAppearance.AppCompat.Medium"
+        <LinearLayout
+            android:id="@+id/linear_layout_settings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/nextcloud_connection_settings"/>
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            tools:context="es.wolfi.app.passman.CredentialDisplay">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="4dp"
-            android:background="#8A8A8A"/>
+            <TextView
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nextcloud_connection_settings" />
 
-        <TextView
-            style="@style/Label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/URL"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#8A8A8A" />
 
-        <EditText
-            android:id="@+id/settings_nextcloud_url"
-            style="@style/FormText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textUri"
-            android:autofillHints="@string/URL"
-            tools:ignore="LabelFor" />
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/URL" />
 
-        <TextView
-            style="@style/Label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/username"/>
+            <EditText
+                android:id="@+id/settings_nextcloud_url"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/URL"
+                android:inputType="textUri"
+                tools:ignore="LabelFor" />
 
-        <EditText
-            android:id="@+id/settings_nextcloud_user"
-            style="@style/FormText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="@string/username"
-            tools:ignore="LabelFor"
-            android:inputType="textNoSuggestions" />
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/username" />
 
-        <TextView
-            style="@style/Label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/password"/>
+            <EditText
+                android:id="@+id/settings_nextcloud_user"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/username"
+                android:inputType="textNoSuggestions"
+                tools:ignore="LabelFor" />
 
-        <EditText
-            android:id="@+id/settings_nextcloud_password"
-            style="@style/FormText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="@string/password"
-            tools:ignore="LabelFor"
-            android:inputType="textPassword" />
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/password" />
 
-        <TextView
-            style="@style/TextAppearance.AppCompat.Medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="@string/app_settings"/>
+            <EditText
+                android:id="@+id/settings_nextcloud_password"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/password"
+                android:inputType="textPassword"
+                tools:ignore="LabelFor" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="4dp"
-            android:background="#8A8A8A"/>
+            <TextView
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/app_settings" />
 
-        <TextView
-            style="@style/Label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/app_start_password"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#8A8A8A" />
 
-        <Switch
-            android:id="@+id/settings_app_start_password_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:switchMinWidth="56dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/app_start_password_android_auth_description"
-            android:checked="false"
-            tools:ignore="UseSwitchCompatOrMaterialXml" />
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/app_start_password" />
 
-        <TextView
-            style="@style/Label"
-            android:id="@+id/default_autofill_vault_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/default_autofill_vault"/>
+            <Switch
+                android:id="@+id/settings_app_start_password_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:switchMinWidth="56dp"
+                android:text="@string/app_start_password_android_auth_description"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
 
-        <Spinner
-            android:id="@+id/default_autofill_vault"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/default_autofill_vault_title"
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/default_autofill_vault" />
 
-        <TextView
-            style="@style/TextAppearance.AppCompat.Medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:text="@string/expert_settings"/>
+            <Spinner
+                android:id="@+id/default_autofill_vault"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="4dp"
-            android:background="#8A8A8A"/>
+            <TextView
+                style="@style/TextAppearance.AppCompat.Medium"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/expert_settings" />
 
-        <TextView
-            style="@style/Label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/request_connect_timeout"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="4dp"
+                android:background="#8A8A8A" />
 
-        <EditText
-            android:id="@+id/request_connect_timeout_value"
-            style="@style/FormText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="LabelFor"
-            android:digits="0123456789"
-            android:inputType="number" />
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/request_connect_timeout" />
 
-        <TextView
-            style="@style/Label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/request_response_timeout"/>
+            <EditText
+                android:id="@+id/request_connect_timeout_value"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789"
+                android:inputType="number"
+                tools:ignore="LabelFor" />
 
-        <EditText
-            android:id="@+id/request_response_timeout_value"
-            style="@style/FormText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="LabelFor"
-            android:digits="0123456789"
-            android:inputType="number" />
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/request_response_timeout" />
 
-        <Button
+            <EditText
+                android:id="@+id/request_response_timeout_value"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789"
+                android:inputType="number"
+                tools:ignore="LabelFor" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom|end">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/settings_save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="20dp"
-            android:text="@string/save"
-            android:theme="@style/Button.Primary" />
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="?attr/colorPrimary"
+            app:srcCompat="@drawable/ic_baseline_save_24_white" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    </LinearLayout>
-</ScrollView>
+</RelativeLayout>
