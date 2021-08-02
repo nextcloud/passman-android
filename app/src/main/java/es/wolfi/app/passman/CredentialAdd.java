@@ -144,12 +144,10 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         ButterKnife.bind(this, view);
 
         filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
-        filesListRecyclerView.setHasFixedSize(true);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         filesListRecyclerView.setAdapter(fed);
 
         customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
-        customFieldsListRecyclerView.setHasFixedSize(true);
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(cfed);
     }
