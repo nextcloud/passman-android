@@ -39,6 +39,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
@@ -111,7 +112,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_credential_add, container, false);
 
-        Button saveCredentialButton = (Button) view.findViewById(R.id.SaveCredentialButton);
+        FloatingActionButton saveCredentialButton = (FloatingActionButton) view.findViewById(R.id.SaveCredentialButton);
         saveCredentialButton.setOnClickListener(this);
         saveCredentialButton.setVisibility(View.VISIBLE);
 

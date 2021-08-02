@@ -39,6 +39,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -119,11 +120,11 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_credential_edit, container, false);
 
-        Button updateCredentialButton = (Button) view.findViewById(R.id.UpdateCredentialButton);
+        FloatingActionButton updateCredentialButton = (FloatingActionButton) view.findViewById(R.id.UpdateCredentialButton);
         updateCredentialButton.setOnClickListener(this);
         updateCredentialButton.setVisibility(View.VISIBLE);
 
-        Button deleteCredentialButton = (Button) view.findViewById(R.id.DeleteCredentialButton);
+        FloatingActionButton deleteCredentialButton = (FloatingActionButton) view.findViewById(R.id.DeleteCredentialButton);
         deleteCredentialButton.setOnClickListener(this.getDeleteButtonListener());
         deleteCredentialButton.setVisibility(View.VISIBLE);
 
