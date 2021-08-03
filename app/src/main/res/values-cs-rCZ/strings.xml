@@ -28,9 +28,28 @@
     <string name="successfully_updated">Úspěšně aktualizováno</string>
     <string name="delete">Vymazat</string>
     <string name="successfully_deleted">Úspěšně vymazáno</string>
+    <string name="nextcloud_connection_settings">Nastavení připojení k Nextcloud</string>
     <string name="app_settings">Nastavení aplikace</string>
+    <string name="wait_while_loading">Vyčkejte dokončení načítání…</string>
     <string name="loading">Načítání</string>
     <string name="error_downloading_file">Chyba při stahování souboru</string>
     <string name="error_writing_file">Chyba při zápisu do souboru</string>
     <string name="files">Soubory</string>
-    </resources>
+    <string name="custom_fields">Uživatelsky určené kolonky</string>
+    <string name="add_file">Přidat soubor</string>
+    <string name="add_custom_field">Přidat uživatelsky určenou kolonku</string>
+    <string name="unlock_passman">Odemknout Passman</string>
+    <string name="unlock_passman_message_device_auth">Udělte pověření pro přístup do aplikace Passman</string>
+    <string name="app_start_password">Heslo při spuštění aplikace</string>
+    <string name="app_start_password_android_auth_description">Zapnout ověření uživatele ze systému Android při spuštění aplikace?</string>
+    <string name="wait_while_encrypting">Vyčkejte dokončení šifrování…</string>
+    <string name="wait_while_decrypting">Vyčkejte dokončení rozšifrování…</string>
+    <string name="wait_while_uploading">Vyčkejte dokončení nahrávání…</string>
+    <string name="wait_while_downloading">Vyčkejte dokončení stahování…</string>
+    <string name="autofill_noactivevault">Žádný aktivní trezor</string>
+    <string name="autofill_vaultlocked">Trezor je třeba odemknout</string>
+    <string name="autofill_vaultempty">V trezoru nejsou žádné přihlašovací údaje</string>
+    <string name="autofill_createdbyautofillservice">Vytvořeno službo automatického vyplňování</string>
+    <string name="default_autofill_vault">Výchozí trezor pro automatické vyplňování</string>
+    <string name="automatically">automaticky</string>
+</resources>
