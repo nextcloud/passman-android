@@ -32,17 +32,14 @@ android {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 8
-        versionName "0.142"
+        versionCode 9
+        versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11 -frtti -fexceptions"
             }
 
-        }
-        ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
         }
     }
     buildTypes {
@@ -76,49 +73,38 @@ android {
         }
     }
 
-    flavorDimensions "arm"
-
-    productFlavors {
-        create("armabi") {
-            dimension("arm")
-        }
-        create("armeabi-v7a") {
-            dimension("arm")
-        }
-        create("arm64-v8a") {
-            dimension("arm")
-        }
-        create("x86_64") {
-            dimension("x86")
-        }
-        create("x86") {
-            dimension("x86")
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
+            universalApk true
         }
     }
 
     lintOptions {
         disable 'MissingTranslation'
     }
-    ndkVersion '21.3.6528147'
+    ndkVersion '21.4.7075529'
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.2.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.4.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // Nextcloud SSO
     implementation "com.github.nextcloud:Android-SingleSignOn:0.5.6"
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
     implementation 'com.jakewharton:butterknife:10.2.3'
-    implementation 'com.koushikdutta.ion:ion:3.0.9'
+    implementation 'com.koushikdutta.ion:ion:3.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'commons-codec:commons-codec:1.10'
-    implementation 'com.loopj.android:android-async-http:1.4.9'
-    testImplementation 'junit:junit:4.13.1'
+    implementation 'commons-codec:commons-codec:1.15'
+    implementation 'com.loopj.android:android-async-http:1.4.11'
+    testImplementation 'junit:junit:4.13.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 }

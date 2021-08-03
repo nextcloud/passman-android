@@ -26,7 +26,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,22 +39,21 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
+import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
-import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.JSONUtils;
+import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.ProgressUtils;
 
 
 /**
@@ -93,7 +91,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
     private CustomFieldEditAdapter cfed;
     private RecyclerView filesListRecyclerView;
     private RecyclerView customFieldsListRecyclerView;
-    private boolean alreadySaving = false;
+    private AtomicBoolean alreadySaving = new AtomicBoolean(false);
 
     public CredentialAdd() {
         // Required empty public constructor
@@ -114,7 +112,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_credential_add, container, false);
 
-        Button saveCredentialButton = (Button) view.findViewById(R.id.SaveCredentialButton);
+        FloatingActionButton saveCredentialButton = (FloatingActionButton) view.findViewById(R.id.SaveCredentialButton);
         saveCredentialButton.setOnClickListener(this);
         saveCredentialButton.setVisibility(View.VISIBLE);
 
@@ -146,12 +144,10 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         ButterKnife.bind(this, view);
 
         filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
-        filesListRecyclerView.setHasFixedSize(true);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         filesListRecyclerView.setAdapter(fed);
 
         customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
-        customFieldsListRecyclerView.setHasFixedSize(true);
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(cfed);
     }
@@ -170,63 +166,10 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         mListener = null;
     }
 
-    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) throws JSONException {
+    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) {
         Context context = getContext();
-        final ProgressDialog progress = new ProgressDialog(context);
-        progress.setTitle(context.getString(R.string.loading));
-        progress.setMessage(context.getString(R.string.wait_while_loading));
-        progress.setCancelable(false);
-        progress.show();
-
-        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                String result = new String(responseBody);
-                if (statusCode == 200 && !result.equals("")) {
-                    try {
-                        JSONObject fileObject = new JSONObject(result);
-                        if (fileObject.has("message") && fileObject.getString("message").equals("Current user is not logged in")) {
-                            return;
-                        }
-                        if (fileObject.has("file_id") && fileObject.has("filename") && fileObject.has("guid")
-                                && fileObject.has("size") && fileObject.has("created") && fileObject.has("mimetype")) {
-                            fileObject.put("filename", fileName);
-                            File file = new File(fileObject);
-
-                            if (requestCode == 4) {
-                                fed.addFile(file);
-                                fed.notifyDataSetChanged();
-                            }
-                            if (requestCode == 5) {
-                                JSONObject customFieldJSONObject = new JSONObject();
-                                customFieldJSONObject.put("label", "newLabel" + cfed.getItemCount() + 1);
-                                customFieldJSONObject.put("secret", false);
-                                customFieldJSONObject.put("field_type", "file");
-                                customFieldJSONObject.put("value", file.getAsJSONObject());
-
-                                CustomField cf = new CustomField(customFieldJSONObject);
-                                cfed.addCustomField(cf);
-                                cfed.notifyDataSetChanged();
-                            }
-                        }
-                    } catch (JSONException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-                progress.dismiss();
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                error.printStackTrace();
-                progress.dismiss();
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        };
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+        final AsyncHttpResponseHandler responseHandler = new CredentialAddFileResponseHandler(progress, getView(), fileName, requestCode, fed, cfed);
 
         // Start encryption a little later so that the main thread does not get stuck in the file selection dialog and it can close.
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -241,7 +184,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd(4);
+                ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddFile.ordinal());
             }
         };
     }
@@ -251,21 +194,16 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordList) Objects.requireNonNull(getActivity())).selectFileToAdd(5);
+                    ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal());
                 } else {
-                    try {
-                        JSONObject customFieldJSONObject = new JSONObject();
-                        customFieldJSONObject.put("label", "newLabel" + (cfed.getItemCount() + 1));
-                        customFieldJSONObject.put("secret", customFieldType.getSelectedItem().toString().toLowerCase().equals("password"));
-                        customFieldJSONObject.put("field_type", customFieldType.getSelectedItem().toString().toLowerCase());
-                        customFieldJSONObject.put("value", "");
+                    CustomField cf = new CustomField();
+                    cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
+                    cf.setSecret(customFieldType.getSelectedItem().toString().toLowerCase().equals("password"));
+                    cf.setFieldType(customFieldType.getSelectedItem().toString().toLowerCase());
+                    cf.setValue("");
 
-                        CustomField cf = new CustomField(customFieldJSONObject);
-                        cfed.addCustomField(cf);
-                        cfed.notifyDataSetChanged();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    cfed.addCustomField(cf);
+                    cfed.notifyDataSetChanged();
                 }
             }
         };
@@ -273,7 +211,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if (alreadySaving) {
+        if (alreadySaving.get()) {
             return;
         }
 
@@ -281,13 +219,6 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             label_header.setTextColor(getResources().getColor(R.color.danger));
             return;
         }
-
-        Context context = getContext();
-        final ProgressDialog progress = new ProgressDialog(context);
-        progress.setTitle(context.getString(R.string.loading));
-        progress.setMessage(context.getString(R.string.wait_while_loading));
-        progress.setCancelable(false);
-        progress.show();
 
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
@@ -303,75 +234,11 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         this.credential.setCompromised(false);
         this.credential.setHidden(false);
 
-        alreadySaving = true;
+        alreadySaving.set(true);
 
-        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                String result = new String(responseBody);
-                if (statusCode == 200 && !result.equals("")) {
-                    try {
-                        JSONObject credentialObject = new JSONObject(result);
-                        Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-                        if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
-                            Credential currentCredential = Credential.fromJSON(credentialObject, v);
-
-                            Snackbar.make(view, R.string.successfully_saved, Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                            assert getFragmentManager() != null;
-                            Objects.requireNonNull(((PasswordList) getActivity())).addCredentialToCurrentLocalVaultList(currentCredential);
-                            Objects.requireNonNull(((PasswordList) getActivity())).showAddCredentialsButton();
-                            alreadySaving = false;
-                            progress.dismiss();
-                            getFragmentManager().popBackStack();
-                            return;
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    alreadySaving = false;
-                    progress.dismiss();
-                    Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                alreadySaving = false;
-                progress.dismiss();
-                String response = new String(responseBody);
-
-                if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-                    try {
-                        JSONObject o = new JSONObject(response);
-                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                            Snackbar.make(view, o.getString("message"), Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                            return;
-                        }
-                    } catch (JSONException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-
-                if (error != null && error.getMessage() != null) {
-                    error.printStackTrace();
-                    Log.e("async http response", new String(responseBody));
-                    Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                } else {
-                    Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        };
+        Context context = getContext();
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordList) getActivity(), getFragmentManager());
 
         this.credential.save(context, responseHandler);
     }

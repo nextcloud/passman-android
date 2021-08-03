@@ -57,7 +57,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mContentView.setText(mValues.get(position).getLabel());
+        holder.mContentView.setText(holder.mItem.getLabel());
 
         if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
             holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
@@ -73,6 +73,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
                 }
             }
         });
+        //if (holder.mItem.isHidden()) holder.mView.setVisibility(View.GONE);
     }
 
     @Override

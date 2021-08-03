@@ -21,4 +21,9 @@
     <string name="created">作成:</string>
     <string name="last_accessed">最終アクセス：</string>
     <string name="search">検索</string>
+    <string name="save">保存</string>
+    <string name="delete">削除</string>
+    <string name="app_settings">アプリ設定</string>
+    <string name="loading">読み込み中</string>
+    <string name="files">ファイル</string>
     </resources>

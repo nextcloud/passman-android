@@ -21,4 +21,9 @@
     <string name="created">Δημιουργήθηκε:</string>
     <string name="last_accessed">Τελευταία προσπέλαση:</string>
     <string name="search">Αναζήτηση</string>
+    <string name="save">Αποθήκευση</string>
+    <string name="update">Ενημέρωση</string>
+    <string name="delete">Διαγραφή</string>
+    <string name="loading">Γίνεται φόρτωση</string>
+    <string name="files">Αρχεία</string>
     </resources>

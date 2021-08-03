@@ -21,4 +21,16 @@
     <string name="created">Utworzono:</string>
     <string name="last_accessed">Ostatnio uzyskany dostęp:</string>
     <string name="search">Szukaj</string>
+    <string name="save">Zapisz</string>
+    <string name="successfully_saved">Zapisano pomyślnie</string>
+    <string name="error_occurred">Wystąpił błąd</string>
+    <string name="update">Aktualizuj</string>
+    <string name="successfully_updated">Zaktualizowano pomyślnie</string>
+    <string name="delete">Usuń</string>
+    <string name="successfully_deleted">Usunięto pomyślnie</string>
+    <string name="app_settings">Ustawienia aplikacji</string>
+    <string name="loading">Wczytywanie</string>
+    <string name="error_downloading_file">Błąd podczas pobierania pliku</string>
+    <string name="error_writing_file">Błąd podczas zapisywania pliku</string>
+    <string name="files">Pliki</string>
     </resources>

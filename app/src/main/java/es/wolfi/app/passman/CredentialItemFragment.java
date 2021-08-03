@@ -1,39 +1,40 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 package es.wolfi.app.passman;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+
+import androidx.appcompat.widget.AppCompatImageButton;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -53,6 +54,7 @@ public class CredentialItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private int sortMethod = 0;     // 0=default, 1=az ascending, 2=az descending
     private OnListFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
     private RecyclerView recyclerView;
@@ -83,9 +85,11 @@ public class CredentialItemFragment extends Fragment {
         }
     }
 
-    public void loadCredentialList(View view){
+    public void loadCredentialList(View view) {
         final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
         final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
+        final AppCompatImageButton toggleSortButton = (AppCompatImageButton) view.findViewById(R.id.toggle_sort_button);
+
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -94,13 +98,7 @@ public class CredentialItemFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String searchText = searchInput.getText().toString().toLowerCase();
-                if(filterTask != null){
-                    filterTask.cancel(true);
-                }
-                filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
-                ArrayList<Credential> input [] = new ArrayList[]{v.getCredentials()};
-                filterTask.execute((Object[]) input);
+                applyFilters(v, searchInput);
             }
 
             @Override
@@ -108,7 +106,42 @@ public class CredentialItemFragment extends Fragment {
 
             }
         });
+        toggleSortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sortMethod = (++sortMethod % 3);
+                updateToggleSortButtonImage(toggleSortButton);
+
+                v.sort(sortMethod);
+                applyFilters(v, searchInput);
+            }
+        });
+        v.sort(sortMethod);
         recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+        updateToggleSortButtonImage(toggleSortButton);
+    }
+
+    public void applyFilters(Vault vault, EditText searchInput) {
+        String searchText = searchInput.getText().toString().toLowerCase();
+        if (filterTask != null) {
+            filterTask.cancel(true);
+        }
+        filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
+        ArrayList<Credential> input[] = new ArrayList[]{vault.getCredentials()};
+        filterTask.execute((Object[]) input);
+    }
+
+    public void updateToggleSortButtonImage(AppCompatImageButton toggleSortButton) {
+        if (sortMethod == 0) {
+            // set default image
+            toggleSortButton.setImageResource(R.drawable.ic_baseline_list_24);
+        } else if (sortMethod == 1) {
+            // set az ascending image
+            toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
+        } else if (sortMethod == 2) {
+            // set az descending image
+            toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
+        }
     }
 
     @Override

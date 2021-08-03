@@ -20,7 +20,6 @@
  */
 package es.wolfi.app.passman;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Rect;
@@ -49,9 +48,12 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import es.wolfi.app.ResponseHandlers.CustomFieldFileDeleteResponseHandler;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
+import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.ProgressUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File}.
@@ -91,15 +93,6 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
         return new ViewHolder(view);
     }
 
-    @SuppressLint("DefaultLocale")
-    public static String humanReadableByteCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-    }
-
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
@@ -110,7 +103,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             holder.mValueEdit.setEnabled(false);
             try {
                 File file = new File(customField.getJvalue());
-                String filenameToPrint = String.format("%s (%s)", file.getFilename(), humanReadableByteCount((Double.valueOf(file.getSize())).longValue(), true));
+                String filenameToPrint = String.format("%s (%s)", file.getFilename(), FileUtils.humanReadableByteCount((Double.valueOf(file.getSize())).longValue(), true));
                 holder.mValueEdit.setText(filenameToPrint);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -185,39 +178,15 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             }
         });
 
+        CustomFieldEditAdapter self = this;
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 Context context = holder.mView.getContext();
 
                 if (holder.mItem.getFieldType().equals("file")) {
-                    final ProgressDialog progress = new ProgressDialog(context);
-                    progress.setTitle(context.getString(R.string.loading));
-                    progress.setMessage(context.getString(R.string.wait_while_loading));
-                    progress.setCancelable(false);
-                    progress.show();
-
-                    AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                            if (statusCode == 200) {
-                                mValues.remove(holder.mItem);
-                                notifyDataSetChanged();
-                            }
-                            progress.dismiss();
-                        }
-
-                        @Override
-                        public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                            error.printStackTrace();
-                            progress.dismiss();
-                        }
-
-                        @Override
-                        public void onRetry(int retryNo) {
-                            // called when request is retried
-                        }
-                    };
+                    final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                    final AsyncHttpResponseHandler responseHandler = new CustomFieldFileDeleteResponseHandler(progress, holder, mValues, self);
 
                     try {
                         File file = new File(holder.mItem.getJvalue());

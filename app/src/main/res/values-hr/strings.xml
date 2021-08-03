@@ -21,4 +21,16 @@
     <string name="created">Stvoreno:</string>
     <string name="last_accessed">Posljednji pristup:</string>
     <string name="search">Traži</string>
+    <string name="save">Spremi</string>
+    <string name="successfully_saved">Uspješno spremljeno</string>
+    <string name="error_occurred">Došlo je do pogreške</string>
+    <string name="update">Ažuriraj</string>
+    <string name="successfully_updated">Uspješno ažurirano</string>
+    <string name="delete">Izbriši</string>
+    <string name="successfully_deleted">Uspješno izbrisano</string>
+    <string name="app_settings">Postavke aplikacije</string>
+    <string name="loading">Učitavanje</string>
+    <string name="error_downloading_file">Pogreška pri preuzimanju datoteke</string>
+    <string name="error_writing_file">Pogreška pisanja datoteke</string>
+    <string name="files">Datoteke</string>
     </resources>

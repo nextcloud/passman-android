@@ -14,6 +14,11 @@ import es.wolfi.passman.API.Vault;
 
 public class PassmanReceiver extends BroadcastReceiver {
 
+    public static final String CopyUsernameIntentAction = "COPYUSERNAMEINTENTACTION";
+    public static final String CopyEmailIntentAction = "COPYEMAILINTENTACTION";
+    public static final String CopyPasswordIntentAction = "COPYPASSWORDINTENTACTION";
+    public static final String DismissCopyIntentAction = "DISMISSCOPYINTENTACTION";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
@@ -31,20 +36,20 @@ public class PassmanReceiver extends BroadcastReceiver {
                         Credential c = v.findCredentialByGUID(credGuid);
                         if (c != null) {
                             switch (intentAction) {
-                                case "COPYUSERNAMEINTENTACTION":
+                                case CopyUsernameIntentAction:
                                     copyTextToClipboard(context, "Username", c.getUsername());
                                     break;
-                                case "COPYEMAILINTENTACTION":
+                                case CopyEmailIntentAction:
                                     copyTextToClipboard(context, "Email", c.getEmail());
                                     break;
-                                case "COPYPASSWORDINTENTACTION":
+                                case CopyPasswordIntentAction:
                                     copyTextToClipboard(context, "Password", c.getPassword());
                                     break;
                             }
                         }
                     }
                 }
-            } else if (intentAction.equals("DISMISSCOPYINTENTACTION")) {
+            } else if (intentAction.equals(DismissCopyIntentAction)) {
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
                 // notificationId is a unique int for each notification that you must define

@@ -21,4 +21,16 @@
     <string name="created">Vytvořeno:</string>
     <string name="last_accessed">Poslední přístup:</string>
     <string name="search">Hledat</string>
+    <string name="save">Uložit</string>
+    <string name="successfully_saved">Úspěšně uloženo</string>
+    <string name="error_occurred">Došlo k chybě</string>
+    <string name="update">Aktualizovat</string>
+    <string name="successfully_updated">Úspěšně aktualizováno</string>
+    <string name="delete">Vymazat</string>
+    <string name="successfully_deleted">Úspěšně vymazáno</string>
+    <string name="app_settings">Nastavení aplikace</string>
+    <string name="loading">Načítání</string>
+    <string name="error_downloading_file">Chyba při stahování souboru</string>
+    <string name="error_writing_file">Chyba při zápisu do souboru</string>
+    <string name="files">Soubory</string>
     </resources>

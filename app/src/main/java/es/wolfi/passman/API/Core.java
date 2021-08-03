@@ -36,6 +36,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.nextcloud.android.sso.aidl.NextcloudRequest;
+import com.nextcloud.android.sso.api.AidlNetworkRequest;
 import com.nextcloud.android.sso.api.NextcloudAPI;
 import com.nextcloud.android.sso.api.Response;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
@@ -43,22 +44,25 @@ import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
 import com.nextcloud.android.sso.helper.SingleAccountHelper;
 import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HeaderElement;
+import cz.msebera.android.httpclient.ParseException;
+import es.wolfi.app.ResponseHandlers.CoreAPIGETResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
-import es.wolfi.utils.JSONUtils;
 
 public abstract class Core {
     protected static final String LOG_TAG = "API_LIB";
@@ -69,7 +73,7 @@ public abstract class Core {
     protected static String password;
     protected static String version_name;
     protected static String API_URL = "/index.php/apps/passman/api/v2/";
-    protected static int version_number = 0;
+    protected static int versionNumber = 0;
 
 
     public static void setUpAPI(Context c, String host, String username, String password) {
@@ -108,46 +112,15 @@ public abstract class Core {
         Core.password = password;
     }
 
+    public static int getConnectTimeout(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15) * 1000;
+    }
+
+    public static int getResponseTimeout(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
+    }
+
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
-        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                String result = new String(responseBody);
-                if (statusCode == 200 && !result.equals("")) {
-                    if (JSONUtils.isJSONObject(result)) {
-                        try {
-                            JSONObject o = new JSONObject(result);
-                            if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                                callback.onCompleted(new Exception("401"), null);
-                                return;
-                            }
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-                callback.onCompleted(null, result);
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                String errorMessage = error.getMessage();
-                if (errorMessage == null) {
-                    error.printStackTrace();
-                    errorMessage = "Unknown error";
-                }
-                if (statusCode == 401) {
-                    callback.onCompleted(new Exception("401"), null);
-                }
-                callback.onCompleted(new Exception(errorMessage), null);
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        };
-
         if (ssoAccount != null) {
             final Map<String, List<String>> header = new HashMap<>();
             header.put("Content-Type", Collections.singletonList("application/json"));
@@ -159,8 +132,11 @@ public abstract class Core {
                     .build();
             new SyncedRequestTask(nextcloudRequest, ssoAccount, callback, c).execute();
         } else {
+            final AsyncHttpResponseHandler responseHandler = new CoreAPIGETResponseHandler(callback);
             AsyncHttpClient client = new AsyncHttpClient();
             client.setBasicAuth(username, password);
+            client.setConnectTimeout(getConnectTimeout(c));
+            client.setResponseTimeout(getResponseTimeout(c));
             client.addHeader("Content-Type", "application/json");
             client.get(host.concat(endpoint), responseHandler);
         }
@@ -169,29 +145,43 @@ public abstract class Core {
     public static void requestAPI(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
             throws MalformedURLException {
 
-        URL url = new URL(host.concat(endpoint));
+        if (ssoAccount != null) {
+            final Map<String, List<String>> header = new HashMap<>();
+            header.put("Content-Type", Collections.singletonList("application/json"));
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setBasicAuth(username, password);
-        client.setConnectTimeout(1000 * 15);      // 15s connect timeout
-        client.setResponseTimeout(1000 * 120);    // 120s response timeout
-        //client.addHeader("Content-Type", "application/json; utf-8");
-        client.addHeader("Accept", "application/json, text/plain, */*");
+            NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
+                    .setMethod(requestType)
+                    .setUrl(API_URL.concat(endpoint))
+                    .setHeader(header)
+                    .setRequestBody(postDataParams.toString())
+                    .build();
+
+            new SyncedRequestTask(nextcloudRequest, ssoAccount, responseHandler, c).execute();
+        } else {
+            URL url = new URL(host.concat(endpoint));
+
+            AsyncHttpClient client = new AsyncHttpClient();
+            client.setBasicAuth(username, password);
+            client.setConnectTimeout(getConnectTimeout(c));
+            client.setResponseTimeout(getResponseTimeout(c));
+            //client.addHeader("Content-Type", "application/json; utf-8");
+            client.addHeader("Accept", "application/json, text/plain, */*");
 
 
-        if (requestType.equals("POST")) {
-            client.post(url.toString(), postDataParams, responseHandler);
-        } else if (requestType.equals("PATCH")) {
-            client.patch(url.toString(), postDataParams, responseHandler);
-        } else if (requestType.equals("DELETE")) {
-            client.delete(url.toString(), postDataParams, responseHandler);
+            if (requestType.equals("POST")) {
+                client.post(url.toString(), postDataParams, responseHandler);
+            } else if (requestType.equals("PATCH")) {
+                client.patch(url.toString(), postDataParams, responseHandler);
+            } else if (requestType.equals("DELETE")) {
+                client.delete(url.toString(), postDataParams, responseHandler);
+            }
         }
     }
 
     // TODO Test this method once the server response works!
     public static void getAPIVersion(final Context c, FutureCallback<Integer> cb) {
-        if (version_number != 0) {
-            cb.onCompleted(null, version_number);
+        if (versionNumber != 0) {
+            cb.onCompleted(null, versionNumber);
             return;
         }
 
@@ -273,15 +263,58 @@ public abstract class Core {
         });
     }
 
+    private static class NCHeader implements Header {
+
+        String name, value;
+
+        public NCHeader(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public NCHeader(ArrayList<AidlNetworkRequest.PlainHeader> plainHeaders, cz.msebera.android.httpclient.Header[] headers) {
+            Iterator<AidlNetworkRequest.PlainHeader> it = plainHeaders.iterator();
+            for (int i = 0; it.hasNext(); i++) {
+                AidlNetworkRequest.PlainHeader plainHeader = it.next();
+                headers[i] = new NCHeader(plainHeader.getName(), plainHeader.getValue());
+            }
+        }
+
+        @Override
+        public HeaderElement[] getElements() throws ParseException {
+            return new HeaderElement[0];
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getValue() {
+            return value;
+        }
+    }
+
     private static class SyncedRequestTask extends AsyncTask<Void, Void, Boolean> {
 
-        private NextcloudRequest nextcloudRequest;
-        private NextcloudAPI mNextcloudAPI;
-        private FutureCallback<String> callback;
+        private final NextcloudRequest nextcloudRequest;
+        private final NextcloudAPI mNextcloudAPI;
+        private final AsyncHttpResponseHandler responseHandler;
+        private final FutureCallback<String> callback;
+
+        SyncedRequestTask(@NonNull NextcloudRequest nextcloudRequest, @NonNull SingleSignOnAccount ssoAccount, final AsyncHttpResponseHandler responseHandler, Context c) {
+            this.nextcloudRequest = nextcloudRequest;
+            this.mNextcloudAPI = new NextcloudAPI(c.getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
+            this.responseHandler = responseHandler;
+            this.callback = null;
+            Log.d("SyncedRequestTask", ssoAccount.name + " → " + nextcloudRequest.getMethod() + " " + nextcloudRequest.getUrl() + " ");
+        }
 
         SyncedRequestTask(@NonNull NextcloudRequest nextcloudRequest, @NonNull SingleSignOnAccount ssoAccount, final FutureCallback<String> callback, Context c) {
             this.nextcloudRequest = nextcloudRequest;
             this.mNextcloudAPI = new NextcloudAPI(c.getApplicationContext(), ssoAccount, new GsonBuilder().create(), apiCallback);
+            this.responseHandler = null;
             this.callback = callback;
             Log.d("SyncedRequestTask", ssoAccount.name + " → " + nextcloudRequest.getMethod() + " " + nextcloudRequest.getUrl() + " ");
         }
@@ -292,6 +325,7 @@ public abstract class Core {
                 Log.d("doInBackground", "before request");
                 Response response = mNextcloudAPI.performNetworkRequestV2(nextcloudRequest);
                 Log.d("doInBackground", "NextcloudRequest: " + nextcloudRequest.toString());
+
                 StringBuilder textBuilder = new StringBuilder();
                 final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getBody()));
                 String line;
@@ -300,10 +334,21 @@ public abstract class Core {
                 }
                 response.getBody().close();
                 Log.d("response string:", textBuilder.toString());
-                callback.onCompleted(null, textBuilder.toString());
+
+                cz.msebera.android.httpclient.Header[] headers = new cz.msebera.android.httpclient.Header[response.getPlainHeaders().size()];
+                new NCHeader(response.getPlainHeaders(), headers);
+
+                if (responseHandler != null) {
+                    responseHandler.onSuccess(200, headers, textBuilder.toString().getBytes(StandardCharsets.UTF_8));
+                } else if (callback != null) {
+                    callback.onCompleted(null, textBuilder.toString());
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e("error msg:", e.getMessage());
+                if (responseHandler != null) {
+                    responseHandler.onFailure(400, null, null, e);
+                }
             }
 
             return true;
