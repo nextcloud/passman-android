@@ -73,7 +73,6 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
                 }
             }
         });
-        //if (holder.mItem.isHidden()) holder.mView.setVisibility(View.GONE);
     }
 
     @Override
