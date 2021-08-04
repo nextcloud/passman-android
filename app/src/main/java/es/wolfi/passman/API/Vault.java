@@ -284,7 +284,7 @@ public class Vault extends Core implements Filterable {
             JSONArray credentialArr = new JSONArray();
             for (Credential credential : vault.getCredentials()) {
                 try {
-                    credentialArr.put(credential.getAsJSONObject());
+                    credentialArr.put(credential.getAsJSONObject(true));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

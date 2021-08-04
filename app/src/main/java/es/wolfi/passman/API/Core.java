@@ -23,6 +23,7 @@ package es.wolfi.passman.API;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -43,6 +44,8 @@ import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundExce
 import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
 import com.nextcloud.android.sso.helper.SingleAccountHelper;
 import com.nextcloud.android.sso.model.SingleSignOnAccount;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -127,8 +130,7 @@ public abstract class Core {
 
             NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
                     .setMethod("GET")
-                    .setUrl(API_URL.concat(endpoint))
-                    .setHeader(header)
+                    .setUrl(Uri.encode(API_URL.concat(endpoint), "/"))
                     .build();
             new SyncedRequestTask(nextcloudRequest, ssoAccount, callback, c).execute();
         } else {
@@ -142,39 +144,49 @@ public abstract class Core {
         }
     }
 
-    public static void requestAPI(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
+    // for sso requests
+    public static void requestAPI(Context c, String endpoint, JSONObject postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
             throws MalformedURLException {
-
         if (ssoAccount != null) {
             final Map<String, List<String>> header = new HashMap<>();
-            header.put("Content-Type", Collections.singletonList("application/json"));
+            //header.put("Content-Type", Collections.singletonList("application/json"));
 
+            if (requestType.equals("PATCH")) {
+                requestType = "POST";
+                //header.put("X-HTTP-Method-Override", Collections.singletonList("PATCH"));
+            }
+
+            Log.d("CredentialAdd params", postDataParams.toString());
             NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
                     .setMethod(requestType)
                     .setUrl(API_URL.concat(endpoint))
-                    .setHeader(header)
                     .setRequestBody(postDataParams.toString())
+                    .setHeader(header)
                     .build();
 
             new SyncedRequestTask(nextcloudRequest, ssoAccount, responseHandler, c).execute();
-        } else {
-            URL url = new URL(host.concat(endpoint));
+        }
+    }
 
-            AsyncHttpClient client = new AsyncHttpClient();
-            client.setBasicAuth(username, password);
-            client.setConnectTimeout(getConnectTimeout(c));
-            client.setResponseTimeout(getResponseTimeout(c));
-            //client.addHeader("Content-Type", "application/json; utf-8");
-            client.addHeader("Accept", "application/json, text/plain, */*");
+    // for legacy requests
+    public static void requestAPI(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
+            throws MalformedURLException {
 
+        URL url = new URL(host.concat(endpoint));
 
-            if (requestType.equals("POST")) {
-                client.post(url.toString(), postDataParams, responseHandler);
-            } else if (requestType.equals("PATCH")) {
-                client.patch(url.toString(), postDataParams, responseHandler);
-            } else if (requestType.equals("DELETE")) {
-                client.delete(url.toString(), postDataParams, responseHandler);
-            }
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setBasicAuth(username, password);
+        client.setConnectTimeout(getConnectTimeout(c));
+        client.setResponseTimeout(getResponseTimeout(c));
+        //client.addHeader("Content-Type", "application/json; utf-8");
+        client.addHeader("Accept", "application/json, text/plain, */*");
+
+        if (requestType.equals("POST")) {
+            client.post(url.toString(), postDataParams, responseHandler);
+        } else if (requestType.equals("PATCH")) {
+            client.patch(url.toString(), postDataParams, responseHandler);
+        } else if (requestType.equals("DELETE")) {
+            client.delete(url.toString(), postDataParams, responseHandler);
         }
     }
 
@@ -185,6 +197,7 @@ public abstract class Core {
             return;
         }
 
+        /*
         requestAPIGET(c, "version", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
@@ -195,6 +208,7 @@ public abstract class Core {
                 }
             }
         });
+         */
     }
 
     /**
@@ -347,7 +361,7 @@ public abstract class Core {
                 e.printStackTrace();
                 Log.e("error msg:", e.getMessage());
                 if (responseHandler != null) {
-                    responseHandler.onFailure(400, null, null, e);
+                    responseHandler.onFailure(400, null, "".getBytes(), e);
                 }
             }
 

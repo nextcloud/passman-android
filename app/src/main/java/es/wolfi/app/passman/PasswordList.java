@@ -169,6 +169,7 @@ public class PasswordList extends AppCompatActivity implements
                     }
 
                     // If not logged in, show login form!
+                    Log.d("PasswordList", "If not logged in, show login form!");
                     LoginActivity.launch(self, () -> showVaults());
                 }
             });
@@ -186,6 +187,7 @@ public class PasswordList extends AppCompatActivity implements
         return progress;
     }
 
+    /* TODO: commit() to replace content_password_list not working! */
     public void showVaults() {
         this.VaultLockButton.setVisibility(View.INVISIBLE);
         Core.getAPIVersion(this, new FutureCallback<Integer>() {
@@ -196,35 +198,43 @@ public class PasswordList extends AppCompatActivity implements
         });
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
         if (vaults != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                    .replace(R.id.content_password_list, new VaultFragment(), "vaults")
-                    .commit();
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .replace(R.id.content_password_list, new VaultFragment(), "vaults")
+                            .commit();
+                }
+            });
         } else {
-            final ProgressDialog progress = getProgressDialog();
-            progress.show();
-            Vault.getVaults(this, (e, result) -> {
-                progress.dismiss();
-                if (e != null) {
-                    // Not logged in, restart activity
-                    if (Objects.equals(e.getMessage(), "401")) {
-                        recreate();
+            this.runOnUiThread(() -> {
+                final ProgressDialog progress = getProgressDialog();
+                progress.show();
+
+                Vault.getVaults(this, (e, result) -> {
+                    progress.dismiss();
+                    if (e != null) {
+                        // Not logged in, restart activity
+                        if (Objects.equals(e.getMessage(), "401")) {
+                            recreate();
+                        }
+
+                        Toast.makeText(getApplicationContext(), getString(R.string.net_error), Toast.LENGTH_LONG).show();
+
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                showVaults();
+                            }
+                        }, 30000);
+                        return;
                     }
 
-                    Toast.makeText(getApplicationContext(), getString(R.string.net_error), Toast.LENGTH_LONG).show();
-
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showVaults();
-                        }
-                    }, 30000);
-                    return;
-                }
-
-                ton.addExtra(SettingValues.VAULTS.toString(), result);
-                showVaults();
+                    ton.addExtra(SettingValues.VAULTS.toString(), result);
+                    showVaults();
+                });
             });
         }
     }
@@ -250,6 +260,7 @@ public class PasswordList extends AppCompatActivity implements
             }
             progress.dismiss();
         } else {
+            final AppCompatActivity self = this;
             Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
                 @Override
                 public void onCompleted(Exception e, Vault result) {
@@ -276,9 +287,10 @@ public class PasswordList extends AppCompatActivity implements
                     ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(result.guid, result);
 
                     ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
-                    showActiveVault();
-
-                    Vault.updateAutofillVault(result, settings);
+                    self.runOnUiThread(() -> {
+                        showActiveVault();
+                        Vault.updateAutofillVault(result, settings);
+                    });
                 }
             });
         }
@@ -418,7 +430,12 @@ public class PasswordList extends AppCompatActivity implements
                     CredentialItemFragment credentialItems = (CredentialItemFragment)
                             getSupportFragmentManager().findFragmentById(R.id.content_password_list);
                     assert credentialItems != null;
-                    credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+                        }
+                    });
                 }
             }
         });
@@ -549,7 +566,7 @@ public class PasswordList extends AppCompatActivity implements
     }
 
     public void showAddCredentialsButton() {
-        this.addCredentialsButton.show();
+        this.runOnUiThread(() -> this.addCredentialsButton.show());
     }
 
     public void showLockVaultButton() {

@@ -308,22 +308,33 @@ public class Credential extends Core implements Filterable {
         vaultId = vault.vault_id;
     }
 
-    public JSONObject getAsJSONObject() throws JSONException {
+    public JSONObject getAsJSONObject(boolean forUpdate) throws JSONException {
         JSONObject params = new JSONObject();
 
         JSONObject icon = null;
 
-        try {
-            icon = new JSONObject();
-            icon.put("type", false);
-            icon.put("content", "");
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (forUpdate) {
+            params.put("credential_id", getId());
+            params.put("guid", getGuid());
+
+            if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
+                try {
+                    icon = new JSONObject(favicon);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            try {
+                icon = new JSONObject();
+                icon.put("type", false);
+                icon.put("content", "");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         params.put("user_id", getUserId());
-        params.put("credential_id", getId());
-        params.put("guid", getGuid());
         params.put("shared_key", getSharedKey());
         params.put("vault_id", getVaultId());
         params.put("label", label);
@@ -455,24 +466,35 @@ public class Credential extends Core implements Filterable {
 
     public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
         try {
-            requestAPI(c, "credentials", getAsRequestParams(false, true), "POST", responseHandler);
-        } catch (MalformedURLException e) {
+            if (Core.ssoAccount != null) {
+                requestAPI(c, "credentials", getAsJSONObject(false), "POST", responseHandler);
+            } else {
+                requestAPI(c, "credentials", getAsRequestParams(false, true), "POST", responseHandler);
+            }
+        } catch (MalformedURLException | JSONException e) {
             e.printStackTrace();
         }
     }
 
     public void update(Context c, final AsyncHttpResponseHandler responseHandler) {
         try {
-            requestAPI(c, "credentials/" + getGuid(), getAsRequestParams(true, true), "PATCH", responseHandler);
-        } catch (MalformedURLException e) {
+            if (Core.ssoAccount != null) {
+                requestAPI(c, "credentials/" + getGuid(), getAsJSONObject(true), "PATCH", responseHandler);
+            } else {
+                requestAPI(c, "credentials/" + getGuid(), getAsRequestParams(true, true), "PATCH", responseHandler);
+            }
+        } catch (MalformedURLException | JSONException e) {
             e.printStackTrace();
         }
     }
 
     public void sendFileDeleteRequest(Context c, int file_id, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = new RequestParams();
         try {
-            requestAPI(c, "file/" + file_id, params, "DELETE", responseHandler);
+            if (Core.ssoAccount != null) {
+                requestAPI(c, "file/" + file_id, new JSONObject(), "DELETE", responseHandler);
+            } else {
+                requestAPI(c, "file/" + file_id, new RequestParams(), "DELETE", responseHandler);
+            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

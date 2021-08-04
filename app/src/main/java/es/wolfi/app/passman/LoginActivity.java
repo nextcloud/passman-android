@@ -25,6 +25,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Button;
@@ -191,23 +193,28 @@ public class LoginActivity extends AppCompatActivity {
                     ton.addString(SettingValues.PASSWORD.toString(), ssoAccount.token);
 
                     SingleSignOnAccount finalSsoAccount = ssoAccount;
-                    Core.checkLogin(c, true, new FutureCallback<Boolean>() {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
-                        public void onCompleted(Exception e, Boolean result) {
-                            if (result) {
-                                settings.edit()
-                                        .putString(SettingValues.HOST.toString(), finalSsoAccount.url)
-                                        .putString(SettingValues.USER.toString(), finalSsoAccount.userId)
-                                        .putString(SettingValues.PASSWORD.toString(), finalSsoAccount.token)
-                                        .apply();
+                        public void run() {
+                            Core.checkLogin(c, true, new FutureCallback<Boolean>() {
+                                @Override
+                                public void onCompleted(Exception e, Boolean result) {
+                                    if (result) {
+                                        settings.edit()
+                                                .putString(SettingValues.HOST.toString(), finalSsoAccount.url)
+                                                .putString(SettingValues.USER.toString(), finalSsoAccount.userId)
+                                                .putString(SettingValues.PASSWORD.toString(), finalSsoAccount.token)
+                                                .apply();
 
-                                ton.getCallback(CallbackNames.LOGIN.toString()).onTaskFinished();
-                                //c.finish();
-                            } else {
-                                ton.removeString(SettingValues.HOST.toString());
-                                ton.removeString(SettingValues.USER.toString());
-                                ton.removeString(SettingValues.PASSWORD.toString());
-                            }
+                                        ton.getCallback(CallbackNames.LOGIN.toString()).onTaskFinished();
+                                        //c.finish();
+                                    } else {
+                                        ton.removeString(SettingValues.HOST.toString());
+                                        ton.removeString(SettingValues.USER.toString());
+                                        ton.removeString(SettingValues.PASSWORD.toString());
+                                    }
+                                }
+                            });
                         }
                     });
                 }
