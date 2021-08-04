@@ -48,7 +48,7 @@ public abstract class Core {
     protected static String username;
     protected static String password;
     protected static String version_name;
-    protected static int versionNumber = 0;
+    protected static int version_number = 0;
 
 
     public static void setUpAPI(String host, String username, String password) {
@@ -123,8 +123,8 @@ public abstract class Core {
 
     // TODO Test this method once the server response works!
     public static void getAPIVersion(final Context c, FutureCallback<Integer> cb) {
-        if (versionNumber != 0) {
-            cb.onCompleted(null, versionNumber);
+        if (version_number != 0) {
+            cb.onCompleted(null, version_number);
             return;
         }
 
