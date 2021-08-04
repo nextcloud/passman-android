@@ -77,7 +77,8 @@ public class PasswordListActivity extends AppCompatActivity implements
     SingleTon ton;
 
     private static final int REQUEST_CODE_KEYGUARD = 0;
-    private static final int REQUEST_CODE_CREATE_DOCUMENT = 1;
+    private static final int REQUEST_CODE_AUTHENTICATE = 1;
+    private static final int REQUEST_CODE_CREATE_DOCUMENT = 2;
 
     static boolean running = false;
 
@@ -159,20 +160,19 @@ public class PasswordListActivity extends AppCompatActivity implements
             final ProgressDialog progress = getProgressDialog();
             progress.show();
 
-            final AppCompatActivity self = this;
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
-                public void onCompleted(Exception e, Boolean result) {
+                public void onCompleted(Exception e, Boolean loggedIn) {
                     // To dismiss the dialog
                     progress.dismiss();
 
-                    if (result) {
+                    if (loggedIn) {
                         showVaults();
-                        return;
+                    } else {
+                        // If not logged in, show login form!
+                        Intent intent = new Intent(PasswordListActivity.this, LoginActivity.class);
+                        startActivityForResult(intent, REQUEST_CODE_AUTHENTICATE);
                     }
-
-                    // If not logged in, show login form!
-                    LoginActivity.launch(self, () -> showVaults());
                 }
             });
 
@@ -467,16 +467,16 @@ public class PasswordListActivity extends AppCompatActivity implements
             progress.show();
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
-                public void onCompleted(Exception e, Boolean result) {
+                public void onCompleted(Exception e, Boolean loggedIn) {
                     progress.dismiss();
 
-                    if (result) {
+                    if (loggedIn) {
                         showVaults();
-                        return;
+                    } else {
+                        // If not logged in, show login form!
+                        Intent intent = new Intent(PasswordListActivity.this, LoginActivity.class);
+                        startActivityForResult(intent, REQUEST_CODE_AUTHENTICATE);
                     }
-
-                    // If not logged in, show login form!
-                    LoginActivity.launch(getParent(), () -> showVaults());
                 }
             });
         }
@@ -672,6 +672,17 @@ public class PasswordListActivity extends AppCompatActivity implements
             initialAuthentication(true);
         }
 
+        if (requestCode == REQUEST_CODE_AUTHENTICATE) {
+            if (resultCode == RESULT_CANCELED) {
+                // User cancelled login (i.e. touched "back" button)
+                finish();
+            } else {
+                // Proceed
+                showVaults();
+            }
+        }
+
+        // Following cases should only be handled on positive result
         if (resultCode != RESULT_OK)
             return;
 
