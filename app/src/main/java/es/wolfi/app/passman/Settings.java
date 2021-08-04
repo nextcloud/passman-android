@@ -209,9 +209,9 @@ public class Settings extends Fragment {
                     settings.edit().putString(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString()).commit();
                     settings.edit().putString(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString()).commit();
 
-                    Objects.requireNonNull(((PasswordList) getActivity())).applyNewSettings(true);
+                    Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(true);
                 } else {
-                    Objects.requireNonNull(((PasswordList) getActivity())).applyNewSettings(false);
+                    Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(false);
                 }
             }
         };

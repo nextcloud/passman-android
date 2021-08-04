@@ -151,6 +151,6 @@ public class CopyTextItem extends LinearLayout {
 
     @OnClick(R.id.open_url_btn_toggle_visible)
     public void openExternalURL() {
-        ((PasswordList) Objects.requireNonNull((Activity) getContext())).openExternalURL(this.text.getText().toString());
+        ((PasswordListActivity) Objects.requireNonNull((Activity) getContext())).openExternalURL(this.text.getText().toString());
     }
 }

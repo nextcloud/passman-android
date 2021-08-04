@@ -67,7 +67,7 @@ import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
 
-public class PasswordList extends AppCompatActivity implements
+public class PasswordListActivity extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
         CredentialItemFragment.OnListFragmentInteractionListener,
         VaultLockScreen.VaultUnlockInteractionListener,
@@ -204,6 +204,7 @@ public class PasswordList extends AppCompatActivity implements
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                     .replace(R.id.content_password_list, new VaultFragment(), "vaults")
                     .commit();
+            Log.d("PL", "committed transaction");
         } else {
             final ProgressDialog progress = getProgressDialog();
             progress.show();
