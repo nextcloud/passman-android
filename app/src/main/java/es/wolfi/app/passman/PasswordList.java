@@ -76,6 +76,9 @@ public class PasswordList extends AppCompatActivity implements
     SharedPreferences settings;
     SingleTon ton;
 
+    private static final int REQUEST_CODE_KEYGUARD = 0;
+    private static final int REQUEST_CODE_CREATE_DOCUMENT = 1;
+
     static boolean running = false;
 
     private AppCompatImageButton VaultLockButton;
@@ -148,7 +151,7 @@ public class PasswordList extends AppCompatActivity implements
 
             if (km.isKeyguardSecure()) {
                 Intent authIntent = km.createConfirmDeviceCredentialIntent(getString(R.string.unlock_passman), getString(R.string.unlock_passman_message_device_auth));
-                startActivityForResult(authIntent, 0);
+                startActivityForResult(authIntent, REQUEST_CODE_KEYGUARD);
             } else {
                 initialAuthentication(true);
             }
@@ -627,7 +630,7 @@ public class PasswordList extends AppCompatActivity implements
                                 // the system file picker when your app creates the document.
                                 //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
-                                startActivityForResult(intent, 1);
+                                startActivityForResult(intent, REQUEST_CODE_CREATE_DOCUMENT);
                             }
                         }
                     } catch (JSONException ex) {
@@ -659,7 +662,7 @@ public class PasswordList extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 0) { //initial authentication
+        if (requestCode == REQUEST_CODE_KEYGUARD) { // initial authentication
             if (resultCode != RESULT_OK) {
                 finishAffinity();
                 return;
@@ -671,7 +674,7 @@ public class PasswordList extends AppCompatActivity implements
         if (resultCode != RESULT_OK)
             return;
 
-        if (requestCode == 1) { //download file
+        if (requestCode == REQUEST_CODE_CREATE_DOCUMENT) { // download file
             if (data != null) {
                 Uri uri = data.getData();
 
