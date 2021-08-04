@@ -21,8 +21,10 @@
 
 package es.wolfi.app.passman;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -231,19 +233,31 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (alreadySaving.get()) {
-                    return;
-                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage(R.string.confirm_credential_deletion);
+                builder.setCancelable(false);
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (alreadySaving.get()) {
+                            return;
+                        }
 
-                alreadySaving.set(true);
+                        alreadySaving.set(true);
 
-                Context context = getContext();
-                final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-                final AsyncHttpResponseHandler responseHandler = new CredentialDeleteResponseHandler(alreadySaving, progress, view, (PasswordList) getActivity(), getFragmentManager());
+                        Context context = getContext();
+                        final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                        final AsyncHttpResponseHandler responseHandler = new CredentialDeleteResponseHandler(alreadySaving, progress, view, (PasswordList) getActivity(), getFragmentManager());
 
-                Date date = new Date();
-                credential.setDeleteTime(date.getTime());
-                credential.update(view.getContext(), responseHandler);
+                        Date date = new Date();
+                        credential.setDeleteTime(date.getTime());
+                        credential.update(view.getContext(), responseHandler);
+
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
             }
         };
     }
