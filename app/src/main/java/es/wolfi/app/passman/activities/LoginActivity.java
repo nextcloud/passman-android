@@ -18,11 +18,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.activities;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -39,15 +36,15 @@ import android.widget.Toast;
 import com.koushikdutta.async.future.FutureCallback;
 
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Core;
-import es.wolfi.passman.API.Vault;
 
 public class LoginActivity extends AppCompatActivity {
     public final static String LOG_TAG = "LoginActivity";

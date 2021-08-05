@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.activities;
 
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
@@ -61,6 +61,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
+import es.wolfi.app.passman.CredentialAdd;
+import es.wolfi.app.passman.CredentialDisplay;
+import es.wolfi.app.passman.CredentialEdit;
+import es.wolfi.app.passman.CredentialItemFragment;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.Settings;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.VaultFragment;
+import es.wolfi.app.passman.VaultLockScreen;
 import es.wolfi.passman.API.Core;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
@@ -457,7 +467,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         Runtime.getRuntime().exit(0);
     }
 
-    void applyNewSettings(boolean doRebirth) {
+    public void applyNewSettings(boolean doRebirth) {
         Toast.makeText(this, R.string.successfully_saved, Toast.LENGTH_SHORT).show();
 
         if (doRebirth) {

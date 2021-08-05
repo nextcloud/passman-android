@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -50,6 +49,7 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 
 
