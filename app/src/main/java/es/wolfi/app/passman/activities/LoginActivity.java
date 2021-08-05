@@ -23,13 +23,18 @@ package es.wolfi.app.passman.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -38,6 +43,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.nextcloud.android.sso.AccountImporter;
+import com.nextcloud.android.sso.Constants;
 import com.nextcloud.android.sso.exceptions.AccountImportCancelledException;
 import com.nextcloud.android.sso.exceptions.AndroidGetAccountsPermissionNotGranted;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
@@ -49,6 +55,8 @@ import com.nextcloud.android.sso.ui.UiExceptionManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -79,21 +87,40 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Log.d("LoginActivity", "in onCreate");
+
+        setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+
+        if (!isNextcloudFilesAppInstalled(this)) {
+            loadLegacyLogin();
+        }
+    }
+
+    @OnClick(R.id.load_legacy_login_button)
+    public void loadLegacyLogin() {
+        hideLoginOptions();
+
+        ImageView login_options_logo = findViewById(R.id.login_options_logo);
+        login_options_logo.setVisibility(View.INVISIBLE);
+
+        LinearLayout content_legacy_login = findViewById(R.id.content_legacy_login);
+        content_legacy_login.setVisibility(View.VISIBLE);
+
+        EditText hostForm = findViewById(R.id.host);
+        hostForm.requestFocus();
+
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        ton = SingleTon.getTon();
+
         try {
-            AccountImporter.pickNewAccount(this);
-            Log.w("SSO@LoginActivity", "try AccountImporter was successful");
-        } catch (NextcloudFilesAppNotInstalledException e1) {
-            //UiExceptionManager.showDialogForException(this, e1);
-            Log.w("SSO@LoginActivity", "Nextcloud app is not installed. Cannot choose account. Use legacy login method.");
-            //e1.printStackTrace();
-            setContentView(R.layout.activity_login);
-            ButterKnife.bind(this);
-
-            settings = PreferenceManager.getDefaultSharedPreferences(this);
-            ton = SingleTon.getTon();
-
-            try {
-                String host = settings.getString(SettingValues.HOST.toString(), null);
+            String host = settings.getString(SettingValues.HOST.toString(), null);
+            if (host != null) {
                 URL uri = new URL(host);
 
                 String hostonly = uri.getHost();
@@ -101,19 +128,65 @@ public class LoginActivity extends AppCompatActivity {
 
                 String protocolonly = uri.getProtocol();
                 input_protocol.setPrompt(protocolonly.toUpperCase());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                Toast.makeText(getApplicationContext(), getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
             }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
+        }
 
-            input_user.setText(settings.getString(SettingValues.USER.toString(), null));
-            input_pass.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
+        input_user.setText(settings.getString(SettingValues.USER.toString(), null));
+        input_pass.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
 
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-            setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    @OnClick(R.id.load_sso_login_button)
+    public void loadSSOLogin() {
+        hideLoginOptions();
+
+        try {
+            AccountImporter.pickNewAccount(this);
+            Log.w("SSO@LoginActivity", "try AccountImporter was successful");
+        } catch (NextcloudFilesAppNotInstalledException e1) {
+            UiExceptionManager.showDialogForException(this, e1);
+            Log.w("SSO@LoginActivity", "Nextcloud app is not installed. Cannot choose account. Use legacy login method.");
+
+            loadLegacyLogin();
         } catch (AndroidGetAccountsPermissionNotGranted e2) {
             AccountImporter.requestAndroidAccountPermissionsAndPickAccount(this);
         }
+    }
+
+    private void showLoginOptions() {
+        LinearLayout content_legacy_login = findViewById(R.id.content_legacy_login);
+        content_legacy_login.setVisibility(View.INVISIBLE);
+
+        LinearLayout login_options = findViewById(R.id.login_options);
+        login_options.setVisibility(View.VISIBLE);
+        ImageView login_options_logo = findViewById(R.id.login_options_logo);
+        login_options_logo.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoginOptions() {
+        LinearLayout login_options = findViewById(R.id.login_options);
+        login_options.setVisibility(View.INVISIBLE);
+    }
+
+    private static boolean isNextcloudFilesAppInstalled(Context context) {
+        List<String> APPS = Arrays.asList(Constants.PACKAGE_NAME_PROD, Constants.PACKAGE_NAME_DEV);
+
+        boolean returnValue = false;
+        PackageManager pm = context.getPackageManager();
+        for (String app : APPS) {
+            try {
+                pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
+                returnValue = true;
+                break;
+            } catch (PackageManager.NameNotFoundException ignored) {
+            }
+        }
+        return returnValue;
     }
 
     @OnClick(R.id.next)
@@ -208,7 +281,18 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         } catch (AccountImportCancelledException e) {
-            e.printStackTrace();
+            showLoginOptions();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        LinearLayout login_options = findViewById(R.id.login_options);
+        if (login_options.getVisibility() == View.INVISIBLE) {
+            showLoginOptions();
+        } else {
+            PasswordListActivity.running = false;
+            super.onBackPressed();
         }
     }
 }

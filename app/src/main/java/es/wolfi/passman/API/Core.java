@@ -149,6 +149,7 @@ public abstract class Core {
             throws MalformedURLException {
         if (ssoAccount != null) {
             final Map<String, List<String>> header = new HashMap<>();
+            header.put("Accept", Collections.singletonList("application/json, text/plain, */*"));
             //header.put("Content-Type", Collections.singletonList("application/json"));
 
             if (requestType.equals("PATCH")) {
@@ -156,7 +157,6 @@ public abstract class Core {
                 header.put("X-HTTP-Method-Override", Collections.singletonList("PATCH"));
             }
 
-            Log.d("CredentialAdd params", postDataParams.toString());
             NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
                     .setMethod(requestType)
                     .setUrl(API_URL.concat(endpoint))

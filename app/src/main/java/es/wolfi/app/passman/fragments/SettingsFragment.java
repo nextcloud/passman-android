@@ -91,9 +91,7 @@ public class SettingsFragment extends Fragment {
      * @return A new instance of fragment SettingsFragment.
      */
     public static SettingsFragment newInstance() {
-        SettingsFragment fragment = new SettingsFragment();
-
-        return fragment;
+        return new SettingsFragment();
     }
 
     @Override
