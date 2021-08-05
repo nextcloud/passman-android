@@ -1,0 +1,68 @@
+<!--
+    *  Passman Android App
+    *
+    * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
+    * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+    * @license GNU AGPL version 3 or any later version
+    *
+    * This program is free software: you can redistribute it and/or modify
+    * it under the terms of the GNU Affero General Public License as
+    * published by the Free Software Foundation, either version 3 of the
+    * License, or (at your option) any later version.
+    *
+    * This program is distributed in the hope that it will be useful,
+    * but WITHOUT ANY WARRANTY; without even the implied warranty of
+    * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    * GNU Affero General Public License for more details.
+    *
+    * You should have received a copy of the GNU Affero General Public License
+    * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    *
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/linear_layout_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/nextcloud_single_sign_on" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="4dp"
+            android:background="#8A8A8A" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/sso_user_server"
+                style="@style/TextAppearance.AppCompat.Small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/login_decision_button" />
+
+            <Button
+                android:id="@+id/sso_user_server_logout_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignEnd="@id/sso_user_server"
+                android:layout_centerInParent="true"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/ic_baseline_logout_24_grey" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

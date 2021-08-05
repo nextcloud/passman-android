@@ -26,12 +26,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -41,7 +43,13 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -79,7 +87,16 @@ public class SettingsFragment extends Fragment {
     @BindView(R.id.request_response_timeout_value)
     EditText request_response_timeout_value;
 
+    @BindView(R.id.manual_server_connection_settings)
+    RelativeLayout manual_server_connection_settings;
+    @BindView(R.id.sso_settings)
+    RelativeLayout sso_settings;
+
+    @BindView(R.id.sso_user_server)
+    TextView sso_user_server;
+
     SharedPreferences settings;
+    SingleSignOnAccount ssoAccount;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -115,6 +132,24 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        try {
+            ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(getContext());
+            manual_server_connection_settings.removeAllViews();
+            sso_settings.setVisibility(View.VISIBLE);
+
+            String hostname = "";
+            try {
+                URL uri = new URL(ssoAccount.url);
+                hostname = uri.getHost();
+            } catch (MalformedURLException e) {
+                Log.d("SettingsFragment", "Error parsing host from sso account");
+            }
+            sso_user_server.setText(String.format("%s@%s", ssoAccount.userId, hostname));
+        } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+            manual_server_connection_settings.setVisibility(View.VISIBLE);
+            sso_settings.removeAllViews();
+        }
 
         settings_nextcloud_url.setText(settings.getString(SettingValues.HOST.toString(), null));
         settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
@@ -206,9 +241,9 @@ public class SettingsFragment extends Fragment {
                     }
                 }
 
-                if (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
+                if (ssoAccount == null && (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
                         !settings.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
-                        !settings.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {
+                        !settings.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString()))) {
                     ton.removeString(SettingValues.HOST.toString());
                     ton.removeString(SettingValues.USER.toString());
                     ton.removeString(SettingValues.PASSWORD.toString());
