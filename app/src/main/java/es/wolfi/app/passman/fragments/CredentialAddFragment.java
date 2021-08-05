@@ -40,17 +40,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import org.json.JSONException;
-
-import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
-import es.wolfi.app.ResponseHandlers.CredentialDeleteResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -67,25 +64,25 @@ import es.wolfi.utils.ProgressUtils;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CredentialEdit#newInstance} factory method to
+ * Use the {@link CredentialAddFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CredentialEdit extends Fragment implements View.OnClickListener {
+public class CredentialAddFragment extends Fragment implements View.OnClickListener {
     public static String CREDENTIAL = "credential";
 
-    @BindView(R.id.edit_credential_label_header)
+    @BindView(R.id.add_credential_label_header)
     TextView label_header;
-    @BindView(R.id.edit_credential_label)
+    @BindView(R.id.add_credential_label)
     EditText label;
-    @BindView(R.id.edit_credential_user)
+    @BindView(R.id.add_credential_user)
     EditText user;
-    @BindView(R.id.edit_credential_password)
+    @BindView(R.id.add_credential_password)
     EditText password;
-    @BindView(R.id.edit_credential_email)
+    @BindView(R.id.add_credential_email)
     EditText email;
-    @BindView(R.id.edit_credential_url)
+    @BindView(R.id.add_credential_url)
     EditText url;
-    @BindView(R.id.edit_credential_description)
+    @BindView(R.id.add_credential_description)
     EditText description;
     @BindView(R.id.filesList)
     RecyclerView filesList;
@@ -94,45 +91,36 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     @BindView(R.id.customFieldType)
     Spinner customFieldType;
 
+    private OnCredentialFragmentInteraction mListener;
     private Credential credential;
-    private AtomicBoolean alreadySaving = new AtomicBoolean(false);
     private FileEditAdapter fed;
     private CustomFieldEditAdapter cfed;
     private RecyclerView filesListRecyclerView;
     private RecyclerView customFieldsListRecyclerView;
+    private AtomicBoolean alreadySaving = new AtomicBoolean(false);
 
-    public CredentialEdit() {
+    public CredentialAddFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment CredentialEdit.
+     * @return A new instance of fragment CredentialAddFragment.
      */
-    public static CredentialEdit newInstance(String credentialGUID) {
-        CredentialEdit fragment = new CredentialEdit();
-
-        Bundle b = new Bundle();
-        b.putString(CREDENTIAL, credentialGUID);
-        fragment.setArguments(b);
-
-        return fragment;
+    public static CredentialAddFragment newInstance() {
+        return new CredentialAddFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_credential_edit, container, false);
+        View view = inflater.inflate(R.layout.fragment_credential_add, container, false);
 
-        FloatingActionButton updateCredentialButton = (FloatingActionButton) view.findViewById(R.id.UpdateCredentialButton);
-        updateCredentialButton.setOnClickListener(this);
-        updateCredentialButton.setVisibility(View.VISIBLE);
-
-        FloatingActionButton deleteCredentialButton = (FloatingActionButton) view.findViewById(R.id.DeleteCredentialButton);
-        deleteCredentialButton.setOnClickListener(this.getDeleteButtonListener());
-        deleteCredentialButton.setVisibility(View.VISIBLE);
+        FloatingActionButton saveCredentialButton = (FloatingActionButton) view.findViewById(R.id.SaveCredentialButton);
+        saveCredentialButton.setOnClickListener(this);
+        saveCredentialButton.setVisibility(View.VISIBLE);
 
         Button addFileButton = (Button) view.findViewById(R.id.AddFileButton);
         addFileButton.setOnClickListener(this.getAddFileButtonListener());
@@ -151,6 +139,9 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnCredentialFragmentInteraction) {
+            mListener = (OnCredentialFragmentInteraction) context;
+        }
     }
 
     @Override
@@ -165,30 +156,23 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(cfed);
-
-        label.setText(this.credential.getLabel());
-        user.setText(this.credential.getUsername());
-        password.setText(this.credential.getPassword());
-        email.setText(this.credential.getEmail());
-        url.setText(this.credential.getUrl());
-        description.setText(this.credential.getDescription());
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
-        }
+        Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        this.credential = new Credential();
+        this.credential.setVault(v);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
-    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) throws JSONException {
+    public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) {
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
         final AsyncHttpResponseHandler responseHandler = new CredentialAddFileResponseHandler(progress, getView(), fileName, requestCode, fed, cfed);
@@ -206,7 +190,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditFile.ordinal());
+                ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddFile.ordinal());
             }
         };
     }
@@ -216,7 +200,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal());
+                    ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal());
                 } else {
                     CustomField cf = new CustomField();
                     cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
@@ -227,27 +211,6 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
                     cfed.addCustomField(cf);
                     cfed.notifyDataSetChanged();
                 }
-            }
-        };
-    }
-
-    public View.OnClickListener getDeleteButtonListener() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (alreadySaving.get()) {
-                    return;
-                }
-
-                alreadySaving.set(true);
-
-                Context context = getContext();
-                final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-                final AsyncHttpResponseHandler responseHandler = new CredentialDeleteResponseHandler(alreadySaving, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
-
-                Date date = new Date();
-                credential.setDeleteTime(date.getTime());
-                credential.update(view.getContext(), responseHandler);
             }
         };
     }
@@ -263,30 +226,43 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             return;
         }
 
-        if (this.credential.getCompromised().equals("true") && !this.credential.getPassword().equals(password.getText().toString())) {
-            this.credential.setCompromised(false);
-        }
-
-        // fix sometimes wrong saved compromised field
-        if (!this.credential.getCompromised().equals("true")) {
-            this.credential.setCompromised(false);
-        }
-
         this.credential.setLabel(label.getText().toString());
         this.credential.setUsername(user.getText().toString());
         this.credential.setPassword(password.getText().toString());
         this.credential.setEmail(email.getText().toString());
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
+        this.credential.setOtp("{}");
         this.credential.setFiles(fed.getFilesString());
         this.credential.setCustomFields(cfed.getCustomFieldsString());
+        this.credential.setTags("");
+        this.credential.setFavicon("");
+        this.credential.setCompromised(false);
+        this.credential.setHidden(false);
 
         alreadySaving.set(true);
 
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, true, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
+        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
 
-        this.credential.update(context, responseHandler);
+        this.credential.save(context, responseHandler);
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnCredentialFragmentInteraction {
+        // TODO: Update argument type and name
+        void onCredentialFragmentInteraction(Credential credential);
+
+        void saveCredential(Credential credential, Context c, FutureCallback<String> cb);
     }
 }

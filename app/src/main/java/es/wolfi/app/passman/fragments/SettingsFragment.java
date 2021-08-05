@@ -56,7 +56,7 @@ import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 
 
-public class Settings extends Fragment {
+public class SettingsFragment extends Fragment {
 
     @BindView(R.id.settings_nextcloud_url)
     EditText settings_nextcloud_url;
@@ -81,17 +81,17 @@ public class Settings extends Fragment {
 
     SharedPreferences settings;
 
-    public Settings() {
+    public SettingsFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment Settings.
+     * @return A new instance of fragment SettingsFragment.
      */
-    public static Settings newInstance() {
-        Settings fragment = new Settings();
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
 
         return fragment;
     }

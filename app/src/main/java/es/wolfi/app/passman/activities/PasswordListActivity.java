@@ -61,16 +61,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
-import es.wolfi.app.passman.fragments.CredentialAdd;
-import es.wolfi.app.passman.fragments.CredentialDisplay;
-import es.wolfi.app.passman.fragments.CredentialEdit;
+import es.wolfi.app.passman.fragments.CredentialAddFragment;
+import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
+import es.wolfi.app.passman.fragments.CredentialEditFragment;
 import es.wolfi.app.passman.fragments.CredentialItemFragment;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
-import es.wolfi.app.passman.fragments.Settings;
+import es.wolfi.app.passman.fragments.SettingsFragment;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.fragments.VaultFragment;
-import es.wolfi.app.passman.fragments.VaultLockScreen;
+import es.wolfi.app.passman.fragments.VaultLockScreenFragment;
 import es.wolfi.passman.API.Core;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
@@ -80,9 +80,9 @@ import es.wolfi.utils.FileUtils;
 public class PasswordListActivity extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
         CredentialItemFragment.OnListFragmentInteractionListener,
-        VaultLockScreen.VaultUnlockInteractionListener,
-        CredentialDisplay.OnCredentialFragmentInteraction,
-        CredentialDisplay.OnListFragmentInteractionListener {
+        VaultLockScreenFragment.VaultUnlockInteractionListener,
+        CredentialDisplayFragment.OnCredentialFragmentInteraction,
+        CredentialDisplayFragment.OnListFragmentInteractionListener {
     SharedPreferences settings;
     SingleTon ton;
 
@@ -142,7 +142,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                 getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .replace(R.id.content_password_list, CredentialAdd.newInstance(), "credentialAdd")
+                        .replace(R.id.content_password_list, CredentialAddFragment.newInstance(), "credentialAdd")
                         .addToBackStack(null)
                         .commit();
             }
@@ -309,7 +309,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                .replace(R.id.content_password_list, new VaultLockScreen(), "vault")
+                .replace(R.id.content_password_list, new VaultLockScreenFragment(), "vault")
                 .addToBackStack(null)
                 .commit();
     }
@@ -447,7 +447,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                .replace(R.id.content_password_list, CredentialEdit.newInstance(this.lastOpenedCredentialGuid), "credentialEdit")
+                .replace(R.id.content_password_list, CredentialEditFragment.newInstance(this.lastOpenedCredentialGuid), "credentialEdit")
                 .addToBackStack(null)
                 .commit();
     }
@@ -526,7 +526,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                .replace(R.id.content_password_list, Settings.newInstance(), "settings")
+                .replace(R.id.content_password_list, SettingsFragment.newInstance(), "settings")
                 .addToBackStack(null)
                 .commit();
     }
@@ -594,7 +594,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                .replace(R.id.content_password_list, CredentialDisplay.newInstance(item.getGuid()), "credential")
+                .replace(R.id.content_password_list, CredentialDisplayFragment.newInstance(item.getGuid()), "credential")
                 .addToBackStack(null)
                 .commit();
     }
@@ -749,7 +749,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                             try {
                                 String encodedFile = String.format("data:%s;base64,%s", mimeType, realEncodedFile);
                                 if (requestCode == FileUtils.activityRequestFileCode.credentialEditFile.ordinal() || requestCode == FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal()) {
-                                    CredentialEdit credentialEditFragment = (CredentialEdit) getSupportFragmentManager().findFragmentByTag("credentialEdit");
+                                    CredentialEditFragment credentialEditFragment = (CredentialEditFragment) getSupportFragmentManager().findFragmentByTag("credentialEdit");
 
                                     // generalize requestCode for usage with generalized ResponseHandler instances
                                     if (requestCode == FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal()) {
@@ -762,7 +762,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                                         credentialEditFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
                                     }
                                 } else if (requestCode == FileUtils.activityRequestFileCode.credentialAddFile.ordinal() || requestCode == FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) {
-                                    CredentialAdd credentialAddFragment = (CredentialAdd) getSupportFragmentManager().findFragmentByTag("credentialAdd");
+                                    CredentialAddFragment credentialAddFragment = (CredentialAddFragment) getSupportFragmentManager().findFragmentByTag("credentialAdd");
                                     if (credentialAddFragment != null) {
                                         credentialAddFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
                                     }

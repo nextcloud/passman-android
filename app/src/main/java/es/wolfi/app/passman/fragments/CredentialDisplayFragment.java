@@ -57,10 +57,10 @@ import es.wolfi.passman.API.Vault;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CredentialDisplay#newInstance} factory method to
+ * Use the {@link CredentialDisplayFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CredentialDisplay extends Fragment {
+public class CredentialDisplayFragment extends Fragment {
     public static String CREDENTIAL = "credential";
 
     @BindView(R.id.credential_label)
@@ -91,7 +91,7 @@ public class CredentialDisplay extends Fragment {
     private OnCredentialFragmentInteraction mListener;
     private OnListFragmentInteractionListener filelistListener;
 
-    public CredentialDisplay() {
+    public CredentialDisplayFragment() {
         // Required empty public constructor
     }
 
@@ -100,10 +100,10 @@ public class CredentialDisplay extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param credentialGUID The guid of the credential to display.
-     * @return A new instance of fragment CredentialDisplay.
+     * @return A new instance of fragment CredentialDisplayFragment.
      */
-    public static CredentialDisplay newInstance(String credentialGUID) {
-        CredentialDisplay fragment = new CredentialDisplay();
+    public static CredentialDisplayFragment newInstance(String credentialGUID) {
+        CredentialDisplayFragment fragment = new CredentialDisplayFragment();
 
         Bundle b = new Bundle();
         b.putString(CREDENTIAL, credentialGUID);

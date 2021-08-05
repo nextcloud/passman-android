@@ -29,21 +29,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import es.wolfi.app.passman.fragments.CredentialDisplay;
+import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
 import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File} and makes a call to the
- * specified {@link CredentialDisplay.OnListFragmentInteractionListener}.
+ * specified {@link CredentialDisplayFragment.OnListFragmentInteractionListener}.
  */
 public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> {
 
     private final List<File> mValues;
-    private final CredentialDisplay.OnListFragmentInteractionListener filelistListener;
+    private final CredentialDisplayFragment.OnListFragmentInteractionListener filelistListener;
 
-    public FileViewAdapter(List<File> files, CredentialDisplay.OnListFragmentInteractionListener listener) {
+    public FileViewAdapter(List<File> files, CredentialDisplayFragment.OnListFragmentInteractionListener listener) {
         mValues = files;
         filelistListener = listener;
     }
