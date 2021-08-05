@@ -22,7 +22,10 @@
 package es.wolfi.app.passman.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -32,6 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -43,6 +47,8 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.nextcloud.android.sso.AccountImporter;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
 import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
 import com.nextcloud.android.sso.helper.SingleAccountHelper;
@@ -50,6 +56,7 @@ import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -57,11 +64,14 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.ResponseHandlers.CredentialDeleteResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.LoginActivity;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.ProgressUtils;
 
 
 public class SettingsFragment extends Fragment {
@@ -119,6 +129,9 @@ public class SettingsFragment extends Fragment {
 
         FloatingActionButton settingsSaveButton = (FloatingActionButton) view.findViewById(R.id.settings_save_button);
         settingsSaveButton.setOnClickListener(this.getSaveButtonListener());
+
+        Button sso_user_server_logout_button = (Button) view.findViewById(R.id.sso_user_server_logout_button);
+        sso_user_server_logout_button.setOnClickListener(this.getSSOLogoutButtonListener());
 
         return view;
     }
@@ -200,6 +213,33 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public View.OnClickListener getSSOLogoutButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage(R.string.confirm_account_logout);
+                builder.setCancelable(false);
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AccountImporter.clearAllAuthTokens(getContext());
+                        SingleAccountHelper.setCurrentAccount(getContext(), null);
+
+                        settings.edit().remove(SettingValues.HOST.toString()).commit();
+                        settings.edit().remove(SettingValues.USER.toString()).commit();
+                        settings.edit().remove(SettingValues.PASSWORD.toString()).commit();
+
+                        dialogInterface.dismiss();
+                        PasswordListActivity.triggerRebirth(Objects.requireNonNull(((PasswordListActivity) getActivity())));
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+            }
+        };
     }
 
     public View.OnClickListener getSaveButtonListener() {
