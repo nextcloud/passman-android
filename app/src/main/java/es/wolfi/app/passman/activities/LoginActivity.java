@@ -23,15 +23,14 @@ package es.wolfi.app.passman.activities;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.koushikdutta.async.future.FutureCallback;
 
@@ -74,13 +73,15 @@ public class LoginActivity extends AppCompatActivity {
 
         try {
             String host = settings.getString(SettingValues.HOST.toString(), null);
-            URL uri = new URL(host);
+            if (host != null) {
+                URL uri = new URL(host);
 
-            String hostonly = uri.getHost();
-            input_host.setText(hostonly);
+                String hostonly = uri.getHost();
+                input_host.setText(hostonly);
 
-            String protocolonly = uri.getProtocol();
-            input_protocol.setPrompt(protocolonly.toUpperCase());
+                String protocolonly = uri.getProtocol();
+                input_protocol.setPrompt(protocolonly.toUpperCase());
+            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
