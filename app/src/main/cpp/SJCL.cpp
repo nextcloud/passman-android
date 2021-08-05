@@ -29,6 +29,7 @@
 #include <android/log.h>
 #include <vector>
 #include <algorithm>
+#include <stdlib.h>
 
 #define LOG_TAG "SJCL"
 
@@ -204,8 +205,8 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     key_size    = (int) food[L"ks"]->AsNumber();
     tag_size    = (int) food[L"ts"]->AsNumber();
 
-    tag_size /= 8; // Make it bytes!
-    key_size /= 8; // Make it bytes
+    tag_size = (tag_size +7) / 8; // Make it bytes!
+    key_size = (key_size +7) / 8; // Make it bytes
 
     // The actual cryptogram includes the tag size, so we need to take this into account later on!
     Datagram* cryptogram = BASE64::decode((unsigned char *) cyphertext, strlen(cyphertext));
@@ -218,9 +219,7 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     unsigned char* derived_key = (unsigned char*) malloc(sizeof(unsigned char) * key_size);
 
     // Assuming plaintext will always be smaller than the sjcl cyphertext which includes the tag and padding and stuff
-    unsigned char* plaintext = (unsigned char*) malloc(sizeof(unsigned char) * strlen(cyphertext));
-    // Ensure plaintext ends up null terminated
-    for (int i = 0; i < strlen(cyphertext); i++) plaintext[i] = '\0';
+    unsigned char* plaintext = (unsigned char*) std::calloc(cryptogram->length +1, sizeof(unsigned char));
     string s = string("The allocated string is: ") + string((char*)plaintext);
 
     /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
@@ -280,8 +279,8 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     int tag_size = 64;
     int ciphertext_allocation_multiplicator = 3;    // give generated ciphertext some backup space
 
-    int ks = key_size / 8;  // Make it bytes
-    int ts = tag_size / 8;  // Make it bytes
+    int ks = (key_size +7) / 8;  // Make it bytes
+    int ts = (tag_size +7) / 8;  // Make it bytes
     unsigned char *ciphertext;
     unsigned char *derived_key;
     unsigned char tag[ts];
@@ -336,12 +335,15 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         food["cipher"] = "aes";
 
         string retrn = food.dump();
-        ret = (char *) malloc(sizeof(char) * retrn.length());
+        ret = (char *) std::calloc(retrn.length() +1, sizeof(char));
         strcpy(ret, retrn.c_str());
     }
 
     // Free up resources
     free(ciphertext);
+    free(iv);
+    free(salt);
+    free(derived_key);
 
     return ret;
 }
