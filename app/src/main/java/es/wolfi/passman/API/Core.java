@@ -153,7 +153,7 @@ public abstract class Core {
 
             if (requestType.equals("PATCH")) {
                 requestType = "POST";
-                //header.put("X-HTTP-Method-Override", Collections.singletonList("PATCH"));
+                header.put("X-HTTP-Method-Override", Collections.singletonList("PATCH"));
             }
 
             Log.d("CredentialAdd params", postDataParams.toString());

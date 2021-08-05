@@ -43,6 +43,7 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 
 public class CopyTextItem extends LinearLayout {
 

@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -50,10 +49,14 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 
 
-public class Settings extends Fragment {
+public class SettingsFragment extends Fragment {
 
     @BindView(R.id.settings_nextcloud_url)
     EditText settings_nextcloud_url;
@@ -78,17 +81,17 @@ public class Settings extends Fragment {
 
     SharedPreferences settings;
 
-    public Settings() {
+    public SettingsFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment Settings.
+     * @return A new instance of fragment SettingsFragment.
      */
-    public static Settings newInstance() {
-        Settings fragment = new Settings();
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
 
         return fragment;
     }

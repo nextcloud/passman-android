@@ -1,48 +1,55 @@
 /**
- * Passman Android App
+ *  Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
  * @license GNU AGPL version 3 or any later version
- * <p>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * <p>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
-package es.wolfi.app.passman;
+
+package es.wolfi.app.passman.adapters;
 
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import es.wolfi.passman.API.Credential;
-
+import java.text.DateFormat;
 import java.util.List;
-import java.util.Objects;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.fragments.VaultFragment.OnListFragmentInteractionListener;
+import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.ColorUtils;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the
- * specified {@link CredentialItemFragment.OnListFragmentInteractionListener}.
+ * {@link RecyclerView.Adapter} that can display a {@link Vault} and makes a call to the
+ * specified {@link OnListFragmentInteractionListener}.
  */
-public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAdapter.ViewHolder> {
+public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.ViewHolder> {
+    private static final String TAG = VaultViewAdapter.class.getSimpleName();
 
-    private final List<Credential> mValues;
-    private final CredentialItemFragment.OnListFragmentInteractionListener mListener;
+    private final List<Vault> mValues;
+    private final OnListFragmentInteractionListener mListener;
 
-    public CredentialViewAdapter(List<Credential> items, CredentialItemFragment.OnListFragmentInteractionListener listener) {
+    public VaultViewAdapter(List<Vault> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -50,17 +57,23 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_credential_item, parent, false);
+                .inflate(R.layout.fragment_vault, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mContentView.setText(holder.mItem.getLabel());
+        holder.name.setText(mValues.get(position).name);
 
-        if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
-            holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
+        DateFormat f = DateFormat.getDateInstance();
+        holder.created.setText(f.format(holder.mItem.getCreatedTime()));
+        holder.last_access.setText(f.format(holder.mItem.getLastAccessTime()));
+
+        try {
+            holder.name.setTextColor(ColorUtils.calculateColor(mValues.get(position).name));
+        } catch (Exception e) {
+            Log.w(TAG, "Error calculating vault item color.");
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -73,7 +86,6 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
                 }
             }
         });
-        //if (holder.mItem.isHidden()) holder.mView.setVisibility(View.GONE);
     }
 
     @Override
@@ -82,21 +94,22 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.vault_name) TextView name;
+        @BindView(R.id.vault_created) TextView created;
+        @BindView(R.id.vault_last_access) TextView last_access;
+
         public final View mView;
-        public final TextView mContentView;
-        public final LinearLayout contentLayout;
-        public Credential mItem;
+        public Vault mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mContentView = (TextView) view.findViewById(R.id.content);
-            contentLayout = (LinearLayout) view.findViewById(R.id.contentLayout);
+            ButterKnife.bind(this, view);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mItem.name + "'";
         }
     }
 }

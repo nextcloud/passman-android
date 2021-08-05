@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -52,6 +52,12 @@ import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialDeleteResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.PasswordListActivity;
+import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
+import es.wolfi.app.passman.adapters.FileEditAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
@@ -61,10 +67,10 @@ import es.wolfi.utils.ProgressUtils;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CredentialEdit#newInstance} factory method to
+ * Use the {@link CredentialEditFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CredentialEdit extends Fragment implements View.OnClickListener {
+public class CredentialEditFragment extends Fragment implements View.OnClickListener {
     public static String CREDENTIAL = "credential";
 
     @BindView(R.id.edit_credential_label_header)
@@ -95,17 +101,17 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     private RecyclerView filesListRecyclerView;
     private RecyclerView customFieldsListRecyclerView;
 
-    public CredentialEdit() {
+    public CredentialEditFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment CredentialEdit.
+     * @return A new instance of fragment CredentialEditFragment.
      */
-    public static CredentialEdit newInstance(String credentialGUID) {
-        CredentialEdit fragment = new CredentialEdit();
+    public static CredentialEditFragment newInstance(String credentialGUID) {
+        CredentialEditFragment fragment = new CredentialEditFragment();
 
         Bundle b = new Bundle();
         b.putString(CREDENTIAL, credentialGUID);

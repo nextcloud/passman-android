@@ -6,7 +6,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.util.List;
 
-import es.wolfi.app.passman.CustomFieldEditAdapter;
+import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
 import es.wolfi.passman.API.CustomField;
 
 public class CustomFieldFileDeleteResponseHandler extends AsyncHttpResponseHandler {
