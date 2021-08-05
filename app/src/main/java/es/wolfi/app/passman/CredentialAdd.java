@@ -184,7 +184,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddFile.ordinal());
+                ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddFile.ordinal());
             }
         };
     }
@@ -194,7 +194,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal());
+                    ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal());
                 } else {
                     CustomField cf = new CustomField();
                     cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
@@ -238,7 +238,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordList) getActivity(), getFragmentManager());
+        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
 
         this.credential.save(context, responseHandler);
     }

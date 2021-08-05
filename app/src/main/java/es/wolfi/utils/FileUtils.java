@@ -30,7 +30,8 @@ public class FileUtils {
      * credentialAddCustomFieldFile     5
      */
     public enum activityRequestFileCode {
-        padding0, padding1, credentialEditFile, credentialEditCustomFieldFile, credentialAddFile, credentialAddCustomFieldFile
+        padding0, padding1, padding2,
+        credentialEditFile, credentialEditCustomFieldFile, credentialAddFile, credentialAddCustomFieldFile
     }
 
     /**
