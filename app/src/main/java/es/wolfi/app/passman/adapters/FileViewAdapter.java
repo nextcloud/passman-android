@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import es.wolfi.app.passman.CredentialDisplay;
+import es.wolfi.app.passman.fragments.CredentialDisplay;
 import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;

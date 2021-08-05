@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import es.wolfi.app.passman.CredentialItemFragment;
+import es.wolfi.app.passman.fragments.CredentialItemFragment;
 import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.Credential;
 

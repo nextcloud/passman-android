@@ -32,7 +32,7 @@ import org.json.JSONException;
 import java.util.List;
 
 import es.wolfi.app.passman.CopyTextItem;
-import es.wolfi.app.passman.CredentialDisplay;
+import es.wolfi.app.passman.fragments.CredentialDisplay;
 import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;

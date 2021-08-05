@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -44,6 +44,10 @@ import org.apache.commons.codec.binary.Base32;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.CopyTextItem;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.adapters.CustomFieldViewAdapter;
 import es.wolfi.app.passman.adapters.FileViewAdapter;
 import es.wolfi.passman.API.Credential;

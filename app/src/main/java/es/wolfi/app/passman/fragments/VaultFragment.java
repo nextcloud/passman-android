@@ -20,7 +20,7 @@
  *
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -32,6 +32,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.adapters.VaultViewAdapter;
 import es.wolfi.passman.API.Vault;
 
@@ -93,7 +96,7 @@ public class VaultFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            HashMap<String, Vault> vaults = (HashMap<String, Vault>)SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
+            HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
             ArrayList<Vault> l = new ArrayList<Vault>(vaults.values());
             recyclerView.setAdapter(new VaultViewAdapter(l, mListener));
         }

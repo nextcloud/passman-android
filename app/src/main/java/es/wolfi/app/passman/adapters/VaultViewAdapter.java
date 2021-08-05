@@ -35,7 +35,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.VaultFragment.OnListFragmentInteractionListener;
+import es.wolfi.app.passman.fragments.VaultFragment.OnListFragmentInteractionListener;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ColorUtils;
 
