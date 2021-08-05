@@ -44,6 +44,7 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.adapters.CredentialViewAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.CredentialLabelSort;
 import es.wolfi.utils.FilterListAsyncTask;
 
 /**
@@ -58,7 +59,7 @@ public class CredentialItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private int sortMethod = 0;     // 0=default, 1=az ascending, 2=az descending
+    private int sortMethod = CredentialLabelSort.sortMethod.standard.ordinal();
     private OnListFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
     private RecyclerView recyclerView;
@@ -136,13 +137,13 @@ public class CredentialItemFragment extends Fragment {
     }
 
     public void updateToggleSortButtonImage(AppCompatImageButton toggleSortButton) {
-        if (sortMethod == 0) {
+        if (sortMethod == CredentialLabelSort.sortMethod.standard.ordinal()) {
             // set default image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_list_24);
-        } else if (sortMethod == 1) {
+        } else if (sortMethod == CredentialLabelSort.sortMethod.alphabeticallyAscending.ordinal()) {
             // set az ascending image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
-        } else if (sortMethod == 2) {
+        } else if (sortMethod == CredentialLabelSort.sortMethod.alphabeticallyDescending.ordinal()) {
             // set az descending image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
         }

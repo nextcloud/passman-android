@@ -10,6 +10,18 @@ import es.wolfi.passman.API.Credential;
 
 public class CredentialLabelSort implements Comparator<Credential> {
 
+    /**
+     * credential sort methods:
+     * description                      code
+     * <p>
+     * default server sort              0
+     * alphabetically ascending         1
+     * alphabetically descending        2
+     */
+    public enum sortMethod {
+        standard, alphabeticallyAscending, alphabeticallyDescending
+    }
+
     private final int method;
 
     public CredentialLabelSort(int method) {
@@ -18,10 +30,10 @@ public class CredentialLabelSort implements Comparator<Credential> {
 
     @Override
     public int compare(Credential left, Credential right) {
-        if (method == 1) {
+        if (method == sortMethod.alphabeticallyAscending.ordinal()) {
             return left.getLabel().compareTo(right.getLabel());
         }
-        if (method == 2) {
+        if (method == sortMethod.alphabeticallyDescending.ordinal()) {
             return right.getLabel().compareTo(left.getLabel());
         }
         return left.getId() - right.getId();
