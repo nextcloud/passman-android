@@ -67,7 +67,7 @@ import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
 
-public class PasswordList extends AppCompatActivity implements
+public class PasswordListActivity extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
         CredentialItemFragment.OnListFragmentInteractionListener,
         VaultLockScreen.VaultUnlockInteractionListener,
@@ -75,6 +75,10 @@ public class PasswordList extends AppCompatActivity implements
         CredentialDisplay.OnListFragmentInteractionListener {
     SharedPreferences settings;
     SingleTon ton;
+
+    private static final int REQUEST_CODE_KEYGUARD = 0;
+    private static final int REQUEST_CODE_AUTHENTICATE = 1;
+    private static final int REQUEST_CODE_CREATE_DOCUMENT = 2;
 
     static boolean running = false;
 
@@ -148,7 +152,7 @@ public class PasswordList extends AppCompatActivity implements
 
             if (km.isKeyguardSecure()) {
                 Intent authIntent = km.createConfirmDeviceCredentialIntent(getString(R.string.unlock_passman), getString(R.string.unlock_passman_message_device_auth));
-                startActivityForResult(authIntent, 0);
+                startActivityForResult(authIntent, REQUEST_CODE_KEYGUARD);
             } else {
                 initialAuthentication(true);
             }
@@ -156,21 +160,19 @@ public class PasswordList extends AppCompatActivity implements
             final ProgressDialog progress = getProgressDialog();
             progress.show();
 
-            final AppCompatActivity self = this;
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
-                public void onCompleted(Exception e, Boolean result) {
+                public void onCompleted(Exception e, Boolean loggedIn) {
                     // To dismiss the dialog
                     progress.dismiss();
 
-                    if (result) {
+                    if (loggedIn) {
                         showVaults();
-                        return;
+                    } else {
+                        // If not logged in, show login form!
+                        Intent intent = new Intent(PasswordListActivity.this, LoginActivity.class);
+                        startActivityForResult(intent, REQUEST_CODE_AUTHENTICATE);
                     }
-
-                    // If not logged in, show login form!
-                    Log.d("PasswordList", "If not logged in, show login form!");
-                    LoginActivity.launch(self, () -> showVaults());
                 }
             });
 
@@ -198,16 +200,11 @@ public class PasswordList extends AppCompatActivity implements
         });
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
         if (vaults != null) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                            .replace(R.id.content_password_list, new VaultFragment(), "vaults")
-                            .commit();
-                }
-            });
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                    .replace(R.id.content_password_list, new VaultFragment(), "vaults")
+                    .commit();
         } else {
             this.runOnUiThread(() -> {
                 final ProgressDialog progress = getProgressDialog();
@@ -480,16 +477,16 @@ public class PasswordList extends AppCompatActivity implements
             progress.show();
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
-                public void onCompleted(Exception e, Boolean result) {
+                public void onCompleted(Exception e, Boolean loggedIn) {
                     progress.dismiss();
 
-                    if (result) {
+                    if (loggedIn) {
                         showVaults();
-                        return;
+                    } else {
+                        // If not logged in, show login form!
+                        Intent intent = new Intent(PasswordListActivity.this, LoginActivity.class);
+                        startActivityForResult(intent, REQUEST_CODE_AUTHENTICATE);
                     }
-
-                    // If not logged in, show login form!
-                    LoginActivity.launch(getParent(), () -> showVaults());
                 }
             });
         }
@@ -644,7 +641,7 @@ public class PasswordList extends AppCompatActivity implements
                                 // the system file picker when your app creates the document.
                                 //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
-                                startActivityForResult(intent, 1);
+                                startActivityForResult(intent, REQUEST_CODE_CREATE_DOCUMENT);
                             }
                         }
                     } catch (JSONException ex) {
@@ -676,7 +673,7 @@ public class PasswordList extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 0) { //initial authentication
+        if (requestCode == REQUEST_CODE_KEYGUARD) { // initial authentication
             if (resultCode != RESULT_OK) {
                 finishAffinity();
                 return;
@@ -685,10 +682,21 @@ public class PasswordList extends AppCompatActivity implements
             initialAuthentication(true);
         }
 
+        if (requestCode == REQUEST_CODE_AUTHENTICATE) {
+            if (resultCode == RESULT_CANCELED) {
+                // User cancelled login (i.e. touched "back" button)
+                finish();
+            } else {
+                // Proceed
+                showVaults();
+            }
+        }
+
+        // Following cases should only be handled on positive result
         if (resultCode != RESULT_OK)
             return;
 
-        if (requestCode == 1) { //download file
+        if (requestCode == REQUEST_CODE_CREATE_DOCUMENT) { // download file
             if (data != null) {
                 Uri uri = data.getData();
 

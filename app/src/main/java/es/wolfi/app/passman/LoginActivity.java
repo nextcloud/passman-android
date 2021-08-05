@@ -20,7 +20,6 @@
  */
 package es.wolfi.app.passman;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -122,24 +121,22 @@ public class LoginActivity extends AppCompatActivity {
         final String user = input_user.getText().toString();
         final String pass = input_pass.getText().toString();
 
-        final Activity c = this;
-
         ton.addString(SettingValues.HOST.toString(), host);
         ton.addString(SettingValues.USER.toString(), user);
         ton.addString(SettingValues.PASSWORD.toString(), pass);
 
         Core.checkLogin(this, true, new FutureCallback<Boolean>() {
             @Override
-            public void onCompleted(Exception e, Boolean result) {
-                if (result) {
+            public void onCompleted(Exception e, Boolean loginSuccessful) {
+                if (loginSuccessful) {
                     settings.edit()
                             .putString(SettingValues.HOST.toString(), host)
                             .putString(SettingValues.USER.toString(), user)
                             .putString(SettingValues.PASSWORD.toString(), pass)
                             .apply();
 
-                    ton.getCallback(CallbackNames.LOGIN.toString()).onTaskFinished();
-                    c.finish();
+                    setResult(RESULT_OK);
+                    LoginActivity.this.finish();
                 } else {
                     ton.removeString(SettingValues.HOST.toString());
                     ton.removeString(SettingValues.USER.toString());
@@ -148,18 +145,6 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    /**
-     * Displays this activity
-     *
-     * @param c
-     * @param cb
-     */
-    public static void launch(Context c, ICallback cb) {
-        SingleTon.getTon().addCallback(CallbackNames.LOGIN.toString(), cb);
-        Intent i = new Intent(c, LoginActivity.class);
-        c.startActivity(i);
     }
 
     @Override
@@ -206,8 +191,8 @@ public class LoginActivity extends AppCompatActivity {
                                                 .putString(SettingValues.PASSWORD.toString(), finalSsoAccount.token)
                                                 .apply();
 
-                                        ton.getCallback(CallbackNames.LOGIN.toString()).onTaskFinished();
-                                        //c.finish();
+                                        setResult(RESULT_OK);
+                                        LoginActivity.this.finish();
                                     } else {
                                         ton.removeString(SettingValues.HOST.toString());
                                         ton.removeString(SettingValues.USER.toString());
