@@ -44,6 +44,8 @@ import org.apache.commons.codec.binary.Base32;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.adapters.CustomFieldViewAdapter;
+import es.wolfi.app.passman.adapters.FileViewAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;

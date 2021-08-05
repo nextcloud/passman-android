@@ -53,6 +53,8 @@ import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialDeleteResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
 import es.wolfi.app.passman.activities.PasswordListActivity;
+import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
+import es.wolfi.app.passman.adapters.FileEditAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;

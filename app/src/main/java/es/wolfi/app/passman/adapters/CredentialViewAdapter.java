@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.adapters;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,10 +28,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import es.wolfi.app.passman.CredentialItemFragment;
+import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.Credential;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the

@@ -7,7 +7,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.util.List;
 
-import es.wolfi.app.passman.FileEditAdapter;
+import es.wolfi.app.passman.adapters.FileEditAdapter;
 import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.File;
 

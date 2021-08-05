@@ -38,6 +38,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import es.wolfi.app.passman.adapters.CredentialViewAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FilterListAsyncTask;

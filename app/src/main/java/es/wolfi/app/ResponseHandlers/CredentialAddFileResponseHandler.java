@@ -8,8 +8,8 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONObject;
 
-import es.wolfi.app.passman.CustomFieldEditAdapter;
-import es.wolfi.app.passman.FileEditAdapter;
+import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
+import es.wolfi.app.passman.adapters.FileEditAdapter;
 import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;

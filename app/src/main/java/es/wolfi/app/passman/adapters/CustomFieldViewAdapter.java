@@ -18,9 +18,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.adapters;
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,9 @@ import org.json.JSONException;
 
 import java.util.List;
 
+import es.wolfi.app.passman.CopyTextItem;
+import es.wolfi.app.passman.CredentialDisplay;
+import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;

@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import es.wolfi.app.passman.adapters.VaultViewAdapter;
 import es.wolfi.passman.API.Vault;
 
 import java.util.ArrayList;

@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +29,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import es.wolfi.app.passman.CredentialDisplay;
+import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;
 
