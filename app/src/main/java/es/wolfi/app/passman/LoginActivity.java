@@ -102,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
         final String protocol = input_protocol.getSelectedItem().toString().toLowerCase();
         final String host = protocol + "://" + input_host.getText().toString().trim();
         final String user = input_user.getText().toString().trim();
-        final String pass = input_pass.getText().toString().trim();
+        final String pass = input_pass.getText().toString();
 
         final Activity c = this;
 
