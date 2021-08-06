@@ -640,7 +640,7 @@ public class PasswordList extends AppCompatActivity implements
                 progress.dismiss();
             }
         };
-        item.download(getParent(), cb);
+        item.download(getApplicationContext(), cb);
     }
 
     public void selectFileToAdd(int activityRequestFileCode) {

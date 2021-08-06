@@ -45,15 +45,21 @@
     <string name="unlock_passman">Unlock Passman</string>
     <string name="unlock_passman_message_device_auth">Please authenticate to access Passman</string>
     <string name="app_start_password">App start password</string>
-    <string name="app_start_password_android_auth_description">Enable android user authentication on app start?</string>
-    <string name="wait_while_encrypting">Wait while encrypting...</string>
-    <string name="wait_while_decrypting">Wait while decrypting...</string>
-    <string name="wait_while_uploading">Wait while uploading...</string>
-    <string name="wait_while_downloading">Wait while downloading...</string>
+    <string name="app_start_password_android_auth_description">Enable Android user authentication on app start?</string>
+    <string name="wait_while_encrypting">Wait while encrypting …</string>
+    <string name="wait_while_decrypting">Wait while decrypting …</string>
+    <string name="wait_while_uploading">Wait while uploading …</string>
+    <string name="wait_while_downloading">Wait while downloading …</string>
     <string name="autofill_noactivevault">No active vault</string>
     <string name="autofill_vaultlocked">Vault needs to be unlocked</string>
     <string name="autofill_vaultempty">No credentials in vault</string>
     <string name="autofill_createdbyautofillservice">Created by autofill service</string>
     <string name="default_autofill_vault">Default autofill vault</string>
     <string name="automatically">automatically</string>
+    <string name="request_connect_timeout">Request connect timeout (in seconds)</string>
+    <string name="request_response_timeout">Request response timeout (in seconds)</string>
+    <string name="expert_settings">Expert settings</string>
+    <string name="confirm_credential_deletion">Are you sure you want to delete this credential?</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
 </resources>
