@@ -100,9 +100,9 @@ public class LoginActivity extends AppCompatActivity {
     public void onNextClick() {
         Log.e("Login", "begin");
         final String protocol = input_protocol.getSelectedItem().toString().toLowerCase();
-        final String host = protocol + "://" + input_host.getText().toString();
-        final String user = input_user.getText().toString();
-        final String pass = input_pass.getText().toString();
+        final String host = protocol + "://" + input_host.getText().toString().trim();
+        final String user = input_user.getText().toString().trim();
+        final String pass = input_pass.getText().toString().trim();
 
         final Activity c = this;
 
