@@ -55,7 +55,7 @@ public class CredentialItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private int sortMethod = CredentialLabelSort.sortMethod.standard.ordinal();
+    private int sortMethod = CredentialLabelSort.SortMethod.STANDARD.ordinal();
     private OnListFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
     private RecyclerView recyclerView;
@@ -133,13 +133,13 @@ public class CredentialItemFragment extends Fragment {
     }
 
     public void updateToggleSortButtonImage(AppCompatImageButton toggleSortButton) {
-        if (sortMethod == CredentialLabelSort.sortMethod.standard.ordinal()) {
+        if (sortMethod == CredentialLabelSort.SortMethod.STANDARD.ordinal()) {
             // set default image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_list_24);
-        } else if (sortMethod == CredentialLabelSort.sortMethod.alphabeticallyAscending.ordinal()) {
+        } else if (sortMethod == CredentialLabelSort.SortMethod.ALPHABETICALLY_ASCENDING.ordinal()) {
             // set az ascending image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
-        } else if (sortMethod == CredentialLabelSort.sortMethod.alphabeticallyDescending.ordinal()) {
+        } else if (sortMethod == CredentialLabelSort.SortMethod.ALPHABETICALLY_DESCENDING.ordinal()) {
             // set az descending image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
         }
