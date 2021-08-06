@@ -61,14 +61,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.fragments.CredentialAddFragment;
 import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
 import es.wolfi.app.passman.fragments.CredentialEditFragment;
 import es.wolfi.app.passman.fragments.CredentialItemFragment;
-import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.fragments.SettingsFragment;
-import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.fragments.VaultFragment;
 import es.wolfi.app.passman.fragments.VaultLockScreenFragment;
 import es.wolfi.passman.API.Core;
@@ -449,7 +449,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     }
 
     public void showCredentialEditButton() {
-        this.CredentialEditButton.setVisibility(View.VISIBLE);
+        this.runOnUiThread(() -> this.CredentialEditButton.setVisibility(View.VISIBLE));
     }
 
     void editCredential() {
@@ -577,7 +577,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     }
 
     public void showLockVaultButton() {
-        this.VaultLockButton.setVisibility(View.VISIBLE);
+        this.runOnUiThread(() -> this.VaultLockButton.setVisibility(View.VISIBLE));
     }
 
     private void showNotImplementedMessage() {
@@ -617,7 +617,7 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     @Override
     public void onCredentialFragmentInteraction(Credential credential) {
-        this.addCredentialsButton.hide();
+        this.runOnUiThread(() -> this.addCredentialsButton.hide());
     }
 
     @Override
@@ -635,7 +635,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                     try {
                         JSONObject o = new JSONObject(result);
                         if (o.has("file_data")) {
-                            progress.setMessage(getString(R.string.wait_while_decrypting));
+                            runOnUiThread(() -> progress.setMessage(getString(R.string.wait_while_decrypting)));
                             String[] decryptedSplitString = v.decryptString(o.getString("file_data")).split(",");
                             if (decryptedSplitString.length == 2) {
                                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);

@@ -152,11 +152,6 @@ public abstract class Core {
             header.put("Accept", Collections.singletonList("application/json, text/plain, */*"));
             //header.put("Content-Type", Collections.singletonList("application/json"));
 
-            if (requestType.equals("PATCH")) {
-                requestType = "POST";
-                header.put("X-HTTP-Method-Override", Collections.singletonList("PATCH"));
-            }
-
             NextcloudRequest nextcloudRequest = new NextcloudRequest.Builder()
                     .setMethod(requestType)
                     .setUrl(API_URL.concat(endpoint))

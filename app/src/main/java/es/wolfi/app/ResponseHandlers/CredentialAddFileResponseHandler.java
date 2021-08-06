@@ -1,6 +1,8 @@
 package es.wolfi.app.ResponseHandlers;
 
 import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -8,9 +10,9 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONObject;
 
+import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
 import es.wolfi.app.passman.adapters.FileEditAdapter;
-import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;
@@ -49,8 +51,13 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
                 File file = new File(fileObject);
 
                 if (requestCode == FileUtils.activityRequestFileCode.credentialAddFile.ordinal()) {
-                    fed.addFile(file);
-                    fed.notifyDataSetChanged();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            fed.addFile(file);
+                            fed.notifyDataSetChanged();
+                        }
+                    });
                 }
                 if (requestCode == FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) {
                     CustomField cf = new CustomField();
@@ -59,8 +66,13 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
                     cf.setFieldType("file");
                     cf.setJValue(file.getAsJSONObject());
 
-                    cfed.addCustomField(cf);
-                    cfed.notifyDataSetChanged();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            cfed.addCustomField(cf);
+                            cfed.notifyDataSetChanged();
+                        }
+                    });
                 }
             } catch (Exception e) {
                 e.printStackTrace();

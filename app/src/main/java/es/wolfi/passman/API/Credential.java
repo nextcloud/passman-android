@@ -501,19 +501,33 @@ public class Credential extends Core implements Filterable {
     }
 
     public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler, ProgressDialog progress) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(true);
-
         progress.setMessage(c.getString(R.string.wait_while_encrypting));
         try {
-            params.put("filename", vault.encryptString(fileName));
-            params.put("data", vault.encryptRawStringData(encodedFile));
-            params.put("mimetype", mimeType);
-            params.put("size", fileSize);
-            progress.setMessage(c.getString(R.string.wait_while_uploading));
-            requestAPI(c, "file", params, "POST", responseHandler);
-        } catch (MalformedURLException e) {
+            if (Core.ssoAccount != null) {
+                JSONObject params = new JSONObject();
+
+                params.put("filename", vault.encryptString(fileName));
+                params.put("data", vault.encryptRawStringData(encodedFile));
+                params.put("mimetype", mimeType);
+                params.put("size", fileSize);
+
+                progress.setMessage(c.getString(R.string.wait_while_uploading));
+                requestAPI(c, "file", params, "POST", responseHandler);
+            } else {
+                RequestParams params = new RequestParams();
+                params.setUseJsonStreamer(true);
+
+                params.put("filename", vault.encryptString(fileName));
+                params.put("data", vault.encryptRawStringData(encodedFile));
+                params.put("mimetype", mimeType);
+                params.put("size", fileSize);
+
+                progress.setMessage(c.getString(R.string.wait_while_uploading));
+                requestAPI(c, "file", params, "POST", responseHandler);
+            }
+        } catch (MalformedURLException | JSONException e) {
             e.printStackTrace();
+            progress.cancel();
         }
     }
 
