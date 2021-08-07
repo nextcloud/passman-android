@@ -41,15 +41,10 @@
     <string name="unlock_passman">Odomknúť Passman</string>
     <string name="unlock_passman_message_device_auth">Pre prístup do programu Passman sa autentifikujte</string>
     <string name="app_start_password">Štartovacie heslo aplikácie</string>
-    <string name="app_start_password_android_auth_description">Chcete povoliť autentifikáciu užívateľa systému Android pri spustení aplikácie?</string>
-    <string name="wait_while_encrypting">Čakajte zašifrovávam...</string>
-    <string name="wait_while_decrypting">Čakajte dešifrujem...</string>
-    <string name="wait_while_uploading">Čakajte nahrávam...</string>
-    <string name="wait_while_downloading">Čakajte sťahujem...</string>
     <string name="autofill_noactivevault">Žiadny aktívny trezor</string>
     <string name="autofill_vaultlocked">Trezor musí byť odomknutý</string>
     <string name="autofill_vaultempty">Žiadne prihlasovacie údaje v trezore</string>
     <string name="autofill_createdbyautofillservice">Vytvorené automatickým dopĺňaním</string>
     <string name="default_autofill_vault">Predvolený trezor pre automatické dopĺňanie</string>
     <string name="automatically">automaticky</string>
-</resources>
+    </resources>
