@@ -41,10 +41,21 @@
     <string name="unlock_passman">解锁 Passman</string>
     <string name="unlock_passman_message_device_auth">请验证身份以访问 Passman</string>
     <string name="app_start_password">应用启动密码</string>
+    <string name="app_start_password_android_auth_description">应用启动时启用安卓用户身份验证？</string>
+    <string name="wait_while_encrypting">加密中，请稍等...</string>
+    <string name="wait_while_decrypting">解密中，请稍等...</string>
+    <string name="wait_while_uploading">上传中，请稍等...</string>
+    <string name="wait_while_downloading">下载中，请稍等...</string>
     <string name="autofill_noactivevault">无活跃保险库</string>
     <string name="autofill_vaultlocked">需要解锁保险库</string>
     <string name="autofill_vaultempty">保险库中无身份凭据</string>
     <string name="autofill_createdbyautofillservice">由自动填写服务创建</string>
     <string name="default_autofill_vault">默认自动填写保险库</string>
     <string name="automatically">自动</string>
-    </resources>
+    <string name="request_connect_timeout">请求连接超时（秒）</string>
+    <string name="request_response_timeout">请求响应超时 (秒）</string>
+    <string name="expert_settings">专家设置</string>
+    <string name="confirm_credential_deletion">你确定要删除此凭据吗？</string>
+    <string name="yes">是</string>
+    <string name="cancel">取消</string>
+</resources>
