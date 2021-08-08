@@ -54,12 +54,12 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
     if (!(ctx = EVP_CIPHER_CTX_new())) handleErrors("Error initializing context");
 
     /* Initialise the decryption operation. */
-    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL)) {
+    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_ccm(), nullptr, nullptr, nullptr)) {
         handleErrors("Error setting crypto mode");
         goto CLEANUP;
     }
 
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 15-lol, NULL)) {
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 15-lol, nullptr)) {
         handleErrors("Error setting IV Length");
         goto CLEANUP;
     }
@@ -71,14 +71,14 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
     }
 
     /* Initialise key and IV */
-    if (1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv)) {
+    if (1 != EVP_DecryptInit_ex(ctx, nullptr, nullptr, key, iv)) {
         handleErrors("Error setting KEY and IV");
         goto CLEANUP;
     }
 
     /* Provide the total ciphertext length
      */
-    if (1 != EVP_DecryptUpdate(ctx, NULL, &len, NULL, ciphertext_len)) {
+    if (1 != EVP_DecryptUpdate(ctx, nullptr, &len, nullptr, ciphertext_len)) {
         handleErrors("Error setting cyphertext length");
         goto CLEANUP;
     }
@@ -86,7 +86,7 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
     /* Provide any AAD data. This can be called zero or more times as
      * required
      */
-    if (1 != EVP_DecryptUpdate(ctx, NULL, &len, aad, aad_len)) {
+    if (1 != EVP_DecryptUpdate(ctx, nullptr, &len, aad, aad_len)) {
         handleErrors("Error setting AAD data");
         goto CLEANUP;
     }
@@ -137,37 +137,37 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
     }
 
     /* Initialise the encryption operation. */
-    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL)) {
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ccm(), nullptr, nullptr, nullptr)) {
         handleErrors("Error setting crypto mode");
         goto CLEANUP;
     }
 
     /* Set IV length */
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, iv_len, NULL)) {
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, iv_len, nullptr)) {
         handleErrors("Error setting IV Length");
         goto CLEANUP;
     }
 
     /* Set tag length */
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, tag_len, NULL)) {
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, tag_len, nullptr)) {
         handleErrors("Error setting tag length");
         goto CLEANUP;
     }
 
     /* Initialise key and IV */
-    if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv)) {
+    if (1 != EVP_EncryptInit_ex(ctx, nullptr, nullptr, key, iv)) {
         handleErrors("Error setting KEY and IV");
         goto CLEANUP;
     }
 
     /* Provide the total plaintext length */
-    if (1 != EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len)) {
+    if (1 != EVP_EncryptUpdate(ctx, nullptr, &len, nullptr, plaintext_len)) {
         handleErrors("Error setting plaintext length");
         goto CLEANUP;
     }
 
     /* Provide any AAD data. This can be called zero or one times as required */
-    if (1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_len)) {
+    if (1 != EVP_EncryptUpdate(ctx, nullptr, &len, aad, aad_len)) {
         handleErrors("Error setting AAD data");
         goto CLEANUP;
     }
@@ -236,9 +236,9 @@ using namespace WLF::Crypto;
 char* SJCL::decrypt(string sjcl_json, string key) {
     JSONValue *data = JSON::Parse(sjcl_json.c_str());
 
-    if (data == NULL || ! data->IsObject()) {
+    if (data == nullptr || ! data->IsObject()) {
         __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "Error parsing the SJCL JSON");
-        return NULL;
+        return nullptr;
     }
 
     JSONObject food = data->AsObject();
@@ -278,7 +278,7 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
     PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key);
 
-    char* ret = NULL;
+    char* ret = nullptr;
     // Decrypt the data
     int plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
                &cryptogram->data[cyphertext_data_length], derived_key, iv_raw->data, plaintext);
@@ -314,7 +314,7 @@ char* SJCL::decrypt(string sjcl_json, string key) {
 }
 
 int getInsecureRandomNumber(int min, int max) {
-    srand(time(NULL));
+    srand(time(nullptr));
     return (rand() % (max - min + 1)) + min;
 }
 
@@ -340,7 +340,7 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     unsigned char *iv;
     unsigned char *salt;
     unsigned char *additional = (unsigned char *)"";
-    char* ret = NULL;
+    char* ret = nullptr;
 
     iv = (unsigned char *) malloc(sizeof(unsigned char) * iv_len);
     salt = (unsigned char *) malloc(sizeof(unsigned char) * salt_len);
