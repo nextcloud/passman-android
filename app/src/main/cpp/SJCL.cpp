@@ -29,7 +29,7 @@
 #include <android/log.h>
 #include <vector>
 #include <algorithm>
-#include <stdlib.h>
+#include <cstdlib>
 
 #define LOG_TAG "SJCL"
 
