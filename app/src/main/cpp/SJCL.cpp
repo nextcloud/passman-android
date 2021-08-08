@@ -43,35 +43,53 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
 ) {
     EVP_CIPHER_CTX *ctx;
     int len;
-    int plaintext_len;
-    int ret;
-
-    /* Create and initialise the context */
-    if(!(ctx = EVP_CIPHER_CTX_new())) handleErrors("Error initializing context");
-
-    /* Initialise the decryption operation. */
-    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL)) handleErrors("Error setting crypto mode");
-
+    int plaintext_len = -1;
+    int ret = -1;
     int lol = 2;
+
     if (ciphertext_len >= 1<<16) lol++;
     if (ciphertext_len >= 1<<24) lol++;
 
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 15-lol, NULL)) handleErrors("Error setting IV Length");
+    /* Create and initialise the context */
+    if (!(ctx = EVP_CIPHER_CTX_new())) handleErrors("Error initializing context");
+
+    /* Initialise the decryption operation. */
+    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL)) {
+        handleErrors("Error setting crypto mode");
+        goto CLEANUP;
+    }
+
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 15-lol, NULL)) {
+        handleErrors("Error setting IV Length");
+        goto CLEANUP;
+    }
 
     /* Set expected tag value. */
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, 8, tag)) handleErrors("Error setting TAG value");
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, 8, tag)) {
+        handleErrors("Error setting TAG value");
+        goto CLEANUP;
+    }
 
     /* Initialise key and IV */
-    if(1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv)) handleErrors("Error setting KEY and IV");
+    if (1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv)) {
+        handleErrors("Error setting KEY and IV");
+        goto CLEANUP;
+    }
 
     /* Provide the total ciphertext length
      */
-    if(1 != EVP_DecryptUpdate(ctx, NULL, &len, NULL, ciphertext_len)) handleErrors("Error setting cyphertext length");
+    if (1 != EVP_DecryptUpdate(ctx, NULL, &len, NULL, ciphertext_len)) {
+        handleErrors("Error setting cyphertext length");
+        goto CLEANUP;
+    }
 
     /* Provide any AAD data. This can be called zero or more times as
      * required
      */
-    if(1 != EVP_DecryptUpdate(ctx, NULL, &len, aad, aad_len)) handleErrors("Error setting AAD data");
+    if (1 != EVP_DecryptUpdate(ctx, NULL, &len, aad, aad_len)) {
+        handleErrors("Error setting AAD data");
+        goto CLEANUP;
+    }
 
     /* Provide the message to be decrypted, and obtain the plaintext output.
      * EVP_DecryptUpdate can be called multiple times if necessary
@@ -80,6 +98,7 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
 
     plaintext_len = len;
 
+    CLEANUP:
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
 
@@ -106,60 +125,94 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
 {
     EVP_CIPHER_CTX *ctx;
 
-    int len;
+    int len = -1;
 
-    int ciphertext_len;
+    int ciphertext_len = -1;
 
 
     /* Create and initialise the context */
-    if(!(ctx = EVP_CIPHER_CTX_new()))
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
         handleErrors("Error initializing context");
+        goto CLEANUP;
+    }
 
     /* Initialise the encryption operation. */
-    if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL))
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL)) {
         handleErrors("Error setting crypto mode");
+        goto CLEANUP;
+    }
 
     /* Set IV length */
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, iv_len, NULL))
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, iv_len, NULL)) {
         handleErrors("Error setting IV Length");
+        goto CLEANUP;
+    }
 
     /* Set tag length */
-    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, tag_len, NULL);
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, tag_len, NULL)) {
+        handleErrors("Error setting tag length");
+        goto CLEANUP;
+    }
 
     /* Initialise key and IV */
-    if(1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv))
+    if (1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv)) {
         handleErrors("Error setting KEY and IV");
+        goto CLEANUP;
+    }
 
     /* Provide the total plaintext length */
-    if(1 != EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len))
+    if (1 != EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len)) {
         handleErrors("Error setting plaintext length");
+        goto CLEANUP;
+    }
 
     /* Provide any AAD data. This can be called zero or one times as required */
-    if(1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_len))
+    if (1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_len)) {
         handleErrors("Error setting AAD data");
+        goto CLEANUP;
+    }
 
     /*
      * Provide the message to be encrypted, and obtain the encrypted output.
      * EVP_EncryptUpdate can only be called once for this.
      */
-    if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len,
-                              reinterpret_cast<const unsigned char *>(plaintext), plaintext_len))
+    if (
+            1 != EVP_EncryptUpdate(
+                ctx,
+                ciphertext,
+                &len,
+                reinterpret_cast<const unsigned char *>(plaintext),
+                plaintext_len
+            )
+    ) {
         handleErrors("Error obtaining the encrypted output");
+        len = -1;
+        goto CLEANUP;
+    }
+
     ciphertext_len = len;
 
     /*
      * Finalise the encryption. Normally ciphertext bytes may be written at
      * this stage, but this does not occur in CCM mode.
      */
-    if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
+    if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) {
         handleErrors("Error finalizing the encryption");
+        len = ciphertext_len = -1;
+        goto CLEANUP;
+    }
+
     ciphertext_len += len;
 
     /* Get the tag */
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, tag_len, tag))
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, tag_len, tag)) {
         handleErrors("Error getting the encryption tag");
+        ciphertext_len = -1;
+        goto CLEANUP;
+    }
 
     /* Clean up */
+    CLEANUP:
     EVP_CIPHER_CTX_free(ctx);
 
     return ciphertext_len;
