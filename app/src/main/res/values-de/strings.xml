@@ -52,4 +52,10 @@
     <string name="autofill_createdbyautofillservice">Erstellt durch den Dienst zum automatischen Ausfüllen</string>
     <string name="default_autofill_vault">Standard-Tresor für automatisches Ausfüllen</string>
     <string name="automatically">automatisch</string>
+    <string name="request_connect_timeout">Zeitüberschreitung bei Verbindungsanfragen (in Sekunden)</string>
+    <string name="request_response_timeout">Zeitüberschreitung bei der Beantwortung von Anfragen (in Sekunden)</string>
+    <string name="expert_settings">Experteneinstellungen</string>
+    <string name="confirm_credential_deletion">Möchten Sie diese Zugangsdaten wirklisch löschen?</string>
+    <string name="yes">Ja</string>
+    <string name="cancel">Abbrechen</string>
 </resources>

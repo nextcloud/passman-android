@@ -39,5 +39,12 @@
     <string name="add_file">Pridať súbor</string>
     <string name="add_custom_field">Pridať vlastné pole</string>
     <string name="unlock_passman">Odomknúť Passman</string>
+    <string name="unlock_passman_message_device_auth">Pre prístup do programu Passman sa autentifikujte</string>
+    <string name="app_start_password">Štartovacie heslo aplikácie</string>
+    <string name="autofill_noactivevault">Žiadny aktívny trezor</string>
+    <string name="autofill_vaultlocked">Trezor musí byť odomknutý</string>
+    <string name="autofill_vaultempty">Žiadne prihlasovacie údaje v trezore</string>
+    <string name="autofill_createdbyautofillservice">Vytvorené automatickým dopĺňaním</string>
+    <string name="default_autofill_vault">Predvolený trezor pre automatické dopĺňanie</string>
     <string name="automatically">automaticky</string>
-</resources>
+    </resources>

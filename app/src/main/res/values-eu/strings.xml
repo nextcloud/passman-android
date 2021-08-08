@@ -41,15 +41,10 @@
     <string name="unlock_passman">Desbloketatu Passman</string>
     <string name="unlock_passman_message_device_auth">Autentifikatu Passman-era sartzeko</string>
     <string name="app_start_password">Aplikazioa hasteko pasahitza</string>
-    <string name="app_start_password_android_auth_description">Android-en erabiltzailearen autentifikazioa gaitu nahi duzu aplikazioa abiaraztean?</string>
-    <string name="wait_while_encrypting">itxaron zifratzen den bitartean...</string>
-    <string name="wait_while_decrypting">Itxaron deszifratzen den bitartean...</string>
-    <string name="wait_while_uploading">Itxaron kargatzen den bitartean...</string>
-    <string name="wait_while_downloading">Itxaron deskargatzen den bitartean...</string>
     <string name="autofill_noactivevault">Ez dago ganbera korazatu aktiborik</string>
     <string name="autofill_vaultlocked">Ganbara korazatua desblokeatu behar da</string>
     <string name="autofill_vaultempty">Kredentzialik ez ganbara korazatuan</string>
     <string name="autofill_createdbyautofillservice">Betetze automatikoaren zerbitzuak sortua</string>
     <string name="default_autofill_vault">betetze automatiko-kutxa lehenetsia</string>
     <string name="automatically">automatikoki</string>
-</resources>
+    </resources>

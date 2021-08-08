@@ -71,4 +71,6 @@
         <item name="android:textColor">@color/login_text_hint_color</item>
     </style>
 
+    <dimen name="floating_button_parent_padding">90dp</dimen>
+
 </resources>

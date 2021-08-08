@@ -81,10 +81,20 @@ public abstract class Core {
         Core.password = password;
     }
 
+    public static int getConnectTimeout(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15) * 1000;
+    }
+
+    public static int getResponseTimeout(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
+    }
+
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
         final AsyncHttpResponseHandler responseHandler = new CoreAPIGETResponseHandler(callback);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setBasicAuth(username, password);
+        client.setConnectTimeout(getConnectTimeout(c));
+        client.setResponseTimeout(getResponseTimeout(c));
         client.addHeader("Content-Type", "application/json");
         client.get(host.concat(endpoint), responseHandler);
     }
@@ -96,8 +106,8 @@ public abstract class Core {
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.setBasicAuth(username, password);
-        client.setConnectTimeout(15000);      // 15s connect timeout
-        client.setResponseTimeout(120000);    // 120s response timeout
+        client.setConnectTimeout(getConnectTimeout(c));
+        client.setResponseTimeout(getResponseTimeout(c));
         //client.addHeader("Content-Type", "application/json; utf-8");
         client.addHeader("Accept", "application/json, text/plain, */*");
 
