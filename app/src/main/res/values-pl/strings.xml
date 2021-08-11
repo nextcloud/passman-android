@@ -41,10 +41,21 @@
     <string name="unlock_passman">Odblokuj Pasmana</string>
     <string name="unlock_passman_message_device_auth">Uwierzytelnij się, aby uzyskać dostęp do Passmana</string>
     <string name="app_start_password">Hasło początkowe aplikacji</string>
+    <string name="app_start_password_android_auth_description">Włączyć uwierzytelnianie użytkownika Androida podczas uruchamiania aplikacji?</string>
+    <string name="wait_while_encrypting">Poczekaj, trwa szyfrowanie…</string>
+    <string name="wait_while_decrypting">Poczekaj, trwa odszyfrowywanie…</string>
+    <string name="wait_while_uploading">Poczekaj, trwa wysyłanie…</string>
+    <string name="wait_while_downloading">Poczekaj, trwa pobieranie…</string>
     <string name="autofill_noactivevault">Brak aktywnego sejfu</string>
     <string name="autofill_vaultlocked">Sejf musi być odblokowany</string>
     <string name="autofill_vaultempty">Brak danych logowania do sejfu</string>
     <string name="autofill_createdbyautofillservice">Utworzony przez usługę automatycznego uzupełniania</string>
     <string name="default_autofill_vault">Domyślne automatyczne uzupełnianie sejfu</string>
     <string name="automatically">automatycznie</string>
-    </resources>
+    <string name="request_connect_timeout">Czas oczekiwania na połączenie (w sekundach)</string>
+    <string name="request_response_timeout">Czas oczekiwania na odpowiedź (w sekundach)</string>
+    <string name="expert_settings">Ustawienia eksperckie</string>
+    <string name="confirm_credential_deletion">Czy na pewno chcesz usunąć to poświadczenie?</string>
+    <string name="yes">Tak</string>
+    <string name="cancel">Anuluj</string>
+</resources>
