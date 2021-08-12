@@ -3,10 +3,10 @@ package es.wolfi.app.ResponseHandlers;
 import android.app.ProgressDialog;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -51,8 +51,7 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
                 if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
                     Credential currentCredential = Credential.fromJSON(credentialObject, v);
 
-                    Snackbar.make(view, R.string.successfully_deleted, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
 
                     Objects.requireNonNull(passwordListActivity).deleteCredentialInCurrentLocalVaultList(currentCredential);
                     Objects.requireNonNull(passwordListActivity).showAddCredentialsButton();
@@ -72,8 +71,7 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
 
         alreadySaving.set(false);
         progress.dismiss();
-        Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -86,8 +84,7 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
             try {
                 JSONObject o = new JSONObject(response);
                 if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                    Snackbar.make(view, o.getString("message"), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
                     return;
                 }
             } catch (JSONException e1) {
@@ -95,14 +92,12 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
             }
         }
 
-        if (error != null && error.getMessage() != null) {
+        if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
             Log.e("async http response", new String(responseBody));
-            Snackbar.make(view, error.getMessage(), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
         } else {
-            Snackbar.make(view, R.string.error_occurred, Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
         }
     }
 
