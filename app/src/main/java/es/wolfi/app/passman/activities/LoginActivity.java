@@ -23,6 +23,7 @@ package es.wolfi.app.passman.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -180,9 +181,12 @@ public class LoginActivity extends AppCompatActivity {
         PackageManager pm = context.getPackageManager();
         for (String app : APPS) {
             try {
-                pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
-                returnValue = true;
-                break;
+                PackageInfo pi = pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
+                // check if Nextcloud Files App version with the required PATCH request fix is installed
+                if (pi.versionCode > 30160190) {
+                    returnValue = true;
+                    break;
+                }
             } catch (PackageManager.NameNotFoundException ignored) {
             }
         }
