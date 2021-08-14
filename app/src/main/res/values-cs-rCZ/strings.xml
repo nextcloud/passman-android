@@ -52,4 +52,10 @@
     <string name="autofill_createdbyautofillservice">Vytvořeno službo automatického vyplňování</string>
     <string name="default_autofill_vault">Výchozí trezor pro automatické vyplňování</string>
     <string name="automatically">automaticky</string>
+    <string name="request_connect_timeout">Časový limit požadavku na připojení (sekundy)</string>
+    <string name="request_response_timeout">Časový limit požadavku na odpověď (sekundy)</string>
+    <string name="expert_settings">Nastavení pro pokročilé uživatele</string>
+    <string name="confirm_credential_deletion">Opravdu chcete tento přihlašovací údaj smazat?</string>
+    <string name="yes">Ano</string>
+    <string name="cancel">Storno</string>
 </resources>

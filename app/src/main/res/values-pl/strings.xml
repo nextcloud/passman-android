@@ -52,4 +52,10 @@
     <string name="autofill_createdbyautofillservice">Utworzony przez usługę automatycznego uzupełniania</string>
     <string name="default_autofill_vault">Domyślne automatyczne uzupełnianie sejfu</string>
     <string name="automatically">automatycznie</string>
+    <string name="request_connect_timeout">Czas oczekiwania na połączenie (w sekundach)</string>
+    <string name="request_response_timeout">Czas oczekiwania na odpowiedź (w sekundach)</string>
+    <string name="expert_settings">Ustawienia eksperckie</string>
+    <string name="confirm_credential_deletion">Czy na pewno chcesz usunąć to poświadczenie?</string>
+    <string name="yes">Tak</string>
+    <string name="cancel">Anuluj</string>
 </resources>

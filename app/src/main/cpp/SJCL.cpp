@@ -29,6 +29,7 @@
 #include <android/log.h>
 #include <vector>
 #include <algorithm>
+#include <cstdlib>
 
 #define LOG_TAG "SJCL"
 
@@ -42,35 +43,53 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
 ) {
     EVP_CIPHER_CTX *ctx;
     int len;
-    int plaintext_len;
-    int ret;
-
-    /* Create and initialise the context */
-    if(!(ctx = EVP_CIPHER_CTX_new())) handleErrors("Error initializing context");
-
-    /* Initialise the decryption operation. */
-    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL)) handleErrors("Error setting crypto mode");
-
+    int plaintext_len = -1;
+    int ret = -1;
     int lol = 2;
+
     if (ciphertext_len >= 1<<16) lol++;
     if (ciphertext_len >= 1<<24) lol++;
 
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 15-lol, NULL)) handleErrors("Error setting IV Length");
+    /* Create and initialise the context */
+    if (!(ctx = EVP_CIPHER_CTX_new())) handleErrors("Error initializing context");
+
+    /* Initialise the decryption operation. */
+    if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_ccm(), nullptr, nullptr, nullptr)) {
+        handleErrors("Error setting crypto mode");
+        goto CLEANUP;
+    }
+
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, 15-lol, nullptr)) {
+        handleErrors("Error setting IV Length");
+        goto CLEANUP;
+    }
 
     /* Set expected tag value. */
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, 8, tag)) handleErrors("Error setting TAG value");
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, 8, tag)) {
+        handleErrors("Error setting TAG value");
+        goto CLEANUP;
+    }
 
     /* Initialise key and IV */
-    if(1 != EVP_DecryptInit_ex(ctx, NULL, NULL, key, iv)) handleErrors("Error setting KEY and IV");
+    if (1 != EVP_DecryptInit_ex(ctx, nullptr, nullptr, key, iv)) {
+        handleErrors("Error setting KEY and IV");
+        goto CLEANUP;
+    }
 
     /* Provide the total ciphertext length
      */
-    if(1 != EVP_DecryptUpdate(ctx, NULL, &len, NULL, ciphertext_len)) handleErrors("Error setting cyphertext length");
+    if (1 != EVP_DecryptUpdate(ctx, nullptr, &len, nullptr, ciphertext_len)) {
+        handleErrors("Error setting cyphertext length");
+        goto CLEANUP;
+    }
 
     /* Provide any AAD data. This can be called zero or more times as
      * required
      */
-    if(1 != EVP_DecryptUpdate(ctx, NULL, &len, aad, aad_len)) handleErrors("Error setting AAD data");
+    if (1 != EVP_DecryptUpdate(ctx, nullptr, &len, aad, aad_len)) {
+        handleErrors("Error setting AAD data");
+        goto CLEANUP;
+    }
 
     /* Provide the message to be decrypted, and obtain the plaintext output.
      * EVP_DecryptUpdate can be called multiple times if necessary
@@ -79,6 +98,7 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
 
     plaintext_len = len;
 
+    CLEANUP:
     /* Clean up */
     EVP_CIPHER_CTX_free(ctx);
 
@@ -105,60 +125,94 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
 {
     EVP_CIPHER_CTX *ctx;
 
-    int len;
+    int len = -1;
 
-    int ciphertext_len;
+    int ciphertext_len = -1;
 
 
     /* Create and initialise the context */
-    if(!(ctx = EVP_CIPHER_CTX_new()))
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
         handleErrors("Error initializing context");
+        goto CLEANUP;
+    }
 
     /* Initialise the encryption operation. */
-    if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ccm(), NULL, NULL, NULL))
+    if (1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_ccm(), nullptr, nullptr, nullptr)) {
         handleErrors("Error setting crypto mode");
+        goto CLEANUP;
+    }
 
     /* Set IV length */
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, iv_len, NULL))
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_IVLEN, iv_len, nullptr)) {
         handleErrors("Error setting IV Length");
+        goto CLEANUP;
+    }
 
     /* Set tag length */
-    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, tag_len, NULL);
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, tag_len, nullptr)) {
+        handleErrors("Error setting tag length");
+        goto CLEANUP;
+    }
 
     /* Initialise key and IV */
-    if(1 != EVP_EncryptInit_ex(ctx, NULL, NULL, key, iv))
+    if (1 != EVP_EncryptInit_ex(ctx, nullptr, nullptr, key, iv)) {
         handleErrors("Error setting KEY and IV");
+        goto CLEANUP;
+    }
 
     /* Provide the total plaintext length */
-    if(1 != EVP_EncryptUpdate(ctx, NULL, &len, NULL, plaintext_len))
+    if (1 != EVP_EncryptUpdate(ctx, nullptr, &len, nullptr, plaintext_len)) {
         handleErrors("Error setting plaintext length");
+        goto CLEANUP;
+    }
 
     /* Provide any AAD data. This can be called zero or one times as required */
-    if(1 != EVP_EncryptUpdate(ctx, NULL, &len, aad, aad_len))
+    if (1 != EVP_EncryptUpdate(ctx, nullptr, &len, aad, aad_len)) {
         handleErrors("Error setting AAD data");
+        goto CLEANUP;
+    }
 
     /*
      * Provide the message to be encrypted, and obtain the encrypted output.
      * EVP_EncryptUpdate can only be called once for this.
      */
-    if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len,
-                              reinterpret_cast<const unsigned char *>(plaintext), plaintext_len))
+    if (
+            1 != EVP_EncryptUpdate(
+                ctx,
+                ciphertext,
+                &len,
+                reinterpret_cast<const unsigned char *>(plaintext),
+                plaintext_len
+            )
+    ) {
         handleErrors("Error obtaining the encrypted output");
+        len = -1;
+        goto CLEANUP;
+    }
+
     ciphertext_len = len;
 
     /*
      * Finalise the encryption. Normally ciphertext bytes may be written at
      * this stage, but this does not occur in CCM mode.
      */
-    if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len))
+    if (1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) {
         handleErrors("Error finalizing the encryption");
+        len = ciphertext_len = -1;
+        goto CLEANUP;
+    }
+
     ciphertext_len += len;
 
     /* Get the tag */
-    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, tag_len, tag))
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_GET_TAG, tag_len, tag)) {
         handleErrors("Error getting the encryption tag");
+        ciphertext_len = -1;
+        goto CLEANUP;
+    }
 
     /* Clean up */
+    CLEANUP:
     EVP_CIPHER_CTX_free(ctx);
 
     return ciphertext_len;
@@ -182,9 +236,9 @@ using namespace WLF::Crypto;
 char* SJCL::decrypt(string sjcl_json, string key) {
     JSONValue *data = JSON::Parse(sjcl_json.c_str());
 
-    if (data == NULL || ! data->IsObject()) {
+    if (data == nullptr || ! data->IsObject()) {
         __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "Error parsing the SJCL JSON");
-        return NULL;
+        return nullptr;
     }
 
     JSONObject food = data->AsObject();
@@ -204,8 +258,8 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     key_size    = (int) food[L"ks"]->AsNumber();
     tag_size    = (int) food[L"ts"]->AsNumber();
 
-    tag_size /= 8; // Make it bytes!
-    key_size /= 8; // Make it bytes
+    tag_size = (tag_size +7) / 8; // Make it bytes!
+    key_size = (key_size +7) / 8; // Make it bytes
 
     // The actual cryptogram includes the tag size, so we need to take this into account later on!
     Datagram* cryptogram = BASE64::decode((unsigned char *) cyphertext, strlen(cyphertext));
@@ -218,15 +272,13 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     unsigned char* derived_key = (unsigned char*) malloc(sizeof(unsigned char) * key_size);
 
     // Assuming plaintext will always be smaller than the sjcl cyphertext which includes the tag and padding and stuff
-    unsigned char* plaintext = (unsigned char*) malloc(sizeof(unsigned char) * strlen(cyphertext));
-    // Ensure plaintext ends up null terminated
-    for (int i = 0; i < strlen(cyphertext); i++) plaintext[i] = '\0';
+    unsigned char* plaintext = (unsigned char*) std::calloc(cryptogram->length +1, sizeof(unsigned char));
     string s = string("The allocated string is: ") + string((char*)plaintext);
 
     /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
     PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key);
 
-    char* ret = NULL;
+    char* ret = nullptr;
     // Decrypt the data
     int plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
                &cryptogram->data[cyphertext_data_length], derived_key, iv_raw->data, plaintext);
@@ -262,7 +314,7 @@ char* SJCL::decrypt(string sjcl_json, string key) {
 }
 
 int getInsecureRandomNumber(int min, int max) {
-    srand(time(NULL));
+    srand(time(nullptr));
     return (rand() % (max - min + 1)) + min;
 }
 
@@ -280,15 +332,15 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     int tag_size = 64;
     int ciphertext_allocation_multiplicator = 3;    // give generated ciphertext some backup space
 
-    int ks = key_size / 8;  // Make it bytes
-    int ts = tag_size / 8;  // Make it bytes
+    int ks = (key_size +7) / 8;  // Make it bytes
+    int ts = (tag_size +7) / 8;  // Make it bytes
     unsigned char *ciphertext;
     unsigned char *derived_key;
     unsigned char tag[ts];
     unsigned char *iv;
     unsigned char *salt;
     unsigned char *additional = (unsigned char *)"";
-    char* ret = NULL;
+    char* ret = nullptr;
 
     iv = (unsigned char *) malloc(sizeof(unsigned char) * iv_len);
     salt = (unsigned char *) malloc(sizeof(unsigned char) * salt_len);
@@ -336,12 +388,15 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         food["cipher"] = "aes";
 
         string retrn = food.dump();
-        ret = (char *) malloc(sizeof(char) * retrn.length());
+        ret = (char *) std::calloc(retrn.length() +1, sizeof(char));
         strcpy(ret, retrn.c_str());
     }
 
     // Free up resources
     free(ciphertext);
+    free(iv);
+    free(salt);
+    free(derived_key);
 
     return ret;
 }

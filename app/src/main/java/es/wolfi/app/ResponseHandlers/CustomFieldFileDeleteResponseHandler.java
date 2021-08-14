@@ -1,11 +1,13 @@
 package es.wolfi.app.ResponseHandlers;
 
 import android.app.ProgressDialog;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.util.List;
 
+import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
 import es.wolfi.passman.API.CustomField;
 
@@ -37,6 +39,7 @@ public class CustomFieldFileDeleteResponseHandler extends AsyncHttpResponseHandl
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         error.printStackTrace();
+        Toast.makeText(progress.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
         progress.dismiss();
     }
 
