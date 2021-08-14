@@ -88,7 +88,7 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
             }
         }
 
-        if (error != null && error.getMessage() != null) {
+        if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
             Log.e("async http response", new String(responseBody));
             Toast.makeText(applicationContext, error.getMessage(), Toast.LENGTH_SHORT).show();
