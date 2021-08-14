@@ -35,4 +35,27 @@
     <string name="error_downloading_file">Erro ao baixar o arquivo</string>
     <string name="error_writing_file">Erro ao gravar o arquivo</string>
     <string name="files">Arquivos</string>
-    </resources>
+    <string name="custom_fields">Os campos personalizados</string>
+    <string name="add_file">Adicionar ficheiro </string>
+    <string name="add_custom_field">Adicionar campo personalizado </string>
+    <string name="unlock_passman">Desbloquear Passman </string>
+    <string name="unlock_passman_message_device_auth">Por favor autentique para acessar o Passman </string>
+    <string name="app_start_password">Senha de início do aplicativo </string>
+    <string name="app_start_password_android_auth_description">Ativar autenticação de usuário Android ao iniciar o aplicativo? </string>
+    <string name="wait_while_encrypting">Aguarde enquanto criptografa ... </string>
+    <string name="wait_while_decrypting">Espere enquanto descriptografa ... </string>
+    <string name="wait_while_uploading">Aguarde enquanto faz o upload ... </string>
+    <string name="wait_while_downloading">Aguarde enquanto faz o download ... </string>
+    <string name="autofill_noactivevault">Nenhum cofre ativo </string>
+    <string name="autofill_vaultlocked">O Vault precisa ser desbloqueado </string>
+    <string name="autofill_vaultempty">Sem credenciais no vault </string>
+    <string name="autofill_createdbyautofillservice">Criado por serviço de preenchimento automático </string>
+    <string name="default_autofill_vault">Cofre de preenchimento automático padrão </string>
+    <string name="automatically">automaticamente </string>
+    <string name="request_connect_timeout">Solicitar tempo limite de conexão (em segundos) </string>
+    <string name="request_response_timeout">Tempo limite de resposta da solicitação (em segundos) </string>
+    <string name="expert_settings">Configurações para especialistas </string>
+    <string name="confirm_credential_deletion">Tem certeza de que deseja excluir esta credencial? </string>
+    <string name="yes">Sim</string>
+    <string name="cancel">Cancelar </string>
+</resources>
