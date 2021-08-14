@@ -62,4 +62,5 @@
     <string name="confirm_credential_deletion">Are you sure you want to delete this credential?</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="clear_clipboard_delay">Clear clipboard (after seconds)</string>
 </resources>

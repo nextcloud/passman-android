@@ -23,6 +23,8 @@ package es.wolfi.app.passman;
 
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -85,6 +87,7 @@ public class PasswordList extends AppCompatActivity implements
     private String lastOpenedCredentialGuid = "";
     private String intentFilecontent = "";
     HashMap<String, Integer> visibleButtonsBeforeEnterSettings = new HashMap<String, Integer>();
+    private ClipboardManager.OnPrimaryClipChangedListener onPrimaryClipChangedListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,6 +166,8 @@ public class PasswordList extends AppCompatActivity implements
                     // To dismiss the dialog
                     progress.dismiss();
 
+                    attachClipboardListener();
+
                     if (result) {
                         showVaults();
                         return;
@@ -175,6 +180,53 @@ public class PasswordList extends AppCompatActivity implements
 
             running = true;
         }
+    }
+
+    public void attachClipboardListener() {
+        ClipboardManager clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        if (onPrimaryClipChangedListener != null) {
+            clipBoard.removePrimaryClipChangedListener(onPrimaryClipChangedListener);
+        }
+        int delaySeconds = settings.getInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), 0);
+        if (delaySeconds > 0) {
+            clipBoard.addPrimaryClipChangedListener(getOnPrimaryClipChangedListener(delaySeconds * 1000));
+        }
+    }
+
+    private ClipboardManager.OnPrimaryClipChangedListener getOnPrimaryClipChangedListener(int delayMillis) {
+        onPrimaryClipChangedListener = new ClipboardManager.OnPrimaryClipChangedListener() {
+            @Override
+            public void onPrimaryClipChanged() {
+                ClipboardManager clipBoard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                ClipData clipData = clipBoard.getPrimaryClip();
+                ClipData.Item item = clipData.getItemAt(0);
+                String clipboardData = item.getText().toString();
+
+                if (!clipboardData.equals("")) {
+                    Log.d("clipboard", "got new value");
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // check if clipboard is readable, otherwise clear by default
+                            if (clipBoard.hasPrimaryClip()) {
+                                ClipData clipDataAfterDelay = clipBoard.getPrimaryClip();
+                                ClipData.Item itemAfterDelay = clipDataAfterDelay.getItemAt(0);
+                                String clipboardDataAfterDelay = itemAfterDelay.getText().toString();
+
+                                // check that clipboard data was changed in the meantime
+                                if (!clipboardData.equals(clipboardDataAfterDelay)) {
+                                    return;
+                                }
+                            }
+                            clipBoard.setPrimaryClip(ClipData.newPlainText("", ""));
+                            Log.d("clipboard", "cleared");
+                        }
+                    }, delayMillis);
+                }
+            }
+        };
+
+        return onPrimaryClipChangedListener;
     }
 
     private ProgressDialog getProgressDialog() {
