@@ -80,12 +80,16 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
             if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
                 try {
                     JSONObject icon = new JSONObject(favicon);
-                    byte[] byteImageData = Base64.decode(icon.getString("content"), Base64.DEFAULT);
-                    Bitmap bitmapImageData = BitmapFactory.decodeByteArray(byteImageData, 0, byteImageData.length);
-                    if (bitmapImageData == null) {
-                        Sharp.loadInputStream(new ByteArrayInputStream(byteImageData)).into(holder.contentImage);
+                    if (!icon.getString("type").equals("false") && !icon.getString("content").equals("")){
+                        byte[] byteImageData = Base64.decode(icon.getString("content"), Base64.DEFAULT);
+                        Bitmap bitmapImageData = BitmapFactory.decodeByteArray(byteImageData, 0, byteImageData.length);
+                        if (bitmapImageData == null) {
+                            Sharp.loadInputStream(new ByteArrayInputStream(byteImageData)).into(holder.contentImage);
+                        } else {
+                            holder.contentImage.setImageBitmap(bitmapImageData);
+                        }
                     } else {
-                        holder.contentImage.setImageBitmap(bitmapImageData);
+                        holder.contentImage.setImageResource(R.drawable.ic_baseline_lock_24);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
