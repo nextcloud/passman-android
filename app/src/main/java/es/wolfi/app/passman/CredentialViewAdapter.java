@@ -21,9 +21,6 @@
 package es.wolfi.app.passman;
 
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,15 +30,10 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.pixplicity.sharp.Sharp;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import es.wolfi.passman.API.Credential;
+import es.wolfi.utils.IconUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the
@@ -76,27 +68,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
         }
 
         if (holder.mItem != null && settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true)) {
-            String favicon = holder.mItem.getFavicon();
-            if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
-                try {
-                    JSONObject icon = new JSONObject(favicon);
-                    if (!icon.getString("type").equals("false") && !icon.getString("content").equals("")){
-                        byte[] byteImageData = Base64.decode(icon.getString("content"), Base64.DEFAULT);
-                        Bitmap bitmapImageData = BitmapFactory.decodeByteArray(byteImageData, 0, byteImageData.length);
-                        if (bitmapImageData == null) {
-                            Sharp.loadInputStream(new ByteArrayInputStream(byteImageData)).into(holder.contentImage);
-                        } else {
-                            holder.contentImage.setImageBitmap(bitmapImageData);
-                        }
-                    } else {
-                        holder.contentImage.setImageResource(R.drawable.ic_baseline_lock_24);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                holder.contentImage.setImageResource(R.drawable.ic_baseline_lock_24);
-            }
+            IconUtils.loadIconToImageView(holder.mItem.getFavicon(), holder.contentImage);
         } else {
             holder.contentLayout.removeView(holder.contentImage);
         }
