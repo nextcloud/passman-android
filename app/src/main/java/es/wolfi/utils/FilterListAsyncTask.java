@@ -23,6 +23,7 @@
 package es.wolfi.utils;
 
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -70,7 +71,7 @@ public class FilterListAsyncTask <T extends Filterable> extends AsyncTask<ArrayL
             recyclerView.setAdapter(new VaultViewAdapter((ArrayList<Vault>)filteredList, vaultMListener));
         }
         else {
-            recyclerView.setAdapter(new CredentialViewAdapter((ArrayList<Credential>) filteredList, credentialMListener));
+            recyclerView.setAdapter(new CredentialViewAdapter((ArrayList<Credential>) filteredList, credentialMListener, PreferenceManager.getDefaultSharedPreferences(recyclerView.getContext())));
         }
     }
 }

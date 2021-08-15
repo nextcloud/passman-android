@@ -62,4 +62,6 @@
     <string name="confirm_credential_deletion">Are you sure you want to delete this credential?</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="enable_credential_list_icons">Enable credential list icons</string>
+    <string name="credential_icon">Credential icon</string>
 </resources>

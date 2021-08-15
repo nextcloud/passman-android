@@ -20,6 +20,7 @@
  */
 package es.wolfi.app.passman;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
@@ -50,16 +51,16 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
 
     private final List<Credential> mValues;
     private final CredentialItemFragment.OnListFragmentInteractionListener mListener;
-    private ViewGroup vg;
+    private final SharedPreferences settings;
 
-    public CredentialViewAdapter(List<Credential> items, CredentialItemFragment.OnListFragmentInteractionListener listener) {
+    public CredentialViewAdapter(List<Credential> items, CredentialItemFragment.OnListFragmentInteractionListener listener, SharedPreferences settings) {
         mValues = items;
         mListener = listener;
+        this.settings = settings;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        vg = parent;
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_credential_item, parent, false);
         return new ViewHolder(view);
@@ -74,7 +75,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
             holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
         }
 
-        if (holder.mItem != null) {
+        if (holder.mItem != null && settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true)) {
             String favicon = holder.mItem.getFavicon();
             if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
                 try {
@@ -92,6 +93,8 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
             } else {
                 holder.contentImage.setImageResource(R.drawable.ic_baseline_lock_24);
             }
+        } else {
+            holder.contentLayout.removeView(holder.contentImage);
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
