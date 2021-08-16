@@ -32,12 +32,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
 import es.wolfi.app.passman.SJCLCrypto;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.utils.CredentialLabelSort;
 import es.wolfi.utils.Filterable;
 
 public class Vault extends Core implements Filterable {
@@ -237,6 +239,14 @@ public class Vault extends Core implements Filterable {
         }
 
         return v;
+    }
+
+    public void sort(int method) {
+        credential_guid.clear();
+        Collections.sort(credentials, new CredentialLabelSort(method));
+        for (int i = 0; i < credentials.size(); i++) {
+            credential_guid.put(credentials.get(i).getGuid(), i);
+        }
     }
 
     public void addCredential(Credential credential) {

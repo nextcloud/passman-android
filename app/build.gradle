@@ -32,17 +32,14 @@ android {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 8
-        versionName "0.142"
+        versionCode 10
+        versionName "1.1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11 -frtti -fexceptions"
             }
 
-        }
-        ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
         }
     }
     buildTypes {
@@ -76,23 +73,12 @@ android {
         }
     }
 
-    flavorDimensions "arm"
-
-    productFlavors {
-        create("armabi") {
-            dimension("arm")
-        }
-        create("armeabi-v7a") {
-            dimension("arm")
-        }
-        create("arm64-v8a") {
-            dimension("arm")
-        }
-        create("x86_64") {
-            dimension("x86")
-        }
-        create("x86") {
-            dimension("x86")
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
+            universalApk true
         }
     }
 

@@ -29,6 +29,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +40,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
 
 import java.util.HashMap;
@@ -69,6 +71,11 @@ public class Settings extends Fragment {
     @BindView(R.id.default_autofill_vault)
     Spinner default_autofill_vault;
 
+    @BindView(R.id.request_connect_timeout_value)
+    EditText request_connect_timeout_value;
+    @BindView(R.id.request_response_timeout_value)
+    EditText request_response_timeout_value;
+
     SharedPreferences settings;
 
     public Settings() {
@@ -92,9 +99,8 @@ public class Settings extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        Button settingsSaveButton = (Button) view.findViewById(R.id.settings_save_button);
+        FloatingActionButton settingsSaveButton = (FloatingActionButton) view.findViewById(R.id.settings_save_button);
         settingsSaveButton.setOnClickListener(this.getSaveButtonListener());
-        settingsSaveButton.setVisibility(View.VISIBLE);
 
         return view;
     }
@@ -136,9 +142,12 @@ public class Settings extends Fragment {
             default_autofill_vault.setAdapter(adapter);
             default_autofill_vault.setSelection(selection_id);
         } else {
-            default_autofill_vault.setVisibility(View.INVISIBLE);
-            default_autofill_vault_title.setVisibility(View.INVISIBLE);
+            ((ViewManager) default_autofill_vault.getParent()).removeView(default_autofill_vault);
+            ((ViewManager) default_autofill_vault_title.getParent()).removeView(default_autofill_vault_title);
         }
+
+        request_connect_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15)));
+        request_response_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120)));
     }
 
     private Set<Map.Entry<String, Vault>> getVaultsEntrySet() {
@@ -165,6 +174,9 @@ public class Settings extends Fragment {
                 SingleTon ton = SingleTon.getTon();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
+
+                settings.edit().putInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), Integer.parseInt(request_connect_timeout_value.getText().toString())).commit();
+                settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     if (default_autofill_vault.getSelectedItem().toString().equals(getContext().getString(R.string.automatically))) {

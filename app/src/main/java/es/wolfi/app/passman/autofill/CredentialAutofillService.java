@@ -541,19 +541,19 @@ public final class CredentialAutofillService extends AutofillService {
 
     private Vault getAutofillVault(SingleTon ton) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null) != null) {
-            String autofill_vault_guid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
-            if (!autofill_vault_guid.equals("")) {
-                try {
-                    Vault requestedVault = Vault.fromJSON(new JSONObject(settings.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
-                    requestedVault.unlock(settings.getString(autofill_vault_guid, ""));
-                    return requestedVault;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        Vault activeVault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        String autofillVaultGuid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
+
+        if (!activeVault.guid.equals(autofillVaultGuid) && !autofillVaultGuid.equals("")) {
+            try {
+                Vault requestedVault = Vault.fromJSON(new JSONObject(settings.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
+                requestedVault.unlock(settings.getString(autofillVaultGuid, ""));
+                return requestedVault;
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
-        return (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        return activeVault;
     }
 }
