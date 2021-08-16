@@ -48,6 +48,18 @@ android {
             debuggable false
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        googlePlayRelease {
+            minifyEnabled true
+            debuggable false
+            resValue "string", "app_name", "@string/app_name_release"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // .alpha is needed to keep it compatible with the custom signing key approach on the play store,
+            // since it won't let us create a new store page and publish the app without the alpha on the name.
+            applicationIdSuffix ".alpha"
+            versionNameSuffix '-gplay'
+            signingConfig signingConfigs.release
         }
         debug {
             debuggable true
