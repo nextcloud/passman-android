@@ -307,31 +307,34 @@ public class Credential extends Core implements Filterable {
     public void setVault(Vault v) {
         vault = v;
         vaultId = vault.vault_id;
-
-        if (this.sharedKey.length() > 1 && !this.sharedKey.equals("null")) {
-            this.sharedKeyDecrypted = vault.decryptString(this.sharedKey);
-        }
     }
 
     public String encryptString(String plaintext) {
-        if (this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null")) {
+        if (this.isEncryptedWithSharedKey()) {
             return vault.encryptString(plaintext, this.sharedKeyDecrypted);
         }
         return vault.encryptString(plaintext);
     }
 
     public String encryptRawStringData(String plaintext) {
-        if (this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null")) {
+        if (this.isEncryptedWithSharedKey()) {
             return vault.encryptRawStringData(plaintext, this.sharedKeyDecrypted);
         }
         return vault.encryptRawStringData(plaintext);
     }
 
     public String decryptString(String cryptogram) {
-        if (this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null")) {
+        if (this.isEncryptedWithSharedKey()) {
             return vault.decryptString(cryptogram, this.sharedKeyDecrypted);
         }
         return vault.decryptString(cryptogram);
+    }
+
+    private boolean isEncryptedWithSharedKey() {
+        if (this.sharedKeyDecrypted == null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null")) {
+            this.sharedKeyDecrypted = vault.decryptString(this.sharedKey);
+        }
+        return this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null");
     }
 
     public JSONObject getAsJSONObject() throws JSONException {
