@@ -17,8 +17,16 @@ android {
             keyAlias ALPHA_KEY_ALIAS
             keyPassword ALPHA_KEY_PASSWORD
             v2SigningEnabled true
+
         }
         release {
+            storeFile file(RELEASE_STORE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+            v2SigningEnabled true
+        }
+        googlePlayRelease {
             storeFile file(RELEASE_STORE)
             storePassword RELEASE_STORE_PASSWORD
             keyAlias RELEASE_KEY_ALIAS
@@ -48,6 +56,16 @@ android {
             debuggable false
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        googlePlayRelease {
+            minifyEnabled true
+            debuggable false
+            resValue "string", "app_name", "@string/app_name_release"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // .alpha is needed to keep it compatible with the custom signing key approach on the play store,
+            // since it won't let us create a new store page and publish the app without the alpha on the name.
+            applicationIdSuffix ".alpha"
+            versionNameSuffix '-gplay'
         }
         debug {
             debuggable true
