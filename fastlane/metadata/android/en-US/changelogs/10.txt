@@ -1,0 +1,8 @@
+- New confirm dialog to delete a credential
+- New option to sort credentials by label
+- Migrated save and delete buttons to floating action buttons
+- Fix broken messages when the keyboard was open
+- Use uniform (editable) connect/response timeouts for common api requests
+- Fix endless loading dialog after deleting a credential
+- Fix autofill vault selection if the vault is active and selected as default
+- Security fixes that could have ended on memory corruption on the cryptographic c++ core
