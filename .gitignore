@@ -8,10 +8,10 @@
 /captures
 .externalNativeBuild
 app/.cxx
-
 # Built application files
 *.apk
 *.ap_
+output-metadata.json
 
 # Files for the ART/Dalvik VM
 *.dex

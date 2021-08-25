@@ -21,4 +21,13 @@
     <string name="created">Créé le :</string>
     <string name="last_accessed">Dernier accès le :</string>
     <string name="search">Rechercher</string>
+    <string name="save">Sauvegarder</string>
+    <string name="successfully_saved">Enregistré avec succès</string>
+    <string name="error_occurred">Une erreur est survenue</string>
+    <string name="update">Mettre à jour</string>
+    <string name="successfully_updated">Mis à jour avec succès</string>
+    <string name="delete">Supprimer</string>
+    <string name="successfully_deleted">Suppression réussie</string>
+    <string name="loading">Chargement</string>
+    <string name="files">Fichiers</string>
     </resources>

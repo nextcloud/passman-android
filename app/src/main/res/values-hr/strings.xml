@@ -28,11 +28,9 @@
     <string name="successfully_updated">Uspješno ažurirano</string>
     <string name="delete">Izbriši</string>
     <string name="successfully_deleted">Uspješno izbrisano</string>
-    <string name="nextcloud_connection_settings">Postavke veze Nextclouda</string>
     <string name="app_settings">Postavke aplikacije</string>
-    <string name="wait_while_loading">Pričekajte, učitavanje u tijeku...</string>
     <string name="loading">Učitavanje</string>
     <string name="error_downloading_file">Pogreška pri preuzimanju datoteke</string>
     <string name="error_writing_file">Pogreška pisanja datoteke</string>
     <string name="files">Datoteke</string>
-</resources>
+    </resources>

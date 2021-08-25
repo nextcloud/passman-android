@@ -32,17 +32,14 @@ android {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 8
-        versionName "0.142"
+        versionCode 11
+        versionName "1.1.1"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11 -frtti -fexceptions"
             }
 
-        }
-        ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
         }
     }
     buildTypes {
@@ -51,6 +48,18 @@ android {
             debuggable false
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        googlePlayRelease {
+            minifyEnabled true
+            debuggable false
+            resValue "string", "app_name", "@string/app_name_release"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // .alpha is needed to keep it compatible with the custom signing key approach on the play store,
+            // since it won't let us create a new store page and publish the app without the alpha on the name.
+            applicationIdSuffix ".alpha"
+            versionNameSuffix '-gplay'
+            signingConfig signingConfigs.release
         }
         debug {
             debuggable true
@@ -76,23 +85,12 @@ android {
         }
     }
 
-    flavorDimensions "arm"
-
-    productFlavors {
-        create("armabi") {
-            dimension("arm")
-        }
-        create("armeabi-v7a") {
-            dimension("arm")
-        }
-        create("arm64-v8a") {
-            dimension("arm")
-        }
-        create("x86_64") {
-            dimension("x86")
-        }
-        create("x86") {
-            dimension("x86")
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
+            universalApk true
         }
     }
 
@@ -104,7 +102,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.2.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -115,8 +113,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'commons-codec:commons-codec:1.10'
-    implementation 'org.bouncycastle:bcpkix-jdk15on:1.58'
     implementation 'com.loopj.android:android-async-http:1.4.9'
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 }

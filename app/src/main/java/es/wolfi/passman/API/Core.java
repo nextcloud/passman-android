@@ -32,17 +32,14 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 
+import es.wolfi.app.ResponseHandlers.CoreAPIGETResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
-import es.wolfi.utils.JSONUtils;
 
 public abstract class Core {
     protected static final String LOG_TAG = "API_LIB";
@@ -84,48 +81,20 @@ public abstract class Core {
         Core.password = password;
     }
 
+    public static int getConnectTimeout(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15) * 1000;
+    }
+
+    public static int getResponseTimeout(Context c) {
+        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
+    }
+
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
-        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
-                String result = new String(responseBody);
-                if (statusCode == 200 && !result.equals("")) {
-                    if (JSONUtils.isJSONObject(result)) {
-                        try {
-                            JSONObject o = new JSONObject(result);
-                            if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                                callback.onCompleted(new Exception("401"), null);
-                                return;
-                            }
-                        } catch (JSONException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-                callback.onCompleted(null, result);
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                String errorMessage = error.getMessage();
-                if (errorMessage == null) {
-                    error.printStackTrace();
-                    errorMessage = "Unknown error";
-                }
-                if (statusCode == 401) {
-                    callback.onCompleted(new Exception("401"), null);
-                }
-                callback.onCompleted(new Exception(errorMessage), null);
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        };
-
+        final AsyncHttpResponseHandler responseHandler = new CoreAPIGETResponseHandler(callback);
         AsyncHttpClient client = new AsyncHttpClient();
         client.setBasicAuth(username, password);
+        client.setConnectTimeout(getConnectTimeout(c));
+        client.setResponseTimeout(getResponseTimeout(c));
         client.addHeader("Content-Type", "application/json");
         client.get(host.concat(endpoint), responseHandler);
     }
@@ -137,8 +106,8 @@ public abstract class Core {
 
         AsyncHttpClient client = new AsyncHttpClient();
         client.setBasicAuth(username, password);
-        client.setConnectTimeout(15000);
-        client.setResponseTimeout(15000);
+        client.setConnectTimeout(getConnectTimeout(c));
+        client.setResponseTimeout(getResponseTimeout(c));
         //client.addHeader("Content-Type", "application/json; utf-8");
         client.addHeader("Accept", "application/json, text/plain, */*");
 

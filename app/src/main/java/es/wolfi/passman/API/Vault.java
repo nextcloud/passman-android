@@ -22,6 +22,7 @@
 package es.wolfi.passman.API;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -31,10 +32,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
 import es.wolfi.app.passman.SJCLCrypto;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.utils.CredentialLabelSort;
 import es.wolfi.utils.Filterable;
 
 public class Vault extends Core implements Filterable {
@@ -194,7 +199,7 @@ public class Vault extends Core implements Filterable {
         });
     }
 
-    protected static Vault fromJSON(JSONObject o) throws JSONException {
+    public static Vault fromJSON(JSONObject o) throws JSONException {
         Vault v = new Vault();
 
         v.vault_id = o.getInt("vault_id");
@@ -222,6 +227,85 @@ public class Vault extends Core implements Filterable {
         }
 
         return v;
+    }
+
+    public void sort(int method) {
+        credential_guid.clear();
+        Collections.sort(credentials, new CredentialLabelSort(method));
+        for (int i = 0; i < credentials.size(); i++) {
+            credential_guid.put(credentials.get(i).getGuid(), i);
+        }
+    }
+
+    public void addCredential(Credential credential) {
+        credentials.add(credential);
+        credential_guid.put(credential.getGuid(), credentials.size() - 1);
+    }
+
+    public void updateCredential(Credential updatedCredential) {
+        for (Credential credential : credentials) {
+            if (credential.getGuid().equals(updatedCredential.getGuid())) {
+                int index = credentials.indexOf(credential);
+                credentials.set(index, updatedCredential);
+            }
+        }
+    }
+
+    public void deleteCredential(Credential updatedCredential) {
+        for (Credential credential : credentials) {
+            if (credential.getGuid().equals(updatedCredential.getGuid())) {
+                credentials.remove(credential);
+            }
+        }
+    }
+
+    public static Vault getVaultByGuid(String guid) {
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
+
+        if (vaults != null) {
+            return vaults.get(guid);
+        }
+        return null;
+    }
+
+    public static String asJson(Vault vault) throws JSONException {
+        if (vault == null) {
+            return "";
+        }
+
+        JSONObject obj = new JSONObject();
+        obj.put("vault_id", vault.vault_id);
+        obj.put("guid", vault.guid);
+        obj.put("name", vault.name);
+        obj.put("created", vault.created);
+        obj.put("public_sharing_key", vault.public_sharing_key);
+        obj.put("last_access", vault.last_access);
+        if (vault.getCredentials() != null) {
+            JSONArray credentialArr = new JSONArray();
+            for (Credential credential : vault.getCredentials()) {
+                try {
+                    credentialArr.put(credential.getAsJSONObject());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            obj.put("credentials", credentialArr);
+        } else {
+            obj.put("challenge_password", vault.challenge_password);
+        }
+        return obj.toString();
+    }
+
+    public static void updateAutofillVault(Vault vault, SharedPreferences settings) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").equals(vault.guid)) {
+                try {
+                    settings.edit().putString(SettingValues.AUTOFILL_VAULT.toString(), Vault.asJson(vault)).apply();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
