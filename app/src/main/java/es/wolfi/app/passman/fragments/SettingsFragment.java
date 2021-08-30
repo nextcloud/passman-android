@@ -73,6 +73,8 @@ public class SettingsFragment extends Fragment {
     TextView default_autofill_vault_title;
     @BindView(R.id.default_autofill_vault)
     Spinner default_autofill_vault;
+    @BindView(R.id.clear_clipboard_delay_value)
+    EditText clear_clipboard_delay_value;
 
     @BindView(R.id.request_connect_timeout_value)
     EditText request_connect_timeout_value;
@@ -149,6 +151,8 @@ public class SettingsFragment extends Fragment {
             ((ViewManager) default_autofill_vault_title.getParent()).removeView(default_autofill_vault_title);
         }
 
+        clear_clipboard_delay_value.setText(String.valueOf(settings.getInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), 0)));
+
         request_connect_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15)));
         request_response_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120)));
     }
@@ -177,6 +181,9 @@ public class SettingsFragment extends Fragment {
                 SingleTon ton = SingleTon.getTon();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
+
+                settings.edit().putInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), Integer.parseInt(clear_clipboard_delay_value.getText().toString())).commit();
+                Objects.requireNonNull(((PasswordListActivity) getActivity())).attachClipboardListener();
 
                 settings.edit().putInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), Integer.parseInt(request_connect_timeout_value.getText().toString())).commit();
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
