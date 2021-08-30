@@ -58,7 +58,10 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
                     Objects.requireNonNull(passwordListActivity).showLockVaultButton();
 
                     int backStackCount = fragmentManager.getBackStackEntryCount();
-                    int backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                    int backStackId = 0;
+                    if (backStackCount - 2 >= 0) {
+                        backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                    }
                     alreadySaving.set(false);
                     progress.dismiss();
                     fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
