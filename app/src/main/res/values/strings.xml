@@ -62,4 +62,6 @@
     <string name="confirm_credential_deletion">Are you sure you want to delete this credential?</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="generate_password">Generate password</string>
+    <string name="generate_password_to_clipboard">Generate a random password and copy to clipboard</string>
 </resources>

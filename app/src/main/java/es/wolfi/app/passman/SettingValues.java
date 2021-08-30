@@ -31,7 +31,8 @@ public enum SettingValues {
     AUTOFILL_VAULT("autofill_vault"),
     ENABLE_APP_START_DEVICE_PASSWORD("enable_app_start_device_password"),
     REQUEST_CONNECT_TIMEOUT("request_connect_timeout"),
-    REQUEST_RESPONSE_TIMEOUT("request_response_timeout");
+    REQUEST_RESPONSE_TIMEOUT("request_response_timeout"),
+    PASSWORD_GENERATOR_SETTINGS("password_generator_settings");
 
     private final String name;
 

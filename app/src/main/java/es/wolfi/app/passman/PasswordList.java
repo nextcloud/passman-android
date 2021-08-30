@@ -21,6 +21,7 @@
 
 package es.wolfi.app.passman;
 
+import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -28,8 +29,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ShortcutInfo;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -46,6 +50,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -58,6 +65,8 @@ import org.json.JSONObject;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -93,6 +102,20 @@ public class PasswordList extends AppCompatActivity implements
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         ton = SingleTon.getTon();
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            Intent ShortcutActivityIntent = new Intent(this, ShortcutActivity.class);
+            ShortcutActivityIntent.setAction("custom.actions.intent.GENERATE_PASSWORD");
+
+            @SuppressLint("RestrictedApi")
+            ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, "es.wolfi.app.passman.generate_password")
+                    .setShortLabel(getString(R.string.generate_password))
+                    .setLongLabel(getString(R.string.generate_password_to_clipboard))
+                    .setIcon(IconCompat.createFromIcon(Icon.createWithResource(this, R.drawable.ic_baseline_refresh_24)))
+                    .setIntent(ShortcutActivityIntent)
+                    .build();
+            ShortcutManagerCompat.addDynamicShortcuts(this, Collections.singletonList(shortcut));
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
