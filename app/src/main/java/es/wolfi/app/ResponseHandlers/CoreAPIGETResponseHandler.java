@@ -46,8 +46,9 @@ public class CoreAPIGETResponseHandler extends AsyncHttpResponseHandler {
         }
         if (statusCode == 401) {
             callback.onCompleted(new Exception("401"), null);
+        } else {
+            callback.onCompleted(new Exception(errorMessage), null);
         }
-        callback.onCompleted(new Exception(errorMessage), null);
     }
 
     @Override

@@ -64,4 +64,5 @@
     <string name="cancel">Cancel</string>
     <string name="enable_credential_list_icons">Enable credential list icons</string>
     <string name="credential_icon">Credential icon</string>
+    <string name="clear_clipboard_delay">Clear clipboard (after seconds)</string>
 </resources>
