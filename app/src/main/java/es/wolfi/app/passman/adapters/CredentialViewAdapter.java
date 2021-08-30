@@ -20,19 +20,23 @@
  */
 package es.wolfi.app.passman.adapters;
 
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import es.wolfi.app.passman.fragments.CredentialItemFragment;
-import es.wolfi.app.passman.R;
-import es.wolfi.passman.API.Credential;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.fragments.CredentialItemFragment;
+import es.wolfi.passman.API.Credential;
+import es.wolfi.utils.IconUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the
@@ -42,10 +46,12 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
 
     private final List<Credential> mValues;
     private final CredentialItemFragment.OnListFragmentInteractionListener mListener;
+    private final SharedPreferences settings;
 
-    public CredentialViewAdapter(List<Credential> items, CredentialItemFragment.OnListFragmentInteractionListener listener) {
+    public CredentialViewAdapter(List<Credential> items, CredentialItemFragment.OnListFragmentInteractionListener listener, SharedPreferences settings) {
         mValues = items;
         mListener = listener;
+        this.settings = settings;
     }
 
     @Override
@@ -62,6 +68,12 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
 
         if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
             holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
+        }
+
+        if (holder.mItem != null && settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true)) {
+            IconUtils.loadIconToImageView(holder.mItem.getFavicon(), holder.contentImage);
+        } else {
+            holder.contentLayout.removeView(holder.contentImage);
         }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +97,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
         public final View mView;
         public final TextView mContentView;
         public final LinearLayout contentLayout;
+        public final ImageView contentImage;
         public Credential mItem;
 
         public ViewHolder(View view) {
@@ -92,6 +105,7 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
             mView = view;
             mContentView = (TextView) view.findViewById(R.id.content);
             contentLayout = (LinearLayout) view.findViewById(R.id.contentLayout);
+            contentImage = (ImageView) view.findViewById(R.id.contentImage);
         }
 
         @Override

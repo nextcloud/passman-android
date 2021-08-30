@@ -21,8 +21,10 @@
 package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -122,7 +124,7 @@ public class CredentialItemFragment extends Fragment {
             }
         });
         v.sort(sortMethod);
-        recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+        recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
         updateToggleSortButtonImage(toggleSortButton);
     }
 

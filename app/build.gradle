@@ -114,6 +114,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'commons-codec:commons-codec:1.15'
     implementation 'com.loopj.android:android-async-http:1.4.11'
+    implementation 'com.caverock:androidsvg:1.4'
     testImplementation 'junit:junit:4.13.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 }
