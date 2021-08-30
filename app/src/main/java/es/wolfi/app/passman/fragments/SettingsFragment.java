@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -49,10 +49,14 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 
 
-public class Settings extends Fragment {
+public class SettingsFragment extends Fragment {
 
     @BindView(R.id.settings_nextcloud_url)
     EditText settings_nextcloud_url;
@@ -79,17 +83,17 @@ public class Settings extends Fragment {
 
     SharedPreferences settings;
 
-    public Settings() {
+    public SettingsFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment Settings.
+     * @return A new instance of fragment SettingsFragment.
      */
-    public static Settings newInstance() {
-        Settings fragment = new Settings();
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
 
         return fragment;
     }
@@ -179,7 +183,7 @@ public class Settings extends Fragment {
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
 
                 settings.edit().putInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), Integer.parseInt(clear_clipboard_delay_value.getText().toString())).commit();
-                Objects.requireNonNull(((PasswordList) getActivity())).attachClipboardListener();
+                Objects.requireNonNull(((PasswordListActivity) getActivity())).attachClipboardListener();
 
                 settings.edit().putInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), Integer.parseInt(request_connect_timeout_value.getText().toString())).commit();
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
@@ -226,9 +230,9 @@ public class Settings extends Fragment {
                     settings.edit().putString(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString()).commit();
                     settings.edit().putString(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString()).commit();
 
-                    Objects.requireNonNull(((PasswordList) getActivity())).applyNewSettings(true);
+                    Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(true);
                 } else {
-                    Objects.requireNonNull(((PasswordList) getActivity())).applyNewSettings(false);
+                    Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(false);
                 }
             }
         };
