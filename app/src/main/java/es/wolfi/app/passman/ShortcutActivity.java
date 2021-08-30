@@ -34,6 +34,7 @@ import es.wolfi.utils.PasswordGenerator;
 
 public class ShortcutActivity extends AppCompatActivity {
     public final static String LOG_TAG = "ShortcutActivity";
+    public final static String GENERATE_PASSWORD_ID = "es.wolfi.app.passman.generate_password";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

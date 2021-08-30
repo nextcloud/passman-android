@@ -103,19 +103,7 @@ public class PasswordList extends AppCompatActivity implements
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         ton = SingleTon.getTon();
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            Intent ShortcutActivityIntent = new Intent(this, ShortcutActivity.class);
-            ShortcutActivityIntent.setAction("custom.actions.intent.GENERATE_PASSWORD");
-
-            @SuppressLint("RestrictedApi")
-            ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, "es.wolfi.app.passman.generate_password")
-                    .setShortLabel(getString(R.string.generate_password))
-                    .setLongLabel(getString(R.string.generate_password_to_clipboard))
-                    .setIcon(IconCompat.createFromIcon(Icon.createWithResource(this, R.drawable.ic_baseline_refresh_24)))
-                    .setIntent(ShortcutActivityIntent)
-                    .build();
-            ShortcutManagerCompat.addDynamicShortcuts(this, Collections.singletonList(shortcut));
-        }
+        updateShortcuts();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -207,6 +195,26 @@ public class PasswordList extends AppCompatActivity implements
         progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
 
         return progress;
+    }
+
+    private void updateShortcuts() {
+        if (settings.getBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), true) &&
+                android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            Intent shortcutActivityIntent = new Intent(this, ShortcutActivity.class);
+            shortcutActivityIntent.setAction("custom.actions.intent.GENERATE_PASSWORD");
+
+            @SuppressLint("RestrictedApi")
+            ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, ShortcutActivity.GENERATE_PASSWORD_ID)
+                    .setShortLabel(getString(R.string.generate_password))
+                    .setLongLabel(getString(R.string.generate_password_to_clipboard))
+                    .setIcon(IconCompat.createFromIcon(Icon.createWithResource(this, R.drawable.ic_baseline_refresh_24)))
+                    .setIntent(shortcutActivityIntent)
+                    .build();
+            ShortcutManagerCompat.addDynamicShortcuts(this, Collections.singletonList(shortcut));
+        } else if (!settings.getBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), true) &&
+                android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            ShortcutManagerCompat.removeDynamicShortcuts(this, Collections.singletonList(ShortcutActivity.GENERATE_PASSWORD_ID));
+        }
     }
 
     public void showVaults() {
@@ -478,6 +486,8 @@ public class PasswordList extends AppCompatActivity implements
 
     void applyNewSettings(boolean doRebirth) {
         Toast.makeText(this, R.string.successfully_saved, Toast.LENGTH_SHORT).show();
+
+        updateShortcuts();
 
         if (doRebirth) {
             triggerRebirth(this);

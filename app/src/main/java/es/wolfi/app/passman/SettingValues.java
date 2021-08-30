@@ -32,7 +32,8 @@ public enum SettingValues {
     ENABLE_APP_START_DEVICE_PASSWORD("enable_app_start_device_password"),
     REQUEST_CONNECT_TIMEOUT("request_connect_timeout"),
     REQUEST_RESPONSE_TIMEOUT("request_response_timeout"),
-    PASSWORD_GENERATOR_SETTINGS("password_generator_settings");
+    PASSWORD_GENERATOR_SETTINGS("password_generator_settings"),
+    ENABLE_PASSWORD_GENERATOR_SHORTCUT("enable_password_generator_shortcut");
 
     private final String name;
 

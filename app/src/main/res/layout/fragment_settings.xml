@@ -127,6 +127,22 @@
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/generate_password" />
+
+            <Switch
+                android:id="@+id/settings_password_generator_shortcut_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:switchMinWidth="56dp"
+                android:text="@string/enable_password_generator_shortcut_description"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <TextView
                 android:id="@+id/default_autofill_vault_title"
                 style="@style/Label"
                 android:layout_width="match_parent"

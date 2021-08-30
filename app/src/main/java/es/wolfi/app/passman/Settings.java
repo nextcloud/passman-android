@@ -24,6 +24,7 @@ package es.wolfi.app.passman;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -65,6 +66,9 @@ public class Settings extends Fragment {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     @BindView(R.id.settings_app_start_password_switch)
     Switch settings_app_start_password_switch;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    @BindView(R.id.settings_password_generator_shortcut_switch)
+    Switch settings_password_generator_shortcut_switch;
 
     @BindView(R.id.default_autofill_vault_title)
     TextView default_autofill_vault_title;
@@ -119,6 +123,11 @@ public class Settings extends Fragment {
         settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
         settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
+        settings_password_generator_shortcut_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), true));
+
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) {
+            ((ViewManager) settings_password_generator_shortcut_switch.getParent()).removeView(settings_password_generator_shortcut_switch);
+        }
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String last_selected_guid = "";
@@ -174,6 +183,7 @@ public class Settings extends Fragment {
                 SingleTon ton = SingleTon.getTon();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), settings_password_generator_shortcut_switch.isChecked()).commit();
 
                 settings.edit().putInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), Integer.parseInt(request_connect_timeout_value.getText().toString())).commit();
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
