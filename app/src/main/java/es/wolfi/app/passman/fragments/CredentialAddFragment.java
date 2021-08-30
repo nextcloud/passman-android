@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -49,6 +49,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.PasswordListActivity;
+import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
+import es.wolfi.app.passman.adapters.FileEditAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
@@ -58,10 +64,10 @@ import es.wolfi.utils.ProgressUtils;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CredentialAdd#newInstance} factory method to
+ * Use the {@link CredentialAddFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CredentialAdd extends Fragment implements View.OnClickListener {
+public class CredentialAddFragment extends Fragment implements View.OnClickListener {
     public static String CREDENTIAL = "credential";
 
     @BindView(R.id.add_credential_label_header)
@@ -93,17 +99,17 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
     private RecyclerView customFieldsListRecyclerView;
     private AtomicBoolean alreadySaving = new AtomicBoolean(false);
 
-    public CredentialAdd() {
+    public CredentialAddFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment CredentialAdd.
+     * @return A new instance of fragment CredentialAddFragment.
      */
-    public static CredentialAdd newInstance() {
-        return new CredentialAdd();
+    public static CredentialAddFragment newInstance() {
+        return new CredentialAddFragment();
     }
 
     @Override
@@ -144,12 +150,10 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         ButterKnife.bind(this, view);
 
         filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
-        filesListRecyclerView.setHasFixedSize(true);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         filesListRecyclerView.setAdapter(fed);
 
         customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
-        customFieldsListRecyclerView.setHasFixedSize(true);
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(cfed);
     }
@@ -186,7 +190,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddFile.ordinal());
+                ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddFile.ordinal());
             }
         };
     }
@@ -196,7 +200,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal());
+                    ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal());
                 } else {
                     CustomField cf = new CustomField();
                     cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
@@ -240,7 +244,7 @@ public class CredentialAdd extends Fragment implements View.OnClickListener {
 
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordList) getActivity(), getFragmentManager());
+        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
 
         this.credential.save(context, responseHandler);
     }

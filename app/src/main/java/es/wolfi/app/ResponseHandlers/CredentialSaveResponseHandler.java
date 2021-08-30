@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import es.wolfi.app.passman.PasswordList;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -29,10 +29,10 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
     private final boolean updateCredential;
     private final ProgressDialog progress;
     private final View view;
-    private final PasswordList passwordListActivity;
+    private final PasswordListActivity passwordListActivity;
     private final FragmentManager fragmentManager;
 
-    public CredentialSaveResponseHandler(AtomicBoolean alreadySaving, boolean updateCredential, ProgressDialog progress, View view, PasswordList passwordListActivity, FragmentManager fragmentManager) {
+    public CredentialSaveResponseHandler(AtomicBoolean alreadySaving, boolean updateCredential, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
         super();
 
         this.alreadySaving = alreadySaving;

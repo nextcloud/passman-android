@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -41,6 +41,9 @@ import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Vault;
 
 
@@ -49,10 +52,10 @@ import es.wolfi.passman.API.Vault;
  * Activities that contain this fragment must implement the
  * {@link VaultUnlockInteractionListener} interface
  * to handle interaction events.
- * Use the {@link VaultLockScreen#newInstance} factory method to
+ * Use the {@link VaultLockScreenFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class VaultLockScreen extends Fragment {
+public class VaultLockScreenFragment extends Fragment {
     private Vault vault;
 
     private VaultUnlockInteractionListener mListener;
@@ -66,7 +69,7 @@ public class VaultLockScreen extends Fragment {
     @BindView(R.id.vault_lock_screen_chk_save_pw)
     CheckBox chk_save;
 
-    public VaultLockScreen() {
+    public VaultLockScreenFragment() {
         // Required empty public constructor
     }
 
@@ -75,10 +78,10 @@ public class VaultLockScreen extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param vault The vault
-     * @return A new instance of fragment VaultLockScreen.
+     * @return A new instance of fragment VaultLockScreenFragment.
      */
-    public static VaultLockScreen newInstance(Vault vault) {
-        VaultLockScreen fragment = new VaultLockScreen();
+    public static VaultLockScreenFragment newInstance(Vault vault) {
+        VaultLockScreenFragment fragment = new VaultLockScreenFragment();
         fragment.vault = vault;
         return fragment;
     }
@@ -110,7 +113,7 @@ public class VaultLockScreen extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         vault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-        Log.e("VaultLockScreen", "Vault guid: ".concat(vault.guid));
+        Log.e("VaultLockScreenFragment", "Vault guid: ".concat(vault.guid));
         vault_name.setText(vault.name);
     }
 

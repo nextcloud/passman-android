@@ -18,9 +18,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.adapters;
 
-import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,21 +31,24 @@ import org.json.JSONException;
 
 import java.util.List;
 
+import es.wolfi.app.passman.CopyTextItem;
+import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
+import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link File} and makes a call to the
- * specified {@link CredentialDisplay.OnListFragmentInteractionListener}.
+ * specified {@link CredentialDisplayFragment.OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class CustomFieldViewAdapter extends RecyclerView.Adapter<CustomFieldViewAdapter.ViewHolder> {
 
     private final List<CustomField> mValues;
-    private final CredentialDisplay.OnListFragmentInteractionListener customFieldListListener;
+    private final CredentialDisplayFragment.OnListFragmentInteractionListener customFieldListListener;
 
-    public CustomFieldViewAdapter(List<CustomField> customFields, CredentialDisplay.OnListFragmentInteractionListener listener) {
+    public CustomFieldViewAdapter(List<CustomField> customFields, CredentialDisplayFragment.OnListFragmentInteractionListener listener) {
         mValues = customFields;
         customFieldListListener = listener;
     }

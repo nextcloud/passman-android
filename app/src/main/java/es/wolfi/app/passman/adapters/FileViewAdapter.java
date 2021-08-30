@@ -18,58 +18,56 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.wolfi.app.passman;
-
-import androidx.recyclerview.widget.RecyclerView;
+package es.wolfi.app.passman.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import es.wolfi.passman.API.Credential;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.Objects;
+
+import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
+import es.wolfi.app.passman.R;
+import es.wolfi.passman.API.File;
+import es.wolfi.utils.FileUtils;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Credential} and makes a call to the
- * specified {@link CredentialItemFragment.OnListFragmentInteractionListener}.
+ * {@link RecyclerView.Adapter} that can display a {@link File} and makes a call to the
+ * specified {@link CredentialDisplayFragment.OnListFragmentInteractionListener}.
  */
-public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAdapter.ViewHolder> {
+public class FileViewAdapter extends RecyclerView.Adapter<FileViewAdapter.ViewHolder> {
 
-    private final List<Credential> mValues;
-    private final CredentialItemFragment.OnListFragmentInteractionListener mListener;
+    private final List<File> mValues;
+    private final CredentialDisplayFragment.OnListFragmentInteractionListener filelistListener;
 
-    public CredentialViewAdapter(List<Credential> items, CredentialItemFragment.OnListFragmentInteractionListener listener) {
-        mValues = items;
-        mListener = listener;
+    public FileViewAdapter(List<File> files, CredentialDisplayFragment.OnListFragmentInteractionListener listener) {
+        mValues = files;
+        filelistListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_credential_item, parent, false);
+                .inflate(R.layout.fragment_credential_file_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mContentView.setText(holder.mItem.getLabel());
-
-        if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
-            holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
-        }
+        String filenameToPrint = String.format("%s (%s)", mValues.get(position).getFilename(), FileUtils.humanReadableByteCount((Double.valueOf(mValues.get(position).getSize())).longValue(), true));
+        holder.mContentView.setText(filenameToPrint);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
+                if (null != filelistListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    filelistListener.onListFragmentInteraction(holder.mItem);
                 }
             }
         });
@@ -83,14 +81,12 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mContentView;
-        public final LinearLayout contentLayout;
-        public Credential mItem;
+        public File mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mContentView = (TextView) view.findViewById(R.id.content);
-            contentLayout = (LinearLayout) view.findViewById(R.id.contentLayout);
         }
 
         @Override

@@ -30,10 +30,8 @@ public class SingleTon {
     protected ConcurrentHashMap<String, View.OnClickListener> _click;
     protected ConcurrentHashMap<String, Object>               _extra;
     protected ConcurrentHashMap<String, String>               _string;
-    protected ConcurrentHashMap<String, ICallback>            _callback;
 
     public SingleTon(){
-        _callback   = new ConcurrentHashMap<String, ICallback>();
         _string     = new ConcurrentHashMap<String, String>();
         _click      = new ConcurrentHashMap<String, View.OnClickListener>();
         _extra      = new ConcurrentHashMap<String, Object>();
@@ -49,18 +47,6 @@ public class SingleTon {
 
     public String getString(String name){
         return _string.get(name);
-    }
-
-    public void addCallback(String name, ICallback c){
-        _callback.put(name, c);
-    }
-
-    public ICallback getCallback(String name){
-        return _callback.get(name);
-    }
-
-    public void removeCallback(String name){
-        _callback.remove(name);
     }
 
     public void addExtra(String name, Object data){
