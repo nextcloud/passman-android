@@ -1,0 +1,1 @@
+- fix app crash if no automatic autofill vault can be selected

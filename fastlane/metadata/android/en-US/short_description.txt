@@ -1,0 +1,1 @@
+Allow you to manage the credentials stored in your Nextcloud Passman app.
