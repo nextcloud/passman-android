@@ -95,6 +95,10 @@ public class Vault extends Core implements Filterable {
 
     public void lock() {
         encryption_key = "";
+
+        for (Credential credential : credentials) {
+            credential.resetDecryptedSharedKey();
+        }
     }
 
     public boolean is_unlocked() {

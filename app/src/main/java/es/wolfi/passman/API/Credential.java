@@ -337,6 +337,10 @@ public class Credential extends Core implements Filterable {
         return this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null");
     }
 
+    public void resetDecryptedSharedKey() {
+        this.sharedKeyDecrypted = null;
+    }
+
     public JSONObject getAsJSONObject() throws JSONException {
         JSONObject params = new JSONObject();
 
