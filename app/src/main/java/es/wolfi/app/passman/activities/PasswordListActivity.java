@@ -446,9 +446,12 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        ProgressDialog progress = getProgressDialog();
+        progress.show();
         Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
             @Override
             public void onCompleted(Exception e, Vault result) {
+                progress.dismiss();
                 if (e != null) {
                     // Not logged in, restart activity
                     if (e.getMessage() != null && e.getMessage().equals("401")) {
