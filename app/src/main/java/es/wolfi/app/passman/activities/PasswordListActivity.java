@@ -102,6 +102,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     private String intentFilecontent = "";
     HashMap<String, Integer> visibleButtonsBeforeEnterSettings = new HashMap<String, Integer>();
     private ClipboardManager.OnPrimaryClipChangedListener onPrimaryClipChangedListener;
+    private int lastCredentialListPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -660,6 +661,16 @@ public class PasswordListActivity extends AppCompatActivity implements
     @Override
     public void onCredentialFragmentInteraction(Credential credential) {
         this.addCredentialsButton.hide();
+    }
+
+    @Override
+    public void setLastCredentialListPosition(int pos) {
+        lastCredentialListPosition = pos;
+    }
+
+    @Override
+    public int getLastCredentialListPosition() {
+        return lastCredentialListPosition;
     }
 
     @Override
