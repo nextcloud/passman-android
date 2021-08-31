@@ -50,9 +50,32 @@ public class PasswordGenerator {
         return passwordGeneratorSettings;
     }
 
+    public static void setPasswordGeneratorSettings(Context context, JSONObject passwordGeneratorSettings) {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+        String passwordGeneratorSettingsString = null;
+
+        try {
+            JSONObject defaultPasswordGeneratorSettings = getDefaultPasswordGeneratorSettings();
+            Iterator<String> keyIterator = defaultPasswordGeneratorSettings.keys();
+            while (keyIterator.hasNext()) {
+                String key = keyIterator.next();
+
+                if (passwordGeneratorSettings.has(key)) {
+                    defaultPasswordGeneratorSettings.put(key, passwordGeneratorSettings.get(key));
+                }
+            }
+            passwordGeneratorSettingsString = defaultPasswordGeneratorSettings.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        settings.edit().putString(SettingValues.PASSWORD_GENERATOR_SETTINGS.toString(), passwordGeneratorSettingsString).apply();
+    }
+
     public static String generateRandomPassword(Context context) throws JSONException {
         JSONObject passwordGeneratorSettings = getPasswordGeneratorSettings(context);
         StringBuilder generatedPassword = new StringBuilder();
+        Random rand = new Random();
 
         String characterPool = "";
         String lowercaseCharacters = "abcdefghjkmnpqrstuvwxyz";
@@ -79,11 +102,41 @@ public class PasswordGenerator {
             characterPool += specialCharacters;
         }
 
-        for (int i = 0; i < length; i++) {
-            Random rand = new Random();
-            generatedPassword.append(characterPool.charAt(rand.nextInt(characterPool.length())));
+        for (int generatorPosition = 0; generatorPosition < length; generatorPosition++) {
+            String customCharacterPool = characterPool;
+
+            if (passwordGeneratorSettings.getBoolean("requireEveryCharType")) {
+                customCharacterPool = "";
+                switch (generatorPosition) {
+                    case 0:
+                        customCharacterPool += lowercaseCharacters;
+                        break;
+                    case 1:
+                        customCharacterPool += uppercaseCharacters;
+                        break;
+                    case 2:
+                        customCharacterPool += digits;
+                        break;
+                    case 3:
+                        customCharacterPool += specialCharacters;
+                        break;
+                    default:
+                        customCharacterPool = characterPool;
+                        break;
+                }
+            }
+
+            generatedPassword.append(customCharacterPool.charAt(rand.nextInt(customCharacterPool.length())));
         }
 
-        return generatedPassword.toString();
+        StringBuilder generatedPasswordShuffled = new StringBuilder();
+        while (generatedPassword.length() != 0) {
+            int index = rand.nextInt(generatedPassword.length());
+            char c = generatedPassword.charAt(index);
+            generatedPasswordShuffled.append(c);
+            generatedPassword.deleteCharAt(index);
+        }
+
+        return generatedPasswordShuffled.toString();
     }
 }

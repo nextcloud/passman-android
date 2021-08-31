@@ -68,4 +68,11 @@
     <string name="generate_password">Generate password</string>
     <string name="generate_password_to_clipboard">Generate a random password and copy to clipboard</string>
     <string name="enable_password_generator_shortcut_description">Enable password generator app shortcut?</string>
+    <string name="password_generator_require_every_char_type">Require every char type</string>
+    <string name="password_generator_avoid_ambiguous_chars">Avoid ambiguous characters</string>
+    <string name="password_generator_use_special_chars">Use special characters</string>
+    <string name="password_generator_use_digits">Use digits</string>
+    <string name="password_generator_use_lowercase">Use lowercase characters</string>
+    <string name="password_generator_use_uppercase">Use uppercase characters</string>
+    <string name="password_length">Password length</string>
 </resources>
