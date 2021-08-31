@@ -18,11 +18,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -38,6 +40,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.adapters.CredentialViewAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.CredentialLabelSort;
@@ -118,7 +124,7 @@ public class CredentialItemFragment extends Fragment {
             }
         });
         v.sort(sortMethod);
-        recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+        recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
         updateToggleSortButtonImage(toggleSortButton);
     }
 

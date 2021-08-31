@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.activities;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONException;
 
+import es.wolfi.app.passman.R;
 import es.wolfi.utils.PasswordGenerator;
 
 public class ShortcutActivity extends AppCompatActivity {

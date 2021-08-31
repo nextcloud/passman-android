@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import es.wolfi.app.passman.PasswordList;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -28,10 +28,10 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
     private final AtomicBoolean alreadySaving;
     private final ProgressDialog progress;
     private final View view;
-    private final PasswordList passwordListActivity;
+    private final PasswordListActivity passwordListActivity;
     private final FragmentManager fragmentManager;
 
-    public CredentialDeleteResponseHandler(AtomicBoolean alreadySaving, ProgressDialog progress, View view, PasswordList passwordListActivity, FragmentManager fragmentManager) {
+    public CredentialDeleteResponseHandler(AtomicBoolean alreadySaving, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
         super();
 
         this.alreadySaving = alreadySaving;
@@ -58,7 +58,10 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
                     Objects.requireNonNull(passwordListActivity).showLockVaultButton();
 
                     int backStackCount = fragmentManager.getBackStackEntryCount();
-                    int backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                    int backStackId = 0;
+                    if (backStackCount - 2 >= 0) {
+                        backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                    }
                     alreadySaving.set(false);
                     progress.dismiss();
                     fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);

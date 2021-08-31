@@ -23,19 +23,18 @@
 package es.wolfi.utils;
 
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import es.wolfi.app.passman.CredentialItemFragment;
-import es.wolfi.app.passman.CredentialViewAdapter;
-import es.wolfi.app.passman.VaultFragment;
-import es.wolfi.app.passman.VaultViewAdapter;
+import es.wolfi.app.passman.fragments.CredentialItemFragment;
+import es.wolfi.app.passman.adapters.CredentialViewAdapter;
+import es.wolfi.app.passman.fragments.VaultFragment;
+import es.wolfi.app.passman.adapters.VaultViewAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.Filterable;
-import es.wolfi.utils.ListUtils;
 
 public class FilterListAsyncTask <T extends Filterable> extends AsyncTask<ArrayList<T>, Integer, ArrayList<T>>{
 
@@ -70,7 +69,7 @@ public class FilterListAsyncTask <T extends Filterable> extends AsyncTask<ArrayL
             recyclerView.setAdapter(new VaultViewAdapter((ArrayList<Vault>)filteredList, vaultMListener));
         }
         else {
-            recyclerView.setAdapter(new CredentialViewAdapter((ArrayList<Credential>) filteredList, credentialMListener));
+            recyclerView.setAdapter(new CredentialViewAdapter((ArrayList<Credential>) filteredList, credentialMListener, PreferenceManager.getDefaultSharedPreferences(recyclerView.getContext())));
         }
     }
 }

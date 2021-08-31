@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -54,6 +54,12 @@ import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialDeleteResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.PasswordListActivity;
+import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
+import es.wolfi.app.passman.adapters.FileEditAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
@@ -63,10 +69,10 @@ import es.wolfi.utils.ProgressUtils;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CredentialEdit#newInstance} factory method to
+ * Use the {@link CredentialEditFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CredentialEdit extends Fragment implements View.OnClickListener {
+public class CredentialEditFragment extends Fragment implements View.OnClickListener {
     public static String CREDENTIAL = "credential";
 
     @BindView(R.id.edit_credential_label_header)
@@ -97,17 +103,17 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
     private RecyclerView filesListRecyclerView;
     private RecyclerView customFieldsListRecyclerView;
 
-    public CredentialEdit() {
+    public CredentialEditFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment CredentialEdit.
+     * @return A new instance of fragment CredentialEditFragment.
      */
-    public static CredentialEdit newInstance(String credentialGUID) {
-        CredentialEdit fragment = new CredentialEdit();
+    public static CredentialEditFragment newInstance(String credentialGUID) {
+        CredentialEditFragment fragment = new CredentialEditFragment();
 
         Bundle b = new Bundle();
         b.putString(CREDENTIAL, credentialGUID);
@@ -155,12 +161,10 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         ButterKnife.bind(this, view);
 
         filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
-        filesListRecyclerView.setHasFixedSize(true);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         filesListRecyclerView.setAdapter(fed);
 
         customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
-        customFieldsListRecyclerView.setHasFixedSize(true);
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(cfed);
 
@@ -204,7 +208,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditFile.ordinal());
+                ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditFile.ordinal());
             }
         };
     }
@@ -214,7 +218,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordList) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal());
+                    ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal());
                 } else {
                     CustomField cf = new CustomField();
                     cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
@@ -247,7 +251,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
 
                         Context context = getContext();
                         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-                        final AsyncHttpResponseHandler responseHandler = new CredentialDeleteResponseHandler(alreadySaving, progress, view, (PasswordList) getActivity(), getFragmentManager());
+                        final AsyncHttpResponseHandler responseHandler = new CredentialDeleteResponseHandler(alreadySaving, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
 
                         Date date = new Date();
                         credential.setDeleteTime(date.getTime());
@@ -295,7 +299,7 @@ public class CredentialEdit extends Fragment implements View.OnClickListener {
 
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, true, progress, view, (PasswordList) getActivity(), getFragmentManager());
+        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, true, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
 
         this.credential.update(context, responseHandler);
     }

@@ -38,7 +38,7 @@
             android:paddingTop="@dimen/activity_vertical_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingBottom="@dimen/activity_vertical_margin"
-            tools:context="es.wolfi.app.passman.CredentialDisplay">
+            tools:context="es.wolfi.app.passman.fragments.CredentialDisplayFragment">
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Medium"
@@ -143,6 +143,22 @@
                 tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/credential_icon" />
+
+            <Switch
+                android:id="@+id/enable_credential_list_icons_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:switchMinWidth="56dp"
+                android:text="@string/enable_credential_list_icons"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+            <TextView
                 android:id="@+id/default_autofill_vault_title"
                 style="@style/Label"
                 android:layout_width="match_parent"
@@ -154,6 +170,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp" />
+
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/clear_clipboard_delay" />
+
+            <EditText
+                android:id="@+id/clear_clipboard_delay_value"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789"
+                android:inputType="number"
+                tools:ignore="LabelFor" />
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Medium"

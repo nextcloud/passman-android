@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.webkit.URLUtil;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -44,19 +45,28 @@ import org.apache.commons.codec.binary.Base32;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.CopyTextItem;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.adapters.CustomFieldViewAdapter;
+import es.wolfi.app.passman.adapters.FileViewAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.IconUtils;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link CredentialDisplay#newInstance} factory method to
+ * Use the {@link CredentialDisplayFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CredentialDisplay extends Fragment {
+public class CredentialDisplayFragment extends Fragment {
     public static String CREDENTIAL = "credential";
 
+    @BindView(R.id.credentialIcon)
+    ImageView credentialIcon;
     @BindView(R.id.credential_label)
     TextView label;
     @BindView(R.id.credential_user)
@@ -85,7 +95,7 @@ public class CredentialDisplay extends Fragment {
     private OnCredentialFragmentInteraction mListener;
     private OnListFragmentInteractionListener filelistListener;
 
-    public CredentialDisplay() {
+    public CredentialDisplayFragment() {
         // Required empty public constructor
     }
 
@@ -94,10 +104,10 @@ public class CredentialDisplay extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param credentialGUID The guid of the credential to display.
-     * @return A new instance of fragment CredentialDisplay.
+     * @return A new instance of fragment CredentialDisplayFragment.
      */
-    public static CredentialDisplay newInstance(String credentialGUID) {
-        CredentialDisplay fragment = new CredentialDisplay();
+    public static CredentialDisplayFragment newInstance(String credentialGUID) {
+        CredentialDisplayFragment fragment = new CredentialDisplayFragment();
 
         Bundle b = new Bundle();
         b.putString(CREDENTIAL, credentialGUID);
@@ -184,12 +194,10 @@ public class CredentialDisplay extends Fragment {
         ButterKnife.bind(this, view);
 
         RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
-        filesListRecyclerView.setHasFixedSize(true);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
 
         RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
-        customFieldsListRecyclerView.setHasFixedSize(true);
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
 
@@ -207,6 +215,7 @@ public class CredentialDisplay extends Fragment {
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
         otp.setEnabled(false);
+        IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
 
         if (URLUtil.isValidUrl(credential.getUrl())) {
             url.setModeURL();

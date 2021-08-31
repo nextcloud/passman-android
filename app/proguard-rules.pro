@@ -15,3 +15,6 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# This is generated automatically by the Android Gradle plugin.-dontwarn org.conscrypt.Conscrypt$ProviderBuilder
+-dontwarn org.conscrypt.Conscrypt

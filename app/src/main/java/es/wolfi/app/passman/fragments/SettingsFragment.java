@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package es.wolfi.app.passman;
+package es.wolfi.app.passman.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -32,7 +32,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
@@ -51,10 +50,14 @@ import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 
 
-public class Settings extends Fragment {
+public class SettingsFragment extends Fragment {
 
     @BindView(R.id.settings_nextcloud_url)
     EditText settings_nextcloud_url;
@@ -69,11 +72,16 @@ public class Settings extends Fragment {
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     @BindView(R.id.settings_password_generator_shortcut_switch)
     Switch settings_password_generator_shortcut_switch;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    @BindView(R.id.enable_credential_list_icons_switch)
+    Switch enable_credential_list_icons_switch;
 
     @BindView(R.id.default_autofill_vault_title)
     TextView default_autofill_vault_title;
     @BindView(R.id.default_autofill_vault)
     Spinner default_autofill_vault;
+    @BindView(R.id.clear_clipboard_delay_value)
+    EditText clear_clipboard_delay_value;
 
     @BindView(R.id.request_connect_timeout_value)
     EditText request_connect_timeout_value;
@@ -82,17 +90,17 @@ public class Settings extends Fragment {
 
     SharedPreferences settings;
 
-    public Settings() {
+    public SettingsFragment() {
         // Required empty public constructor
     }
 
     /**
      * Use this factory method to create a new instance of this fragment.
      *
-     * @return A new instance of fragment Settings.
+     * @return A new instance of fragment SettingsFragment.
      */
-    public static Settings newInstance() {
-        Settings fragment = new Settings();
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
 
         return fragment;
     }
@@ -129,6 +137,8 @@ public class Settings extends Fragment {
             ((ViewManager) settings_password_generator_shortcut_switch.getParent()).removeView(settings_password_generator_shortcut_switch);
         }
 
+        enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String last_selected_guid = "";
             if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null) != null) {
@@ -154,6 +164,8 @@ public class Settings extends Fragment {
             ((ViewManager) default_autofill_vault.getParent()).removeView(default_autofill_vault);
             ((ViewManager) default_autofill_vault_title.getParent()).removeView(default_autofill_vault_title);
         }
+
+        clear_clipboard_delay_value.setText(String.valueOf(settings.getInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), 0)));
 
         request_connect_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15)));
         request_response_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120)));
@@ -184,6 +196,10 @@ public class Settings extends Fragment {
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
                 settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), settings_password_generator_shortcut_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), enable_credential_list_icons_switch.isChecked()).commit();
+
+                settings.edit().putInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), Integer.parseInt(clear_clipboard_delay_value.getText().toString())).commit();
+                Objects.requireNonNull(((PasswordListActivity) getActivity())).attachClipboardListener();
 
                 settings.edit().putInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), Integer.parseInt(request_connect_timeout_value.getText().toString())).commit();
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
@@ -230,9 +246,9 @@ public class Settings extends Fragment {
                     settings.edit().putString(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString()).commit();
                     settings.edit().putString(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString()).commit();
 
-                    Objects.requireNonNull(((PasswordList) getActivity())).applyNewSettings(true);
+                    Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(true);
                 } else {
-                    Objects.requireNonNull(((PasswordList) getActivity())).applyNewSettings(false);
+                    Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(false);
                 }
             }
         };
