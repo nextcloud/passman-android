@@ -36,12 +36,13 @@ import es.wolfi.utils.PasswordGenerator;
 public class ShortcutActivity extends AppCompatActivity {
     public final static String LOG_TAG = "ShortcutActivity";
     public final static String GENERATE_PASSWORD_ID = "es.wolfi.app.passman.generate_password";
+    public final static String GENERATE_PASSWORD_INTENT_ACTION = "custom.actions.intent.GENERATE_PASSWORD";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getIntent().getAction().equals("custom.actions.intent.GENERATE_PASSWORD")) {
+        if (getIntent().getAction().equals(GENERATE_PASSWORD_INTENT_ACTION)) {
             generatePassword();
         }
 
@@ -56,7 +57,7 @@ public class ShortcutActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if (password != null) {
+        if (password != null && password.length() > 0) {
             ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("generated_password", password);
             clipboard.setPrimaryClip(clip);

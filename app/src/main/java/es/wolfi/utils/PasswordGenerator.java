@@ -54,35 +54,34 @@ public class PasswordGenerator {
         JSONObject passwordGeneratorSettings = getPasswordGeneratorSettings(context);
         StringBuilder generatedPassword = new StringBuilder();
 
-        // Variable naming corresponds to the javascript part in passwordgen.js of Passman
-        String h = "";
-        String u = "abcdefghjkmnpqrstuvwxyz";
-        String l = "ABCDEFGHJKMNPQRSTUVWXYZ";
-        String c = "23456789";
-        String v = "!@#$%^&*";
+        String characterPool = "";
+        String lowercaseCharacters = "abcdefghjkmnpqrstuvwxyz";
+        String uppercaseCharacters = "ABCDEFGHJKMNPQRSTUVWXYZ";
+        String digits = "23456789";
+        String specialCharacters = ".!@#$%^&*";
         int length = passwordGeneratorSettings.getInt("length");
 
         if (!passwordGeneratorSettings.getBoolean("avoidAmbiguousCharacters")) {
-            u += "ilo";
-            l += "ILO";
-            c += "10";
+            lowercaseCharacters += "ilo";
+            uppercaseCharacters += "ILO";
+            digits += "10";
         }
         if (passwordGeneratorSettings.getBoolean("useLowercase")) {
-            h += u;
+            characterPool += lowercaseCharacters;
         }
         if (passwordGeneratorSettings.getBoolean("useUppercase")) {
-            h += l;
+            characterPool += uppercaseCharacters;
         }
         if (passwordGeneratorSettings.getBoolean("useDigits")) {
-            h += c;
+            characterPool += digits;
         }
         if (passwordGeneratorSettings.getBoolean("useSpecialChars")) {
-            h += v;
+            characterPool += specialCharacters;
         }
 
         for (int i = 0; i < length; i++) {
             Random rand = new Random();
-            generatedPassword.append(h.charAt(rand.nextInt(h.length())));
+            generatedPassword.append(characterPool.charAt(rand.nextInt(characterPool.length())));
         }
 
         return generatedPassword.toString();

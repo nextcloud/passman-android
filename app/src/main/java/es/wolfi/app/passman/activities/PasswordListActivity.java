@@ -264,7 +264,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         if (settings.getBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), true) &&
                 android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             Intent shortcutActivityIntent = new Intent(this, ShortcutActivity.class);
-            shortcutActivityIntent.setAction("custom.actions.intent.GENERATE_PASSWORD");
+            shortcutActivityIntent.setAction(ShortcutActivity.GENERATE_PASSWORD_INTENT_ACTION);
 
             @SuppressLint("RestrictedApi")
             ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, ShortcutActivity.GENERATE_PASSWORD_ID)
