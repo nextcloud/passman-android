@@ -39,6 +39,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -134,7 +135,7 @@ public class CredentialItemFragment extends Fragment {
             filterTask.cancel(true);
         }
         filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
-        ArrayList<Credential> input[] = new ArrayList[]{vault.getCredentials()};
+        CopyOnWriteArrayList<Credential> input[] = new CopyOnWriteArrayList[]{vault.getCredentials()};
         filterTask.execute((Object[]) input);
     }
 

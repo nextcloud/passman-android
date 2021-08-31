@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import es.wolfi.app.passman.SJCLCrypto;
 import es.wolfi.app.passman.SettingValues;
@@ -51,7 +52,7 @@ public class Vault extends Core implements Filterable {
     public double last_access;
     public String challenge_password;
 
-    ArrayList<Credential> credentials;
+    CopyOnWriteArrayList<Credential> credentials;
     HashMap<String, Integer> credential_guid;
 
     private String encryption_key = "";
@@ -162,7 +163,7 @@ public class Vault extends Core implements Filterable {
         return new Date((long) last_access * 1000);
     }
 
-    public ArrayList<Credential> getCredentials() {
+    public CopyOnWriteArrayList<Credential> getCredentials() {
         return credentials;
     }
 
@@ -227,7 +228,7 @@ public class Vault extends Core implements Filterable {
 
         if (o.has("credentials")) {
             JSONArray j = o.getJSONArray("credentials");
-            v.credentials = new ArrayList<Credential>();
+            v.credentials = new CopyOnWriteArrayList<Credential>();
             v.credential_guid = new HashMap<>();
 
             for (int i = 0; i < j.length(); i++) {
@@ -246,11 +247,16 @@ public class Vault extends Core implements Filterable {
     }
 
     public void sort(int method) {
+        ArrayList<Credential> temp = new ArrayList<>(credentials);
         credential_guid.clear();
-        Collections.sort(credentials, new CredentialLabelSort(method));
-        for (int i = 0; i < credentials.size(); i++) {
-            credential_guid.put(credentials.get(i).getGuid(), i);
+
+        Collections.sort(temp, new CredentialLabelSort(method));
+        for (int i = 0; i < temp.size(); i++) {
+            credential_guid.put(temp.get(i).getGuid(), i);
         }
+
+        credentials.clear();
+        credentials.addAll(temp);
     }
 
     public void addCredential(Credential credential) {
@@ -271,6 +277,8 @@ public class Vault extends Core implements Filterable {
         for (Credential credential : credentials) {
             if (credential.getGuid().equals(updatedCredential.getGuid())) {
                 credentials.remove(credential);
+                credential_guid.remove(updatedCredential.getGuid());
+                break;
             }
         }
     }
