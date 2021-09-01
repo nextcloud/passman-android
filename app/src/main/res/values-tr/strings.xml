@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">Bu kimlik doğrulama bilgisini silmek istediğinize emin misiniz?</string>
     <string name="yes">Evet</string>
     <string name="cancel">İptal</string>
-    </resources>
+    <string name="enable_credential_list_icons">Kimlik doğrulama listesi simgeleri kullanılsın</string>
+    <string name="credential_icon">Kimlik doğrulama bilgileri simgesi</string>
+    <string name="clear_clipboard_delay">Pano temizlensin (bu kadar saniye sonra)</string>
+</resources>

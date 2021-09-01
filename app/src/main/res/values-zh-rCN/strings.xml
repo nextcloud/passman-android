@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">你确定要删除此凭据吗？</string>
     <string name="yes">是</string>
     <string name="cancel">取消</string>
-    </resources>
+    <string name="enable_credential_list_icons">启用凭据列表图标</string>
+    <string name="credential_icon">凭据图标</string>
+    <string name="clear_clipboard_delay">清理剪贴板（数秒后）</string>
+</resources>

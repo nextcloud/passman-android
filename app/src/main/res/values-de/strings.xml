@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">Möchten Sie diese Zugangsdaten wirklisch löschen?</string>
     <string name="yes">Ja</string>
     <string name="cancel">Abbrechen</string>
-    </resources>
+    <string name="enable_credential_list_icons">Symbole für Anmeldeinformationen aktivieren</string>
+    <string name="credential_icon">Symbol für Anmeldeinformationen</string>
+    <string name="clear_clipboard_delay">Zwischenablage leeren (nach ein paar Sekunden)</string>
+</resources>

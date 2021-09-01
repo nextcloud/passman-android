@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">Czy na pewno chcesz usunąć to poświadczenie?</string>
     <string name="yes">Tak</string>
     <string name="cancel">Anuluj</string>
-    </resources>
+    <string name="enable_credential_list_icons">Włącz ikony listy poświadczeń</string>
+    <string name="credential_icon">Ikona poświadczeń</string>
+    <string name="clear_clipboard_delay">Wyczyść schowek (po sekundach)</string>
+</resources>

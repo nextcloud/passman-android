@@ -1,0 +1,37 @@
+<resources>
+    <string name="action_settings">Nustatymai</string>
+    <string name="action_refresh">Įkelti iš naujo</string>
+    <string name="nchost">Serverio adresas</string>
+    <string name="username">Naudotojo vardas</string>
+    <string name="password">Slaptažodis</string>
+    <string name="connect">Prisijungti</string>
+    <string name="wrongNCSettings">Nustatymai neteisingi</string>
+    <string name="net_error">Tinklo klaida</string>
+    <string name="unlock">Atrakinti</string>
+    <string name="wrong_vault_pw">Neteisingas slėptuvės slaptažodis</string>
+    <string name="label">Etiketė</string>
+    <string name="email">El. paštas</string>
+    <string name="URL">URL</string>
+    <string name="description">Aprašas</string>
+    <string name="copied_to_clipboard">Tekstas nukopijuotas į iškarpinę</string>
+    <string name="vault_password">Slėptuvės slaptažodis</string>
+    <string name="vault_password_save">Įsirašykite slėptuvės slaptažodį</string>
+    <string name="not_implemented_yet">Kol kas neįgyvendinta</string>
+    <string name="created">Sukurta:</string>
+    <string name="search">Ieškoti</string>
+    <string name="save">Įrašyti</string>
+    <string name="successfully_saved">Sėkmingai įrašyta</string>
+    <string name="error_occurred">Įvyko klaida</string>
+    <string name="update">Atnaujinti</string>
+    <string name="successfully_updated">Sėkmingai atnaujinta</string>
+    <string name="delete">Ištrinti</string>
+    <string name="successfully_deleted">Sėkmingai ištrinta</string>
+    <string name="wait_while_loading">Palaukite, kol įkeliama…</string>
+    <string name="loading">Įkeliama</string>
+    <string name="error_downloading_file">Klaida atsisiunčiant failą</string>
+    <string name="error_writing_file">Klaida rašant failą</string>
+    <string name="add_file">Pridėti failą</string>
+    <string name="wait_while_encrypting">Palaukite, kol šifruojama…</string>
+    <string name="wait_while_decrypting">Palaukite, kol iššifruojama…</string>
+    <string name="yes">Taip</string>
+    </resources>

@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">Opravdu chcete tento přihlašovací údaj smazat?</string>
     <string name="yes">Ano</string>
     <string name="cancel">Storno</string>
-    </resources>
+    <string name="enable_credential_list_icons">Zapnout ikony v seznamu přihlašovacích údajů</string>
+    <string name="credential_icon">Ikona přihlašovacího údaje</string>
+    <string name="clear_clipboard_delay">Vymazat obsah schránky po uplynutí (sekund)</string>
+</resources>
