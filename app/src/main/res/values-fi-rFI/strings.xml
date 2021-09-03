@@ -1,0 +1,36 @@
+<resources>
+    <string name="action_settings">Asetukset</string>
+    <string name="action_refresh">Päivitä</string>
+    <string name="nchost">Palvelimen osoite</string>
+    <string name="username">Käyttäjätunnus</string>
+    <string name="password">Salasana</string>
+    <string name="connect">Yhdistä</string>
+    <string name="wrongNCSettings">Virheelliset asetukset</string>
+    <string name="net_error">Verkkovirhe</string>
+    <string name="unlock">Avaa lukitus</string>
+    <string name="wrong_vault_pw">Väärä holvin salasana</string>
+    <string name="email">Sähköposti</string>
+    <string name="URL">URL-osoite</string>
+    <string name="description">Kuvaus</string>
+    <string name="copied_to_clipboard">Teksti kopioitu leikepöydälle</string>
+    <string name="vault_password">Holvin salasana</string>
+    <string name="vault_password_save">Tallenna holvin salasana</string>
+    <string name="not_implemented_yet">Ei toteutettu vielä</string>
+    <string name="created">Luotu:</string>
+    <string name="last_accessed">Viimeksi käytetty:</string>
+    <string name="search">Etsi</string>
+    <string name="save">Tallenna</string>
+    <string name="successfully_saved">Tallennettu onnistuneesti</string>
+    <string name="error_occurred">Tapahtui virhe</string>
+    <string name="update">Päivitä</string>
+    <string name="successfully_updated">Päivitetty onnistuneesti</string>
+    <string name="delete">Poista</string>
+    <string name="successfully_deleted">Poistettu onnistuneesti</string>
+    <string name="app_settings">Sovelluksen asetukset</string>
+    <string name="loading">Ladataan</string>
+    <string name="files">Tiedostot</string>
+    <string name="add_file">Lisää tiedosto</string>
+    <string name="automatically">automaattisesti</string>
+    <string name="yes">Kyllä</string>
+    <string name="cancel">Peruuta</string>
+    </resources>
