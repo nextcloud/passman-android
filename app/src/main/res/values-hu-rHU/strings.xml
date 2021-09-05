@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">Biztos, hogy törli ezt a hitelesítő adatot?</string>
     <string name="yes">Igen</string>
     <string name="cancel">Mégse</string>
-    </resources>
+    <string name="enable_credential_list_icons">Hitelesítőadat-lista ikonjainak engedélyezése</string>
+    <string name="credential_icon">Hitelesítő adat ikonja</string>
+    <string name="clear_clipboard_delay">Vágólap törlése (másodpercek múlva)</string>
+</resources>
