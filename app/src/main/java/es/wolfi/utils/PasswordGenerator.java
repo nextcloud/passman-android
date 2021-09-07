@@ -7,64 +7,74 @@ import android.preference.PreferenceManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Iterator;
-import java.util.Random;
+import java.security.SecureRandom;
 
 import es.wolfi.app.passman.SettingValues;
 
 public class PasswordGenerator {
-    private static JSONObject getDefaultPasswordGeneratorSettings() throws JSONException {
-        JSONObject passwordGeneratorSettings = new JSONObject();
 
-        passwordGeneratorSettings.put("length", 12);
-        passwordGeneratorSettings.put("useUppercase", true);
-        passwordGeneratorSettings.put("useLowercase", true);
-        passwordGeneratorSettings.put("useDigits", true);
-        passwordGeneratorSettings.put("useSpecialChars", true);
-        passwordGeneratorSettings.put("avoidAmbiguousCharacters", true);
-        passwordGeneratorSettings.put("requireEveryCharType", true);
+    private final Context context;
+    private int length = 12;
+    private boolean useUppercase = true;
+    private boolean useLowercase = true;
+    private boolean useDigits = true;
+    private boolean useSpecialChars = true;
+    private boolean avoidAmbiguousCharacters = true;
+    private boolean requireEveryCharType = true;
 
-        return passwordGeneratorSettings;
-    }
+    public PasswordGenerator(Context context) {
+        this.context = context;
 
-    public static JSONObject getPasswordGeneratorSettings(Context context) throws JSONException {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-        JSONObject passwordGeneratorSettings = getDefaultPasswordGeneratorSettings();
 
         try {
             String cs = settings.getString(SettingValues.PASSWORD_GENERATOR_SETTINGS.toString(), null);
             if (cs != null) {
                 JSONObject customPasswordGeneratorSettings = new JSONObject(cs);
-                Iterator<String> keyIterator = passwordGeneratorSettings.keys();
-                while (keyIterator.hasNext()) {
-                    String key = keyIterator.next();
-                    if (!passwordGeneratorSettings.get(key).equals(customPasswordGeneratorSettings.get(key))) {
-                        passwordGeneratorSettings.put(key, customPasswordGeneratorSettings.get(key));
-                    }
+
+                if (customPasswordGeneratorSettings.has("length")) {
+                    setLength(customPasswordGeneratorSettings.getInt("length"));
+                }
+                if (customPasswordGeneratorSettings.has("useUppercase")) {
+                    setUseUppercase(customPasswordGeneratorSettings.getBoolean("useUppercase"));
+                }
+                if (customPasswordGeneratorSettings.has("useLowercase")) {
+                    setUseLowercase(customPasswordGeneratorSettings.getBoolean("useLowercase"));
+                }
+                if (customPasswordGeneratorSettings.has("useDigits")) {
+                    setUseDigits(customPasswordGeneratorSettings.getBoolean("useDigits"));
+                }
+                if (customPasswordGeneratorSettings.has("useSpecialChars")) {
+                    setUseSpecialChars(customPasswordGeneratorSettings.getBoolean("useSpecialChars"));
+                }
+                if (customPasswordGeneratorSettings.has("avoidAmbiguousCharacters")) {
+                    setAvoidAmbiguousCharacters(customPasswordGeneratorSettings.getBoolean("avoidAmbiguousCharacters"));
+                }
+                if (customPasswordGeneratorSettings.has("requireEveryCharType")) {
+                    setRequireEveryCharType(customPasswordGeneratorSettings.getBoolean("requireEveryCharType"));
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        return passwordGeneratorSettings;
     }
 
-    public static void setPasswordGeneratorSettings(Context context, JSONObject passwordGeneratorSettings) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+    public void applyChanges() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this.context);
         String passwordGeneratorSettingsString = null;
 
         try {
-            JSONObject defaultPasswordGeneratorSettings = getDefaultPasswordGeneratorSettings();
-            Iterator<String> keyIterator = defaultPasswordGeneratorSettings.keys();
-            while (keyIterator.hasNext()) {
-                String key = keyIterator.next();
+            JSONObject passwordGeneratorSettings = new JSONObject();
 
-                if (passwordGeneratorSettings.has(key)) {
-                    defaultPasswordGeneratorSettings.put(key, passwordGeneratorSettings.get(key));
-                }
-            }
-            passwordGeneratorSettingsString = defaultPasswordGeneratorSettings.toString();
+            passwordGeneratorSettings.put("length", getLength());
+            passwordGeneratorSettings.put("useUppercase", isUseUppercase());
+            passwordGeneratorSettings.put("useLowercase", isUseLowercase());
+            passwordGeneratorSettings.put("useDigits", isUseDigits());
+            passwordGeneratorSettings.put("useSpecialChars", isUseSpecialChars());
+            passwordGeneratorSettings.put("avoidAmbiguousCharacters", isAvoidAmbiguousCharacters());
+            passwordGeneratorSettings.put("requireEveryCharType", isRequireEveryCharType());
+
+            passwordGeneratorSettingsString = passwordGeneratorSettings.toString();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -72,40 +82,94 @@ public class PasswordGenerator {
         settings.edit().putString(SettingValues.PASSWORD_GENERATOR_SETTINGS.toString(), passwordGeneratorSettingsString).apply();
     }
 
-    public static String generateRandomPassword(Context context) throws JSONException {
-        JSONObject passwordGeneratorSettings = getPasswordGeneratorSettings(context);
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public boolean isUseUppercase() {
+        return useUppercase;
+    }
+
+    public void setUseUppercase(boolean useUppercase) {
+        this.useUppercase = useUppercase;
+    }
+
+    public boolean isUseLowercase() {
+        return useLowercase;
+    }
+
+    public void setUseLowercase(boolean useLowercase) {
+        this.useLowercase = useLowercase;
+    }
+
+    public boolean isUseDigits() {
+        return useDigits;
+    }
+
+    public void setUseDigits(boolean useDigits) {
+        this.useDigits = useDigits;
+    }
+
+    public boolean isUseSpecialChars() {
+        return useSpecialChars;
+    }
+
+    public void setUseSpecialChars(boolean useSpecialChars) {
+        this.useSpecialChars = useSpecialChars;
+    }
+
+    public boolean isAvoidAmbiguousCharacters() {
+        return avoidAmbiguousCharacters;
+    }
+
+    public void setAvoidAmbiguousCharacters(boolean avoidAmbiguousCharacters) {
+        this.avoidAmbiguousCharacters = avoidAmbiguousCharacters;
+    }
+
+    public boolean isRequireEveryCharType() {
+        return requireEveryCharType;
+    }
+
+    public void setRequireEveryCharType(boolean requireEveryCharType) {
+        this.requireEveryCharType = requireEveryCharType;
+    }
+
+    public String generateRandomPassword() {
         StringBuilder generatedPassword = new StringBuilder();
-        Random rand = new Random();
+        SecureRandom rand = new SecureRandom();
 
         String characterPool = "";
         String lowercaseCharacters = "abcdefghjkmnpqrstuvwxyz";
         String uppercaseCharacters = "ABCDEFGHJKMNPQRSTUVWXYZ";
         String digits = "23456789";
         String specialCharacters = ".!@#$%^&*";
-        int length = passwordGeneratorSettings.getInt("length");
 
-        if (!passwordGeneratorSettings.getBoolean("avoidAmbiguousCharacters")) {
+        if (!isAvoidAmbiguousCharacters()) {
             lowercaseCharacters += "ilo";
             uppercaseCharacters += "ILO";
             digits += "10";
         }
-        if (passwordGeneratorSettings.getBoolean("useLowercase")) {
+        if (isUseLowercase()) {
             characterPool += lowercaseCharacters;
         }
-        if (passwordGeneratorSettings.getBoolean("useUppercase")) {
+        if (isUseUppercase()) {
             characterPool += uppercaseCharacters;
         }
-        if (passwordGeneratorSettings.getBoolean("useDigits")) {
+        if (isUseDigits()) {
             characterPool += digits;
         }
-        if (passwordGeneratorSettings.getBoolean("useSpecialChars")) {
+        if (isUseSpecialChars()) {
             characterPool += specialCharacters;
         }
 
-        for (int generatorPosition = 0; generatorPosition < length; generatorPosition++) {
+        for (int generatorPosition = 0; generatorPosition < getLength(); generatorPosition++) {
             String customCharacterPool = characterPool;
 
-            if (passwordGeneratorSettings.getBoolean("requireEveryCharType")) {
+            if (isRequireEveryCharType()) {
                 customCharacterPool = "";
                 switch (generatorPosition) {
                     case 0:

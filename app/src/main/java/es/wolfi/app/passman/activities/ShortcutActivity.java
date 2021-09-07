@@ -28,8 +28,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import org.json.JSONException;
-
 import es.wolfi.app.passman.R;
 import es.wolfi.utils.PasswordGenerator;
 
@@ -50,12 +48,7 @@ public class ShortcutActivity extends AppCompatActivity {
     }
 
     protected void generatePassword() {
-        String password = null;
-        try {
-            password = PasswordGenerator.generateRandomPassword(getApplicationContext());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        String password = new PasswordGenerator(getApplicationContext()).generateRandomPassword();
 
         if (password != null && password.length() > 0) {
             ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);

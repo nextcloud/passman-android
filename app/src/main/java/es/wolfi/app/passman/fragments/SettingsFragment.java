@@ -43,9 +43,6 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -87,6 +84,7 @@ public class SettingsFragment extends Fragment {
     EditText request_response_timeout_value;
 
     SharedPreferences settings;
+    PasswordGenerator passwordGenerator;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -109,32 +107,32 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
-        FloatingActionButton settingsSaveButton = (FloatingActionButton) view.findViewById(R.id.settings_save_button);
+        FloatingActionButton settingsSaveButton = view.findViewById(R.id.settings_save_button);
         settingsSaveButton.setOnClickListener(this.getSaveButtonListener());
 
-        settings_nextcloud_url = (EditText) view.findViewById(R.id.settings_nextcloud_url);
-        settings_nextcloud_user = (EditText) view.findViewById(R.id.settings_nextcloud_user);
-        settings_nextcloud_password = (EditText) view.findViewById(R.id.settings_nextcloud_password);
+        settings_nextcloud_url = view.findViewById(R.id.settings_nextcloud_url);
+        settings_nextcloud_user = view.findViewById(R.id.settings_nextcloud_user);
+        settings_nextcloud_password = view.findViewById(R.id.settings_nextcloud_password);
 
-        settings_app_start_password_switch = (MaterialCheckBox) view.findViewById(R.id.settings_app_start_password_switch);
+        settings_app_start_password_switch = view.findViewById(R.id.settings_app_start_password_switch);
 
-        settings_password_generator_shortcut_switch = (MaterialCheckBox) view.findViewById(R.id.settings_password_generator_shortcut_switch);
-        settings_password_generator_use_uppercase_switch = (MaterialCheckBox) view.findViewById(R.id.settings_password_generator_use_uppercase_switch);
-        settings_password_generator_use_lowercase_switch = (MaterialCheckBox) view.findViewById(R.id.settings_password_generator_use_lowercase_switch);
-        settings_password_generator_use_digits_switch = (MaterialCheckBox) view.findViewById(R.id.settings_password_generator_use_digits_switch);
-        settings_password_generator_use_special_chars_switch = (MaterialCheckBox) view.findViewById(R.id.settings_password_generator_use_special_chars_switch);
-        settings_password_generator_avoid_ambiguous_chars_switch = (MaterialCheckBox) view.findViewById(R.id.settings_password_generator_avoid_ambiguous_chars_switch);
-        settings_password_generator_require_every_char_type_switch = (MaterialCheckBox) view.findViewById(R.id.settings_password_generator_require_every_char_type_switch);
-        settings_password_generator_length_value = (EditText) view.findViewById(R.id.settings_password_generator_length_value);
+        settings_password_generator_shortcut_switch = view.findViewById(R.id.settings_password_generator_shortcut_switch);
+        settings_password_generator_use_uppercase_switch = view.findViewById(R.id.settings_password_generator_use_uppercase_switch);
+        settings_password_generator_use_lowercase_switch = view.findViewById(R.id.settings_password_generator_use_lowercase_switch);
+        settings_password_generator_use_digits_switch = view.findViewById(R.id.settings_password_generator_use_digits_switch);
+        settings_password_generator_use_special_chars_switch = view.findViewById(R.id.settings_password_generator_use_special_chars_switch);
+        settings_password_generator_avoid_ambiguous_chars_switch = view.findViewById(R.id.settings_password_generator_avoid_ambiguous_chars_switch);
+        settings_password_generator_require_every_char_type_switch = view.findViewById(R.id.settings_password_generator_require_every_char_type_switch);
+        settings_password_generator_length_value = view.findViewById(R.id.settings_password_generator_length_value);
 
-        enable_credential_list_icons_switch = (MaterialCheckBox) view.findViewById(R.id.enable_credential_list_icons_switch);
+        enable_credential_list_icons_switch = view.findViewById(R.id.enable_credential_list_icons_switch);
 
-        default_autofill_vault_title = (TextView) view.findViewById(R.id.default_autofill_vault_title);
-        default_autofill_vault = (Spinner) view.findViewById(R.id.default_autofill_vault);
-        clear_clipboard_delay_value = (EditText) view.findViewById(R.id.clear_clipboard_delay_value);
+        default_autofill_vault_title = view.findViewById(R.id.default_autofill_vault_title);
+        default_autofill_vault = view.findViewById(R.id.default_autofill_vault);
+        clear_clipboard_delay_value = view.findViewById(R.id.clear_clipboard_delay_value);
 
-        request_connect_timeout_value = (EditText) view.findViewById(R.id.request_connect_timeout_value);
-        request_response_timeout_value = (EditText) view.findViewById(R.id.request_response_timeout_value);
+        request_connect_timeout_value = view.findViewById(R.id.request_connect_timeout_value);
+        request_response_timeout_value = view.findViewById(R.id.request_response_timeout_value);
 
         return view;
     }
@@ -155,36 +153,16 @@ public class SettingsFragment extends Fragment {
 
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
 
-        boolean password_generator_use_uppercase = true;
-        boolean password_generator_use_lowercase = true;
-        boolean password_generator_use_digits = true;
-        boolean password_generator_use_special_chars = true;
-        boolean password_generator_avoid_ambiguous_chars = true;
-        boolean password_generator_require_every_char_type = true;
-        int password_generator_length = 12;
-
-        try {
-            JSONObject passwordGeneratorSettings = PasswordGenerator.getPasswordGeneratorSettings(getContext());
-
-            password_generator_use_uppercase = passwordGeneratorSettings.getBoolean("useUppercase");
-            password_generator_use_lowercase = passwordGeneratorSettings.getBoolean("useLowercase");
-            password_generator_use_digits = passwordGeneratorSettings.getBoolean("useDigits");
-            password_generator_use_special_chars = passwordGeneratorSettings.getBoolean("useSpecialChars");
-            password_generator_avoid_ambiguous_chars = passwordGeneratorSettings.getBoolean("avoidAmbiguousCharacters");
-            password_generator_require_every_char_type = passwordGeneratorSettings.getBoolean("requireEveryCharType");
-            password_generator_length = passwordGeneratorSettings.getInt("length");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        passwordGenerator = new PasswordGenerator(getContext());
 
         settings_password_generator_shortcut_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), true));
-        settings_password_generator_use_uppercase_switch.setChecked(password_generator_use_uppercase);
-        settings_password_generator_use_lowercase_switch.setChecked(password_generator_use_lowercase);
-        settings_password_generator_use_digits_switch.setChecked(password_generator_use_digits);
-        settings_password_generator_use_special_chars_switch.setChecked(password_generator_use_special_chars);
-        settings_password_generator_avoid_ambiguous_chars_switch.setChecked(password_generator_avoid_ambiguous_chars);
-        settings_password_generator_require_every_char_type_switch.setChecked(password_generator_require_every_char_type);
-        settings_password_generator_length_value.setText(String.valueOf(password_generator_length));
+        settings_password_generator_use_uppercase_switch.setChecked(passwordGenerator.isUseUppercase());
+        settings_password_generator_use_lowercase_switch.setChecked(passwordGenerator.isUseLowercase());
+        settings_password_generator_use_digits_switch.setChecked(passwordGenerator.isUseDigits());
+        settings_password_generator_use_special_chars_switch.setChecked(passwordGenerator.isUseSpecialChars());
+        settings_password_generator_avoid_ambiguous_chars_switch.setChecked(passwordGenerator.isAvoidAmbiguousCharacters());
+        settings_password_generator_require_every_char_type_switch.setChecked(passwordGenerator.isRequireEveryCharType());
+        settings_password_generator_length_value.setText(String.valueOf(passwordGenerator.getLength()));
 
         if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) {
             ((ViewManager) settings_password_generator_shortcut_switch.getParent()).removeView(settings_password_generator_shortcut_switch);
@@ -250,22 +228,16 @@ public class SettingsFragment extends Fragment {
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), settings_password_generator_shortcut_switch.isChecked()).commit();
-                try {
-                    JSONObject passwordGeneratorSettings = new JSONObject();
 
-                    int length = Integer.parseInt(settings_password_generator_length_value.getText().toString());
-                    passwordGeneratorSettings.put("length", length > 0 ? length : 12);
-                    passwordGeneratorSettings.put("useUppercase", settings_password_generator_use_uppercase_switch.isChecked());
-                    passwordGeneratorSettings.put("useLowercase", settings_password_generator_use_lowercase_switch.isChecked());
-                    passwordGeneratorSettings.put("useDigits", settings_password_generator_use_digits_switch.isChecked());
-                    passwordGeneratorSettings.put("useSpecialChars", settings_password_generator_use_special_chars_switch.isChecked());
-                    passwordGeneratorSettings.put("avoidAmbiguousCharacters", settings_password_generator_avoid_ambiguous_chars_switch.isChecked());
-                    passwordGeneratorSettings.put("requireEveryCharType", settings_password_generator_require_every_char_type_switch.isChecked());
-
-                    PasswordGenerator.setPasswordGeneratorSettings(getContext(), passwordGeneratorSettings);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                int length = Integer.parseInt(settings_password_generator_length_value.getText().toString());
+                passwordGenerator.setLength(length > 0 ? length : 12);
+                passwordGenerator.setUseUppercase(settings_password_generator_use_uppercase_switch.isChecked());
+                passwordGenerator.setUseLowercase(settings_password_generator_use_lowercase_switch.isChecked());
+                passwordGenerator.setUseDigits(settings_password_generator_use_digits_switch.isChecked());
+                passwordGenerator.setUseSpecialChars(settings_password_generator_use_special_chars_switch.isChecked());
+                passwordGenerator.setAvoidAmbiguousCharacters(settings_password_generator_avoid_ambiguous_chars_switch.isChecked());
+                passwordGenerator.setRequireEveryCharType(settings_password_generator_require_every_char_type_switch.isChecked());
+                passwordGenerator.applyChanges();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), enable_credential_list_icons_switch.isChecked()).commit();
 

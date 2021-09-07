@@ -21,7 +21,6 @@
  */
 package es.wolfi.app.passman;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.text.Editable;
@@ -32,8 +31,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-
-import org.json.JSONException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -115,12 +112,6 @@ public class EditPasswordTextItem extends LinearLayout {
 
     @OnClick(R.id.generate_password_btn)
     public void generatePassword() {
-        String password = "";
-        try {
-            password = PasswordGenerator.generateRandomPassword(getContext());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        this.password.setText(password);
+        this.password.setText(new PasswordGenerator(getContext()).generateRandomPassword());
     }
 }
