@@ -21,7 +21,6 @@
 
 package es.wolfi.app.passman.activities;
 
-import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.ClipData;
@@ -31,7 +30,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Build;
@@ -266,11 +264,10 @@ public class PasswordListActivity extends AppCompatActivity implements
             Intent shortcutActivityIntent = new Intent(this, ShortcutActivity.class);
             shortcutActivityIntent.setAction(ShortcutActivity.GENERATE_PASSWORD_INTENT_ACTION);
 
-            @SuppressLint("RestrictedApi")
             ShortcutInfoCompat shortcut = new ShortcutInfoCompat.Builder(this, ShortcutActivity.GENERATE_PASSWORD_ID)
                     .setShortLabel(getString(R.string.generate_password))
                     .setLongLabel(getString(R.string.generate_password_to_clipboard))
-                    .setIcon(IconCompat.createFromIcon(Icon.createWithResource(this, R.drawable.ic_baseline_refresh_24)))
+                    .setIcon(IconCompat.createWithResource(this, R.drawable.ic_baseline_refresh_24))
                     .setIntent(shortcutActivityIntent)
                     .build();
             ShortcutManagerCompat.addDynamicShortcuts(this, Collections.singletonList(shortcut));
