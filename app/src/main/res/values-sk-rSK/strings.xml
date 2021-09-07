@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">Naozaj chcete odstrániť tieto prihlasovacie údaje?</string>
     <string name="yes">Áno</string>
     <string name="cancel">Zrušiť</string>
-    </resources>
+    <string name="enable_credential_list_icons">Povoliť ikony v zozname účtov</string>
+    <string name="credential_icon">Ikona účtu</string>
+    <string name="clear_clipboard_delay">Vymazať schránku (po sekundách)</string>
+</resources>
