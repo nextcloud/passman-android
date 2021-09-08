@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">Tem certeza de que deseja excluir esta credencial? </string>
     <string name="yes">Sim</string>
     <string name="cancel">Cancelar </string>
-    </resources>
+    <string name="enable_credential_list_icons">Habilitar ícones na lista de credenciais</string>
+    <string name="credential_icon">Ícone da credencial</string>
+    <string name="clear_clipboard_delay">Limpar área de transferência (após segundos)</string>
+</resources>
