@@ -58,4 +58,7 @@
     <string name="confirm_credential_deletion">Ziur kredentzial hau ezabatu nahi duzula?</string>
     <string name="yes">Bai</string>
     <string name="cancel">Ezeztatu</string>
-    </resources>
+    <string name="enable_credential_list_icons">Gaitu kredentzialen zerrenda-ikonoak</string>
+    <string name="credential_icon">Kredentzial ikonoa</string>
+    <string name="clear_clipboard_delay">Garbitu arbela (segundo batzuen ondoren)</string>
+</resources>
