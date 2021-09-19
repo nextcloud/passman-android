@@ -28,7 +28,9 @@
     <string name="successfully_updated">Actualizado con éxito</string>
     <string name="delete">Eliminar</string>
     <string name="successfully_deleted">Eliminado con éxito</string>
+    <string name="nextcloud_connection_settings">Ajustes de conexión de Nextcloud</string>
     <string name="app_settings">Configuración de la app</string>
+    <string name="wait_while_loading">Espere mientras se carga...</string>
     <string name="loading">Cargando</string>
     <string name="error_downloading_file">Error al descargar el archivo</string>
     <string name="error_writing_file">Error al escribir el archivo</string>
