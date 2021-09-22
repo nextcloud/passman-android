@@ -35,4 +35,12 @@
     <string name="error_downloading_file">Error al descargar el archivo</string>
     <string name="error_writing_file">Error al escribir el archivo</string>
     <string name="files">Archivos</string>
+    <string name="custom_fields">Campos personalizados</string>
+    <string name="add_file">Añadir archivo</string>
+    <string name="add_custom_field">Añadir un campo personalizado</string>
+    <string name="unlock_passman">Desbloquea Passman</string>
+    <string name="unlock_passman_message_device_auth">Por favor, identifícate para acceder a Passman</string>
+    <string name="expert_settings">Configuración avanzada</string>
+    <string name="yes">Sí</string>
+    <string name="cancel">Cancelar</string>
     </resources>
