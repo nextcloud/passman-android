@@ -32,9 +32,11 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 
 import es.wolfi.app.ResponseHandlers.CoreAPIGETResponseHandler;
 import es.wolfi.app.passman.R;
@@ -45,6 +47,7 @@ public abstract class Core {
     protected static final String LOG_TAG = "API_LIB";
 
     protected static String host;
+    protected static String host_internal;
     protected static String username;
     protected static String password;
     protected static String version_name;
@@ -63,6 +66,7 @@ public abstract class Core {
 
     public static void setAPIHost(String host) {
         Core.host = host.concat("/index.php/apps/passman/api/v2/");
+        Core.host_internal = host.concat("/index.php/apps/passman/api/internal/");
     }
 
     public static String getAPIUsername() {
@@ -87,6 +91,16 @@ public abstract class Core {
 
     public static int getResponseTimeout(Context c) {
         return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
+    }
+
+    public static void requestInternalAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+        final AsyncHttpResponseHandler responseHandler = new CoreAPIGETResponseHandler(callback);
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setBasicAuth(username, password);
+        client.setConnectTimeout(getConnectTimeout(c));
+        client.setResponseTimeout(getResponseTimeout(c));
+        client.addHeader("Content-Type", "application/json");
+        client.get(host_internal.concat(endpoint), responseHandler);
     }
 
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
@@ -122,19 +136,30 @@ public abstract class Core {
     }
 
     // TODO Test this method once the server response works!
-    public static void getAPIVersion(final Context c, FutureCallback<Integer> cb) {
-        if (version_number != 0) {
-            cb.onCompleted(null, version_number);
+    public static void getAPIVersion(final Context c, FutureCallback<String> cb) {
+        if (version_name != null) {
+            cb.onCompleted(null, version_name);
             return;
         }
 
-        requestAPIGET(c, "version", new FutureCallback<String>() {
+        requestInternalAPIGET(c, "version", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (result != null) {
                     Log.d("getApiVersion", result);
+                    try {
+                        JSONObject parsedResult = new JSONObject(result);
+                        if (parsedResult.has("version")) {
+                            version_name = parsedResult.getString("version");
+                            version_number = Integer.parseInt(version_name.replace(".", ""));
+                            cb.onCompleted(null, version_name);
+                        }
+                    } catch (JSONException | NumberFormatException jsonException) {
+                        jsonException.printStackTrace();
+                    }
                 } else {
-                    Log.d("getApiVersion", "Failure while getting api version");
+                    Log.d("getApiVersion", "Failure while getting api version, maybe offline?");
+                    cb.onCompleted(e, null);
                 }
             }
         });
@@ -175,10 +200,10 @@ public abstract class Core {
         //Log.d(LOG_TAG, "Pass: " + pass);
         Log.d(LOG_TAG, "Pass: " + pass.replaceAll("(?s).", "*"));
 
-        Vault.setUpAPI(host, user, pass);
-        Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {
+        setUpAPI(host, user, pass);
+        getAPIVersion(c, new FutureCallback<String>() {
             @Override
-            public void onCompleted(Exception e, HashMap<String, Vault> result) {
+            public void onCompleted(Exception e, String result) {
                 boolean ret = true;
 
                 if (e != null) {
