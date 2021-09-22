@@ -63,6 +63,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Objects;
 
+import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -155,6 +156,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         checkFragmentPosition(true);
         if (running) return;
 
+        new OfflineStorage(getBaseContext());
         initialAuthentication(false);
     }
 
@@ -253,12 +255,7 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     public void showVaults() {
         this.VaultLockButton.setVisibility(View.INVISIBLE);
-        Core.getAPIVersion(this, new FutureCallback<Integer>() {
-            @Override
-            public void onCompleted(Exception e, Integer result) {
 
-            }
-        });
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
         if (vaults != null) {
             getSupportFragmentManager()
@@ -391,6 +388,11 @@ public class PasswordListActivity extends AppCompatActivity implements
         ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
         Vault.updateAutofillVault(v, settings);
+        try {
+            OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -411,6 +413,11 @@ public class PasswordListActivity extends AppCompatActivity implements
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
         Vault.updateAutofillVault(v, settings);
+        try {
+            OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -431,6 +438,11 @@ public class PasswordListActivity extends AppCompatActivity implements
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
         Vault.updateAutofillVault(v, settings);
+        try {
+            OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -887,5 +899,11 @@ public class PasswordListActivity extends AppCompatActivity implements
     public void onBackPressed() {
         checkFragmentPosition(false);
         super.onBackPressed();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        OfflineStorage.getInstance().commit();
     }
 }

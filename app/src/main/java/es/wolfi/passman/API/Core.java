@@ -39,6 +39,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import es.wolfi.app.ResponseHandlers.CoreAPIGETResponseHandler;
+import es.wolfi.app.passman.OfflineStorage;
+import es.wolfi.app.passman.OfflineStorageValues;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -89,6 +91,10 @@ public abstract class Core {
         return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15) * 1000;
     }
 
+    public static int getConnectRetries(Context c) {
+        return 0;
+    }
+
     public static int getResponseTimeout(Context c) {
         return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
     }
@@ -99,6 +105,7 @@ public abstract class Core {
         client.setBasicAuth(username, password);
         client.setConnectTimeout(getConnectTimeout(c));
         client.setResponseTimeout(getResponseTimeout(c));
+        client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
         client.addHeader("Content-Type", "application/json");
         client.get(host_internal.concat(endpoint), responseHandler);
     }
@@ -109,6 +116,7 @@ public abstract class Core {
         client.setBasicAuth(username, password);
         client.setConnectTimeout(getConnectTimeout(c));
         client.setResponseTimeout(getResponseTimeout(c));
+        client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
         client.addHeader("Content-Type", "application/json");
         client.get(host.concat(endpoint), responseHandler);
     }
@@ -122,6 +130,7 @@ public abstract class Core {
         client.setBasicAuth(username, password);
         client.setConnectTimeout(getConnectTimeout(c));
         client.setResponseTimeout(getResponseTimeout(c));
+        client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
         //client.addHeader("Content-Type", "application/json; utf-8");
         client.addHeader("Accept", "application/json, text/plain, */*");
 
@@ -147,22 +156,36 @@ public abstract class Core {
             public void onCompleted(Exception e, String result) {
                 if (result != null) {
                     Log.d("getApiVersion", result);
-                    try {
-                        JSONObject parsedResult = new JSONObject(result);
-                        if (parsedResult.has("version")) {
-                            version_name = parsedResult.getString("version");
-                            version_number = Integer.parseInt(version_name.replace(".", ""));
-                            cb.onCompleted(null, version_name);
-                        }
-                    } catch (JSONException | NumberFormatException jsonException) {
-                        jsonException.printStackTrace();
+                    if (applyVersionJSON(result)) {
+                        OfflineStorage.getInstance().putObject(OfflineStorageValues.VERSION.toString(), result);
+                        cb.onCompleted(null, version_name);
                     }
                 } else {
                     Log.d("getApiVersion", "Failure while getting api version, maybe offline?");
+                    if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString())) {
+                        if (applyVersionJSON(OfflineStorage.getInstance().getString(OfflineStorageValues.VERSION.toString()))) {
+                            cb.onCompleted(null, version_name);
+                            return;
+                        }
+                    }
                     cb.onCompleted(e, null);
                 }
             }
         });
+    }
+
+    public static boolean applyVersionJSON(String version) {
+        try {
+            JSONObject parsedResult = new JSONObject(version);
+            if (parsedResult.has("version")) {
+                version_name = parsedResult.getString("version");
+                version_number = Integer.parseInt(version_name.replace(".", ""));
+                return true;
+            }
+        } catch (JSONException | NumberFormatException jsonException) {
+            jsonException.printStackTrace();
+        }
+        return false;
     }
 
     /**

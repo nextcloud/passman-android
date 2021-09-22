@@ -36,6 +36,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
+import es.wolfi.app.passman.OfflineStorage;
+import es.wolfi.app.passman.OfflineStorageValues;
 import es.wolfi.app.passman.SJCLCrypto;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -171,8 +173,14 @@ public class Vault extends Core implements Filterable {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
-                    cb.onCompleted(e, null);
-                    return;
+                    if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
+                        result = OfflineStorage.getInstance().getString(OfflineStorageValues.VAULTS.toString(), null);
+                    }
+                    if (result == null || !OfflineStorage.getInstance().isEnabled() ||
+                            !OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
+                        cb.onCompleted(e, null);
+                        return;
+                    }
                 }
 
 //                Log.e(Vault.LOG_TAG, result);
@@ -185,7 +193,8 @@ public class Vault extends Core implements Filterable {
                         l.put(v.guid, v);
                     }
 
-                    cb.onCompleted(e, l);
+                    OfflineStorage.getInstance().putObject(OfflineStorageValues.VAULTS.toString(), result);
+                    cb.onCompleted(null, l);
                 } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
@@ -198,8 +207,14 @@ public class Vault extends Core implements Filterable {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
-                    cb.onCompleted(e, null);
-                    return;
+                    if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(guid)) {
+                        result = OfflineStorage.getInstance().getString(guid, null);
+                    }
+                    if (result == null || !OfflineStorage.getInstance().isEnabled() ||
+                            !OfflineStorage.getInstance().has(guid)) {
+                        cb.onCompleted(e, null);
+                        return;
+                    }
                 }
 
                 try {
@@ -207,7 +222,8 @@ public class Vault extends Core implements Filterable {
 
                     Vault v = Vault.fromJSON(data);
 
-                    cb.onCompleted(e, v);
+                    OfflineStorage.getInstance().putObject(guid, result);
+                    cb.onCompleted(null, v);
                 } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
