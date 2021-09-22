@@ -22,8 +22,6 @@
 package es.wolfi.passman.API;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -43,6 +41,7 @@ import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.OfflineStorageValues;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
 
 public abstract class Core {
@@ -88,7 +87,7 @@ public abstract class Core {
     }
 
     public static int getConnectTimeout(Context c) {
-        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15) * 1000;
+        return SettingsCache.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15) * 1000;
     }
 
     public static int getConnectRetries(Context c) {
@@ -96,7 +95,7 @@ public abstract class Core {
     }
 
     public static int getResponseTimeout(Context c) {
-        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
+        return SettingsCache.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
     }
 
     public static void requestInternalAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
@@ -199,8 +198,7 @@ public abstract class Core {
         SingleTon ton = SingleTon.getTon();
 
         if (ton.getString(SettingValues.HOST.toString()) == null) {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
-            String url = settings.getString(SettingValues.HOST.toString(), null);
+            String url = SettingsCache.getString(SettingValues.HOST.toString(), null);
 
             // If the url is null app has not yet been configured!
             if (url == null) {
@@ -210,8 +208,8 @@ public abstract class Core {
 
             // Load the server settings
             ton.addString(SettingValues.HOST.toString(), url);
-            ton.addString(SettingValues.USER.toString(), settings.getString(SettingValues.USER.toString(), ""));
-            ton.addString(SettingValues.PASSWORD.toString(), settings.getString(SettingValues.PASSWORD.toString(), ""));
+            ton.addString(SettingValues.USER.toString(), SettingsCache.getString(SettingValues.USER.toString(), ""));
+            ton.addString(SettingValues.PASSWORD.toString(), SettingsCache.getString(SettingValues.PASSWORD.toString(), ""));
         }
 
         String host = ton.getString(SettingValues.HOST.toString());

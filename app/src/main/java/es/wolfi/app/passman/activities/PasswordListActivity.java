@@ -66,6 +66,7 @@ import java.util.Objects;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.fragments.CredentialAddFragment;
 import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
@@ -156,6 +157,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         checkFragmentPosition(true);
         if (running) return;
 
+        new SettingsCache().loadSharedPreferences(getBaseContext());
         new OfflineStorage(getBaseContext());
         initialAuthentication(false);
     }
