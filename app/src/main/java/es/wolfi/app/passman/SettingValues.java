@@ -34,7 +34,10 @@ public enum SettingValues {
     REQUEST_CONNECT_TIMEOUT("request_connect_timeout"),
     REQUEST_RESPONSE_TIMEOUT("request_response_timeout"),
     CLEAR_CLIPBOARD_DELAY("clear_clipboard_delay"),
-    OFFLINE_STORAGE("offline_storage");
+    PASSWORD_GENERATOR_SETTINGS("password_generator_settings"),
+    ENABLE_PASSWORD_GENERATOR_SHORTCUT("enable_password_generator_shortcut"),
+    OFFLINE_STORAGE("offline_storage"),
+    ENABLE_OFFLINE_CACHE("enable_offline_cache");
 
     private final String name;
 

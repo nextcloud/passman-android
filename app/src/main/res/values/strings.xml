@@ -45,7 +45,7 @@
     <string name="unlock_passman">Unlock Passman</string>
     <string name="unlock_passman_message_device_auth">Please authenticate to access Passman</string>
     <string name="app_start_password">App start password</string>
-    <string name="app_start_password_android_auth_description">Enable Android user authentication on app start?</string>
+    <string name="app_start_password_android_auth_description">Enable Android user authentication on app start</string>
     <string name="wait_while_encrypting">Wait while encrypting …</string>
     <string name="wait_while_decrypting">Wait while decrypting …</string>
     <string name="wait_while_uploading">Wait while uploading …</string>
@@ -65,4 +65,18 @@
     <string name="enable_credential_list_icons">Enable credential list icons</string>
     <string name="credential_icon">Credential icon</string>
     <string name="clear_clipboard_delay">Clear clipboard (after seconds)</string>
+    <string name="generate_password">Generate password</string>
+    <string name="generate_password_to_clipboard">Generate a random password and copy to clipboard</string>
+    <string name="enable_password_generator_shortcut_description">Enable password generator app shortcut</string>
+    <string name="password_generator_require_every_char_type">Require every char type</string>
+    <string name="password_generator_avoid_ambiguous_chars">Avoid ambiguous characters</string>
+    <string name="password_generator_use_special_chars">Use special characters</string>
+    <string name="password_generator_use_digits">Use digits</string>
+    <string name="password_generator_use_lowercase">Use lowercase characters</string>
+    <string name="password_generator_use_uppercase">Use uppercase characters</string>
+    <string name="password_length">Password length</string>
+    <string name="offline_cache">Offline cache</string>
+    <string name="offline_cache_description">Caches the encrypted vaults if they were loaded manually</string>
+    <string name="enable_offline_cache">Enable offline cache</string>
+    <string name="clear_offline_cache">Clear offline cache</string>
 </resources>
