@@ -324,6 +324,10 @@ public class Vault extends Core implements Filterable {
         }
     }
 
+    public static void deleteVault(Vault vault, Context context) {
+        Log.d("deleteVault", vault.name);
+    }
+
     @Override
     public String getFilterableAttribute() {
         return this.name.toLowerCase();

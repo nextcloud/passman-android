@@ -60,6 +60,7 @@
     <string name="request_response_timeout">Request response timeout (in seconds)</string>
     <string name="expert_settings">Expert settings</string>
     <string name="confirm_credential_deletion">Are you sure you want to delete this credential?</string>
+    <string name="confirm_vault_deletion">Are you sure you want to delete this vault?</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
     <string name="enable_credential_list_icons">Enable credential list icons</string>

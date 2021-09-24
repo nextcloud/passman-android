@@ -23,21 +23,33 @@
 package es.wolfi.app.passman.adapters;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.ResponseHandlers.CredentialDeleteResponseHandler;
 import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.fragments.VaultFragment.OnListFragmentInteractionListener;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ColorUtils;
+import es.wolfi.utils.ProgressUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Vault} and makes a call to the
@@ -86,6 +98,31 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
                 }
             }
         });
+
+        holder.vault_edit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "vault edit button clicked");
+            }
+        });
+
+        holder.vault_delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage(R.string.confirm_vault_deletion);
+                builder.setCancelable(false);
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Vault.deleteVault(holder.mItem, view.getContext());
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+            }
+        });
     }
 
     @Override
@@ -97,6 +134,8 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         @BindView(R.id.vault_name) TextView name;
         @BindView(R.id.vault_created) TextView created;
         @BindView(R.id.vault_last_access) TextView last_access;
+        @BindView(R.id.vault_edit_button) ImageView vault_edit_button;
+        @BindView(R.id.vault_delete_button) ImageView vault_delete_button;
 
         public final View mView;
         public Vault mItem;
