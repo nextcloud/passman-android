@@ -78,4 +78,5 @@
     <string name="offline_cache">Offline cache</string>
     <string name="offline_cache_description">Caches the encrypted vaults if they were loaded manually</string>
     <string name="enable_offline_cache">Enable offline cache</string>
+    <string name="clear_offline_cache">Clear offline cache</string>
 </resources>

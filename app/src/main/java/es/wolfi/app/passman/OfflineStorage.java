@@ -28,6 +28,8 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import es.wolfi.utils.FileUtils;
+
 public class OfflineStorage {
     /**
      * Use OfflineStorage.getInstance().? instead of direct calls!
@@ -40,13 +42,16 @@ public class OfflineStorage {
 
     public OfflineStorage(Context context) {
         loadSharedPreferences(context);
-        String offlineStorageString = sharedPreferences.getString(SettingValues.OFFLINE_STORAGE.toString(), null);
         try {
-            storage = new JSONObject(offlineStorageString);
+            storage = new JSONObject(getOfflineStorageString());
         } catch (JSONException | NullPointerException e) {
             storage = new JSONObject();
         }
         offlineStorage = this;
+    }
+
+    private String getOfflineStorageString() {
+        return sharedPreferences.getString(SettingValues.OFFLINE_STORAGE.toString(), "{}");
     }
 
     public static OfflineStorage getInstance() {
@@ -68,10 +73,23 @@ public class OfflineStorage {
 
     public void clear() {
         storage = new JSONObject();
+        sharedPreferences.edit().putString(SettingValues.OFFLINE_STORAGE.toString(), storage.toString()).commit();
+        Log.d(LOG_TAG, "cleared and committed");
     }
 
     public boolean isEnabled() {
         return sharedPreferences.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true);
+    }
+
+    public String getSize() {
+        int bytes = getOfflineStorageString().getBytes().length;
+        if (isEnabled() && bytes <= 2) {
+            bytes = storage.toString().getBytes().length;
+        }
+        if (bytes >= 2) {
+            bytes -= 2;
+        }
+        return FileUtils.humanReadableByteCount((Double.valueOf(bytes)).longValue(), true);
     }
 
     public boolean has(String name) {

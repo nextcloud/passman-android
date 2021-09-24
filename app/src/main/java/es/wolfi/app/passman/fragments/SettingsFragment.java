@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -83,6 +85,7 @@ public class SettingsFragment extends Fragment {
 
     EditText request_connect_timeout_value;
     EditText request_response_timeout_value;
+    Button clear_offline_cache_button;
 
     SharedPreferences settings;
     PasswordGenerator passwordGenerator;
@@ -135,6 +138,8 @@ public class SettingsFragment extends Fragment {
 
         request_connect_timeout_value = view.findViewById(R.id.request_connect_timeout_value);
         request_response_timeout_value = view.findViewById(R.id.request_response_timeout_value);
+        clear_offline_cache_button = view.findViewById(R.id.clear_offline_cache_button);
+        clear_offline_cache_button.setOnClickListener(this.getClearOfflineCacheButtonListener());
 
         return view;
     }
@@ -203,6 +208,7 @@ public class SettingsFragment extends Fragment {
 
         request_connect_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15)));
         request_response_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120)));
+        clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
     }
 
     private Set<Map.Entry<String, Vault>> getVaultsEntrySet() {
@@ -297,6 +303,17 @@ public class SettingsFragment extends Fragment {
                 } else {
                     Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(false);
                 }
+            }
+        };
+    }
+
+    public View.OnClickListener getClearOfflineCacheButtonListener() {
+        return new View.OnClickListener() {
+            @SuppressLint("ApplySharedPref")
+            @Override
+            public void onClick(View view) {
+                OfflineStorage.getInstance().clear();
+                clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
             }
         };
     }
