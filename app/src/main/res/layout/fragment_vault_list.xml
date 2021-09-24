@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     *  Passman Android App
     *
     * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
@@ -20,15 +19,34 @@
     * along with this program.  If not, see <http://www.gnu.org/licenses/>.
     *
 -->
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list"
-    android:name="es.wolfi.app.passman.VaultFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="0dp"
-    android:layout_marginRight="0dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context="es.wolfi.app.passman.fragments.VaultFragment"
-    tools:listitem="@layout/fragment_vault" />
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/list"
+        android:name="es.wolfi.app.passman.VaultFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_weight="1"
+        app:layoutManager="LinearLayoutManager"
+        tools:context="es.wolfi.app.passman.fragments.VaultFragment"
+        tools:listitem="@layout/fragment_vault">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_vault_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="?attr/colorPrimary"
+        app:srcCompat="@drawable/ic_plus_white" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
