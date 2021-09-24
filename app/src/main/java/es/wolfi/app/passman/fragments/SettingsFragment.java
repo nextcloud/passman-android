@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,7 @@ import butterknife.ButterKnife;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
@@ -284,6 +286,7 @@ public class SettingsFragment extends Fragment {
                     }
                 }
 
+                SettingsCache.clear();
                 if (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
                         !settings.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
                         !settings.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {

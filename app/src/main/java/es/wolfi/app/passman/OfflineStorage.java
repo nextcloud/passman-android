@@ -78,7 +78,7 @@ public class OfflineStorage {
     }
 
     public boolean isEnabled() {
-        return sharedPreferences.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true);
+        return SettingsCache.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true);
     }
 
     public String getSize() {
