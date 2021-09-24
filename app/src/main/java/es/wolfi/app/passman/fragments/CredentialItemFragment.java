@@ -21,7 +21,6 @@
 package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -125,6 +124,7 @@ public class CredentialItemFragment extends Fragment {
         });
         v.sort(sortMethod);
         recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
+        scrollToLastPosition();
         updateToggleSortButtonImage(toggleSortButton);
     }
 
@@ -171,7 +171,6 @@ public class CredentialItemFragment extends Fragment {
         return view;
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -180,6 +179,20 @@ public class CredentialItemFragment extends Fragment {
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
+        }
+    }
+
+    public void scrollToLastPosition() {
+        if (recyclerView != null) {
+            recyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    final LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    if (layoutManager != null) {
+                        layoutManager.scrollToPositionWithOffset(mListener.getLastCredentialListPosition(), 0);
+                    }
+                }
+            });
         }
     }
 
@@ -202,5 +215,9 @@ public class CredentialItemFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Credential item);
+
+        void setLastCredentialListPosition(int pos);
+
+        int getLastCredentialListPosition();
     }
 }

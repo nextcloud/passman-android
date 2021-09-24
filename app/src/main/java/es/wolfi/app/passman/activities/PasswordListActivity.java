@@ -108,6 +108,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     private String intentFilecontent = "";
     HashMap<String, Integer> visibleButtonsBeforeEnterSettings = new HashMap<String, Integer>();
     private ClipboardManager.OnPrimaryClipChangedListener onPrimaryClipChangedListener;
+    private int lastCredentialListPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -483,9 +484,12 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        ProgressDialog progress = getProgressDialog();
+        progress.show();
         Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
             @Override
             public void onCompleted(Exception e, Vault result) {
+                progress.dismiss();
                 if (e != null) {
                     // Not logged in, restart activity
                     if (e.getMessage() != null && e.getMessage().equals("401")) {
@@ -700,6 +704,16 @@ public class PasswordListActivity extends AppCompatActivity implements
     @Override
     public void onCredentialFragmentInteraction(Credential credential) {
         this.addCredentialsButton.hide();
+    }
+
+    @Override
+    public void setLastCredentialListPosition(int pos) {
+        lastCredentialListPosition = pos;
+    }
+
+    @Override
+    public int getLastCredentialListPosition() {
+        return lastCredentialListPosition;
     }
 
     @Override
