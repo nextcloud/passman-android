@@ -3,6 +3,7 @@ package es.wolfi.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.PictureDrawable;
+import android.os.Build;
 import android.util.Base64;
 import android.widget.ImageView;
 
@@ -27,7 +28,8 @@ public class IconUtils {
                     Bitmap bitmapImageData = BitmapFactory.decodeByteArray(byteImageData, 0, byteImageData.length);
                     if (bitmapImageData != null) {
                         credentialIconImageView.setImageBitmap(bitmapImageData);
-                    } else if (icon.getString("type").equals("svg+xml")) {
+                    } else if (icon.getString("type").equals("svg+xml") &&
+                            android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         SVG svg = SVG.getFromInputStream(new ByteArrayInputStream(byteImageData));
                         credentialIconImageView.setImageDrawable(new PictureDrawable(svg.renderToPicture()));
                     }
