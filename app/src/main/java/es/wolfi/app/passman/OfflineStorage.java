@@ -71,7 +71,7 @@ public class OfflineStorage {
     }
 
     public boolean isEnabled() {
-        return true;
+        return sharedPreferences.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true);
     }
 
     public boolean has(String name) {
