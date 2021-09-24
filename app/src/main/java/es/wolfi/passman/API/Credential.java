@@ -347,9 +347,13 @@ public class Credential extends Core implements Filterable {
         JSONObject icon = null;
 
         try {
-            icon = new JSONObject();
-            icon.put("type", false);
-            icon.put("content", "");
+            if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
+                icon = new JSONObject(favicon);
+            } else {
+                icon = new JSONObject();
+                icon.put("type", false);
+                icon.put("content", "");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -484,6 +488,10 @@ public class Credential extends Core implements Filterable {
         Credential c = Credential.fromJSON(j);
         c.setVault(v);
         return c;
+    }
+
+    public static Credential clone(Credential input) throws JSONException {
+        return Credential.fromJSON(input.getAsJSONObject(), input.getVault());
     }
 
     public void save(Context c, final AsyncHttpResponseHandler responseHandler) {

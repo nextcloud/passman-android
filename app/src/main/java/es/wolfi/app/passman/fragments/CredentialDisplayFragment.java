@@ -119,29 +119,8 @@ public class CredentialDisplayFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
-        }
 
         handler = new Handler();
-        if (credential.getOtp().length() > 4) {
-            otp_refresh = new Runnable() {
-                @Override
-                public void run() {
-                    int progress = (int) (System.currentTimeMillis() / 1000) % 30;
-                    otp_progress.setProgress(progress * 100);
-
-                    ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
-                    animation.setDuration(1000);
-                    animation.setInterpolator(new LinearInterpolator());
-                    animation.start();
-
-                    otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
-                    handler.postDelayed(this, 1000);
-                }
-            };
-        }
     }
 
     public String getGuid() {
@@ -167,7 +146,29 @@ public class CredentialDisplayFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        if (getArguments() != null) {
+            Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+            credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+        }
+
+        if (credential.getOtp().length() > 4) {
+            otp_refresh = new Runnable() {
+                @Override
+                public void run() {
+                    int progress = (int) (System.currentTimeMillis() / 1000) % 30;
+                    otp_progress.setProgress(progress * 100);
+
+                    ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
+                    animation.setDuration(1000);
+                    animation.setInterpolator(new LinearInterpolator());
+                    animation.start();
+
+                    otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
+                    handler.postDelayed(this, 1000);
+                }
+            };
+        }
+
         return inflater.inflate(R.layout.fragment_credential_display, container, false);
     }
 
