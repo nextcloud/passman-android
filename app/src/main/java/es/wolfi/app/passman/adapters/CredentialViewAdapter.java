@@ -68,6 +68,8 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
 
         if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
             holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
+        } else {
+            holder.contentLayout.setBackgroundColor(0);
         }
 
         if (holder.mItem != null && settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true)) {
@@ -80,6 +82,8 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
+                    mListener.setLastCredentialListPosition(holder.getBindingAdapterPosition());
+
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.mItem);
