@@ -331,7 +331,7 @@ public class Credential extends Core implements Filterable {
     }
 
     private boolean isEncryptedWithSharedKey() {
-        if (this.sharedKeyDecrypted == null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null")) {
+        if (this.sharedKeyDecrypted == null && this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null")) {
             this.sharedKeyDecrypted = vault.decryptString(this.sharedKey);
         }
         return this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null");
