@@ -51,7 +51,7 @@ android {
             signingConfig signingConfigs.release
         }
         googlePlayRelease {
-            minifyEnabled true
+            minifyEnabled false
             debuggable false
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
