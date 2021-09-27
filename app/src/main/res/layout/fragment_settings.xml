@@ -39,9 +39,17 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingBottom="@dimen/activity_vertical_margin">
 
-            <include android:id="@+id/manual_server_connection_settings" layout="@layout/content_manual_server_connection_settings" />
+            <!--Nextcloud connection settings-->
 
-            <include android:id="@+id/sso_settings" layout="@layout/content_sso_settings" />
+            <include
+                android:id="@+id/manual_server_connection_settings"
+                layout="@layout/content_manual_server_connection_settings" />
+
+            <include
+                android:id="@+id/sso_settings"
+                layout="@layout/content_sso_settings" />
+
+            <!--App settings-->
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Medium"
@@ -62,15 +70,104 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_start_password" />
 
-            <Switch
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/settings_app_start_password_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:checked="false"
-                android:switchMinWidth="56dp"
-                android:text="@string/app_start_password_android_auth_description"
-                tools:ignore="UseSwitchCompatOrMaterialXml" />
+                android:text="@string/app_start_password_android_auth_description" />
+
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/generate_password" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_password_generator_shortcut_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/enable_password_generator_shortcut_description" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_password_generator_use_uppercase_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/password_generator_use_uppercase" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_password_generator_use_lowercase_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/password_generator_use_lowercase" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_password_generator_use_digits_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/password_generator_use_digits" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_password_generator_use_special_chars_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/password_generator_use_special_chars" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_password_generator_avoid_ambiguous_chars_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/password_generator_avoid_ambiguous_chars" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_password_generator_require_every_char_type_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/password_generator_require_every_char_type" />
+
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/password_length" />
+
+            <EditText
+                android:id="@+id/settings_password_generator_length_value"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="123456789"
+                android:inputType="number"
+                tools:ignore="LabelFor" />
+
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/credential_icon" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/enable_credential_list_icons_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/enable_credential_list_icons" />
 
             <TextView
                 android:id="@+id/default_autofill_vault_title"
@@ -84,6 +181,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp" />
+
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/clear_clipboard_delay" />
+
+            <EditText
+                android:id="@+id/clear_clipboard_delay_value"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789"
+                android:inputType="number"
+                tools:ignore="LabelFor" />
+
+            <!--Expert settings-->
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Medium"

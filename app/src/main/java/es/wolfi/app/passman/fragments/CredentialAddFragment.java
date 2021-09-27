@@ -50,6 +50,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
+import es.wolfi.app.passman.EditPasswordTextItem;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -78,7 +79,7 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     @BindView(R.id.add_credential_user)
     EditText user;
     @BindView(R.id.add_credential_password)
-    EditText password;
+    EditPasswordTextItem password;
     @BindView(R.id.add_credential_email)
     EditText email;
     @BindView(R.id.add_credential_url)

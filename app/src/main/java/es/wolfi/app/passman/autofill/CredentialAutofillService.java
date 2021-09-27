@@ -546,7 +546,7 @@ public final class CredentialAutofillService extends AutofillService {
         Vault activeVault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         String autofillVaultGuid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
 
-        if (!activeVault.guid.equals(autofillVaultGuid) && !autofillVaultGuid.equals("")) {
+        if (activeVault != null && !activeVault.guid.equals(autofillVaultGuid) && !autofillVaultGuid.equals("")) {
             try {
                 Vault requestedVault = Vault.fromJSON(new JSONObject(settings.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
                 requestedVault.unlock(settings.getString(autofillVaultGuid, ""));

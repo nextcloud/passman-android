@@ -4,8 +4,8 @@ import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONObject;
@@ -76,10 +76,10 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Snackbar.make(view, e.getMessage() != null ? e.getMessage() : view.getContext().getString(R.string.error_occurred), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Toast.makeText(view.getContext(), e.getMessage() != null ? e.getMessage() : view.getContext().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
             }
         } else {
-            Snackbar.make(view, view.getContext().getString(R.string.error_occurred), Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
         }
 
         progress.dismiss();
@@ -88,6 +88,7 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         error.printStackTrace();
+        Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
         progress.dismiss();
     }
 

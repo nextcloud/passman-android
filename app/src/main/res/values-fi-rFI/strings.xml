@@ -19,4 +19,18 @@
     <string name="created">Luotu:</string>
     <string name="last_accessed">Viimeksi käytetty:</string>
     <string name="search">Etsi</string>
+    <string name="save">Tallenna</string>
+    <string name="successfully_saved">Tallennettu onnistuneesti</string>
+    <string name="error_occurred">Tapahtui virhe</string>
+    <string name="update">Päivitä</string>
+    <string name="successfully_updated">Päivitetty onnistuneesti</string>
+    <string name="delete">Poista</string>
+    <string name="successfully_deleted">Poistettu onnistuneesti</string>
+    <string name="app_settings">Sovelluksen asetukset</string>
+    <string name="loading">Ladataan</string>
+    <string name="files">Tiedostot</string>
+    <string name="add_file">Lisää tiedosto</string>
+    <string name="automatically">automaattisesti</string>
+    <string name="yes">Kyllä</string>
+    <string name="cancel">Peruuta</string>
     </resources>

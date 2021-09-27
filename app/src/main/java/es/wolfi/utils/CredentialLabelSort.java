@@ -18,8 +18,8 @@ public class CredentialLabelSort implements Comparator<Credential> {
      * alphabetically ascending         1
      * alphabetically descending        2
      */
-    public enum sortMethod {
-        standard, alphabeticallyAscending, alphabeticallyDescending
+    public enum SortMethod {
+        STANDARD, ALPHABETICALLY_ASCENDING, ALPHABETICALLY_DESCENDING
     }
 
     private final int method;
@@ -30,10 +30,10 @@ public class CredentialLabelSort implements Comparator<Credential> {
 
     @Override
     public int compare(Credential left, Credential right) {
-        if (method == sortMethod.alphabeticallyAscending.ordinal()) {
+        if (method == SortMethod.ALPHABETICALLY_ASCENDING.ordinal()) {
             return left.getLabel().compareTo(right.getLabel());
         }
-        if (method == sortMethod.alphabeticallyDescending.ordinal()) {
+        if (method == SortMethod.ALPHABETICALLY_DESCENDING.ordinal()) {
             return right.getLabel().compareTo(left.getLabel());
         }
         return left.getId() - right.getId();

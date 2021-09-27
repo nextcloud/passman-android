@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.webkit.URLUtil;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -53,6 +54,7 @@ import es.wolfi.app.passman.adapters.FileViewAdapter;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.IconUtils;
 
 
 /**
@@ -63,6 +65,8 @@ import es.wolfi.passman.API.Vault;
 public class CredentialDisplayFragment extends Fragment {
     public static String CREDENTIAL = "credential";
 
+    @BindView(R.id.credentialIcon)
+    ImageView credentialIcon;
     @BindView(R.id.credential_label)
     TextView label;
     @BindView(R.id.credential_user)
@@ -211,6 +215,7 @@ public class CredentialDisplayFragment extends Fragment {
         url.setText(credential.getUrl());
         description.setText(credential.getDescription());
         otp.setEnabled(false);
+        IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
 
         if (URLUtil.isValidUrl(credential.getUrl())) {
             url.setModeURL();

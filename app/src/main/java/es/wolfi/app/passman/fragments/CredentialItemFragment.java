@@ -23,6 +23,7 @@ package es.wolfi.app.passman.fragments;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -59,7 +60,7 @@ public class CredentialItemFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private int sortMethod = CredentialLabelSort.sortMethod.standard.ordinal();
+    private int sortMethod = CredentialLabelSort.SortMethod.STANDARD.ordinal();
     private OnListFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
     private RecyclerView recyclerView;
@@ -122,7 +123,8 @@ public class CredentialItemFragment extends Fragment {
             }
         });
         v.sort(sortMethod);
-        recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener));
+        recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
+        scrollToLastPosition();
         updateToggleSortButtonImage(toggleSortButton);
     }
 
@@ -137,13 +139,13 @@ public class CredentialItemFragment extends Fragment {
     }
 
     public void updateToggleSortButtonImage(AppCompatImageButton toggleSortButton) {
-        if (sortMethod == CredentialLabelSort.sortMethod.standard.ordinal()) {
+        if (sortMethod == CredentialLabelSort.SortMethod.STANDARD.ordinal()) {
             // set default image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_list_24);
-        } else if (sortMethod == CredentialLabelSort.sortMethod.alphabeticallyAscending.ordinal()) {
+        } else if (sortMethod == CredentialLabelSort.SortMethod.ALPHABETICALLY_ASCENDING.ordinal()) {
             // set az ascending image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
-        } else if (sortMethod == CredentialLabelSort.sortMethod.alphabeticallyDescending.ordinal()) {
+        } else if (sortMethod == CredentialLabelSort.SortMethod.ALPHABETICALLY_DESCENDING.ordinal()) {
             // set az descending image
             toggleSortButton.setImageResource(R.drawable.ic_baseline_sort_by_alpha_24);
         }
@@ -169,7 +171,6 @@ public class CredentialItemFragment extends Fragment {
         return view;
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -178,6 +179,20 @@ public class CredentialItemFragment extends Fragment {
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
+        }
+    }
+
+    public void scrollToLastPosition() {
+        if (recyclerView != null) {
+            recyclerView.post(new Runnable() {
+                @Override
+                public void run() {
+                    final LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    if (layoutManager != null) {
+                        layoutManager.scrollToPositionWithOffset(mListener.getLastCredentialListPosition(), 0);
+                    }
+                }
+            });
         }
     }
 
@@ -200,5 +215,9 @@ public class CredentialItemFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Credential item);
+
+        void setLastCredentialListPosition(int pos);
+
+        int getLastCredentialListPosition();
     }
 }

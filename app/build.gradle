@@ -6,8 +6,8 @@ ext {
 
 android {
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     signingConfigs {
         alpha {
@@ -32,8 +32,8 @@ android {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 9
-        versionName "1.0"
+        versionCode 12
+        versionName "1.2.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         externalNativeBuild {
             cmake {
@@ -48,6 +48,18 @@ android {
             debuggable false
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        googlePlayRelease {
+            minifyEnabled false
+            debuggable false
+            resValue "string", "app_name", "@string/app_name_release"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // .alpha is needed to keep it compatible with the custom signing key approach on the play store,
+            // since it won't let us create a new store page and publish the app without the alpha on the name.
+            applicationIdSuffix ".alpha"
+            versionNameSuffix '-gplay'
+            signingConfig signingConfigs.release
         }
         debug {
             debuggable true
@@ -105,6 +117,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'commons-codec:commons-codec:1.15'
     implementation 'com.loopj.android:android-async-http:1.4.11'
+    implementation 'com.caverock:androidsvg:1.4'
     testImplementation 'junit:junit:4.13.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.3'
 }
