@@ -21,8 +21,10 @@
 
 package es.wolfi.passman.API;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -185,6 +187,33 @@ public abstract class Core {
             jsonException.printStackTrace();
         }
         return false;
+    }
+
+    public static void checkCloudConnection(View view) {
+        getAPIVersion(view.getContext(), new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                boolean ret = true;
+
+                if (e != null) {
+                    if (e.getMessage().equals("401")) {
+                        ret = false;
+                    } else if (e.getMessage().contains("Unable to resolve host") || e.getMessage().contains("Invalid URI")) {
+                        ret = false;
+                    } else {
+                        Log.e(LOG_TAG, "Error: " + e.getMessage(), e);
+                        ret = false;
+                    }
+                }
+
+                if (!ret) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setMessage(R.string.net_error_dialog_description);
+                    builder.setCancelable(true);
+                    builder.show();
+                }
+            }
+        });
     }
 
     /**

@@ -11,6 +11,7 @@
     <string name="wrongNCUrl">Incorrect Nextcloud backend URL or unable to connect</string>
     <string name="wrongNCSettings">Settings incorrect</string>
     <string name="net_error">Network error</string>
+    <string name="net_error_dialog_description">Could not connect to the server! Changes can not be saved without a working server connection.</string>
     <string name="unlock">Unlock</string>
     <string name="wrong_vault_pw">Wrong vault password</string>
     <string name="label">Label</string>
