@@ -164,6 +164,7 @@ public abstract class Core {
                 } else {
                     Log.d("getApiVersion", "Failure while getting api version, maybe offline?");
                     if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString())) {
+                        showConnectionErrorHint(c);
                         if (applyVersionJSON(OfflineStorage.getInstance().getString(OfflineStorageValues.VERSION.toString()))) {
                             cb.onCompleted(null, version_name);
                             return;
@@ -189,31 +190,22 @@ public abstract class Core {
         return false;
     }
 
-    public static void checkCloudConnection(View view) {
-        getAPIVersion(view.getContext(), new FutureCallback<String>() {
+    public static void checkCloudConnectionAndShowHint(View view) {
+        requestInternalAPIGET(view.getContext(), "version", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                boolean ret = true;
-
-                if (e != null) {
-                    if (e.getMessage().equals("401")) {
-                        ret = false;
-                    } else if (e.getMessage().contains("Unable to resolve host") || e.getMessage().contains("Invalid URI")) {
-                        ret = false;
-                    } else {
-                        Log.e(LOG_TAG, "Error: " + e.getMessage(), e);
-                        ret = false;
-                    }
-                }
-
-                if (!ret) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    builder.setMessage(R.string.net_error_dialog_description);
-                    builder.setCancelable(true);
-                    builder.show();
+                if (result == null) {
+                    showConnectionErrorHint(view.getContext());
                 }
             }
         });
+    }
+
+    private static void showConnectionErrorHint(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(R.string.net_error_dialog_description);
+        builder.setCancelable(true);
+        builder.show();
     }
 
     /**

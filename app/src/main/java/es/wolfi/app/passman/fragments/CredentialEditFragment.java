@@ -161,7 +161,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        Vault.checkCloudConnection(view);
+        Vault.checkCloudConnectionAndShowHint(view);
 
         filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
