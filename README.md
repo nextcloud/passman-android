@@ -22,6 +22,7 @@ The passwords will be provided by [passman](https://github.com/nextcloud/passman
 - Add, download and delete files
 - OTP generation
 - Basic Android autofill implementation
+- Password generator
 
 ## FAQ
 
@@ -79,7 +80,6 @@ The passwords will be provided by [passman](https://github.com/nextcloud/passman
 - git
 
 ### Commands
-
 1. Clone the repo
 1. Setup the git submodules with `git submodule update --init --recursive`
 1. Open project in Android Studio and install the SDK an the NDK
@@ -99,3 +99,10 @@ The passwords will be provided by [passman](https://github.com/nextcloud/passman
 
 ## Testing server
 [Here](https://demo.passman.cc/) you can use our demo system.
+
+## Support Passman
+Passman is open source but we’ll gladly accept a beer *or pizza!* Please consider donating:
+* [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6YS8F97PETVU2)
+* [Patreon](https://www.patreon.com/user?u=4833592)
+* [Flattr](https://flattr.com/@passman)
+* bitcoin: 1H2c5tkGX54n48yEtM4Wm4UrAGTW85jQpe
