@@ -41,7 +41,6 @@
     <string name="unlock_passman">Odblokuj Pasmana</string>
     <string name="unlock_passman_message_device_auth">Uwierzytelnij się, aby uzyskać dostęp do Passmana</string>
     <string name="app_start_password">Hasło początkowe aplikacji</string>
-    <string name="app_start_password_android_auth_description">Włączyć uwierzytelnianie użytkownika Androida podczas uruchamiania aplikacji?</string>
     <string name="wait_while_encrypting">Poczekaj, trwa szyfrowanie…</string>
     <string name="wait_while_decrypting">Poczekaj, trwa odszyfrowywanie…</string>
     <string name="wait_while_uploading">Poczekaj, trwa wysyłanie…</string>
@@ -61,4 +60,4 @@
     <string name="enable_credential_list_icons">Włącz ikony listy poświadczeń</string>
     <string name="credential_icon">Ikona poświadczeń</string>
     <string name="clear_clipboard_delay">Wyczyść schowek (po sekundach)</string>
-</resources>
+    </resources>

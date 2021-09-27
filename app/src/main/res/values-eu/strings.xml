@@ -41,7 +41,6 @@
     <string name="unlock_passman">Desbloketatu Passman</string>
     <string name="unlock_passman_message_device_auth">Autentifikatu Passman-era sartzeko</string>
     <string name="app_start_password">Aplikazioa hasteko pasahitza</string>
-    <string name="app_start_password_android_auth_description">Android-en erabiltzailearen autentifikazioa gaitu nahi duzu aplikazioa abiaraztean?</string>
     <string name="wait_while_encrypting">itxaron zifratzen den bitartean ...</string>
     <string name="wait_while_decrypting">Itxaron deszifratzen den bitartean ...</string>
     <string name="wait_while_uploading">Itxaron kargatzen den bitartean ...</string>
@@ -61,4 +60,4 @@
     <string name="enable_credential_list_icons">Gaitu kredentzialen zerrenda-ikonoak</string>
     <string name="credential_icon">Kredentzial ikonoa</string>
     <string name="clear_clipboard_delay">Garbitu arbela (segundo batzuen ondoren)</string>
-</resources>
+    </resources>
