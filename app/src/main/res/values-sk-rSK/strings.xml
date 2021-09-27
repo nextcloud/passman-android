@@ -41,7 +41,6 @@
     <string name="unlock_passman">Odomknúť Passman</string>
     <string name="unlock_passman_message_device_auth">Pre prístup do programu Passman sa autentifikujte</string>
     <string name="app_start_password">Štartovacie heslo aplikácie</string>
-    <string name="app_start_password_android_auth_description">Chcete povoliť autentifikáciu užívateľa systému Android pri spustení aplikácie?</string>
     <string name="wait_while_encrypting">Čakajte šifrujem ...</string>
     <string name="wait_while_decrypting">Čakajte dešifrujem ...</string>
     <string name="wait_while_uploading">Čakajte nahrávam ...</string>
@@ -61,4 +60,4 @@
     <string name="enable_credential_list_icons">Povoliť ikony v zozname účtov</string>
     <string name="credential_icon">Ikona účtu</string>
     <string name="clear_clipboard_delay">Vymazať schránku (po sekundách)</string>
-</resources>
+    </resources>

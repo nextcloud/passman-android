@@ -41,7 +41,6 @@
     <string name="unlock_passman">Passman kilidini aç</string>
     <string name="unlock_passman_message_device_auth">Lütfen Passman için gerekli izinleri verin</string>
     <string name="app_start_password">Uygulama başlatma parolası</string>
-    <string name="app_start_password_android_auth_description">Uygulama başlatılırken Android kullanıcısının kimliği doğrulansın mı?</string>
     <string name="wait_while_encrypting">Şifrelenirken bekleyin …</string>
     <string name="wait_while_decrypting">Şifre çözülürken bekleyin …</string>
     <string name="wait_while_uploading">Yüklenirken bekleyin …</string>
@@ -61,4 +60,4 @@
     <string name="enable_credential_list_icons">Kimlik doğrulama listesi simgeleri kullanılsın</string>
     <string name="credential_icon">Kimlik doğrulama bilgileri simgesi</string>
     <string name="clear_clipboard_delay">Pano temizlensin (bu kadar saniye sonra)</string>
-</resources>
+    </resources>

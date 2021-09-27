@@ -41,7 +41,6 @@
     <string name="unlock_passman">Odemknout Passman</string>
     <string name="unlock_passman_message_device_auth">Udělte pověření pro přístup do aplikace Passman</string>
     <string name="app_start_password">Heslo při spuštění aplikace</string>
-    <string name="app_start_password_android_auth_description">Zapnout ověření uživatele ze systému Android při spuštění aplikace?</string>
     <string name="wait_while_encrypting">Vyčkejte dokončení šifrování…</string>
     <string name="wait_while_decrypting">Vyčkejte dokončení rozšifrování…</string>
     <string name="wait_while_uploading">Vyčkejte dokončení nahrávání…</string>
@@ -61,4 +60,4 @@
     <string name="enable_credential_list_icons">Zapnout ikony v seznamu přihlašovacích údajů</string>
     <string name="credential_icon">Ikona přihlašovacího údaje</string>
     <string name="clear_clipboard_delay">Vymazat obsah schránky po uplynutí (sekund)</string>
-</resources>
+    </resources>
