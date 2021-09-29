@@ -29,6 +29,9 @@
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar.Login" />
+        <activity
+            android:name=".activities.ShortcutActivity"
+            android:theme="@android:style/Theme.NoDisplay" />
 
         <service
             android:name=".autofill.CredentialAutofillService"

@@ -41,7 +41,6 @@
     <string name="unlock_passman">Isbloca Passman</string>
     <string name="unlock_passman_message_device_auth">Faghe s\'autenticatzione pro atzèdere a Passman</string>
     <string name="app_start_password">Crae de s\'aplicatzione de aviada </string>
-    <string name="app_start_password_android_auth_description">Ativare s\'autenticatzione utente de Android in s\'aplicatzione de aviada?</string>
     <string name="wait_while_encrypting">Abeta sa tzifradura ...</string>
     <string name="wait_while_decrypting">Abeta sa detzifradura ...</string>
     <string name="wait_while_uploading">Abeta su carrigamentu ...</string>

@@ -41,7 +41,6 @@
     <string name="unlock_passman">Desbloquear Passman </string>
     <string name="unlock_passman_message_device_auth">Por favor autentique para acessar o Passman </string>
     <string name="app_start_password">Senha de início do aplicativo </string>
-    <string name="app_start_password_android_auth_description">Ativar autenticação de usuário Android ao iniciar o aplicativo? </string>
     <string name="wait_while_encrypting">Aguarde enquanto criptografa ... </string>
     <string name="wait_while_decrypting">Espere enquanto descriptografa ... </string>
     <string name="wait_while_uploading">Aguarde enquanto faz o upload ... </string>
@@ -61,4 +60,4 @@
     <string name="enable_credential_list_icons">Habilitar ícones na lista de credenciais</string>
     <string name="credential_icon">Ícone da credencial</string>
     <string name="clear_clipboard_delay">Limpar área de transferência (após segundos)</string>
-</resources>
+    </resources>

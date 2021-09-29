@@ -6,8 +6,8 @@ ext {
 
 android {
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     signingConfigs {
         alpha {
@@ -32,8 +32,8 @@ android {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 11
-        versionName "1.1.1"
+        versionCode 12
+        versionName "1.2.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         externalNativeBuild {
             cmake {
@@ -51,7 +51,7 @@ android {
             signingConfig signingConfigs.release
         }
         googlePlayRelease {
-            minifyEnabled true
+            minifyEnabled false
             debuggable false
             resValue "string", "app_name", "@string/app_name_release"
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

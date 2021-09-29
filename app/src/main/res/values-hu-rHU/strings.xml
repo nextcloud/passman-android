@@ -41,7 +41,6 @@
     <string name="unlock_passman">Passman feloldása</string>
     <string name="unlock_passman_message_device_auth">Hitelesítsen a Passman eléréséhez</string>
     <string name="app_start_password">Alkalmazásindítási jelszó</string>
-    <string name="app_start_password_android_auth_description">Engedélyezi az androidos felhasználóhitelesítést az alkalmazás indításakor?</string>
     <string name="wait_while_encrypting">Várjon a titkosításra…</string>
     <string name="wait_while_decrypting">Várjon a titkosítás feloldására…</string>
     <string name="wait_while_uploading">Várjon a feltöltésre…</string>
@@ -61,4 +60,4 @@
     <string name="enable_credential_list_icons">Hitelesítőadat-lista ikonjainak engedélyezése</string>
     <string name="credential_icon">Hitelesítő adat ikonja</string>
     <string name="clear_clipboard_delay">Vágólap törlése (másodpercek múlva)</string>
-</resources>
+    </resources>

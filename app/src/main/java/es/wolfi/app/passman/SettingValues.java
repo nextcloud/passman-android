@@ -33,7 +33,9 @@ public enum SettingValues {
     ENABLE_CREDENTIAL_LIST_ICONS("enable_credential_list_icons"),
     REQUEST_CONNECT_TIMEOUT("request_connect_timeout"),
     REQUEST_RESPONSE_TIMEOUT("request_response_timeout"),
-    CLEAR_CLIPBOARD_DELAY("clear_clipboard_delay");
+    CLEAR_CLIPBOARD_DELAY("clear_clipboard_delay"),
+    PASSWORD_GENERATOR_SETTINGS("password_generator_settings"),
+    ENABLE_PASSWORD_GENERATOR_SHORTCUT("enable_password_generator_shortcut");
 
     private final String name;
 
