@@ -60,4 +60,8 @@
     <string name="enable_credential_list_icons">Gaitu kredentzialen zerrenda-ikonoak</string>
     <string name="credential_icon">Kredentzial ikonoa</string>
     <string name="clear_clipboard_delay">Garbitu arbela (segundo batzuen ondoren)</string>
-    </resources>
+    <string name="generate_password">Sortu pasahitza</string>
+    <string name="password_generator_avoid_ambiguous_chars">Saihestu karaktere anbiguoak</string>
+    <string name="password_generator_use_special_chars">Erabili karaktere bereziak</string>
+    <string name="password_length">Pasahitzaren luzera</string>
+</resources>
