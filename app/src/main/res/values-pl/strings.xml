@@ -41,6 +41,7 @@
     <string name="unlock_passman">Odblokuj Pasmana</string>
     <string name="unlock_passman_message_device_auth">Uwierzytelnij się, aby uzyskać dostęp do Passmana</string>
     <string name="app_start_password">Hasło początkowe aplikacji</string>
+    <string name="app_start_password_android_auth_description">Włącz uwierzytelnianie użytkownika Androida przy uruchomieniu aplikacji</string>
     <string name="wait_while_encrypting">Poczekaj, trwa szyfrowanie…</string>
     <string name="wait_while_decrypting">Poczekaj, trwa odszyfrowywanie…</string>
     <string name="wait_while_uploading">Poczekaj, trwa wysyłanie…</string>
@@ -60,4 +61,14 @@
     <string name="enable_credential_list_icons">Włącz ikony listy poświadczeń</string>
     <string name="credential_icon">Ikona poświadczeń</string>
     <string name="clear_clipboard_delay">Wyczyść schowek (po sekundach)</string>
-    </resources>
+    <string name="generate_password">Wygeneruj hasło</string>
+    <string name="generate_password_to_clipboard">Wygeneruj losowe hasło i skopiuj do schowka</string>
+    <string name="enable_password_generator_shortcut_description">Włącz skrót do aplikacji generatora haseł</string>
+    <string name="password_generator_require_every_char_type">Wymagaj znaku każdego typu</string>
+    <string name="password_generator_avoid_ambiguous_chars">Pomijaj znaki wieloznaczne</string>
+    <string name="password_generator_use_special_chars">Użyj znaków specjalnych</string>
+    <string name="password_generator_use_digits">Użyj cyfr</string>
+    <string name="password_generator_use_lowercase">Użyj małych liter</string>
+    <string name="password_generator_use_uppercase">Użyj wielkich liter</string>
+    <string name="password_length">Długość hasła</string>
+</resources>
