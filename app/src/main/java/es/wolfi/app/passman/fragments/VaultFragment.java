@@ -23,7 +23,6 @@ package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +102,12 @@ public class VaultFragment extends Fragment {
         view.findViewById(R.id.add_vault_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("VaultFragment", "add vault button clicked");
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                        .replace(R.id.content_password_list, VaultAddFragment.newInstance(), "vault")
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 

@@ -24,13 +24,23 @@ package es.wolfi.passman.API;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.util.Pair;
 
 import com.koushikdutta.async.future.FutureCallback;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -50,11 +60,20 @@ public class Vault extends Core implements Filterable {
     public String public_sharing_key;
     public double last_access;
     public String challenge_password;
+    public static Integer[] keyStrengths = {1024, 2048, 4096};
 
     ArrayList<Credential> credentials;
     HashMap<String, Integer> credential_guid;
 
     private String encryption_key = "";
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 
     public void setEncryptionKey(String k) {
         encryption_key = k;
@@ -238,7 +257,7 @@ public class Vault extends Core implements Filterable {
                 }
             }
             v.challenge_password = v.credentials.get(0).password;
-        } else {
+        } else if (o.has("challenge_password")) {
             v.challenge_password = o.getString("challenge_password");
         }
 
@@ -312,6 +331,20 @@ public class Vault extends Core implements Filterable {
         return obj.toString();
     }
 
+    public static RequestParams getAsRequestParams(Vault vault, boolean useJsonStreamer) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(useJsonStreamer);
+
+        params.put("vault_id", vault.vault_id);
+        params.put("guid", vault.guid);
+        params.put("name", vault.name);
+        params.put("created", vault.created);
+        params.put("public_sharing_key", vault.public_sharing_key);
+        params.put("last_access", vault.last_access);
+
+        return params;
+    }
+
     public static void updateAutofillVault(Vault vault, SharedPreferences settings) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").equals(vault.guid)) {
@@ -321,6 +354,65 @@ public class Vault extends Core implements Filterable {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    public void updateSharingKeys(int keyStrength, Context context, AsyncHttpResponseHandler createInitialSharingKeysResponseHandler) {
+        Pair<String, String> keyPair = getNewPEMKeyPair(keyStrength);
+        if (keyPair != null) {
+            public_sharing_key = keyPair.first;
+
+            RequestParams params = getAsRequestParams(this, true);
+            params.put("private_sharing_key", encryptRawStringData(keyPair.second));
+
+            try {
+                Vault.requestAPI(context, "vaults/" + guid + "/sharing-keys", params, "POST", createInitialSharingKeysResponseHandler);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static Pair<String, String> getNewPEMKeyPair(int keyStrength) {
+        Pair<String, String> pairPublicPrivatePEM = null;
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(keyStrength);
+            KeyPair keyPair = kpg.generateKeyPair();
+
+            // Convert PublicKey to PEM format
+            StringWriter publicWriter = new StringWriter();
+            JcaPEMWriter publicPemWriter = new JcaPEMWriter(publicWriter);
+            publicPemWriter.writeObject(keyPair.getPublic());
+            publicPemWriter.flush();
+            publicPemWriter.close();
+            String publicPem = publicWriter.toString();
+
+            // Convert PrivateKey to PEM format
+            StringWriter privateWriter = new StringWriter();
+            JcaPEMWriter privatePemWriter = new JcaPEMWriter(privateWriter);
+            privatePemWriter.writeObject(keyPair.getPrivate());
+            privatePemWriter.flush();
+            privatePemWriter.close();
+            String privatePem = privateWriter.toString();
+
+            pairPublicPrivatePEM = new Pair<>(publicPem, privatePem);
+        } catch (NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return pairPublicPrivatePEM;
+    }
+
+    public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(true);
+        params.put("vault_name", this.name);
+
+        try {
+            requestAPI(c, "vaults", params, "POST", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
     }
 

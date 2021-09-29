@@ -76,7 +76,7 @@ public class EditPasswordTextItem extends LinearLayout {
         ButterKnife.bind(this, v);
 
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        generate_password_btn.setVisibility(View.VISIBLE);
+        setPasswordGenerationButtonVisibility(true);
     }
 
     @Override
@@ -94,6 +94,14 @@ public class EditPasswordTextItem extends LinearLayout {
 
     public void setEnabled(boolean enabled) {
         password.setEnabled(enabled);
+    }
+
+    public void setPasswordGenerationButtonVisibility(boolean isVisible) {
+        if (isVisible) {
+            generate_password_btn.setVisibility(View.VISIBLE);
+        } else {
+            generate_password_btn.setVisibility(View.GONE);
+        }
     }
 
     @OnClick(R.id.toggle_password_visibility_btn)

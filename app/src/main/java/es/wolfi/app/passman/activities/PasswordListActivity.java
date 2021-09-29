@@ -470,6 +470,13 @@ public class PasswordListActivity extends AppCompatActivity implements
         }
     }
 
+    public void addVaultToCurrentLocalVaultList(Vault vault) {
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+        vaults.put(vault.guid, vault);
+        ton.removeExtra(SettingValues.VAULTS.toString());
+        ton.addExtra(SettingValues.VAULTS.toString(), vaults);
+    }
+
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         ProgressDialog progress = getProgressDialog();

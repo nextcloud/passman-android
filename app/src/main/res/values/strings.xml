@@ -76,4 +76,6 @@
     <string name="password_generator_use_lowercase">Use lowercase characters</string>
     <string name="password_generator_use_uppercase">Use uppercase characters</string>
     <string name="password_length">Password length</string>
+    <string name="vault_name">Vault name</string>
+    <string name="sharing_key_strength">Sharing key strength</string>
 </resources>
