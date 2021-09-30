@@ -41,6 +41,7 @@
     <string name="unlock_passman">Desbloketatu Passman</string>
     <string name="unlock_passman_message_device_auth">Autentifikatu Passman-era sartzeko</string>
     <string name="app_start_password">Aplikazioa hasteko pasahitza</string>
+    <string name="app_start_password_android_auth_description">Gaitu Android erabiltzailearen autentifikazioa aplikazioa abiaraztean</string>
     <string name="wait_while_encrypting">itxaron zifratzen den bitartean ...</string>
     <string name="wait_while_decrypting">Itxaron deszifratzen den bitartean ...</string>
     <string name="wait_while_uploading">Itxaron kargatzen den bitartean ...</string>
@@ -61,7 +62,12 @@
     <string name="credential_icon">Kredentzial ikonoa</string>
     <string name="clear_clipboard_delay">Garbitu arbela (segundo batzuen ondoren)</string>
     <string name="generate_password">Sortu pasahitza</string>
+    <string name="generate_password_to_clipboard">Sortu ausazko pasahitza eta arbelera kopiatu</string>
+    <string name="password_generator_require_every_char_type">Egin karaktere mota guztiak beharrezko</string>
     <string name="password_generator_avoid_ambiguous_chars">Saihestu karaktere anbiguoak</string>
     <string name="password_generator_use_special_chars">Erabili karaktere bereziak</string>
+    <string name="password_generator_use_digits">Erabili digitoak</string>
+    <string name="password_generator_use_lowercase">Erabili karaktere minuskulak</string>
+    <string name="password_generator_use_uppercase">Erabili karaktere maiuskulak</string>
     <string name="password_length">Pasahitzaren luzera</string>
 </resources>
