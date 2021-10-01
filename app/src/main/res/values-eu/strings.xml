@@ -63,6 +63,7 @@
     <string name="clear_clipboard_delay">Garbitu arbela (segundo batzuen ondoren)</string>
     <string name="generate_password">Sortu pasahitza</string>
     <string name="generate_password_to_clipboard">Sortu ausazko pasahitza eta arbelera kopiatu</string>
+    <string name="enable_password_generator_shortcut_description">Gaitu pasahitz sortzaile aplikazioaren lasterbidea</string>
     <string name="password_generator_require_every_char_type">Egin karaktere mota guztiak beharrezko</string>
     <string name="password_generator_avoid_ambiguous_chars">Saihestu karaktere anbiguoak</string>
     <string name="password_generator_use_special_chars">Erabili karaktere bereziak</string>
