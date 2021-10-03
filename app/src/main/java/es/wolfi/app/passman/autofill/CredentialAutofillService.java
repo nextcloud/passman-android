@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import es.wolfi.app.ResponseHandlers.AutofillCredentialSaveResponseHandler;
 import es.wolfi.app.passman.R;
@@ -115,7 +116,7 @@ public final class CredentialAutofillService extends AutofillService {
         CredentialAutofillService.WebDomainResult domain = getLikelyDomain(structures);
 
         // Grab Credentials from vault
-        ArrayList<Credential> allCred = v.getCredentials();
+        CopyOnWriteArrayList<Credential> allCred = v.getCredentials();
 
         if (allCred.isEmpty()) {
             Toast.makeText(getApplicationContext(), getString(R.string.autofill_vaultempty), Toast.LENGTH_SHORT).show();
@@ -397,7 +398,7 @@ public final class CredentialAutofillService extends AutofillService {
     }
 
     private List<Credential> findMatchingCredentials(
-            @NonNull ArrayList<Credential> credentialArrayList,
+            @NonNull CopyOnWriteArrayList<Credential> credentialArrayList,
             @NonNull String packageName,
             @NonNull CredentialAutofillService.WebDomainResult domain) {
         ArrayList<Credential> matchingDomainCred = new ArrayList<>();
