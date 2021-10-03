@@ -78,4 +78,5 @@
     <string name="password_length">Password length</string>
     <string name="vault_name">Vault name</string>
     <string name="sharing_key_strength">Sharing key strength</string>
+    <string name="new_vault_name">New vault name</string>
 </resources>

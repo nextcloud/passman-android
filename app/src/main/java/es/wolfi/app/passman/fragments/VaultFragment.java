@@ -97,7 +97,7 @@ public class VaultFragment extends Fragment {
 
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
         ArrayList<Vault> l = new ArrayList<Vault>(vaults.values());
-        recyclerView.setAdapter(new VaultViewAdapter(l, mListener));
+        recyclerView.setAdapter(new VaultViewAdapter(l, mListener, getParentFragmentManager()));
 
         view.findViewById(R.id.add_vault_button).setOnClickListener(new View.OnClickListener() {
             @Override

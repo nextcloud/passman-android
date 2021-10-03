@@ -49,18 +49,18 @@ public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
         String result = new String(responseBody);
         if (statusCode == 200) {
             try {
-                JSONObject vaultObject = new JSONObject(result);
-                Vault v = Vault.fromJSON(vaultObject);
-                if (vaultObject.has("vault_id") && vaultObject.has("name") && vaultObject.getString("name").equals(vault.getName())) {
-                    v.setEncryptionKey(vault.getEncryptionKey());
+                if (updateVault) {
+                    alreadySaving.set(false);
+                    progress.dismiss();
+                    fragmentManager.popBackStack();
+                } else {
+                    JSONObject vaultObject = new JSONObject(result);
+                    Vault v = Vault.fromJSON(vaultObject);
+                    if (vaultObject.has("vault_id") && vaultObject.has("name") && vaultObject.getString("name").equals(vault.getName())) {
+                        v.setEncryptionKey(vault.getEncryptionKey());
 
-                    Toast.makeText(view.getContext(), "Vault created", Toast.LENGTH_LONG).show();
+                        Toast.makeText(view.getContext(), "Vault created", Toast.LENGTH_LONG).show();
 
-                    if (updateVault) {
-                        alreadySaving.set(false);
-                        progress.dismiss();
-                        fragmentManager.popBackStack();
-                    } else {
                         //create test credential
                         Credential testCred = new Credential();
                         testCred.setVault(v);
@@ -81,8 +81,9 @@ public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
 
                         final AsyncHttpResponseHandler responseHandler = new CredentialSaveForNewVaultResponseHandler(alreadySaving, v, keyStrength, progress, view, passwordListActivity, fragmentManager);
                         testCred.save(view.getContext(), responseHandler);
+
+                        return;
                     }
-                    return;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -331,7 +331,7 @@ public class Vault extends Core implements Filterable {
         return obj.toString();
     }
 
-    public static RequestParams getAsRequestParams(Vault vault, boolean useJsonStreamer) {
+    public static RequestParams getAsRequestParams(Vault vault, boolean useJsonStreamer, boolean forEdit) {
         RequestParams params = new RequestParams();
         params.setUseJsonStreamer(useJsonStreamer);
 
@@ -341,6 +341,12 @@ public class Vault extends Core implements Filterable {
         params.put("created", vault.created);
         params.put("public_sharing_key", vault.public_sharing_key);
         params.put("last_access", vault.last_access);
+
+        if (forEdit) {
+            params.put("delete_request_pending", false);
+            // params.put("sharing_keys_generated", "?");
+            // params.put("vault_settings", "?");
+        }
 
         return params;
     }
@@ -362,7 +368,7 @@ public class Vault extends Core implements Filterable {
         if (keyPair != null) {
             public_sharing_key = keyPair.first;
 
-            RequestParams params = getAsRequestParams(this, true);
+            RequestParams params = getAsRequestParams(this, true, false);
             params.put("private_sharing_key", encryptRawStringData(keyPair.second));
 
             try {
@@ -411,6 +417,16 @@ public class Vault extends Core implements Filterable {
 
         try {
             requestAPI(c, "vaults", params, "POST", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void edit(Context c, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams params = getAsRequestParams(this, true, true);
+
+        try {
+            requestAPI(c, "vaults/" + this.guid, params, "PATCH", responseHandler);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
