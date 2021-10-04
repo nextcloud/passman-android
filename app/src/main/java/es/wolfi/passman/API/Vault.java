@@ -23,6 +23,7 @@ package es.wolfi.passman.API;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 
@@ -38,10 +39,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -60,6 +63,9 @@ public class Vault extends Core implements Filterable {
     public String public_sharing_key;
     public double last_access;
     public String challenge_password;
+    public int sharing_keys_generated;
+    public boolean delete_request_pending;
+    public JSONObject vault_settings = null;
     public static Integer[] keyStrengths = {1024, 2048, 4096};
 
     ArrayList<Credential> credentials;
@@ -223,10 +229,9 @@ public class Vault extends Core implements Filterable {
 
                 try {
                     JSONObject data = new JSONObject(result);
-
                     Vault v = Vault.fromJSON(data);
 
-                    cb.onCompleted(e, v);
+                    cb.onCompleted(null, v);
                 } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
@@ -243,6 +248,8 @@ public class Vault extends Core implements Filterable {
         v.created = o.getDouble("created");
         v.public_sharing_key = o.getString("public_sharing_key");
         v.last_access = o.getDouble("last_access");
+        v.delete_request_pending = o.getBoolean("delete_request_pending");
+        v.sharing_keys_generated = o.getInt("sharing_keys_generated");
 
         if (o.has("credentials")) {
             JSONArray j = o.getJSONArray("credentials");
@@ -259,6 +266,12 @@ public class Vault extends Core implements Filterable {
             v.challenge_password = v.credentials.get(0).password;
         } else if (o.has("challenge_password")) {
             v.challenge_password = o.getString("challenge_password");
+        }
+
+        if (o.has("vault_settings")) {
+            v.vault_settings = new JSONObject(Arrays.toString(Base64.decode(o.getString("vault_settings"), Base64.DEFAULT)));
+        } else {
+            v.vault_settings = new JSONObject();
         }
 
         return v;
@@ -315,6 +328,9 @@ public class Vault extends Core implements Filterable {
         obj.put("created", vault.created);
         obj.put("public_sharing_key", vault.public_sharing_key);
         obj.put("last_access", vault.last_access);
+        obj.put("delete_request_pending", vault.delete_request_pending);
+        obj.put("sharing_keys_generated", vault.sharing_keys_generated);
+
         if (vault.getCredentials() != null) {
             JSONArray credentialArr = new JSONArray();
             for (Credential credential : vault.getCredentials()) {
@@ -328,6 +344,11 @@ public class Vault extends Core implements Filterable {
         } else {
             obj.put("challenge_password", vault.challenge_password);
         }
+
+        if (vault.vault_settings != null) {
+            obj.put("vault_settings", Base64.encodeToString(vault.vault_settings.toString().getBytes(StandardCharsets.UTF_8), Base64.DEFAULT));
+        }
+
         return obj.toString();
     }
 
@@ -343,9 +364,11 @@ public class Vault extends Core implements Filterable {
         params.put("last_access", vault.last_access);
 
         if (forEdit) {
-            params.put("delete_request_pending", false);
-            // params.put("sharing_keys_generated", "?");
-            // params.put("vault_settings", "?");
+            params.put("delete_request_pending", vault.delete_request_pending);
+            params.put("sharing_keys_generated", vault.sharing_keys_generated);
+            if (vault.vault_settings != null) {
+                params.put("vault_settings", Base64.encodeToString(vault.vault_settings.toString().getBytes(StandardCharsets.UTF_8), Base64.DEFAULT));
+            }
         }
 
         return params;
