@@ -44,7 +44,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -248,8 +247,6 @@ public class Vault extends Core implements Filterable {
         v.created = o.getDouble("created");
         v.public_sharing_key = o.getString("public_sharing_key");
         v.last_access = o.getDouble("last_access");
-        v.delete_request_pending = o.getBoolean("delete_request_pending");
-        v.sharing_keys_generated = o.getInt("sharing_keys_generated");
 
         if (o.has("credentials")) {
             JSONArray j = o.getJSONArray("credentials");
@@ -269,9 +266,19 @@ public class Vault extends Core implements Filterable {
         }
 
         if (o.has("vault_settings")) {
-            v.vault_settings = new JSONObject(Arrays.toString(Base64.decode(o.getString("vault_settings"), Base64.DEFAULT)));
+            v.vault_settings = new JSONObject(new String(Base64.decode(o.getString("vault_settings"), Base64.DEFAULT)));
         } else {
             v.vault_settings = new JSONObject();
+        }
+
+        if (o.has("delete_request_pending")) {
+            v.delete_request_pending = o.getBoolean("delete_request_pending");
+        } else {
+            v.delete_request_pending = false;
+        }
+
+        if (o.has("sharing_keys_generated")) {
+            v.sharing_keys_generated = o.getInt("sharing_keys_generated");
         }
 
         return v;

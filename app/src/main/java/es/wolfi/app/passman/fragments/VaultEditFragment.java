@@ -36,13 +36,15 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.VaultSaveResponseHandler;
 import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ProgressUtils;
@@ -100,13 +102,20 @@ public class VaultEditFragment extends Fragment implements View.OnClickListener 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        edit_vault_name.setText(vault.getName());
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.vault = (Vault) SingleTon.getTon().getExtra(getArguments().getString(VAULT));
+            try {
+                vault = Vault.fromJSON(new JSONObject(Vault.asJson(Vault.getVaultByGuid(getArguments().getString(VAULT)))));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                vault = Vault.getVaultByGuid(getArguments().getString(VAULT));
+            }
         }
     }
 

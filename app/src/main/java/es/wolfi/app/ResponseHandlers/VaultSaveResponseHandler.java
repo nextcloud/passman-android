@@ -50,9 +50,14 @@ public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
         if (statusCode == 200) {
             try {
                 if (updateVault) {
+                    Vault localVaultInstance = Vault.getVaultByGuid(vault.guid);
+                    if (localVaultInstance != null) {
+                        localVaultInstance.setName(vault.getName());
+                    }
                     alreadySaving.set(false);
                     progress.dismiss();
                     fragmentManager.popBackStack();
+                    return;
                 } else {
                     JSONObject vaultObject = new JSONObject(result);
                     Vault v = Vault.fromJSON(vaultObject);
@@ -99,7 +104,11 @@ public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         alreadySaving.set(false);
         progress.dismiss();
-        String response = new String(responseBody);
+        String response = "";
+
+        if (responseBody != null && responseBody.length > 0) {
+            response = new String(responseBody);
+        }
 
         if (!response.equals("") && JSONUtils.isJSONObject(response)) {
             try {
@@ -115,7 +124,7 @@ public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
 
         if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
-            Log.e("async http response", new String(responseBody));
+            Log.e("async http response", response);
             Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();

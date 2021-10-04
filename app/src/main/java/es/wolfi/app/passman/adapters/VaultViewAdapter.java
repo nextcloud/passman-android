@@ -22,6 +22,8 @@
 package es.wolfi.app.passman.adapters;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,20 +31,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.koushikdutta.async.future.FutureCallback;
+
 import java.text.DateFormat;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.fragments.VaultEditFragment;
 import es.wolfi.app.passman.fragments.VaultFragment.OnListFragmentInteractionListener;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ColorUtils;
+import es.wolfi.utils.ProgressUtils;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Vault} and makes a call to the
@@ -97,12 +106,30 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         holder.vault_edit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fragmentManager
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                        .replace(R.id.content_password_list, VaultEditFragment.newInstance(holder.mItem.guid), "vault")
-                        .addToBackStack(null)
-                        .commit();
+                Context context = view.getContext();
+                final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                Vault.getVault(context, holder.mItem.guid, new FutureCallback<Vault>() {
+                    @Override
+                    public void onCompleted(Exception e, Vault result) {
+                        progress.dismiss();
+                        if (e != null) {
+                            Log.e(TAG, "Unknown network error", e);
+
+                            Toast.makeText(context, context.getString(R.string.net_error), Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        // Update the local vault record
+                        ((HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString())).put(result.guid, result);
+
+                        fragmentManager
+                                .beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                                .replace(R.id.content_password_list, VaultEditFragment.newInstance(holder.mItem.guid), "vault")
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                });
             }
         });
 
