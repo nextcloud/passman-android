@@ -21,10 +21,8 @@
 
 package es.wolfi.app.passman.adapters;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +45,7 @@ import butterknife.ButterKnife;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.fragments.VaultDeleteFragment;
 import es.wolfi.app.passman.fragments.VaultEditFragment;
 import es.wolfi.app.passman.fragments.VaultFragment.OnListFragmentInteractionListener;
 import es.wolfi.passman.API.Vault;
@@ -136,18 +135,12 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         holder.vault_delete_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setMessage(R.string.confirm_vault_deletion);
-                builder.setCancelable(false);
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Vault.deleteVault(holder.mItem, view.getContext());
-                        dialogInterface.dismiss();
-                    }
-                });
-                builder.setNegativeButton(R.string.cancel, null);
-                builder.show();
+                fragmentManager
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                        .replace(R.id.content_password_list, VaultDeleteFragment.newInstance(holder.mItem.guid), "vault")
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }
