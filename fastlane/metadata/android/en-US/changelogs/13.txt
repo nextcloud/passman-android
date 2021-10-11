@@ -1,0 +1,3 @@
+- move credential edit button to the default flow button position
+- replace char with character in translations
+- add missing translations
