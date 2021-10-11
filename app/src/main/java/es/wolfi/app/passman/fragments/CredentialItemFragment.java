@@ -162,11 +162,10 @@ public class CredentialItemFragment extends Fragment {
         View credentialView = view.findViewById(R.id.list);
         if (credentialView instanceof RecyclerView) {
 
-            FloatingActionButton addCredentialsButton = view.findViewById(R.id.addCredentialsButton);
-            addCredentialsButton.setOnClickListener(new View.OnClickListener() {
+            FloatingActionButton addCredentialButton = view.findViewById(R.id.addCredentialButton);
+            addCredentialButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    addCredentialsButton.hide();
                     getParentFragmentManager()
                             .beginTransaction()
                             .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
@@ -175,7 +174,7 @@ public class CredentialItemFragment extends Fragment {
                             .commit();
                 }
             });
-            addCredentialsButton.setVisibility(View.VISIBLE);
+            addCredentialButton.setVisibility(View.VISIBLE);
 
             Context context = credentialView.getContext();
             recyclerView = (RecyclerView) credentialView;
