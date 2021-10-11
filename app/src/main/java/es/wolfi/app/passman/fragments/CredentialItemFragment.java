@@ -37,6 +37,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 
 import es.wolfi.app.passman.R;
@@ -159,6 +161,22 @@ public class CredentialItemFragment extends Fragment {
         // Set the adapter
         View credentialView = view.findViewById(R.id.list);
         if (credentialView instanceof RecyclerView) {
+
+            FloatingActionButton addCredentialsButton = view.findViewById(R.id.addCredentialsButton);
+            addCredentialsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    addCredentialsButton.hide();
+                    getParentFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .replace(R.id.content_password_list, CredentialAddFragment.newInstance(), "credentialAdd")
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+            addCredentialsButton.setVisibility(View.VISIBLE);
+
             Context context = credentialView.getContext();
             recyclerView = (RecyclerView) credentialView;
             if (mColumnCount <= 1) {
