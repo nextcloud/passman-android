@@ -462,8 +462,26 @@ public class Vault extends Core implements Filterable {
         }
     }
 
-    public static void deleteVault(Vault vault, Context context) {
-        Log.d("deleteVault", vault.name);
+    public void delete(Context context, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams collectionToDelete = new RequestParams();
+        JSONArray credentialGuids = new JSONArray();
+        JSONArray fileGuids = new JSONArray();
+
+        for (Credential c : this.getCredentials()) {
+            credentialGuids.put(c.getGuid());
+
+            for (File f : c.getFilesList()) {
+                fileGuids.put(f.getGuid());
+            }
+        }
+
+        collectionToDelete.put("credential_guids", credentialGuids);
+        collectionToDelete.put("file_guids", fileGuids);
+        try {
+            requestAPI(context, "vaults/" + this.guid, collectionToDelete, "DELETE", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

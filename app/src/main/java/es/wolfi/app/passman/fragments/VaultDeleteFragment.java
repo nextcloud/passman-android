@@ -22,6 +22,8 @@
 package es.wolfi.app.passman.fragments;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,15 +35,21 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.wolfi.app.ResponseHandlers.VaultDeleteResponseHandler;
 import es.wolfi.app.passman.EditPasswordTextItem;
 import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.ProgressUtils;
 
 
 /**
@@ -60,6 +68,7 @@ public class VaultDeleteFragment extends Fragment implements View.OnClickListene
     EditPasswordTextItem delete_vault_password;
 
     private Vault vault;
+    private AtomicBoolean alreadySaving = new AtomicBoolean(false);
 
     public VaultDeleteFragment() {
         // Required empty public constructor
@@ -124,14 +133,21 @@ public class VaultDeleteFragment extends Fragment implements View.OnClickListene
         } else {
             delete_vault_password_header.setTextColor(getResources().getColor(R.color.colorAccent));
         }
+        Context context = view.getContext();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(view.getContext().getString(R.string.confirm_vault_deletion) + " (" + vault.getName() + ")");
         builder.setCancelable(false);
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Vault.deleteVault(vault, view.getContext());
+                if (alreadySaving.get()) {
+                    return;
+                }
+                alreadySaving.set(true);
+                final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                final AsyncHttpResponseHandler responseHandler = new VaultDeleteResponseHandler(alreadySaving, vault, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
+                vault.delete(context, responseHandler);
                 dialogInterface.dismiss();
             }
         });

@@ -122,9 +122,9 @@ public abstract class Core {
     }
 
     // TODO Test this method once the server response works!
-    public static void getAPIVersion(final Context c, FutureCallback<Integer> cb) {
-        if (version_number != 0) {
-            cb.onCompleted(null, version_number);
+    public static void getAPIVersion(final Context c, FutureCallback<String> cb) {
+        if (version_name != null) {
+            cb.onCompleted(null, version_name);
             return;
         }
 
@@ -133,8 +133,10 @@ public abstract class Core {
             public void onCompleted(Exception e, String result) {
                 if (result != null) {
                     Log.d("getApiVersion", result);
+                    cb.onCompleted(null, result);
                 } else {
                     Log.d("getApiVersion", "Failure while getting api version");
+                    cb.onCompleted(e, null);
                 }
             }
         });

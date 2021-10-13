@@ -35,6 +35,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.koushikdutta.async.future.FutureCallback;
+import com.vdurmont.semver4j.Semver;
 
 import java.text.DateFormat;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.fragments.VaultDeleteFragment;
 import es.wolfi.app.passman.fragments.VaultEditFragment;
 import es.wolfi.app.passman.fragments.VaultFragment.OnListFragmentInteractionListener;
+import es.wolfi.passman.API.Core;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ColorUtils;
 import es.wolfi.utils.ProgressUtils;
@@ -132,15 +134,23 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
             }
         });
 
-        holder.vault_delete_button.setOnClickListener(new View.OnClickListener() {
+        Core.getAPIVersion(holder.mView.getContext(), new FutureCallback<String>() {
             @Override
-            public void onClick(View view) {
-                fragmentManager
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                        .replace(R.id.content_password_list, VaultDeleteFragment.newInstance(holder.mItem.guid), "vault")
-                        .addToBackStack(null)
-                        .commit();
+            public void onCompleted(Exception e, String result) {
+                if (result != null && new Semver(result).isGreaterThanOrEqualTo("2.3.1336")) {
+                    holder.vault_delete_button.setColorFilter(holder.mView.getResources().getColor(R.color.danger));
+                    holder.vault_delete_button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            fragmentManager
+                                    .beginTransaction()
+                                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                                    .replace(R.id.content_password_list, VaultDeleteFragment.newInstance(holder.mItem.guid), "vault")
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
+                    });
+                }
             }
         });
     }

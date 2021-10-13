@@ -25,3 +25,4 @@ RELEASE_KEY_ALIAS=release
 RELEASE_KEY_PASSWORD=release store key
 android.useAndroidX=true
 android.enableJetifier=true
+android.jetifier.ignorelist=bcprov-jdk15on-1.69.jar
