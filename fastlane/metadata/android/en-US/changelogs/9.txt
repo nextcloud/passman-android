@@ -1,0 +1,9 @@
+- Add support for managing credentials and files
+- New app settings, vault refresh and lock buttons
+- New loading dialog
+- Deactivate the computationally expensive OTP generation if no OTP has been specified
+- Add support for user CA certificates (requires at least Android 7.x)
+- Mark compromised credentials
+- Add URL copy and open button
+- Add app start password option based on the android user authentication
+- Implement Android autofill feature (requires at least Android 8)

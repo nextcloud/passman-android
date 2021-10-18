@@ -1,0 +1,20 @@
+This is an Android app for the Nextcloud password manager <i>Passman.</i>
+
+This app is only compatible with Passman V2.x or higher.
+
+<b>Features</b>
+
+* Setup app (enter the nextcloud server settings)
+* App start password option based on the android user authentication
+* Display vault list
+* Login to vault
+* Display credential list
+* View, add, edit and delete credentials
+* Add, download and delete files
+* OTP generation
+* Basic Android autofill implementation
+
+<b>Requirements</b>
+
+* <a href='https://nextcloud.com/'>Nextcloud</a>
+* <a href='https://apps.nextcloud.com/apps/passman'>Nextcloud Passman App</a>

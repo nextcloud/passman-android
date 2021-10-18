@@ -64,6 +64,7 @@ public class Credential extends Core implements Filterable {
     protected String otp;
     protected boolean hidden;
     protected String sharedKey;
+    private String sharedKeyDecrypted;
     protected String compromised;
 
     protected Vault vault;
@@ -108,11 +109,11 @@ public class Credential extends Core implements Filterable {
     }
 
     public String getDescription() {
-        return vault.decryptString(description);
+        return decryptString(description);
     }
 
     public void setDescription(String description) {
-        this.description = vault.encryptString(description);
+        this.description = encryptString(description);
     }
 
     public long getCreated() {
@@ -128,43 +129,43 @@ public class Credential extends Core implements Filterable {
     }
 
     public String getTags() {
-        return vault.decryptString(tags);
+        return decryptString(tags);
     }
 
     public void setTags(String tags) {
-        this.tags = vault.encryptString(tags);
+        this.tags = encryptString(tags);
     }
 
     public String getEmail() {
-        return vault.decryptString(email);
+        return decryptString(email);
     }
 
     public void setEmail(String email) {
-        this.email = vault.encryptString(email);
+        this.email = encryptString(email);
     }
 
     public String getUsername() {
-        return vault.decryptString(username);
+        return decryptString(username);
     }
 
     public void setUsername(String username) {
-        this.username = vault.encryptString(username);
+        this.username = encryptString(username);
     }
 
     public String getPassword() {
-        return vault.decryptString(password);
+        return decryptString(password);
     }
 
     public void setPassword(String password) {
-        this.password = vault.encryptString(password);
+        this.password = encryptString(password);
     }
 
     public String getUrl() {
-        return vault.decryptString(url);
+        return decryptString(url);
     }
 
     public void setUrl(String url) {
-        this.url = vault.encryptString(url);
+        this.url = encryptString(url);
     }
 
     public String getFavicon() {
@@ -219,15 +220,15 @@ public class Credential extends Core implements Filterable {
     }
 
     public String getFiles() {
-        return vault.decryptString(files);
+        return decryptString(files);
     }
 
     public void setFiles(String files) {
         if (files.equals("")) {
-            this.files = vault.encryptString(files);
+            this.files = encryptString(files);
             return;
         }
-        this.files = vault.encryptRawStringData(files);
+        this.files = encryptRawStringData(files);
     }
 
     public List<CustomField> getCustomFieldsList() {
@@ -250,23 +251,23 @@ public class Credential extends Core implements Filterable {
     }
 
     public String getCustomFields() {
-        return vault.decryptString(customFields);
+        return decryptString(customFields);
     }
 
     public void setCustomFields(String customFields) {
         if (customFields.equals("")) {
-            this.customFields = vault.encryptString(customFields);
+            this.customFields = encryptString(customFields);
             return;
         }
-        this.customFields = vault.encryptRawStringData(customFields);
+        this.customFields = encryptRawStringData(customFields);
     }
 
     public String getOtp() {
-        return vault.decryptString(otp);
+        return decryptString(otp);
     }
 
     public void setOtp(String otp) {
-        this.otp = vault.encryptString(otp);
+        this.otp = encryptString(otp);
     }
 
     public boolean isHidden() {
@@ -287,7 +288,7 @@ public class Credential extends Core implements Filterable {
 
     public String getCompromised() {
         if (compromised != null && !compromised.equals("null")) {
-            String decryptedCompromised = vault.decryptString(compromised);
+            String decryptedCompromised = decryptString(compromised);
             if (decryptedCompromised != null && !decryptedCompromised.equals("")) {
                 return decryptedCompromised;
             }
@@ -296,7 +297,7 @@ public class Credential extends Core implements Filterable {
     }
 
     public void setCompromised(boolean compromised) {
-        this.compromised = vault.encryptRawStringData(compromised ? "true" : "false");
+        this.compromised = encryptRawStringData(compromised ? "true" : "false");
     }
 
     public Vault getVault() {
@@ -306,6 +307,38 @@ public class Credential extends Core implements Filterable {
     public void setVault(Vault v) {
         vault = v;
         vaultId = vault.vault_id;
+    }
+
+    public String encryptString(String plaintext) {
+        if (this.isEncryptedWithSharedKey()) {
+            return vault.encryptString(plaintext, this.sharedKeyDecrypted);
+        }
+        return vault.encryptString(plaintext);
+    }
+
+    public String encryptRawStringData(String plaintext) {
+        if (this.isEncryptedWithSharedKey()) {
+            return vault.encryptRawStringData(plaintext, this.sharedKeyDecrypted);
+        }
+        return vault.encryptRawStringData(plaintext);
+    }
+
+    public String decryptString(String cryptogram) {
+        if (this.isEncryptedWithSharedKey()) {
+            return vault.decryptString(cryptogram, this.sharedKeyDecrypted);
+        }
+        return vault.decryptString(cryptogram);
+    }
+
+    private boolean isEncryptedWithSharedKey() {
+        if (this.sharedKeyDecrypted == null && this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null")) {
+            this.sharedKeyDecrypted = vault.decryptString(this.sharedKey);
+        }
+        return this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null");
+    }
+
+    public void resetDecryptedSharedKey() {
+        this.sharedKeyDecrypted = null;
     }
 
     public JSONObject getAsJSONObject() throws JSONException {
@@ -484,8 +517,8 @@ public class Credential extends Core implements Filterable {
 
         progress.setMessage(c.getString(R.string.wait_while_encrypting));
         try {
-            params.put("filename", vault.encryptString(fileName));
-            params.put("data", vault.encryptRawStringData(encodedFile));
+            params.put("filename", encryptString(fileName));
+            params.put("data", encryptRawStringData(encodedFile));
             params.put("mimetype", mimeType);
             params.put("size", fileSize);
             progress.setMessage(c.getString(R.string.wait_while_uploading));
