@@ -8,9 +8,12 @@ height="80">](https://play.google.com/store/apps/details?id=es.wolfi.app.passman
 [<img src="https://f-droid.org/badge/get-it-on.png"
 alt="Get it on F-Droid"
 height="80">](https://f-droid.org/app/es.wolfi.app.passman)
+[<img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
+alt="Get it on IzzyOnDroid"
+height="80">](https://apt.izzysoft.de/fdroid/index/apk/es.wolfi.app.passman)
 
-This app is only compatible with passman V2.x or higher.   
-The passwords will be provided by [passman](https://github.com/nextcloud/passman).
+This app is only compatible with Passman V2.x or higher.   
+The passwords will be provided by [Passman](https://github.com/nextcloud/passman).
 
 ## Current features
 - Setup app (enter the nextcloud server settings)
