@@ -137,17 +137,41 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         Core.getAPIVersion(holder.mView.getContext(), new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                if (result != null && new Semver(result).isGreaterThanOrEqualTo("2.3.1336")) {
+                if (result != null && new Semver(result).isGreaterThanOrEqualTo("2.3.1336") || true) {
                     holder.vault_delete_button.setColorFilter(holder.mView.getResources().getColor(R.color.danger));
                     holder.vault_delete_button.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            fragmentManager
-                                    .beginTransaction()
-                                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                                    .replace(R.id.content_password_list, VaultDeleteFragment.newInstance(holder.mItem.guid), "vault")
-                                    .addToBackStack(null)
-                                    .commit();
+                            Context context = holder.mView.getContext();
+                            final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                            progress.show();
+
+                            Vault.getVault(context, holder.mItem.guid, new FutureCallback<Vault>() {
+                                @Override
+                                public void onCompleted(Exception e, Vault result) {
+                                    progress.dismiss();
+                                    if (e != null) {
+                                        Log.e(TAG, "Unknown network error", e);
+
+                                        Toast.makeText(context, context.getString(R.string.net_error), Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+
+                                    SingleTon ton = SingleTon.getTon();
+
+                                    // Update the vault record to avoid future loads
+                                    ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(result.guid, result);
+
+                                    ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
+
+                                    fragmentManager
+                                            .beginTransaction()
+                                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                                            .replace(R.id.content_password_list, VaultDeleteFragment.newInstance(holder.mItem.guid), "vault")
+                                            .addToBackStack(null)
+                                            .commit();
+                                }
+                            });
                         }
                     });
                 }
