@@ -259,19 +259,28 @@ public class Vault extends Core implements Filterable {
     }
 
     public void updateCredential(Credential updatedCredential) {
+        int newIndex = -1;
         for (Credential credential : credentials) {
             if (credential.getGuid().equals(updatedCredential.getGuid())) {
-                int index = credentials.indexOf(credential);
-                credentials.set(index, updatedCredential);
+                newIndex = credentials.indexOf(credential);
+                break;
             }
+        }
+        if (newIndex >= 0) {
+            credentials.set(newIndex, updatedCredential);
         }
     }
 
     public void deleteCredential(Credential updatedCredential) {
+        Credential credentialToRemove = null;
         for (Credential credential : credentials) {
             if (credential.getGuid().equals(updatedCredential.getGuid())) {
-                credentials.remove(credential);
+                credentialToRemove = credential;
+                break;
             }
+        }
+        if (credentialToRemove != null) {
+            credentials.remove(credentialToRemove);
         }
     }
 
