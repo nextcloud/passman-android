@@ -248,7 +248,7 @@ public class Vault extends Core implements Filterable {
         v.public_sharing_key = o.getString("public_sharing_key");
         v.last_access = o.getDouble("last_access");
 
-        if (o.has("credentials")) {
+        if (o.has("credentials") && !o.getString("credentials").equals("null")) {
             JSONArray j = o.getJSONArray("credentials");
             v.credentials = new ArrayList<Credential>();
             v.credential_guid = new HashMap<>();
@@ -265,7 +265,7 @@ public class Vault extends Core implements Filterable {
             v.challenge_password = o.getString("challenge_password");
         }
 
-        if (o.has("vault_settings")) {
+        if (o.has("vault_settings") && !o.getString("vault_settings").equals("null")) {
             v.vault_settings = new JSONObject(new String(Base64.decode(o.getString("vault_settings"), Base64.DEFAULT)));
         } else {
             v.vault_settings = new JSONObject();
@@ -462,23 +462,43 @@ public class Vault extends Core implements Filterable {
         }
     }
 
-    public void delete(Context context, final AsyncHttpResponseHandler responseHandler) {
+    /**
+     * deleteVaultContents() should be called before delete() to remove vaults credentials and files
+     *
+     * @param context
+     * @param responseHandler
+     */
+    public void deleteVaultContents(Context context, final AsyncHttpResponseHandler responseHandler) {
         RequestParams collectionToDelete = new RequestParams();
         JSONArray credentialGuids = new JSONArray();
-        JSONArray fileGuids = new JSONArray();
+        JSONArray fileIds = new JSONArray();
 
         for (Credential c : this.getCredentials()) {
             credentialGuids.put(c.getGuid());
 
             for (File f : c.getFilesList()) {
-                fileGuids.put(f.getGuid());
+                fileIds.put(f.getFileId());
             }
         }
 
         collectionToDelete.put("credential_guids", credentialGuids);
-        collectionToDelete.put("file_guids", fileGuids);
+        collectionToDelete.put("file_ids", fileIds);
         try {
-            requestAPI(context, "vaults/" + this.guid, collectionToDelete, "DELETE", responseHandler);
+            requestAPI(context, "vaults/delete-vault-content", collectionToDelete, "POST", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * delete() is automatically called by the VaultDeleteResponseHandler when calling deleteVaultContents() with passing the isDeleteVaultContentRequest as true
+     *
+     * @param context
+     * @param responseHandler
+     */
+    public void delete(Context context, final AsyncHttpResponseHandler responseHandler) {
+        try {
+            requestAPI(context, "vaults/" + this.guid, new RequestParams(), "DELETE", responseHandler);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

@@ -24,16 +24,18 @@ public class VaultDeleteResponseHandler extends AsyncHttpResponseHandler {
 
     private final AtomicBoolean alreadySaving;
     private final Vault vault;
+    private final boolean isDeleteVaultContentRequest;
     private final ProgressDialog progress;
     private final View view;
     private final PasswordListActivity passwordListActivity;
     private final FragmentManager fragmentManager;
 
-    public VaultDeleteResponseHandler(AtomicBoolean alreadySaving, Vault vault, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
+    public VaultDeleteResponseHandler(AtomicBoolean alreadySaving, Vault vault, boolean isDeleteVaultContentRequest, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
         super();
 
         this.alreadySaving = alreadySaving;
         this.vault = vault;
+        this.isDeleteVaultContentRequest = isDeleteVaultContentRequest;
         this.progress = progress;
         this.view = view;
         this.passwordListActivity = passwordListActivity;
@@ -43,23 +45,29 @@ public class VaultDeleteResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         String result = new String(responseBody);
+        Log.d("del v str", result);
         if (statusCode == 200) {
             try {
                 JSONObject responseObject = new JSONObject(result);
                 if (responseObject.has("ok") && responseObject.getBoolean("ok")) {
-                    Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
+                    if (isDeleteVaultContentRequest) {
+                        final AsyncHttpResponseHandler responseHandler = new VaultDeleteResponseHandler(alreadySaving, vault, false, progress, view, passwordListActivity, fragmentManager);
+                        vault.delete(view.getContext(), responseHandler);
+                    } else {
+                        Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
 
-                    Objects.requireNonNull(passwordListActivity).deleteVaultInCurrentLocalVaultList(vault);
+                        Objects.requireNonNull(passwordListActivity).deleteVaultInCurrentLocalVaultList(vault);
 
-                    int backStackCount = fragmentManager.getBackStackEntryCount();
-                    int backStackId = 0;
-                    if (backStackCount - 2 >= 0) {
-                        backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                        int backStackCount = fragmentManager.getBackStackEntryCount();
+                        int backStackId = 0;
+                        if (backStackCount - 2 >= 0) {
+                            backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                        }
+
+                        alreadySaving.set(false);
+                        progress.dismiss();
+                        fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     }
-
-                    alreadySaving.set(false);
-                    progress.dismiss();
-                    fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     return;
                 }
             } catch (JSONException e) {

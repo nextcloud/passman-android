@@ -127,31 +127,31 @@ public class VaultDeleteFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-        if (!vault.unlock(delete_vault_password.getText().toString())) {
-            delete_vault_password_header.setTextColor(getResources().getColor(R.color.danger));
-            return;
-        } else {
+        if (vault.unlock(delete_vault_password.getText().toString())) {
             delete_vault_password_header.setTextColor(getResources().getColor(R.color.colorAccent));
-        }
-        Context context = view.getContext();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(view.getContext().getString(R.string.confirm_vault_deletion) + " (" + vault.getName() + ")");
-        builder.setCancelable(false);
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (alreadySaving.get()) {
-                    return;
+            Context context = view.getContext();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setMessage(view.getContext().getString(R.string.confirm_vault_deletion) + " (" + vault.getName() + ")");
+            builder.setCancelable(false);
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    if (alreadySaving.get()) {
+                        return;
+                    }
+                    alreadySaving.set(true);
+                    final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
+                    final AsyncHttpResponseHandler responseHandler = new VaultDeleteResponseHandler(alreadySaving, vault, true, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
+                    vault.deleteVaultContents(context, responseHandler);
+                    dialogInterface.dismiss();
                 }
-                alreadySaving.set(true);
-                final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-                final AsyncHttpResponseHandler responseHandler = new VaultDeleteResponseHandler(alreadySaving, vault, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
-                vault.delete(context, responseHandler);
-                dialogInterface.dismiss();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, null);
-        builder.show();
+            });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.show();
+        } else {
+            delete_vault_password_header.setTextColor(getResources().getColor(R.color.danger));
+        }
     }
 }
