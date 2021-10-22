@@ -25,6 +25,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -121,26 +123,33 @@ public class CredentialDisplayFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            if (v != null) {
+                credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            }
         }
 
-        handler = new Handler();
-        if (credential.getOtp().length() > 4) {
-            otp_refresh = new Runnable() {
-                @Override
-                public void run() {
-                    int progress = (int) (System.currentTimeMillis() / 1000) % 30;
-                    otp_progress.setProgress(progress * 100);
+        if (credential != null) {
+            handler = new Handler();
+            if (credential.getOtp().length() > 4) {
+                otp_refresh = new Runnable() {
+                    @Override
+                    public void run() {
+                        int progress = (int) (System.currentTimeMillis() / 1000) % 30;
+                        otp_progress.setProgress(progress * 100);
 
-                    ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
-                    animation.setDuration(1000);
-                    animation.setInterpolator(new LinearInterpolator());
-                    animation.start();
+                        ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
+                        animation.setDuration(1000);
+                        animation.setInterpolator(new LinearInterpolator());
+                        animation.start();
 
-                    otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
-                    handler.postDelayed(this, 1000);
-                }
-            };
+                        otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
+                        handler.postDelayed(this, 1000);
+                    }
+                };
+            }
+        } else {
+            Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+            Log.e("CredentialDisplayFrag", "credential or vault is null");
         }
     }
 
