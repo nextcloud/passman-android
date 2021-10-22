@@ -292,6 +292,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                     .beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                     .replace(R.id.content_password_list, new VaultFragment(), "vaults")
+                    .addToBackStack(null)
                     .commit();
             Log.d("PL", "committed transaction");
         } else {
