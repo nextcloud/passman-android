@@ -45,7 +45,6 @@ public class VaultDeleteResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         String result = new String(responseBody);
-        Log.d("del v str", result);
         if (statusCode == 200) {
             try {
                 JSONObject responseObject = new JSONObject(result);
@@ -58,15 +57,9 @@ public class VaultDeleteResponseHandler extends AsyncHttpResponseHandler {
 
                         Objects.requireNonNull(passwordListActivity).deleteVaultInCurrentLocalVaultList(vault);
 
-                        int backStackCount = fragmentManager.getBackStackEntryCount();
-                        int backStackId = 0;
-                        if (backStackCount - 2 >= 0) {
-                            backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
-                        }
-
                         alreadySaving.set(false);
                         progress.dismiss();
-                        fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        fragmentManager.popBackStack();
                     }
                     return;
                 }
