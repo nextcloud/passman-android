@@ -41,6 +41,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import net.bierbaumer.otp_authenticator.TOTPHelper;
 
 import org.apache.commons.codec.binary.Base32;
@@ -201,6 +203,21 @@ public class CredentialDisplayFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        FloatingActionButton editCredentialButton = view.findViewById(R.id.editCredentialButton);
+        editCredentialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                        .replace(R.id.content_password_list, CredentialEditFragment.newInstance(credential.getGuid()), "credentialEdit")
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+        editCredentialButton.setVisibility(View.VISIBLE);
+
 
         RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
