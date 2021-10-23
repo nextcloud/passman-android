@@ -185,7 +185,7 @@ public class KeyStoreUtils {
         settings.edit().putString(key, encrypt(value)).apply();
     }
 
-    public static void putStringAndCommit(String key, String value) {
-        settings.edit().putString(key, encrypt(value)).commit();
+    public static boolean putStringAndCommit(String key, String value) {
+        return settings.edit().putString(key, encrypt(value)).commit();
     }
 }
