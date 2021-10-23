@@ -83,6 +83,7 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.ProgressUtils;
 
 public class PasswordListActivity extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
@@ -178,7 +179,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                 initialAuthentication(true);
             }
         } else {
-            final ProgressDialog progress = getProgressDialog();
+            final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
             progress.show();
 
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
@@ -250,15 +251,6 @@ public class PasswordListActivity extends AppCompatActivity implements
         return onPrimaryClipChangedListener;
     }
 
-    private ProgressDialog getProgressDialog() {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle(getString(R.string.loading));
-        progress.setMessage(getString(R.string.wait_while_loading));
-        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-
-        return progress;
-    }
-
     private void updateShortcuts() {
         if (settings.getBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), true) &&
                 android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
@@ -295,7 +287,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                     .commit();
             Log.d("PL", "committed transaction");
         } else {
-            final ProgressDialog progress = getProgressDialog();
+            final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
             progress.show();
             Vault.getVaults(this, (e, result) -> {
                 progress.dismiss();
@@ -323,7 +315,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     }
 
     public void showActiveVault() {
-        final ProgressDialog progress = getProgressDialog();
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
         progress.show();
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         if (vault.getCredentials() != null) {
@@ -472,7 +464,7 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        ProgressDialog progress = getProgressDialog();
+        ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
         progress.show();
         Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
             @Override
@@ -557,7 +549,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         if (doRebirth) {
             triggerRebirth(this);
         } else {
-            final ProgressDialog progress = getProgressDialog();
+            final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
             progress.show();
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
@@ -708,7 +700,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     public void onListFragmentInteraction(File item) {
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
 
-        final ProgressDialog progress = getProgressDialog();
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
         progress.setMessage(getString(R.string.wait_while_downloading));
         progress.show();
 
