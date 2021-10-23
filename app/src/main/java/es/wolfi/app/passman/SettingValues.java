@@ -37,7 +37,8 @@ public enum SettingValues {
     PASSWORD_GENERATOR_SETTINGS("password_generator_settings"),
     ENABLE_PASSWORD_GENERATOR_SHORTCUT("enable_password_generator_shortcut"),
     OFFLINE_STORAGE("offline_storage"),
-    ENABLE_OFFLINE_CACHE("enable_offline_cache");
+    ENABLE_OFFLINE_CACHE("enable_offline_cache"),
+    KEY_STORE_MIGRATION_STATE("key_store_migration_state");
 
     private final String name;
 

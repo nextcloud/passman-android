@@ -18,6 +18,10 @@ public class SettingsCache {
         }
     }
 
+    public static SharedPreferences getSharedPreferences() {
+        return sharedPreferences;
+    }
+
     public static void clear() {
         cache = new JSONObject();
     }
