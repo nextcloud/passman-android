@@ -64,7 +64,6 @@
     <string name="generate_password">Parola üret</string>
     <string name="generate_password_to_clipboard">Rastgele bir parola üreterek panoya kopyalar</string>
     <string name="enable_password_generator_shortcut_description">Parola üreteci uygulaması kısayolu etkinleştirilsin</string>
-    <string name="password_generator_require_every_char_type">Her karakter türü istensin</string>
     <string name="password_generator_avoid_ambiguous_chars">Şüpheli karakterler kullanılmasın</string>
     <string name="password_generator_use_special_chars">Özel karakterler kullanılsın</string>
     <string name="password_generator_use_digits">Rakamlar kullanılsın</string>

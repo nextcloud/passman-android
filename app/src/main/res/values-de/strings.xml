@@ -64,7 +64,6 @@
     <string name="generate_password">Passwort erzeugen</string>
     <string name="generate_password_to_clipboard">Zufälliges Passwort generieren und in die Zwischenablage kopieren</string>
     <string name="enable_password_generator_shortcut_description">Verknüpfung zur Passwortgenerator-App aktivieren</string>
-    <string name="password_generator_require_every_char_type">Jeder Zeichentyp erforderlich</string>
     <string name="password_generator_avoid_ambiguous_chars">Mehrdeutige Zeichen vermeiden</string>
     <string name="password_generator_use_special_chars">Sonderzeichen verwenden</string>
     <string name="password_generator_use_digits">Zahlen verwenden</string>
