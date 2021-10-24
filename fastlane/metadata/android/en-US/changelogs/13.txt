@@ -1,4 +1,5 @@
 - fix ConcurrentModificationException after editing or deleting a credential
+- fix OTP generation
 - some other bug fixes
 - unify button position
 - replace char with character in translations
