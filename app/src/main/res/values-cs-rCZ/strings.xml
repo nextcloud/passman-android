@@ -64,6 +64,7 @@
     <string name="generate_password">Vytvořit heslo</string>
     <string name="generate_password_to_clipboard">Vytvořit náhodné heslo a zkopírovat ho do schránky</string>
     <string name="enable_password_generator_shortcut_description">Zapnout zkratku na generátor hesel</string>
+    <string name="password_generator_require_every_char_type">Vyžadovat každý typ znaků</string>
     <string name="password_generator_avoid_ambiguous_chars">Vynechat nesnadno od sebe rozlišitelné znaky</string>
     <string name="password_generator_use_special_chars">Použít speciální znaky</string>
     <string name="password_generator_use_digits">Použít číslice</string>
