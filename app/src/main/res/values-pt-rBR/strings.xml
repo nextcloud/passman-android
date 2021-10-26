@@ -64,6 +64,7 @@
     <string name="generate_password">Gerar senha</string>
     <string name="generate_password_to_clipboard">Gere uma senha aleatória e copie para a área de transferência</string>
     <string name="enable_password_generator_shortcut_description">Ativar atalho do aplicativo gerador de senha</string>
+    <string name="password_generator_require_every_char_type">Requer todos os tipos de caracteres</string>
     <string name="password_generator_avoid_ambiguous_chars">Evite caracteres ambíguos</string>
     <string name="password_generator_use_special_chars">Use caracteres especiais</string>
     <string name="password_generator_use_digits">Use dígitos </string>
