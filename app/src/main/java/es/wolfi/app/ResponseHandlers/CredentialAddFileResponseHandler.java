@@ -40,55 +40,55 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         String result = new String(responseBody);
-        if (statusCode == 200) {
-            try {
-                JSONObject fileObject = new JSONObject(result);
-                if (fileObject.has("message") && fileObject.getString("message").equals("Current user is not logged in")) {
-                    throw new Exception(fileObject.getString("message"));
-                }
 
-                fileObject.put("filename", fileName);
-                File file = new File(fileObject);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (statusCode == 200) {
+                    try {
+                        JSONObject fileObject = new JSONObject(result);
+                        if (fileObject.has("message") && fileObject.getString("message").equals("Current user is not logged in")) {
+                            throw new Exception(fileObject.getString("message"));
+                        }
 
-                if (requestCode == FileUtils.activityRequestFileCode.credentialAddFile.ordinal()) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
+                        fileObject.put("filename", fileName);
+                        File file = new File(fileObject);
+
+                        if (requestCode == FileUtils.activityRequestFileCode.credentialAddFile.ordinal()) {
                             fed.addFile(file);
                             fed.notifyDataSetChanged();
                         }
-                    });
-                }
-                if (requestCode == FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) {
-                    CustomField cf = new CustomField();
-                    cf.setLabel("newLabel" + cfed.getItemCount() + 1);
-                    cf.setSecret(false);
-                    cf.setFieldType("file");
-                    cf.setJValue(file.getAsJSONObject());
+                        if (requestCode == FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) {
+                            CustomField cf = new CustomField();
+                            cf.setLabel("newLabel" + cfed.getItemCount() + 1);
+                            cf.setSecret(false);
+                            cf.setFieldType("file");
+                            cf.setJValue(file.getAsJSONObject());
 
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
                             cfed.addCustomField(cf);
                             cfed.notifyDataSetChanged();
                         }
-                    });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(view.getContext(), e.getMessage() != null ? e.getMessage() : view.getContext().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(view.getContext(), e.getMessage() != null ? e.getMessage() : view.getContext().getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+                progress.dismiss();
             }
-        } else {
-            Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
-        }
-
-        progress.dismiss();
+        });
     }
 
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         error.printStackTrace();
-        Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+            }
+        });
         progress.dismiss();
     }
 

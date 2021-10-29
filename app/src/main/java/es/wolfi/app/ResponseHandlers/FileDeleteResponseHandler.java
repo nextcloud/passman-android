@@ -1,6 +1,8 @@
 package es.wolfi.app.ResponseHandlers;
 
 import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Toast;
 
@@ -33,8 +35,13 @@ public class FileDeleteResponseHandler extends AsyncHttpResponseHandler {
         if (statusCode == 200) {
             mValues.remove(holder.mItem);
 
-            holder.mContentView.setTextColor(view.getResources().getColor(R.color.disabled));
-            holder.deleteButton.setVisibility(View.INVISIBLE);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    holder.mContentView.setTextColor(view.getResources().getColor(R.color.disabled));
+                    holder.deleteButton.setVisibility(View.INVISIBLE);
+                }
+            });
         }
         progress.dismiss();
     }
@@ -42,7 +49,12 @@ public class FileDeleteResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         error.printStackTrace();
-        Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+            }
+        });
         progress.dismiss();
     }
 

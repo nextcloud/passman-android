@@ -1,6 +1,8 @@
 package es.wolfi.app.ResponseHandlers;
 
 import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -31,7 +33,12 @@ public class CustomFieldFileDeleteResponseHandler extends AsyncHttpResponseHandl
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         if (statusCode == 200) {
             mValues.remove(holder.mItem);
-            customFieldEditAdapter.notifyDataSetChanged();
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    customFieldEditAdapter.notifyDataSetChanged();
+                }
+            });
         }
         progress.dismiss();
     }
@@ -39,7 +46,12 @@ public class CustomFieldFileDeleteResponseHandler extends AsyncHttpResponseHandl
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         error.printStackTrace();
-        Toast.makeText(progress.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(progress.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+            }
+        });
         progress.dismiss();
     }
 
