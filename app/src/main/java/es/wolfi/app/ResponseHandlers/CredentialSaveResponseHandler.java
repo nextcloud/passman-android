@@ -57,10 +57,8 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
 
                     if (updateCredential) {
                         Objects.requireNonNull(passwordListActivity).editCredentialInCurrentLocalVaultList(currentCredential);
-                        Objects.requireNonNull(passwordListActivity).showCredentialEditButton();
                     } else {
                         Objects.requireNonNull(passwordListActivity).addCredentialToCurrentLocalVaultList(currentCredential);
-                        Objects.requireNonNull(passwordListActivity).showAddCredentialsButton();
                     }
 
                     alreadySaving.set(false);

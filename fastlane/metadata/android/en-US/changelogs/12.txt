@@ -1,0 +1,8 @@
+- Add password generator app shortcut.
+- Add password generator and toggle button to credential add/edit forms.
+- Add option to clear clipboard automatically after a defined delay.
+- Show credential icons (requires at least Android 6 for SVG icons).
+- Show, edit, delete credentials shared with others.
+- Update dependencies.
+- Stability improvements.
+- Code cleanup.

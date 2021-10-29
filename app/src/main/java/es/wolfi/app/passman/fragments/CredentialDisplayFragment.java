@@ -25,6 +25,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +34,14 @@ import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.bierbaumer.otp_authenticator.TOTPHelper;
 
@@ -120,7 +124,36 @@ public class CredentialDisplayFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        handler = new Handler();
+        if (getArguments() != null) {
+            Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+            if (v != null) {
+                credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            }
+        }
+
+        if (credential != null) {
+            handler = new Handler();
+            if (credential.getOtp().length() > 4) {
+                otp_refresh = new Runnable() {
+                    @Override
+                    public void run() {
+                        int progress = (int) (System.currentTimeMillis() / 1000) % 30;
+                        otp_progress.setProgress(progress * 100);
+
+                        ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
+                        animation.setDuration(1000);
+                        animation.setInterpolator(new LinearInterpolator());
+                        animation.start();
+
+                        otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
+                        handler.postDelayed(this, 1000);
+                    }
+                };
+            }
+        } else {
+            Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+            Log.e("CredentialDisplayFrag", "credential or vault is null");
+        }
     }
 
     public String getGuid() {
@@ -146,29 +179,7 @@ public class CredentialDisplayFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (getArguments() != null) {
-            Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
-        }
-
-        if (credential.getOtp().length() > 4) {
-            otp_refresh = new Runnable() {
-                @Override
-                public void run() {
-                    int progress = (int) (System.currentTimeMillis() / 1000) % 30;
-                    otp_progress.setProgress(progress * 100);
-
-                    ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
-                    animation.setDuration(1000);
-                    animation.setInterpolator(new LinearInterpolator());
-                    animation.start();
-
-                    otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
-                    handler.postDelayed(this, 1000);
-                }
-            };
-        }
-
+        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_credential_display, container, false);
     }
 
@@ -193,6 +204,21 @@ public class CredentialDisplayFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        FloatingActionButton editCredentialButton = view.findViewById(R.id.editCredentialButton);
+        editCredentialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                        .replace(R.id.content_password_list, CredentialEditFragment.newInstance(credential.getGuid()), "credentialEdit")
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+        editCredentialButton.setVisibility(View.VISIBLE);
+
 
         RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

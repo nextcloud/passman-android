@@ -41,6 +41,7 @@
     <string name="unlock_passman">解鎖 Passman</string>
     <string name="unlock_passman_message_device_auth">請進行身份驗證以存取 Passman</string>
     <string name="app_start_password">應用程式開始密碼</string>
+    <string name="app_start_password_android_auth_description">在應用程式啟動時啟用 Android 用戶身份驗證</string>
     <string name="wait_while_encrypting">加密中，請稍候 ...</string>
     <string name="wait_while_decrypting">解密中，請稍候 ...</string>
     <string name="wait_while_uploading">上傳中，請稍候 ...</string>
@@ -60,4 +61,14 @@
     <string name="enable_credential_list_icons">啟用身份驗證清單圖示</string>
     <string name="credential_icon">身份驗證圖示</string>
     <string name="clear_clipboard_delay">清除剪貼板（秒後）</string>
-    </resources>
+    <string name="generate_password">生成密碼</string>
+    <string name="generate_password_to_clipboard">生成隨機密碼並複製到剪貼板</string>
+    <string name="enable_password_generator_shortcut_description">啟用密碼生成器應用程式捷徑</string>
+    <string name="password_generator_require_every_char_type">要求全部字符類型</string>
+    <string name="password_generator_avoid_ambiguous_chars">避免模糊字符</string>
+    <string name="password_generator_use_special_chars">使用特殊字符</string>
+    <string name="password_generator_use_digits">使用數字</string>
+    <string name="password_generator_use_lowercase">使用小寫字母</string>
+    <string name="password_generator_use_uppercase">使用大寫字母 </string>
+    <string name="password_length">密碼長度</string>
+</resources>
