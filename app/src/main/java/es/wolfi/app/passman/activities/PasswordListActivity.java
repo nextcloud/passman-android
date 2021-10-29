@@ -85,6 +85,7 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.KeyStoreUtils;
 
 public class PasswordListActivity extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
@@ -166,6 +167,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         if (running) return;
 
         new SettingsCache().loadSharedPreferences(getBaseContext());
+        KeyStoreUtils.initialize(settings);
         new OfflineStorage(getBaseContext());
         initialAuthentication(false);
     }
@@ -380,7 +382,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         activatedBeforeRecreate = "unlockVault";
         this.VaultLockButton.setVisibility(View.VISIBLE);
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        if (v.unlock(settings.getString(v.guid, ""))) {
+        if (v.unlock(KeyStoreUtils.getString(v.guid, ""))) {
             showActiveVault();
             return;
         }

@@ -43,6 +43,7 @@ import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.CredentialLabelSort;
 import es.wolfi.utils.Filterable;
+import es.wolfi.utils.KeyStoreUtils;
 
 public class Vault extends Core implements Filterable {
     public int vault_id;
@@ -332,7 +333,7 @@ public class Vault extends Core implements Filterable {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").equals(vault.guid)) {
                 try {
-                    settings.edit().putString(SettingValues.AUTOFILL_VAULT.toString(), Vault.asJson(vault)).apply();
+                    KeyStoreUtils.putString(SettingValues.AUTOFILL_VAULT.toString(), Vault.asJson(vault));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

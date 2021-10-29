@@ -21,14 +21,13 @@
 package es.wolfi.app.passman;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.KeyStoreUtils;
 
 public class OfflineStorage {
     /**
@@ -36,12 +35,11 @@ public class OfflineStorage {
      */
 
     protected static OfflineStorage offlineStorage;
-    protected static SharedPreferences sharedPreferences = null;
     private JSONObject storage;
     public final static String LOG_TAG = "OfflineStorage";
+    public final static String EMPTY_STORAGE_STRING = "{}";
 
     public OfflineStorage(Context context) {
-        loadSharedPreferences(context);
         try {
             storage = new JSONObject(getOfflineStorageString());
         } catch (JSONException | NullPointerException e) {
@@ -51,29 +49,23 @@ public class OfflineStorage {
     }
 
     private String getOfflineStorageString() {
-        return sharedPreferences.getString(SettingValues.OFFLINE_STORAGE.toString(), "{}");
+        return KeyStoreUtils.getString(SettingValues.OFFLINE_STORAGE.toString(), EMPTY_STORAGE_STRING);
     }
 
     public static OfflineStorage getInstance() {
         return offlineStorage;
     }
 
-    private void loadSharedPreferences(Context context) {
-        if (sharedPreferences == null) {
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        }
-    }
-
     public void commit() {
         if (isEnabled() && storage != null) {
-            sharedPreferences.edit().putString(SettingValues.OFFLINE_STORAGE.toString(), storage.toString()).commit();
+            KeyStoreUtils.putStringAndCommit(SettingValues.OFFLINE_STORAGE.toString(), storage.toString());
             Log.d(LOG_TAG, "committed");
         }
     }
 
     public void clear() {
         storage = new JSONObject();
-        sharedPreferences.edit().putString(SettingValues.OFFLINE_STORAGE.toString(), storage.toString()).commit();
+        KeyStoreUtils.putStringAndCommit(SettingValues.OFFLINE_STORAGE.toString(), storage.toString());
         Log.d(LOG_TAG, "cleared and committed");
     }
 
@@ -83,11 +75,11 @@ public class OfflineStorage {
 
     public String getSize() {
         int bytes = getOfflineStorageString().getBytes().length;
-        if (isEnabled() && bytes <= 2) {
+        if (isEnabled() && bytes <= EMPTY_STORAGE_STRING.length()) {
             bytes = storage.toString().getBytes().length;
         }
-        if (bytes >= 2) {
-            bytes -= 2;
+        if (bytes >= EMPTY_STORAGE_STRING.length()) {
+            bytes -= EMPTY_STORAGE_STRING.length();
         }
         return FileUtils.humanReadableByteCount((Double.valueOf(bytes)).longValue(), true);
     }

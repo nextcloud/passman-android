@@ -45,6 +45,7 @@ import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.utils.KeyStoreUtils;
 
 public abstract class Core {
     protected static final String LOG_TAG = "API_LIB";
@@ -219,7 +220,7 @@ public abstract class Core {
         SingleTon ton = SingleTon.getTon();
 
         if (ton.getString(SettingValues.HOST.toString()) == null) {
-            String url = SettingsCache.getString(SettingValues.HOST.toString(), null);
+            String url = KeyStoreUtils.getString(SettingValues.HOST.toString(), null);
 
             // If the url is null app has not yet been configured!
             if (url == null) {
@@ -229,8 +230,8 @@ public abstract class Core {
 
             // Load the server settings
             ton.addString(SettingValues.HOST.toString(), url);
-            ton.addString(SettingValues.USER.toString(), SettingsCache.getString(SettingValues.USER.toString(), ""));
-            ton.addString(SettingValues.PASSWORD.toString(), SettingsCache.getString(SettingValues.PASSWORD.toString(), ""));
+            ton.addString(SettingValues.USER.toString(), KeyStoreUtils.getString(SettingValues.USER.toString(), ""));
+            ton.addString(SettingValues.PASSWORD.toString(), KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), ""));
         }
 
         String host = ton.getString(SettingValues.HOST.toString());

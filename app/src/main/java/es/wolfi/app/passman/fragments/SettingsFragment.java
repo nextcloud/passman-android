@@ -27,7 +27,6 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +57,7 @@ import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.PasswordGenerator;
 
 
@@ -156,9 +156,9 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        settings_nextcloud_url.setText(settings.getString(SettingValues.HOST.toString(), null));
-        settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
-        settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
+        settings_nextcloud_url.setText(KeyStoreUtils.getString(SettingValues.HOST.toString(), null));
+        settings_nextcloud_user.setText(KeyStoreUtils.getString(SettingValues.USER.toString(), null));
+        settings_nextcloud_password.setText(KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null));
 
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
 
@@ -287,9 +287,9 @@ public class SettingsFragment extends Fragment {
                 }
 
                 SettingsCache.clear();
-                if (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
-                        !settings.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
-                        !settings.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {
+                if (!KeyStoreUtils.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
+                        !KeyStoreUtils.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
+                        !KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {
                     ton.removeString(SettingValues.HOST.toString());
                     ton.removeString(SettingValues.USER.toString());
                     ton.removeString(SettingValues.PASSWORD.toString());
@@ -298,9 +298,9 @@ public class SettingsFragment extends Fragment {
                     ton.addString(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString());
                     ton.addString(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString());
 
-                    settings.edit().putString(SettingValues.HOST.toString(), settings_nextcloud_url.getText().toString()).commit();
-                    settings.edit().putString(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString()).commit();
-                    settings.edit().putString(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString()).commit();
+                    KeyStoreUtils.putStringAndCommit(SettingValues.HOST.toString(), settings_nextcloud_url.getText().toString());
+                    KeyStoreUtils.putStringAndCommit(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString());
+                    KeyStoreUtils.putStringAndCommit(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString());
 
                     Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(true);
                 } else {
