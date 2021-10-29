@@ -57,10 +57,8 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
 
                     if (updateCredential) {
                         Objects.requireNonNull(passwordListActivity).editCredentialInCurrentLocalVaultList(currentCredential);
-                        Objects.requireNonNull(passwordListActivity).showCredentialEditButton();
                     } else {
                         Objects.requireNonNull(passwordListActivity).addCredentialToCurrentLocalVaultList(currentCredential);
-                        Objects.requireNonNull(passwordListActivity).showAddCredentialsButton();
                     }
 
                     alreadySaving.set(false);
@@ -82,7 +80,11 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         alreadySaving.set(false);
         progress.dismiss();
-        String response = new String(responseBody);
+        String response = "";
+
+        if (responseBody != null && responseBody.length > 0) {
+            response = new String(responseBody);
+        }
 
         if (!response.equals("") && JSONUtils.isJSONObject(response)) {
             try {
@@ -98,7 +100,7 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
 
         if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
-            Log.e("async http response", new String(responseBody));
+            Log.e("async http response", response);
             Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();

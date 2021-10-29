@@ -1,5 +1,7 @@
 package es.wolfi.app.passman.autofill;
 
+import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
+
 import android.app.assist.AssistStructure;
 import android.app.assist.AssistStructure.ViewNode;
 import android.content.SharedPreferences;
@@ -36,7 +38,6 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,9 +48,7 @@ import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.JSONUtils;
-
-import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
+import es.wolfi.utils.KeyStoreUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public final class CredentialAutofillService extends AutofillService {
@@ -543,13 +542,14 @@ public final class CredentialAutofillService extends AutofillService {
 
     private Vault getAutofillVault(SingleTon ton) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        KeyStoreUtils.initialize(settings);
         Vault activeVault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         String autofillVaultGuid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
 
-        if (activeVault != null && !activeVault.guid.equals(autofillVaultGuid) && !autofillVaultGuid.equals("")) {
+        if (activeVault != null && autofillVaultGuid != null && !activeVault.guid.equals(autofillVaultGuid) && !autofillVaultGuid.equals("")) {
             try {
-                Vault requestedVault = Vault.fromJSON(new JSONObject(settings.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
-                requestedVault.unlock(settings.getString(autofillVaultGuid, ""));
+                Vault requestedVault = Vault.fromJSON(new JSONObject(KeyStoreUtils.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
+                requestedVault.unlock(KeyStoreUtils.getString(autofillVaultGuid, ""));
                 return requestedVault;
             } catch (JSONException e) {
                 e.printStackTrace();

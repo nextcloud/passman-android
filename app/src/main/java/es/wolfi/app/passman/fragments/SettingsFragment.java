@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -49,11 +50,14 @@ import java.util.Objects;
 import java.util.Set;
 
 import butterknife.ButterKnife;
+import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.PasswordGenerator;
 
 
@@ -75,6 +79,7 @@ public class SettingsFragment extends Fragment {
     EditText settings_password_generator_length_value;
 
     MaterialCheckBox enable_credential_list_icons_switch;
+    MaterialCheckBox enable_offline_cache_switch;
 
     TextView default_autofill_vault_title;
     Spinner default_autofill_vault;
@@ -82,6 +87,7 @@ public class SettingsFragment extends Fragment {
 
     EditText request_connect_timeout_value;
     EditText request_response_timeout_value;
+    Button clear_offline_cache_button;
 
     SharedPreferences settings;
     PasswordGenerator passwordGenerator;
@@ -126,6 +132,7 @@ public class SettingsFragment extends Fragment {
         settings_password_generator_length_value = view.findViewById(R.id.settings_password_generator_length_value);
 
         enable_credential_list_icons_switch = view.findViewById(R.id.enable_credential_list_icons_switch);
+        enable_offline_cache_switch = view.findViewById(R.id.enable_offline_cache_switch);
 
         default_autofill_vault_title = view.findViewById(R.id.default_autofill_vault_title);
         default_autofill_vault = view.findViewById(R.id.default_autofill_vault);
@@ -133,6 +140,8 @@ public class SettingsFragment extends Fragment {
 
         request_connect_timeout_value = view.findViewById(R.id.request_connect_timeout_value);
         request_response_timeout_value = view.findViewById(R.id.request_response_timeout_value);
+        clear_offline_cache_button = view.findViewById(R.id.clear_offline_cache_button);
+        clear_offline_cache_button.setOnClickListener(this.getClearOfflineCacheButtonListener());
 
         return view;
     }
@@ -147,9 +156,9 @@ public class SettingsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        settings_nextcloud_url.setText(settings.getString(SettingValues.HOST.toString(), null));
-        settings_nextcloud_user.setText(settings.getString(SettingValues.USER.toString(), null));
-        settings_nextcloud_password.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
+        settings_nextcloud_url.setText(KeyStoreUtils.getString(SettingValues.HOST.toString(), null));
+        settings_nextcloud_user.setText(KeyStoreUtils.getString(SettingValues.USER.toString(), null));
+        settings_nextcloud_password.setText(KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null));
 
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
 
@@ -169,6 +178,7 @@ public class SettingsFragment extends Fragment {
         }
 
         enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
+        enable_offline_cache_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true));
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             String last_selected_guid = "";
@@ -200,6 +210,7 @@ public class SettingsFragment extends Fragment {
 
         request_connect_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15)));
         request_response_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120)));
+        clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
     }
 
     private Set<Map.Entry<String, Vault>> getVaultsEntrySet() {
@@ -240,6 +251,7 @@ public class SettingsFragment extends Fragment {
                 passwordGenerator.applyChanges();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), enable_credential_list_icons_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), enable_offline_cache_switch.isChecked()).commit();
 
                 settings.edit().putInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), Integer.parseInt(clear_clipboard_delay_value.getText().toString())).commit();
                 Objects.requireNonNull(((PasswordListActivity) getActivity())).attachClipboardListener();
@@ -274,9 +286,10 @@ public class SettingsFragment extends Fragment {
                     }
                 }
 
-                if (!settings.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
-                        !settings.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
-                        !settings.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {
+                SettingsCache.clear();
+                if (!KeyStoreUtils.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
+                        !KeyStoreUtils.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
+                        !KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {
                     ton.removeString(SettingValues.HOST.toString());
                     ton.removeString(SettingValues.USER.toString());
                     ton.removeString(SettingValues.PASSWORD.toString());
@@ -285,14 +298,25 @@ public class SettingsFragment extends Fragment {
                     ton.addString(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString());
                     ton.addString(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString());
 
-                    settings.edit().putString(SettingValues.HOST.toString(), settings_nextcloud_url.getText().toString()).commit();
-                    settings.edit().putString(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString()).commit();
-                    settings.edit().putString(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString()).commit();
+                    KeyStoreUtils.putStringAndCommit(SettingValues.HOST.toString(), settings_nextcloud_url.getText().toString());
+                    KeyStoreUtils.putStringAndCommit(SettingValues.USER.toString(), settings_nextcloud_user.getText().toString());
+                    KeyStoreUtils.putStringAndCommit(SettingValues.PASSWORD.toString(), settings_nextcloud_password.getText().toString());
 
                     Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(true);
                 } else {
                     Objects.requireNonNull(((PasswordListActivity) getActivity())).applyNewSettings(false);
                 }
+            }
+        };
+    }
+
+    public View.OnClickListener getClearOfflineCacheButtonListener() {
+        return new View.OnClickListener() {
+            @SuppressLint("ApplySharedPref")
+            @Override
+            public void onClick(View view) {
+                OfflineStorage.getInstance().clear();
+                clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
             }
         };
     }

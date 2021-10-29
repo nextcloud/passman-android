@@ -11,6 +11,7 @@
     <string name="wrongNCUrl">Incorrect Nextcloud backend URL or unable to connect</string>
     <string name="wrongNCSettings">Settings incorrect</string>
     <string name="net_error">Network error</string>
+    <string name="net_error_dialog_description">Could not connect to the server!\nChanges can not be saved without a working server connection.</string>
     <string name="unlock">Unlock</string>
     <string name="wrong_vault_pw">Wrong vault password</string>
     <string name="label">Label</string>
@@ -69,7 +70,7 @@
     <string name="generate_password">Generate password</string>
     <string name="generate_password_to_clipboard">Generate a random password and copy to clipboard</string>
     <string name="enable_password_generator_shortcut_description">Enable password generator app shortcut</string>
-    <string name="password_generator_require_every_char_type">Require every char type</string>
+    <string name="password_generator_require_every_char_type">Require every character type</string>
     <string name="password_generator_avoid_ambiguous_chars">Avoid ambiguous characters</string>
     <string name="password_generator_use_special_chars">Use special characters</string>
     <string name="password_generator_use_digits">Use digits</string>
@@ -79,4 +80,8 @@
     <string name="vault_name">Vault name</string>
     <string name="sharing_key_strength">Sharing key strength</string>
     <string name="new_vault_name">New vault name</string>
+    <string name="offline_cache">Offline cache</string>
+    <string name="offline_cache_description">Caches the encrypted vaults if they were loaded manually</string>
+    <string name="enable_offline_cache">Enable offline cache</string>
+    <string name="clear_offline_cache">Clear offline cache</string>
 </resources>

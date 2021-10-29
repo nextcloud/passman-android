@@ -64,7 +64,7 @@
     <string name="generate_password">生成密码</string>
     <string name="generate_password_to_clipboard">生成随机密码并复制到剪贴板</string>
     <string name="enable_password_generator_shortcut_description">启用密码生成器应用快捷方式</string>
-    <string name="password_generator_require_every_char_type">需要每种字符类型</string>
+    <string name="password_generator_require_every_char_type">要求每种字符类型</string>
     <string name="password_generator_avoid_ambiguous_chars">避免含糊不清的字符</string>
     <string name="password_generator_use_special_chars">使用特殊字符</string>
     <string name="password_generator_use_digits">使用数字</string>

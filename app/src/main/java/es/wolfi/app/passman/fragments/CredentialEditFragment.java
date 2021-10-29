@@ -161,6 +161,8 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
+        Vault.checkCloudConnectionAndShowHint(view);
+
         filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         filesListRecyclerView.setAdapter(fed);
@@ -182,7 +184,11 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-            credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            try {
+                credential = Credential.clone(v.findCredentialByGUID(getArguments().getString(CREDENTIAL)));
+            } catch (JSONException e) {
+                credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+            }
         }
     }
 

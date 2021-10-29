@@ -21,10 +21,10 @@
 
 package es.wolfi.passman.API;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -32,19 +32,26 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 
 import es.wolfi.app.ResponseHandlers.CoreAPIGETResponseHandler;
+import es.wolfi.app.passman.OfflineStorage;
+import es.wolfi.app.passman.OfflineStorageValues;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.utils.KeyStoreUtils;
 
 public abstract class Core {
     protected static final String LOG_TAG = "API_LIB";
 
     protected static String host;
+    protected static String host_internal;
     protected static String username;
     protected static String password;
     protected static String version_name;
@@ -63,6 +70,7 @@ public abstract class Core {
 
     public static void setAPIHost(String host) {
         Core.host = host.concat("/index.php/apps/passman/api/v2/");
+        Core.host_internal = host.concat("/index.php/apps/passman/api/internal/");
     }
 
     public static String getAPIUsername() {
@@ -82,11 +90,26 @@ public abstract class Core {
     }
 
     public static int getConnectTimeout(Context c) {
-        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15) * 1000;
+        return SettingsCache.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15) * 1000;
+    }
+
+    public static int getConnectRetries(Context c) {
+        return 0;
     }
 
     public static int getResponseTimeout(Context c) {
-        return PreferenceManager.getDefaultSharedPreferences(c).getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
+        return SettingsCache.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120) * 1000;
+    }
+
+    public static void requestInternalAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+        final AsyncHttpResponseHandler responseHandler = new CoreAPIGETResponseHandler(callback);
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.setBasicAuth(username, password);
+        client.setConnectTimeout(getConnectTimeout(c));
+        client.setResponseTimeout(getResponseTimeout(c));
+        client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
+        client.addHeader("Content-Type", "application/json");
+        client.get(host_internal.concat(endpoint), responseHandler);
     }
 
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
@@ -95,6 +118,7 @@ public abstract class Core {
         client.setBasicAuth(username, password);
         client.setConnectTimeout(getConnectTimeout(c));
         client.setResponseTimeout(getResponseTimeout(c));
+        client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
         client.addHeader("Content-Type", "application/json");
         client.get(host.concat(endpoint), responseHandler);
     }
@@ -108,6 +132,7 @@ public abstract class Core {
         client.setBasicAuth(username, password);
         client.setConnectTimeout(getConnectTimeout(c));
         client.setResponseTimeout(getResponseTimeout(c));
+        client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
         //client.addHeader("Content-Type", "application/json; utf-8");
         client.addHeader("Accept", "application/json, text/plain, */*");
 
@@ -128,18 +153,60 @@ public abstract class Core {
             return;
         }
 
-        requestAPIGET(c, "version", new FutureCallback<String>() {
+        requestInternalAPIGET(c, "version", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (result != null) {
                     Log.d("getApiVersion", result);
-                    cb.onCompleted(null, result);
+                    if (applyVersionJSON(result)) {
+                        OfflineStorage.getInstance().putObject(OfflineStorageValues.VERSION.toString(), result);
+                        cb.onCompleted(null, version_name);
+                    }
                 } else {
-                    Log.d("getApiVersion", "Failure while getting api version");
+                    Log.d("getApiVersion", "Failure while getting api version, maybe offline?");
+                    if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString())) {
+                        showConnectionErrorHint(c);
+                        if (applyVersionJSON(OfflineStorage.getInstance().getString(OfflineStorageValues.VERSION.toString()))) {
+                            cb.onCompleted(null, version_name);
+                            return;
+                        }
+                    }
                     cb.onCompleted(e, null);
                 }
             }
         });
+    }
+
+    public static boolean applyVersionJSON(String version) {
+        try {
+            JSONObject parsedResult = new JSONObject(version);
+            if (parsedResult.has("version")) {
+                version_name = parsedResult.getString("version");
+                version_number = Integer.parseInt(version_name.replace(".", ""));
+                return true;
+            }
+        } catch (JSONException | NumberFormatException jsonException) {
+            jsonException.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void checkCloudConnectionAndShowHint(View view) {
+        requestInternalAPIGET(view.getContext(), "version", new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                if (result == null) {
+                    showConnectionErrorHint(view.getContext());
+                }
+            }
+        });
+    }
+
+    private static void showConnectionErrorHint(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(R.string.net_error_dialog_description);
+        builder.setCancelable(true);
+        builder.show();
     }
 
     /**
@@ -153,8 +220,7 @@ public abstract class Core {
         SingleTon ton = SingleTon.getTon();
 
         if (ton.getString(SettingValues.HOST.toString()) == null) {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(c);
-            String url = settings.getString(SettingValues.HOST.toString(), null);
+            String url = KeyStoreUtils.getString(SettingValues.HOST.toString(), null);
 
             // If the url is null app has not yet been configured!
             if (url == null) {
@@ -164,8 +230,8 @@ public abstract class Core {
 
             // Load the server settings
             ton.addString(SettingValues.HOST.toString(), url);
-            ton.addString(SettingValues.USER.toString(), settings.getString(SettingValues.USER.toString(), ""));
-            ton.addString(SettingValues.PASSWORD.toString(), settings.getString(SettingValues.PASSWORD.toString(), ""));
+            ton.addString(SettingValues.USER.toString(), KeyStoreUtils.getString(SettingValues.USER.toString(), ""));
+            ton.addString(SettingValues.PASSWORD.toString(), KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), ""));
         }
 
         String host = ton.getString(SettingValues.HOST.toString());
@@ -177,10 +243,10 @@ public abstract class Core {
         //Log.d(LOG_TAG, "Pass: " + pass);
         Log.d(LOG_TAG, "Pass: " + pass.replaceAll("(?s).", "*"));
 
-        Vault.setUpAPI(host, user, pass);
-        Vault.getVaults(c, new FutureCallback<HashMap<String, Vault>>() {
+        setUpAPI(host, user, pass);
+        getAPIVersion(c, new FutureCallback<String>() {
             @Override
-            public void onCompleted(Exception e, HashMap<String, Vault> result) {
+            public void onCompleted(Exception e, String result) {
                 boolean ret = true;
 
                 if (e != null) {
