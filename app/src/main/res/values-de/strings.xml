@@ -41,6 +41,7 @@
     <string name="unlock_passman">Passman entsperren</string>
     <string name="unlock_passman_message_device_auth">Bitte authentifizieren Sie sich, um auf Passman zuzugreifen.</string>
     <string name="app_start_password">Passwort für App-Start</string>
+    <string name="app_start_password_android_auth_description">Android-Benutzerauthentifizierung beim App-Start aktivieren</string>
     <string name="wait_while_encrypting">Warte während der Verschlüsselung …</string>
     <string name="wait_while_decrypting">Warte während der Entschlüsselung …</string>
     <string name="wait_while_uploading">Warte während des Hochladens …</string>
@@ -60,4 +61,13 @@
     <string name="enable_credential_list_icons">Symbole für Anmeldeinformationen aktivieren</string>
     <string name="credential_icon">Symbol für Anmeldeinformationen</string>
     <string name="clear_clipboard_delay">Zwischenablage leeren (nach ein paar Sekunden)</string>
-    </resources>
+    <string name="generate_password">Passwort erzeugen</string>
+    <string name="generate_password_to_clipboard">Zufälliges Passwort generieren und in die Zwischenablage kopieren</string>
+    <string name="enable_password_generator_shortcut_description">Verknüpfung zur Passwortgenerator-App aktivieren</string>
+    <string name="password_generator_avoid_ambiguous_chars">Mehrdeutige Zeichen vermeiden</string>
+    <string name="password_generator_use_special_chars">Sonderzeichen verwenden</string>
+    <string name="password_generator_use_digits">Zahlen verwenden</string>
+    <string name="password_generator_use_lowercase">Kleinbuchstaben verwenden</string>
+    <string name="password_generator_use_uppercase">Großbuchstaben verwenden</string>
+    <string name="password_length">Passwortlänge</string>
+</resources>

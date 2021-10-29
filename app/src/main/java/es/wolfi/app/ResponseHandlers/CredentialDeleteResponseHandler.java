@@ -54,7 +54,6 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
                     Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
 
                     Objects.requireNonNull(passwordListActivity).deleteCredentialInCurrentLocalVaultList(currentCredential);
-                    Objects.requireNonNull(passwordListActivity).showAddCredentialsButton();
                     Objects.requireNonNull(passwordListActivity).showLockVaultButton();
 
                     int backStackCount = fragmentManager.getBackStackEntryCount();

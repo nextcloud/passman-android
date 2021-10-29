@@ -55,7 +55,6 @@ import androidx.core.graphics.drawable.IconCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONException;
@@ -83,6 +82,7 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.ProgressUtils;
 
 public class PasswordListActivity extends AppCompatActivity implements
         VaultFragment.OnListFragmentInteractionListener,
@@ -100,10 +100,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     static boolean running = false;
 
     private AppCompatImageButton VaultLockButton;
-    private AppCompatImageButton CredentialEditButton;
-    private FloatingActionButton addCredentialsButton;
     private static String activatedBeforeRecreate = "";
-    private String lastOpenedCredentialGuid = "";
     private String intentFilecontent = "";
     HashMap<String, Integer> visibleButtonsBeforeEnterSettings = new HashMap<String, Integer>();
     private ClipboardManager.OnPrimaryClipChangedListener onPrimaryClipChangedListener;
@@ -136,30 +133,6 @@ public class PasswordListActivity extends AppCompatActivity implements
         });
         this.VaultLockButton.setVisibility(View.INVISIBLE);
 
-        this.CredentialEditButton = (AppCompatImageButton) findViewById(R.id.CredentialEditButton);
-        this.CredentialEditButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editCredential();
-            }
-        });
-        this.CredentialEditButton.setVisibility(View.INVISIBLE);
-
-        this.addCredentialsButton = (FloatingActionButton) findViewById(R.id.addCredentialsButton);
-        this.addCredentialsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addCredentialsButton.hide();
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .replace(R.id.content_password_list, CredentialAddFragment.newInstance(), "credentialAdd")
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-        this.addCredentialsButton.hide();
-
         checkFragmentPosition(true);
         if (running) return;
 
@@ -178,7 +151,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                 initialAuthentication(true);
             }
         } else {
-            final ProgressDialog progress = getProgressDialog();
+            final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
             progress.show();
 
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
@@ -250,15 +223,6 @@ public class PasswordListActivity extends AppCompatActivity implements
         return onPrimaryClipChangedListener;
     }
 
-    private ProgressDialog getProgressDialog() {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setTitle(getString(R.string.loading));
-        progress.setMessage(getString(R.string.wait_while_loading));
-        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
-
-        return progress;
-    }
-
     private void updateShortcuts() {
         if (settings.getBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), true) &&
                 android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
@@ -292,10 +256,11 @@ public class PasswordListActivity extends AppCompatActivity implements
                     .beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                     .replace(R.id.content_password_list, new VaultFragment(), "vaults")
+                    .addToBackStack(null)
                     .commit();
         } else {
             this.runOnUiThread(() -> {
-                final ProgressDialog progress = getProgressDialog();
+                final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
                 progress.show();
 
                 Vault.getVaults(this, (e, result) -> {
@@ -325,13 +290,12 @@ public class PasswordListActivity extends AppCompatActivity implements
     }
 
     public void showActiveVault() {
-        final ProgressDialog progress = getProgressDialog();
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
         progress.show();
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         if (vault.getCredentials() != null) {
             if (vault.is_unlocked()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
-                this.addCredentialsButton.show();
                 activatedBeforeRecreate = "vault";
                 Log.v("Open vault", String.valueOf(vault.vault_id));
                 getSupportFragmentManager()
@@ -476,7 +440,7 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        ProgressDialog progress = getProgressDialog();
+        ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
         progress.show();
         Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
             @Override
@@ -529,20 +493,6 @@ public class PasswordListActivity extends AppCompatActivity implements
         });
     }
 
-    public void showCredentialEditButton() {
-        this.runOnUiThread(() -> this.CredentialEditButton.setVisibility(View.VISIBLE));
-    }
-
-    void editCredential() {
-        this.CredentialEditButton.setVisibility(View.INVISIBLE);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                .replace(R.id.content_password_list, CredentialEditFragment.newInstance(this.lastOpenedCredentialGuid), "credentialEdit")
-                .addToBackStack(null)
-                .commit();
-    }
-
     void refreshVaults() {
         ton.removeExtra(SettingValues.VAULTS.toString());
         showVaults();
@@ -566,7 +516,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         if (doRebirth) {
             triggerRebirth(this);
         } else {
-            final ProgressDialog progress = getProgressDialog();
+            final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
             progress.show();
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
@@ -608,12 +558,8 @@ public class PasswordListActivity extends AppCompatActivity implements
     }
 
     void settingsButtonPressed() {
-        visibleButtonsBeforeEnterSettings.put("credentialEditButton", this.CredentialEditButton.getVisibility());
-        visibleButtonsBeforeEnterSettings.put("addCredentialsButton", this.addCredentialsButton.getVisibility());
         visibleButtonsBeforeEnterSettings.put("VaultLockButton", this.VaultLockButton.getVisibility());
 
-        this.CredentialEditButton.setVisibility(View.INVISIBLE);
-        this.addCredentialsButton.setVisibility(View.INVISIBLE);
         this.VaultLockButton.setVisibility(View.INVISIBLE);
 
         getSupportFragmentManager()
@@ -655,10 +601,6 @@ public class PasswordListActivity extends AppCompatActivity implements
         }
     }
 
-    public void showAddCredentialsButton() {
-        this.runOnUiThread(() -> this.addCredentialsButton.show());
-    }
-
     public void showLockVaultButton() {
         this.runOnUiThread(() -> this.VaultLockButton.setVisibility(View.VISIBLE));
     }
@@ -681,9 +623,6 @@ public class PasswordListActivity extends AppCompatActivity implements
     @Override
     public void onListFragmentInteraction(Credential item) {
         this.VaultLockButton.setVisibility(View.INVISIBLE);
-        this.addCredentialsButton.hide();
-        this.CredentialEditButton.setVisibility(View.VISIBLE);
-        this.lastOpenedCredentialGuid = item.getGuid();
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
@@ -700,7 +639,6 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     @Override
     public void onCredentialFragmentInteraction(Credential credential) {
-        this.runOnUiThread(() -> this.addCredentialsButton.hide());
     }
 
     @Override
@@ -717,7 +655,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     public void onListFragmentInteraction(File item) {
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
 
-        final ProgressDialog progress = getProgressDialog();
+        final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
         progress.setMessage(getString(R.string.wait_while_downloading));
         progress.show();
 
@@ -889,44 +827,27 @@ public class PasswordListActivity extends AppCompatActivity implements
         Fragment vaultFragment = fm.findFragmentByTag("vault");
         Fragment vaultsFragment = fm.findFragmentByTag("vaults");
         Fragment credentialFragment = fm.findFragmentByTag("credential");
-        Fragment credentialEditFragment = fm.findFragmentByTag("credentialEdit");
         Fragment settingsFragment = fm.findFragmentByTag("settings");
 
         if (positive) {
             if ((vaultFragment != null && vaultFragment.isVisible()) || (activatedBeforeRecreate.equals("vault"))) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
-                this.CredentialEditButton.setVisibility(View.INVISIBLE);
-                this.addCredentialsButton.show();
                 activatedBeforeRecreate = "";
             } else if (activatedBeforeRecreate.equals("unlockVault")) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
             } else if (credentialFragment != null && credentialFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.INVISIBLE);
-                this.addCredentialsButton.hide();
-            } else if (credentialEditFragment != null && credentialEditFragment.isVisible()) {
-                this.CredentialEditButton.setVisibility(View.INVISIBLE);
             } else if (vaultsFragment != null && vaultsFragment.isVisible()) {
                 running = true;
             }
         } else {
             if (vaultFragment != null && vaultFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.INVISIBLE);
-                this.addCredentialsButton.hide();
-            } else if (credentialEditFragment != null && credentialEditFragment.isVisible()) {
-                this.CredentialEditButton.setVisibility(View.VISIBLE);
             } else if (credentialFragment != null && credentialFragment.isVisible()) {
                 this.VaultLockButton.setVisibility(View.VISIBLE);
-                this.CredentialEditButton.setVisibility(View.INVISIBLE);
-                this.addCredentialsButton.show();
             } else if (vaultsFragment != null && vaultsFragment.isVisible()) {
                 running = false;
             } else if (settingsFragment != null && settingsFragment.isVisible()) {
-                if (visibleButtonsBeforeEnterSettings.containsKey("credentialEditButton")) {
-                    this.CredentialEditButton.setVisibility(visibleButtonsBeforeEnterSettings.get("credentialEditButton"));
-                }
-                if (visibleButtonsBeforeEnterSettings.containsKey("addCredentialsButton")) {
-                    this.addCredentialsButton.setVisibility(visibleButtonsBeforeEnterSettings.get("addCredentialsButton"));
-                }
                 if (visibleButtonsBeforeEnterSettings.containsKey("VaultLockButton")) {
                     this.VaultLockButton.setVisibility(visibleButtonsBeforeEnterSettings.get("VaultLockButton"));
                 }

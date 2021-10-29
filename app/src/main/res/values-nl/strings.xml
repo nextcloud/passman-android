@@ -33,4 +33,6 @@
     <string name="error_downloading_file">Fout bij downloaden bestand</string>
     <string name="error_writing_file">Fout bij schrijven bestand</string>
     <string name="files">Bestanden</string>
-    </resources>
+    <string name="yes">Ja</string>
+    <string name="password_length">Wachtwoordlengte</string>
+</resources>
