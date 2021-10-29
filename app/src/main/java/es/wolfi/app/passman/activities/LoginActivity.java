@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 
     SharedPreferences settings;
     SingleTon ton;
+    boolean isLegacyOnly = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +95,7 @@ public class LoginActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         if (!isNextcloudFilesAppInstalled(this)) {
+            isLegacyOnly = true;
             loadLegacyLogin();
         }
     }
@@ -183,7 +185,8 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 PackageInfo pi = pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
                 // check if Nextcloud Files App version with the required PATCH request fix is installed
-                if (pi.versionCode > 30160190) {
+                if ((pi.versionCode >= 30180052 && pi.packageName.equals("com.nextcloud.client")) ||
+                        pi.versionCode >= 20211027 && pi.packageName.equals("com.nextcloud.android.beta")) {
                     returnValue = true;
                     break;
                 }
@@ -245,11 +248,12 @@ public class LoginActivity extends AppCompatActivity {
                     SingleAccountHelper.setCurrentAccount(l_context, account.name);
 
                     // Get the "default" account
-                    SingleSignOnAccount ssoAccount = null;
+                    SingleSignOnAccount ssoAccount;
                     try {
                         ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(l_context);
                     } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
                         UiExceptionManager.showDialogForException(l_context, e);
+                        return;
                     }
 
                     SingleTon ton = SingleTon.getTon();
@@ -292,7 +296,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         LinearLayout login_options = findViewById(R.id.login_options);
-        if (login_options.getVisibility() == View.INVISIBLE) {
+        if (login_options.getVisibility() == View.INVISIBLE && !isLegacyOnly) {
             showLoginOptions();
         } else {
             PasswordListActivity.running = false;
