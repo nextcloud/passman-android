@@ -331,9 +331,7 @@ public abstract class Core {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                Log.d("doInBackground", "before request");
                 Response response = mNextcloudAPI.performNetworkRequestV2(nextcloudRequest);
-                Log.d("doInBackground", "NextcloudRequest: " + nextcloudRequest.toString());
 
                 StringBuilder textBuilder = new StringBuilder();
                 final BufferedReader rd = new BufferedReader(new InputStreamReader(response.getBody()));
@@ -342,7 +340,6 @@ public abstract class Core {
                     textBuilder.append(line);
                 }
                 response.getBody().close();
-                Log.d("response string:", textBuilder.toString());
 
                 cz.msebera.android.httpclient.Header[] headers = new cz.msebera.android.httpclient.Header[response.getPlainHeaders().size()];
                 new NCHeader(response.getPlainHeaders(), headers);
