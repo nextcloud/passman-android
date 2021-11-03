@@ -64,6 +64,7 @@
     <string name="generate_password">Jelszó létrehozása</string>
     <string name="generate_password_to_clipboard">Véletlenszerű jelszó létrehozása és vágólapra másolása</string>
     <string name="enable_password_generator_shortcut_description">A jelszó-előállító alkalmazás indítóikon engedélyezése</string>
+    <string name="password_generator_require_every_char_type">Minden karaktertípus megkövetelése</string>
     <string name="password_generator_avoid_ambiguous_chars">Kétértelmű karakterek elkerülése</string>
     <string name="password_generator_use_special_chars">Speciális karakterek használata</string>
     <string name="password_generator_use_digits">Számjegyek használata</string>
