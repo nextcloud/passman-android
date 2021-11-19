@@ -28,6 +28,12 @@
     tools:context="es.wolfi.app.passman.activities.LoginActivity">
 
     <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/nc_background" />
+
+    <ImageView
         android:id="@+id/login_options_logo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
