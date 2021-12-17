@@ -30,6 +30,17 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * High frequently required SettingValues from SharedPreferences should be requested using the SettingsCache.
+ * It returns/caches data directly from SharedPreferences without checking possible encryption on it.
+ * <p>
+ * Call the initialization of the SettingsCache at the top of each activity you want to use it
+ * - SettingsCache().loadSharedPreferences(getBaseContext());
+ * <p>
+ * The SettingsCache needs to be cleared manually after changing already cached data.
+ * SettingsCache.clear(); should only be called after changing settings in SharedPreferences
+ * that are accessed through the SettingsCache.
+ */
 public class SettingsCache {
     protected static SharedPreferences sharedPreferences = null;
     protected static JSONObject cache = new JSONObject();

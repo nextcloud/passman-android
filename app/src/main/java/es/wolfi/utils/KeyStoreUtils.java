@@ -46,6 +46,23 @@ import javax.crypto.spec.GCMParameterSpec;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.SettingValues;
 
+/**
+ * Takes care of data encryption in SharedPreferences.
+ * <p>
+ * This is an optional feature, but should be used for all user data.
+ *
+ * <b>Basic usage:</b>
+ * Call KeyStoreUtils.initialize(SharedPreferences settings); at the top of each activity
+ * you want to use encrypted data stored in Androids SharedPreferences.
+ * <p>
+ * Encrypt data and store it in SharedPreferences:
+ * - replace settings.edit().putString() with KeyStoreUtils.putString()
+ * - replace settings.edit().putString().commit() with KeyStoreUtils.putStringAndCommit()
+ * Without the explicit commit() call, the backend will take care of storing the data asynchronously (recommended)
+ * <p>
+ * Get encrypted data from SharedPreferences:
+ * - replace settings.getString() with KeyStoreUtils.getString()
+ */
 public class KeyStoreUtils {
 
     private static final String AndroidKeyStore = "AndroidKeyStore";

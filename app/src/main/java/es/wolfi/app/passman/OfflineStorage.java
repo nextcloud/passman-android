@@ -30,6 +30,26 @@ import org.json.JSONObject;
 import es.wolfi.utils.FileUtils;
 import es.wolfi.utils.KeyStoreUtils;
 
+/**
+ * Call the initialization of the OfflineStorage at the top of each activity you want to use it
+ * - new OfflineStorage(getBaseContext());
+ * <p>
+ * <b>Use OfflineStorage.getInstance().? instead of direct calls!</b>
+ * <p>
+ * The OfflineStorage class can be used to store data completely encrypted in Androids SharedPreferences.
+ * <p>
+ * It has getter and setter methods to store and fetch data of type string/object and int.
+ * - OfflineStorage.getInstance().putObject(key, value);
+ * - OfflineStorage.getInstance().putInt(key, value);
+ * - OfflineStorage.getInstance().getObject(key, defaultObject);
+ * - OfflineStorage.getInstance().getString(key, defaultString);
+ * - OfflineStorage.getInstance().getInt(key, defaultInt);
+ * <p>
+ * It works like a "full" layer between the Androids SharedPreferences storage engine and the running Passman app.
+ * It should be used instead of calling SharedPreferences directly.
+ * <p>
+ * Call OfflineStorage.getInstance().commit(); on closing the app to make the changes persistent.
+ */
 public class OfflineStorage {
 
     protected static OfflineStorage offlineStorage;
