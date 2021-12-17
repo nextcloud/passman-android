@@ -67,8 +67,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 
+import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.fragments.CredentialAddFragment;
 import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
@@ -82,6 +84,7 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.ProgressUtils;
 
 public class PasswordListActivity extends AppCompatActivity implements
@@ -136,6 +139,9 @@ public class PasswordListActivity extends AppCompatActivity implements
         checkFragmentPosition(true);
         if (running) return;
 
+        new SettingsCache().loadSharedPreferences(getBaseContext());
+        KeyStoreUtils.initialize(settings);
+        new OfflineStorage(getBaseContext());
         initialAuthentication(false);
     }
 
@@ -244,12 +250,7 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     public void showVaults() {
         this.VaultLockButton.setVisibility(View.INVISIBLE);
-        Core.getAPIVersion(this, new FutureCallback<Integer>() {
-            @Override
-            public void onCompleted(Exception e, Integer result) {
 
-            }
-        });
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
         if (vaults != null) {
             getSupportFragmentManager()
@@ -345,7 +346,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         activatedBeforeRecreate = "unlockVault";
         this.VaultLockButton.setVisibility(View.VISIBLE);
         Vault v = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        if (v.unlock(settings.getString(v.guid, ""))) {
+        if (v.unlock(KeyStoreUtils.getString(v.guid, ""))) {
             showActiveVault();
             return;
         }
@@ -382,6 +383,11 @@ public class PasswordListActivity extends AppCompatActivity implements
         ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(v.guid, v);
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
         Vault.updateAutofillVault(v, settings);
+        try {
+            OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -402,6 +408,11 @@ public class PasswordListActivity extends AppCompatActivity implements
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
         Vault.updateAutofillVault(v, settings);
+        try {
+            OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -422,6 +433,11 @@ public class PasswordListActivity extends AppCompatActivity implements
         ton.removeExtra(SettingValues.ACTIVE_VAULT.toString());
         ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), v);
         Vault.updateAutofillVault(v, settings);
+        try {
+            OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
 
@@ -850,5 +866,11 @@ public class PasswordListActivity extends AppCompatActivity implements
     public void onBackPressed() {
         checkFragmentPosition(false);
         super.onBackPressed();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        OfflineStorage.getInstance().commit();
     }
 }

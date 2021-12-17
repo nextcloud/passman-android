@@ -72,7 +72,11 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
 
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-        String response = new String(responseBody);
+        String response = "";
+
+        if (responseBody != null && responseBody.length > 0) {
+            response = new String(responseBody);
+        }
 
         if (!response.equals("") && JSONUtils.isJSONObject(response)) {
             try {
@@ -90,7 +94,7 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
 
         if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
-            Log.e("async http response", new String(responseBody));
+            Log.e("async http response", response);
             Toast.makeText(applicationContext, error.getMessage(), Toast.LENGTH_SHORT).show();
             Log.d(TAG, error.getMessage());
         } else {
