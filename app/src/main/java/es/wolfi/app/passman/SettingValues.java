@@ -30,8 +30,15 @@ public enum SettingValues {
     AUTOFILL_VAULT_GUID("autofill_vault_guid"),
     AUTOFILL_VAULT("autofill_vault"),
     ENABLE_APP_START_DEVICE_PASSWORD("enable_app_start_device_password"),
+    ENABLE_CREDENTIAL_LIST_ICONS("enable_credential_list_icons"),
     REQUEST_CONNECT_TIMEOUT("request_connect_timeout"),
-    REQUEST_RESPONSE_TIMEOUT("request_response_timeout");
+    REQUEST_RESPONSE_TIMEOUT("request_response_timeout"),
+    CLEAR_CLIPBOARD_DELAY("clear_clipboard_delay"),
+    PASSWORD_GENERATOR_SETTINGS("password_generator_settings"),
+    ENABLE_PASSWORD_GENERATOR_SHORTCUT("enable_password_generator_shortcut"),
+    OFFLINE_STORAGE("offline_storage"),
+    ENABLE_OFFLINE_CACHE("enable_offline_cache"),
+    KEY_STORE_MIGRATION_STATE("key_store_migration_state");
 
     private final String name;
 

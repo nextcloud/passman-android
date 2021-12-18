@@ -28,6 +28,14 @@
     <string name="successfully_updated">Mis à jour avec succès</string>
     <string name="delete">Supprimer</string>
     <string name="successfully_deleted">Suppression réussie</string>
+    <string name="nextcloud_connection_settings">Paramètres de connexion Nextcloud</string>
+    <string name="app_settings">Paramètres de l\'application</string>
+    <string name="wait_while_loading">Patientez pendant le chargement...</string>
     <string name="loading">Chargement</string>
+    <string name="error_downloading_file">Erreur au téléchargement du fichier</string>
+    <string name="error_writing_file">Erreur à l\'écriture du fichier</string>
     <string name="files">Fichiers</string>
+    <string name="custom_fields">Champs personnalisés</string>
+    <string name="wait_while_uploading">Patienter pendant le téléchargement</string>
+    <string name="automatically">automatiquement</string>
     </resources>

@@ -36,11 +36,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
+import es.wolfi.app.passman.OfflineStorage;
+import es.wolfi.app.passman.OfflineStorageValues;
 import es.wolfi.app.passman.SJCLCrypto;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.utils.CredentialLabelSort;
 import es.wolfi.utils.Filterable;
+import es.wolfi.utils.KeyStoreUtils;
 
 public class Vault extends Core implements Filterable {
     public int vault_id;
@@ -65,6 +68,10 @@ public class Vault extends Core implements Filterable {
     }
 
     public String decryptString(String cryptogram) {
+        return decryptString(cryptogram, this.encryption_key);
+    }
+
+    public String decryptString(String cryptogram, String encryption_key) {
         if (cryptogram == null) {
             return "";
         }
@@ -91,6 +98,10 @@ public class Vault extends Core implements Filterable {
 
     public void lock() {
         encryption_key = "";
+
+        for (Credential credential : credentials) {
+            credential.resetDecryptedSharedKey();
+        }
     }
 
     public boolean is_unlocked() {
@@ -108,6 +119,10 @@ public class Vault extends Core implements Filterable {
     }
 
     public String encryptString(String plaintext) {
+        return encryptString(plaintext, this.encryption_key);
+    }
+
+    public String encryptString(String plaintext, String encryption_key) {
         if (plaintext == null) {
             return "";
         }
@@ -121,6 +136,10 @@ public class Vault extends Core implements Filterable {
     }
 
     public String encryptRawStringData(String plaintext) {
+        return encryptRawStringData(plaintext, this.encryption_key);
+    }
+
+    public String encryptRawStringData(String plaintext, String encryption_key) {
         if (plaintext == null) {
             return "";
         }
@@ -155,8 +174,14 @@ public class Vault extends Core implements Filterable {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
-                    cb.onCompleted(e, null);
-                    return;
+                    if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
+                        result = OfflineStorage.getInstance().getString(OfflineStorageValues.VAULTS.toString(), null);
+                    }
+                    if (result == null || !OfflineStorage.getInstance().isEnabled() ||
+                            !OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
+                        cb.onCompleted(e, null);
+                        return;
+                    }
                 }
 
 //                Log.e(Vault.LOG_TAG, result);
@@ -169,7 +194,8 @@ public class Vault extends Core implements Filterable {
                         l.put(v.guid, v);
                     }
 
-                    cb.onCompleted(e, l);
+                    OfflineStorage.getInstance().putObject(OfflineStorageValues.VAULTS.toString(), result);
+                    cb.onCompleted(null, l);
                 } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
@@ -182,8 +208,14 @@ public class Vault extends Core implements Filterable {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
-                    cb.onCompleted(e, null);
-                    return;
+                    if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(guid)) {
+                        result = OfflineStorage.getInstance().getString(guid, null);
+                    }
+                    if (result == null || !OfflineStorage.getInstance().isEnabled() ||
+                            !OfflineStorage.getInstance().has(guid)) {
+                        cb.onCompleted(e, null);
+                        return;
+                    }
                 }
 
                 try {
@@ -191,7 +223,8 @@ public class Vault extends Core implements Filterable {
 
                     Vault v = Vault.fromJSON(data);
 
-                    cb.onCompleted(e, v);
+                    OfflineStorage.getInstance().putObject(guid, result);
+                    cb.onCompleted(null, v);
                 } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
@@ -243,19 +276,28 @@ public class Vault extends Core implements Filterable {
     }
 
     public void updateCredential(Credential updatedCredential) {
+        int newIndex = -1;
         for (Credential credential : credentials) {
             if (credential.getGuid().equals(updatedCredential.getGuid())) {
-                int index = credentials.indexOf(credential);
-                credentials.set(index, updatedCredential);
+                newIndex = credentials.indexOf(credential);
+                break;
             }
+        }
+        if (newIndex >= 0) {
+            credentials.set(newIndex, updatedCredential);
         }
     }
 
     public void deleteCredential(Credential updatedCredential) {
+        Credential credentialToRemove = null;
         for (Credential credential : credentials) {
             if (credential.getGuid().equals(updatedCredential.getGuid())) {
-                credentials.remove(credential);
+                credentialToRemove = credential;
+                break;
             }
+        }
+        if (credentialToRemove != null) {
+            credentials.remove(credentialToRemove);
         }
     }
 
@@ -300,7 +342,7 @@ public class Vault extends Core implements Filterable {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").equals(vault.guid)) {
                 try {
-                    settings.edit().putString(SettingValues.AUTOFILL_VAULT.toString(), Vault.asJson(vault)).apply();
+                    KeyStoreUtils.putString(SettingValues.AUTOFILL_VAULT.toString(), Vault.asJson(vault));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

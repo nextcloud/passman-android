@@ -41,7 +41,6 @@
     <string name="unlock_passman">Sblocca Passman</string>
     <string name="unlock_passman_message_device_auth">Autenticati per accedere a Passman</string>
     <string name="app_start_password">Password di avvio dell\'app</string>
-    <string name="app_start_password_android_auth_description">Attivare l\'autenticazione utente di Android all\'avvio dell\'app?</string>
     <string name="wait_while_encrypting">Attendi la crittografia ...</string>
     <string name="wait_while_decrypting">Attendi la decifrazione ...</string>
     <string name="wait_while_uploading">Attendi l\'invio ...</string>
@@ -58,4 +57,4 @@
     <string name="confirm_credential_deletion">Vuoi davvero eliminare questa credenziale?</string>
     <string name="yes">Sì</string>
     <string name="cancel">Annulla</string>
-</resources>
+    </resources>

@@ -58,4 +58,17 @@
     <string name="confirm_credential_deletion">Naozaj chcete odstrániť tieto prihlasovacie údaje?</string>
     <string name="yes">Áno</string>
     <string name="cancel">Zrušiť</string>
-</resources>
+    <string name="enable_credential_list_icons">Povoliť ikony v zozname účtov</string>
+    <string name="credential_icon">Ikona účtu</string>
+    <string name="clear_clipboard_delay">Vymazať schránku (po sekundách)</string>
+    <string name="generate_password">Generovať heslo</string>
+    <string name="generate_password_to_clipboard">Vygenerovať náhodné heslo a skopírovať ho do schránky</string>
+    <string name="enable_password_generator_shortcut_description">Povoliť odkaz na aplikáciu generátora hesiel</string>
+    <string name="password_generator_require_every_char_type">Vyžadovať znak z každého typu</string>
+    <string name="password_generator_avoid_ambiguous_chars">Vyhnúť sa nejednoznačným znakom</string>
+    <string name="password_generator_use_special_chars">Použiť špeciálne znaky</string>
+    <string name="password_generator_use_digits">Použiť číslice</string>
+    <string name="password_generator_use_lowercase">Použiť malé znaky</string>
+    <string name="password_generator_use_uppercase">Použiť veľké znaky</string>
+    <string name="password_length">Dĺžka hesla</string>
+    </resources>

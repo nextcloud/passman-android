@@ -58,6 +58,12 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="SettingsDescription">
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:layout_marginStart">6dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
     <style name="FormText">
         <item name="android:textColor">#333333</item>
         <item name="android:textSize">16sp</item>

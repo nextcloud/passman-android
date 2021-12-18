@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import es.wolfi.app.passman.PasswordList;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -28,10 +28,10 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
     private final AtomicBoolean alreadySaving;
     private final ProgressDialog progress;
     private final View view;
-    private final PasswordList passwordListActivity;
+    private final PasswordListActivity passwordListActivity;
     private final FragmentManager fragmentManager;
 
-    public CredentialDeleteResponseHandler(AtomicBoolean alreadySaving, ProgressDialog progress, View view, PasswordList passwordListActivity, FragmentManager fragmentManager) {
+    public CredentialDeleteResponseHandler(AtomicBoolean alreadySaving, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
         super();
 
         this.alreadySaving = alreadySaving;
@@ -54,11 +54,13 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
                     Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
 
                     Objects.requireNonNull(passwordListActivity).deleteCredentialInCurrentLocalVaultList(currentCredential);
-                    Objects.requireNonNull(passwordListActivity).showAddCredentialsButton();
                     Objects.requireNonNull(passwordListActivity).showLockVaultButton();
 
                     int backStackCount = fragmentManager.getBackStackEntryCount();
-                    int backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                    int backStackId = 0;
+                    if (backStackCount - 2 >= 0) {
+                        backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                    }
                     alreadySaving.set(false);
                     progress.dismiss();
                     fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -78,7 +80,11 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         alreadySaving.set(false);
         progress.dismiss();
-        String response = new String(responseBody);
+        String response = "";
+
+        if (responseBody != null && responseBody.length > 0) {
+            response = new String(responseBody);
+        }
 
         if (!response.equals("") && JSONUtils.isJSONObject(response)) {
             try {
@@ -94,7 +100,7 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
 
         if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
-            Log.e("async http response", new String(responseBody));
+            Log.e("async http response", response);
             Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
