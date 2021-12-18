@@ -71,4 +71,4 @@
     <string name="password_generator_use_lowercase">Kleinbuchstaben verwenden</string>
     <string name="password_generator_use_uppercase">Großbuchstaben verwenden</string>
     <string name="password_length">Passwortlänge</string>
-</resources>
+    </resources>

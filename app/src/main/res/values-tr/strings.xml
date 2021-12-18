@@ -71,4 +71,4 @@
     <string name="password_generator_use_lowercase">Küçük harf karakterler kullanılsın</string>
     <string name="password_generator_use_uppercase">Büyük harf karakterler kullanılsın</string>
     <string name="password_length">Parola uzunluğu</string>
-</resources>
+    </resources>

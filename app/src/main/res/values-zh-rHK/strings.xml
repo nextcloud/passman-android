@@ -71,4 +71,4 @@
     <string name="password_generator_use_lowercase">使用小寫字母</string>
     <string name="password_generator_use_uppercase">使用大寫字母 </string>
     <string name="password_length">密碼長度</string>
-</resources>
+    </resources>

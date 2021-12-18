@@ -71,4 +71,4 @@
     <string name="password_generator_use_lowercase">Použít malá písmena</string>
     <string name="password_generator_use_uppercase">Použít velká písmena</string>
     <string name="password_length">Délka hesla</string>
-</resources>
+    </resources>
