@@ -34,17 +34,18 @@ import org.json.JSONObject;
  * High frequently required SettingValues from SharedPreferences should be requested using the SettingsCache.
  * It returns/caches data directly from SharedPreferences without checking possible encryption on it.
  * <p>
- * Call the initialization of the SettingsCache at the top of each activity you want to use it
- * - SettingsCache().loadSharedPreferences(getBaseContext());
- * <p>
- * The SettingsCache needs to be cleared manually after changing already cached data.
- * SettingsCache.clear(); should only be called after changing settings in SharedPreferences
- * that are accessed through the SettingsCache.
+ * Don't forget to call loadSharedPreferences() before the first usage!
  */
 public class SettingsCache {
     protected static SharedPreferences sharedPreferences = null;
     protected static JSONObject cache = new JSONObject();
 
+    /**
+     * Call the initialization of the SettingsCache at the top of each activity you want to use it.
+     * Example usage: SettingsCache().loadSharedPreferences(getBaseContext());
+     *
+     * @param context - base context
+     */
     public void loadSharedPreferences(Context context) {
         if (sharedPreferences == null) {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -55,10 +56,22 @@ public class SettingsCache {
         return sharedPreferences;
     }
 
+    /**
+     * The SettingsCache needs to be cleared manually after changing already cached data.
+     * SettingsCache.clear() should only be called after changing settings in SharedPreferences
+     * that are accessed through the SettingsCache.
+     */
     public static void clear() {
         cache = new JSONObject();
     }
 
+    /**
+     * Returns a cached String from sharedPreferences.
+     *
+     * @param key      String
+     * @param fallback String - fallback if the key or it's value does not exist
+     * @return String
+     */
     public static String getString(String key, String fallback) {
         try {
             if (!cache.has(key)) {
@@ -73,6 +86,13 @@ public class SettingsCache {
         return fallback;
     }
 
+    /**
+     * Returns a cached int from sharedPreferences.
+     *
+     * @param key      String
+     * @param fallback int - fallback if the key or it's value does not exist
+     * @return int
+     */
     public static int getInt(String key, int fallback) {
         try {
             if (!cache.has(key)) {
@@ -87,6 +107,13 @@ public class SettingsCache {
         return fallback;
     }
 
+    /**
+     * Returns a cached boolean from sharedPreferences.
+     *
+     * @param key      String
+     * @param fallback boolean - fallback if the key or it's value does not exist
+     * @return boolean
+     */
     public static boolean getBoolean(String key, boolean fallback) {
         try {
             if (!cache.has(key)) {

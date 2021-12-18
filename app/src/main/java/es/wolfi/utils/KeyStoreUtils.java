@@ -48,20 +48,9 @@ import es.wolfi.app.passman.SettingValues;
 
 /**
  * Takes care of data encryption in SharedPreferences.
- * <p>
  * This is an optional feature, but should be used for all user data.
- *
- * <b>Basic usage:</b>
- * Call KeyStoreUtils.initialize(SharedPreferences settings); at the top of each activity
- * you want to use encrypted data stored in Androids SharedPreferences.
  * <p>
- * Encrypt data and store it in SharedPreferences:
- * - replace settings.edit().putString() with KeyStoreUtils.putString()
- * - replace settings.edit().putString().commit() with KeyStoreUtils.putStringAndCommit()
- * Without the explicit commit() call, the backend will take care of storing the data asynchronously (recommended)
- * <p>
- * Get encrypted data from SharedPreferences:
- * - replace settings.getString() with KeyStoreUtils.getString()
+ * Use this class directly only if you don't want to make use of the OfflineStorage class!
  */
 public class KeyStoreUtils {
 
@@ -73,6 +62,12 @@ public class KeyStoreUtils {
     private static KeyStore keyStore = null;
     private static SharedPreferences settings = null;
 
+    /**
+     * Call initialize() at the top of each activity you want to use encrypted data stored in Androids SharedPreferences.
+     * Example usage: KeyStoreUtils.initialize(SharedPreferences settings);
+     *
+     * @param sharedPreferences SharedPreferences
+     */
     public static void initialize(SharedPreferences sharedPreferences) {
         Log.d("KeyStoreUtils", "initialize");
         settings = sharedPreferences;
@@ -104,6 +99,10 @@ public class KeyStoreUtils {
         }
     }
 
+    /**
+     * Called with any KeyStoreUtils.initialize().
+     * Used to automatically encrypt unencrypted stored data from older Passman versions.
+     */
     private static void migrateSharedPreferences() {
         int originalMigrationState = settings.getInt(SettingValues.KEY_STORE_MIGRATION_STATE.toString(), 0);
         int currentMigrationState = originalMigrationState;
@@ -159,6 +158,12 @@ public class KeyStoreUtils {
         return keyStore.getKey(KEY_ALIAS, null);
     }
 
+    /**
+     * Encrypt data using the Android KeyStore feature (to store it in SharedPreferences).
+     *
+     * @param input String
+     * @return String - encrypted input
+     */
     public static String encrypt(String input) {
         try {
             if (input != null && keyStore != null && keyStore.containsAlias(KEY_ALIAS)) {
@@ -177,6 +182,13 @@ public class KeyStoreUtils {
         return input;
     }
 
+    /**
+     * Decrypt data using the Android KeyStore feature (to load encrypted data from SharedPreferences).
+     *
+     * @param encrypted String
+     * @param fallback  String - use this as fallback if the decryption fails
+     * @return String - decrypted data
+     */
     public static String decrypt(String encrypted, String fallback) {
         try {
             if (encrypted != null && keyStore != null && keyStore.containsAlias(KEY_ALIAS) && encrypted.length() >= IV_LENGTH * 2) {
@@ -195,14 +207,39 @@ public class KeyStoreUtils {
         return fallback;
     }
 
+    /**
+     * Decrypt data from SharedPreferences and return it as String.
+     * Replace settings.getString() with KeyStoreUtils.getString().
+     *
+     * @param key      String
+     * @param fallback String
+     * @return String
+     */
     public static String getString(String key, String fallback) {
         return decrypt(settings.getString(key, null), fallback);
     }
 
+    /**
+     * Encrypt data and store it in SharedPreferences.
+     * Replace settings.edit().putString() with KeyStoreUtils.putString().
+     * Without the explicit commit() call, the backend will take care of storing the data asynchronously (recommended)
+     *
+     * @param key   String
+     * @param value String
+     */
     public static void putString(String key, String value) {
         settings.edit().putString(key, encrypt(value)).apply();
     }
 
+    /**
+     * Encrypt data and store it in SharedPreferences.
+     * Replace settings.edit().putString().commit() with KeyStoreUtils.putStringAndCommit().
+     * With the explicit commit() call, data will be stored synchronously (not recommended for the most cases)
+     *
+     * @param key   String
+     * @param value String
+     * @return boolean - Returns true if the value was successfully written to persistent storage.
+     */
     public static boolean putStringAndCommit(String key, String value) {
         return settings.edit().putString(key, encrypt(value)).commit();
     }
