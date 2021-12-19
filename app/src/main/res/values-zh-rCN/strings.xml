@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">无效 Nextcloud 后端 URL 或无法访问</string>
     <string name="wrongNCSettings">配置错误</string>
     <string name="net_error">网络错误</string>
+    <string name="net_error_dialog_description">无法连接到服务器！\n没有正常工作的服务器连接，将无法保存更改。</string>
     <string name="unlock">解锁</string>
     <string name="wrong_vault_pw">保险箱密码错误</string>
     <string name="label">标签</string>
@@ -71,4 +72,8 @@
     <string name="password_generator_use_lowercase">使用小写字符</string>
     <string name="password_generator_use_uppercase">使用大写字符</string>
     <string name="password_length">密码长度</string>
-    </resources>
+    <string name="offline_cache">离线缓存</string>
+    <string name="offline_cache_description">缓存手动加载的密码库</string>
+    <string name="enable_offline_cache">启用离线缓存</string>
+    <string name="clear_offline_cache">清除离线缓存</string>
+</resources>
