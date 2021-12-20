@@ -26,10 +26,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
@@ -98,36 +100,41 @@ public class CredentialItemFragment extends Fragment {
         final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
         final AppCompatImageButton toggleSortButton = (AppCompatImageButton) view.findViewById(R.id.toggle_sort_button);
 
-        searchInput.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        if (v != null) {
+            searchInput.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
+                }
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                applyFilters(v, searchInput);
-            }
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    applyFilters(v, searchInput);
+                }
 
-            @Override
-            public void afterTextChanged(Editable editable) {
+                @Override
+                public void afterTextChanged(Editable editable) {
 
-            }
-        });
-        toggleSortButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sortMethod = (++sortMethod % 3);
-                updateToggleSortButtonImage(toggleSortButton);
+                }
+            });
+            toggleSortButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sortMethod = (++sortMethod % 3);
+                    updateToggleSortButtonImage(toggleSortButton);
 
-                v.sort(sortMethod);
-                applyFilters(v, searchInput);
-            }
-        });
-        v.sort(sortMethod);
-        recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
-        scrollToLastPosition();
-        updateToggleSortButtonImage(toggleSortButton);
+                    v.sort(sortMethod);
+                    applyFilters(v, searchInput);
+                }
+            });
+            v.sort(sortMethod);
+            recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
+            scrollToLastPosition();
+            updateToggleSortButtonImage(toggleSortButton);
+        } else {
+            Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
+            Log.e("CredentialItemFragment", "active vault could not be found");
+        }
     }
 
     public void applyFilters(Vault vault, EditText searchInput) {
