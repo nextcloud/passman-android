@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nesprávna URL Nextcloud backend servera alebo sa nie je možné pripojiť</string>
     <string name="wrongNCSettings">Nesprávne nastavenia</string>
     <string name="net_error">Chyba siete</string>
+    <string name="net_error_dialog_description">Nepodarilo sa pripojiť k serveru!\nZmeny nie je možné uložiť bez funkčného pripojenia k serveru.</string>
     <string name="unlock">Odomknúť</string>
     <string name="wrong_vault_pw">Nesprávne heslo k trezoru</string>
     <string name="label">Štítok</string>
@@ -71,4 +72,8 @@
     <string name="password_generator_use_lowercase">Použiť malé znaky</string>
     <string name="password_generator_use_uppercase">Použiť veľké znaky</string>
     <string name="password_length">Dĺžka hesla</string>
-    </resources>
+    <string name="offline_cache">Offline vyrovnávacia pamäť</string>
+    <string name="offline_cache_description">Ukladá do vyrovnávacej pamäte šifrované trezory, ak boli načítané manuálne</string>
+    <string name="enable_offline_cache">Zapnúť offline vyrovnávaciu pamäť</string>
+    <string name="clear_offline_cache">Vyčistiť offline vyrovnávaciu pamäť</string>
+</resources>
