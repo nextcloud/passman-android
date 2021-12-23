@@ -8,7 +8,7 @@
     <string name="wrongNCUrl">Nesprávná URL Nextcloud podpůrné vrstvy nebo se nedaří spojit</string>
     <string name="wrongNCSettings">Nesprávná nastavení</string>
     <string name="net_error">Chyba sítě</string>
-    <string name="net_error_dialog_description">Nedaří se připojit k serveru! Bez funkčního připojení k serveru, nemůže být uloženo \n změn.</string>
+    <string name="net_error_dialog_description">Nedaří se připojit k serveru!\nBez funkčního připojení k serveru, nemohou být změny uloženy.</string>
     <string name="unlock">Odemknout</string>
     <string name="wrong_vault_pw">Nesprávné heslo k trezoru</string>
     <string name="label">Štítek</string>
@@ -73,7 +73,7 @@
     <string name="password_generator_use_uppercase">Použít velká písmena</string>
     <string name="password_length">Délka hesla</string>
     <string name="offline_cache">Mezipaměť offline režimu</string>
-    <string name="offline_cache_description">Zašifrované trezory, které byly manuálně nahrány, se ukládají do mezipaměti.</string>
+    <string name="offline_cache_description">Uchovává zašifrované trezory, které byly načteny ručně, v mezipaměti</string>
     <string name="enable_offline_cache">Zapnout mezipaměť offline režimu</string>
     <string name="clear_offline_cache">Vymazat mezipaměť offline režimu</string>
 </resources>
