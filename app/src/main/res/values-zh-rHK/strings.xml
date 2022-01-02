@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">不正確的Nextcloud後端URL或無法連接</string>
     <string name="wrongNCSettings">設定不正確</string>
     <string name="net_error">網絡異常</string>
+    <string name="net_error_dialog_description">無法連接到伺服器！\n如果沒有有效的伺服器連接，則無法保存更改。</string>
     <string name="unlock">解鎖</string>
     <string name="wrong_vault_pw">保險庫密碼錯誤</string>
     <string name="label">標籤</string>
@@ -71,4 +72,8 @@
     <string name="password_generator_use_lowercase">使用小寫字母</string>
     <string name="password_generator_use_uppercase">使用大寫字母 </string>
     <string name="password_length">密碼長度</string>
+    <string name="offline_cache">離線缓存</string>
+    <string name="offline_cache_description">緩存手動加載的已加密保管庫</string>
+    <string name="enable_offline_cache">啟用離線缓存</string>
+    <string name="clear_offline_cache">清除離線缓存</string>
 </resources>

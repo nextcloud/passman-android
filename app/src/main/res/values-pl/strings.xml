@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nieprawidłowy URL serwera Nextcloud lub brak połączenia</string>
     <string name="wrongNCSettings">Błędne ustawienia</string>
     <string name="net_error">Błąd sieci</string>
+    <string name="net_error_dialog_description">Nie można połączyć się z serwerem!\nZmiany nie mogą zostać zapisane bez działającego połączenia z serwerem.</string>
     <string name="unlock">Odblokuj</string>
     <string name="wrong_vault_pw">Nieprawidłowe hasło do sejfu</string>
     <string name="label">Etykieta</string>
@@ -71,4 +72,8 @@
     <string name="password_generator_use_lowercase">Użyj małych liter</string>
     <string name="password_generator_use_uppercase">Użyj wielkich liter</string>
     <string name="password_length">Długość hasła</string>
+    <string name="offline_cache">Pamięć podręczna offline</string>
+    <string name="offline_cache_description">Buforuje zaszyfrowane sejfy, jeśli zostały wczytane ręcznie</string>
+    <string name="enable_offline_cache">Włącz pamięć podręczną offline</string>
+    <string name="clear_offline_cache">Wyczyść pamięć podręczną offline</string>
 </resources>

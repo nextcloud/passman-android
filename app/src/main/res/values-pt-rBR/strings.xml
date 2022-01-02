@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">URL da plataforma de serviço Nextcloud incorreta ou impossível conectar</string>
     <string name="wrongNCSettings">Configurações incorretas</string>
     <string name="net_error">Erro de rede</string>
+    <string name="net_error_dialog_description">Não foi possível conectar ao servidor! \nAs alterações não podem ser salvas sem uma conexão de servidor em funcionamento.</string>
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">Senha do cofre incorreta</string>
     <string name="label">Etiqueta</string>
@@ -71,4 +72,8 @@
     <string name="password_generator_use_lowercase">Use caracteres minúsculos</string>
     <string name="password_generator_use_uppercase">Use letras maiúsculas</string>
     <string name="password_length">Comprimento da senha</string>
+    <string name="offline_cache">Cache offline</string>
+    <string name="offline_cache_description">Armazena em cache os cofres criptografados se eles foram carregados manualmente</string>
+    <string name="enable_offline_cache">Habilitar cache offline</string>
+    <string name="clear_offline_cache">Limpar cache offline</string>
 </resources>

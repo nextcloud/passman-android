@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nextcloud yönetim bölümü adresi yanlış ya da bağlanılamıyor</string>
     <string name="wrongNCSettings">Ayarlar hatalı</string>
     <string name="net_error">Ağ sorunu</string>
+    <string name="net_error_dialog_description">Sunucu ile bağlantı kurulamadı!\nDeğişiklikler, çalışan bir sunucu bağlantısı olmadan kaydedilemez.</string>
     <string name="unlock">Kilidi aç</string>
     <string name="wrong_vault_pw">Kasa parolası yanlış</string>
     <string name="label">Etiket</string>
@@ -71,4 +72,8 @@
     <string name="password_generator_use_lowercase">Küçük harf karakterler kullanılsın</string>
     <string name="password_generator_use_uppercase">Büyük harf karakterler kullanılsın</string>
     <string name="password_length">Parola uzunluğu</string>
+    <string name="offline_cache">Çevrimdışı ön bellek</string>
+    <string name="offline_cache_description">El ile olarak yüklenmişlerse şifrelenmiş kasaları ön belleğe alır</string>
+    <string name="enable_offline_cache">Çevrimdışı ön bellek kullanılsın</string>
+    <string name="clear_offline_cache">Çevrimdışı ön belleği temizle</string>
 </resources>
