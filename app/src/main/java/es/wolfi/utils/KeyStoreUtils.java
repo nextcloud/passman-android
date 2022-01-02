@@ -97,6 +97,8 @@ public class KeyStoreUtils {
                     }
                     migrateSharedPreferences();
                 }
+            } else {
+                Log.d("KeyStoreUtils", "not supported");
             }
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | CertificateException e) {
             e.printStackTrace();
@@ -136,7 +138,7 @@ public class KeyStoreUtils {
         return keyStore.getKey(KEY_ALIAS, null);
     }
 
-    public static String encryptKey(String input) {
+    private static String encryptKey(String input) {
         try {
             if (input != null && keyStore != null && keyStore.containsAlias(KEY_ALIAS)) {
                 Cipher c = Cipher.getInstance(AES_MODE);
@@ -156,7 +158,7 @@ public class KeyStoreUtils {
         return null;
     }
 
-    public static String decryptKey(String encrypted) {
+    private static String decryptKey(String encrypted) {
         try {
             if (encrypted != null && keyStore != null && keyStore.containsAlias(KEY_ALIAS) && encrypted.length() >= IV_LENGTH) {
                 byte[] decoded = Base64.decode(encrypted, Base64.DEFAULT);
@@ -189,10 +191,11 @@ public class KeyStoreUtils {
             }
         }
 
-        return null;
+        // seems like KeyStore is not enabled / supported (KeyStore requires at least Android API 23)
+        return input;
     }
 
-    public static String decrypt(String encrypted, String fallback) {
+    public static String decrypt(String encrypted) {
         if (encrypted != null && keyStore != null) {
             String encryptedEncryptionKey = settings.getString(SettingValues.KEY_STORE_ENCRYPTION_KEY.toString(), null);
             String encryptionKey = decryptKey(encryptedEncryptionKey);
@@ -207,11 +210,12 @@ public class KeyStoreUtils {
             }
         }
 
-        return fallback;
+        // seems like KeyStore is not enabled / supported (KeyStore requires at least Android API 23)
+        return encrypted;
     }
 
     public static String getString(String key, String fallback) {
-        return decrypt(settings.getString(key, null), fallback);
+        return decrypt(settings.getString(key, fallback));
     }
 
     public static void putString(String key, String value) {
