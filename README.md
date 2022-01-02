@@ -88,7 +88,7 @@ The passwords will be provided by [Passman](https://github.com/nextcloud/passman
 - The [Android keystore system](https://developer.android.com/training/articles/keystore) is used to encrypt a random generated password with AES/GCM
     - The Android keystore system uses special hardware mechanisms to protect the key
 - This random generated password is used to encrypt all locally stored sensitive data (like the offline cache and stored vault passwords) with the AES-256 encryption that is already used to encrypt credentials
-- If you trust the Android keystore system it should be save to store your vault password on the device
+- If you trust the Android keystore system it should be safe to store your vault password on the device
     - But don't forget that the security of the saved passwords depends on the access protection of your Android phone if you store your vault password on the device!
 
 ## Build locally

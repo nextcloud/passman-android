@@ -51,6 +51,7 @@ import javax.crypto.spec.GCMParameterSpec;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.SJCLCrypto;
 import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SettingsCache;
 
 public class KeyStoreUtils {
 
@@ -99,6 +100,13 @@ public class KeyStoreUtils {
                 }
             } else {
                 Log.d("KeyStoreUtils", "not supported");
+
+                //since offline cache is enabled by default this code disables it for devices with Android < API 23
+                boolean enableOfflineCache = settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), false);
+                if (!enableOfflineCache) {
+                    settings.edit().putBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), false).commit();
+                    SettingsCache.clear();
+                }
             }
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException | NoSuchProviderException | InvalidAlgorithmParameterException | CertificateException e) {
             e.printStackTrace();
