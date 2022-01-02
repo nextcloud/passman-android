@@ -46,6 +46,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import net.bierbaumer.otp_authenticator.TOTPHelper;
 
 import org.apache.commons.codec.binary.Base32;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -133,22 +135,28 @@ public class CredentialDisplayFragment extends Fragment {
 
         if (credential != null) {
             handler = new Handler();
-            if (credential.getOtp().length() > 4) {
-                otp_refresh = new Runnable() {
-                    @Override
-                    public void run() {
-                        int progress = (int) (System.currentTimeMillis() / 1000) % 30;
-                        otp_progress.setProgress(progress * 100);
+            try {
+                JSONObject otpObj = new JSONObject(credential.getOtp());
+                if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
+                    String otpSecret = otpObj.getString("secret");
+                    otp_refresh = new Runnable() {
+                        @Override
+                        public void run() {
+                            int progress = (int) (System.currentTimeMillis() / 1000) % 30;
+                            otp_progress.setProgress(progress * 100);
 
-                        ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
-                        animation.setDuration(1000);
-                        animation.setInterpolator(new LinearInterpolator());
-                        animation.start();
+                            ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
+                            animation.setDuration(1000);
+                            animation.setInterpolator(new LinearInterpolator());
+                            animation.start();
 
-                        otp.setText(TOTPHelper.generate(new Base32().decode(credential.getOtp())));
-                        handler.postDelayed(this, 1000);
-                    }
-                };
+                            otp.setText(TOTPHelper.generate(new Base32().decode(otpSecret)));
+                            handler.postDelayed(this, 1000);
+                        }
+                    };
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         } else {
             Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
@@ -205,51 +213,53 @@ public class CredentialDisplayFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        FloatingActionButton editCredentialButton = view.findViewById(R.id.editCredentialButton);
-        editCredentialButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .replace(R.id.content_password_list, CredentialEditFragment.newInstance(credential.getGuid()), "credentialEdit")
-                        .addToBackStack(null)
-                        .commit();
+        if (credential != null) {
+            FloatingActionButton editCredentialButton = view.findViewById(R.id.editCredentialButton);
+            editCredentialButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getParentFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .replace(R.id.content_password_list, CredentialEditFragment.newInstance(credential.getGuid()), "credentialEdit")
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+            editCredentialButton.setVisibility(View.VISIBLE);
+
+
+            RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+            filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+
+            RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+            customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
+
+            if (credential.getCompromised().equals("true")) {
+                TextView passwordLabel = view.findViewById(R.id.credential_password_label);
+                passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
             }
-        });
-        editCredentialButton.setVisibility(View.VISIBLE);
 
+            label.setText(credential.getLabel());
+            user.setText(credential.getUsername());
+            password.setModePassword();
+            password.setText(credential.getPassword());
+            email.setModeEmail();
+            email.setText(credential.getEmail());
+            url.setText(credential.getUrl());
+            description.setText(credential.getDescription());
+            otp.setEnabled(false);
+            IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
 
-        RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
-        filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+            if (URLUtil.isValidUrl(credential.getUrl())) {
+                url.setModeURL();
+            }
 
-        RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
-        customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
-
-        if (credential.getCompromised().equals("true")) {
-            TextView passwordLabel = view.findViewById(R.id.credential_password_label);
-            passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
-        }
-
-        label.setText(credential.getLabel());
-        user.setText(credential.getUsername());
-        password.setModePassword();
-        password.setText(credential.getPassword());
-        email.setModeEmail();
-        email.setText(credential.getEmail());
-        url.setText(credential.getUrl());
-        description.setText(credential.getDescription());
-        otp.setEnabled(false);
-        IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
-
-        if (URLUtil.isValidUrl(credential.getUrl())) {
-            url.setModeURL();
-        }
-
-        if (otp_refresh == null) {
-            otp_progress.setProgress(0);
+            if (otp_refresh == null) {
+                otp_progress.setProgress(0);
+            }
         }
     }
 

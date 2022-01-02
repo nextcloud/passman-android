@@ -150,8 +150,7 @@ public class FileUtils {
                 selectionArgs = new String[]{split[1]};
 
 
-                return getDataColumn(context, contentUri, selection,
-                        selectionArgs);
+                return getDataColumn(context, contentUri, selection, selectionArgs);
             } else if (isGoogleDriveUri(uri)) {
                 return getDriveFilePath(uri, context);
             }
@@ -332,9 +331,12 @@ public class FileUtils {
                 final int index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(index);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            if (cursor != null)
+            if (cursor != null) {
                 cursor.close();
+            }
         }
 
         return null;
