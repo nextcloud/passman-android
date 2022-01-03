@@ -18,7 +18,7 @@ The passwords will be provided by [Passman](https://github.com/nextcloud/passman
 ## Current features
 - Setup app (enter the nextcloud server settings)
 - App start password option based on the android user authentication
-- Display vault list
+- View, add, rename and delete vaults
 - Login to vault
 - Display credential list
 - View, add, edit and delete credentials
