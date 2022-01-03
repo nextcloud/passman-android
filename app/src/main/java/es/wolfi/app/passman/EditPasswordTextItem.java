@@ -4,6 +4,7 @@
  * @copyright Copyright (c) 2017, Andy Scherzinger
  * @copyright Copyright (c) 2017, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2017, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
