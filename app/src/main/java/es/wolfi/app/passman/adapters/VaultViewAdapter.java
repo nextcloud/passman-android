@@ -138,7 +138,7 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         Core.getAPIVersion(holder.mView.getContext(), new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                if (result != null && new Semver(result).isGreaterThanOrEqualTo("2.3.1336")) {
+                if (result != null && new Semver(result).isGreaterThanOrEqualTo("2.4.0")) {
                     holder.vault_delete_button.setColorFilter(holder.mView.getResources().getColor(R.color.danger));
                     holder.vault_delete_button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -175,6 +175,8 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
                             });
                         }
                     });
+                } else {
+                    Log.d(TAG, "vault deletion not supported");
                 }
             }
         });
