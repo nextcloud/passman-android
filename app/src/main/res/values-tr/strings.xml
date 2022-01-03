@@ -8,7 +8,6 @@
     <string name="wrongNCUrl">Nextcloud yönetim bölümü adresi yanlış ya da bağlanılamıyor</string>
     <string name="wrongNCSettings">Ayarlar hatalı</string>
     <string name="net_error">Ağ sorunu</string>
-    <string name="net_error_dialog_description">Sunucu ile bağlantı kurulamadı!\nDeğişiklikler, çalışan bir sunucu bağlantısı olmadan kaydedilemez.</string>
     <string name="unlock">Kilidi aç</string>
     <string name="wrong_vault_pw">Kasa parolası yanlış</string>
     <string name="label">Etiket</string>

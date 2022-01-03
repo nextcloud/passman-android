@@ -8,7 +8,6 @@
     <string name="wrongNCUrl">Nesprávna URL Nextcloud backend servera alebo sa nie je možné pripojiť</string>
     <string name="wrongNCSettings">Nesprávne nastavenia</string>
     <string name="net_error">Chyba siete</string>
-    <string name="net_error_dialog_description">Nepodarilo sa pripojiť k serveru!\nZmeny nie je možné uložiť bez funkčného pripojenia k serveru.</string>
     <string name="unlock">Odomknúť</string>
     <string name="wrong_vault_pw">Nesprávne heslo k trezoru</string>
     <string name="label">Štítok</string>
