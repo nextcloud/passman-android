@@ -26,6 +26,8 @@ The passwords will be provided by [Passman](https://github.com/nextcloud/passman
 - OTP generation
 - Basic Android autofill implementation
 - Password generator
+- Encrypted offline cache
+- Encrypted stored vault and cloud connection passwords
 
 ## FAQ
 
@@ -36,7 +38,7 @@ The passwords will be provided by [Passman](https://github.com/nextcloud/passman
       - 10.0.2.2
       - 10.0.2.2:8080
       - mycloud.example.com/
-- Fill in your Nextcloud user and password
+- Fill in your Nextcloud user and password (will be stored encrypted)
 - Press the connect button
 
 ### What is the design (intention) for log out on the vaults?
@@ -71,9 +73,23 @@ The passwords will be provided by [Passman](https://github.com/nextcloud/passman
 - You can't access the deleted credentials with the Passman Android app at the moment
 
 ### I don't have enough storage on my phone to install Passman Android from an App Store, what can I do?
-- You could try to install the apk from the GithHub release which matches to your phones CPU architecture and is usually smaller than the App Stores version
+- You could try to install the apk from the GitHub release which matches to your phones CPU architecture and is usually smaller than the App Stores version
    - https://github.com/nextcloud/passman-android/releases/latest
 - The apks that are delivered from the App Stores combines the required files for all supported architectures
+
+### What means "Encrypted offline cache"?
+- By default vaults and credentials are stored in the offline cache
+- If your device has at least Android 6 / API 23 the offline cache will be stored encrypted
+    - Since credentials are already encrypted with the vault password, they will be encrypted twice
+- It's called cache because it works like a read-only fallback mode in case your cloud is not reachable over the network
+    - that means vaults and credentials can not be edited without a working cloud connection
+
+### How far can I trust the local storage encryption? Is it save to store my vault password on the device?
+- The [Android keystore system](https://developer.android.com/training/articles/keystore) is used to encrypt a random generated password with AES/GCM
+    - The Android keystore system uses special hardware mechanisms to protect the key
+- This random generated password is used to encrypt all locally stored sensitive data (like the offline cache and stored vault passwords) with the AES-256 encryption that is already used to encrypt credentials
+- If you trust the Android keystore system it should be safe to store your vault password on the device
+    - But don't forget that the security of the saved passwords depends on the access protection of your Android phone if you store your vault password on the device!
 
 ## Build locally
 
