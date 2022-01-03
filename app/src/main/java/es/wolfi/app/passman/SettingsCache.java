@@ -52,6 +52,11 @@ public class SettingsCache {
         }
     }
 
+    /**
+     * Can be used to get the "default shared preferences" in any activity (or a fragment of it) the SettingsCache was initially loaded.
+     *
+     * @return SharedPreferences
+     */
     public static SharedPreferences getSharedPreferences() {
         return sharedPreferences;
     }
@@ -128,6 +133,11 @@ public class SettingsCache {
         return fallback;
     }
 
+    /**
+     * Proves that SettingsCache makes things faster :)
+     *
+     * @param context Context
+     */
     public static void runTimingTest(Context context) {
         SettingsCache.clear();
 

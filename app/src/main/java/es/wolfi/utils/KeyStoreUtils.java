@@ -74,6 +74,11 @@ public class KeyStoreUtils {
     /**
      * Call initialize() at the top of each activity you want to use encrypted data stored in Androids SharedPreferences.
      * Example usage: KeyStoreUtils.initialize(SharedPreferences settings);
+     * <p>
+     * If the Android KeyStore does not contain the required KEY_ALIAS (usually only at the first app start) an encryption key
+     * for AES/GCM will be generated and stored in the KeyStore (which also protects it from any direct access).
+     * This AES/GCM key is the encryption key for a random generated password which is used to encrypt the user data with the known SJCL.cpp lib.
+     * This is much faster than using any java crypto implementation to encrypt/decrypt user data like data from the OfflineStorage class.
      *
      * @param sharedPreferences SharedPreferences
      */
@@ -114,7 +119,7 @@ public class KeyStoreUtils {
             } else {
                 Log.d("KeyStoreUtils", "not supported");
 
-                //since offline cache is enabled by default this code disables it for devices with Android < API 23
+                // since offline cache is enabled by default this code disables it for devices with Android < API 23
                 boolean enableOfflineCache = settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), false);
                 if (!enableOfflineCache) {
                     settings.edit().putBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), false).commit();
@@ -136,6 +141,7 @@ public class KeyStoreUtils {
 
         if (currentMigrationState < 1) {
             // first app start and first KeyStoreUtils usage migration
+            // already saved vault password will not be migrated and have to be reentered
             Log.d("KeyStoreUtils", "run initial local storage encryption migration");
 
             KeyStoreUtils.putStringAndCommit(SettingValues.HOST.toString(), settings.getString(SettingValues.HOST.toString(), null));
@@ -152,6 +158,12 @@ public class KeyStoreUtils {
         }
     }
 
+    /**
+     * Generates the initialisation vector for the encryption of the user data's encryption key.
+     *
+     * @return byte[]
+     * @throws NoSuchAlgorithmException
+     */
     private static byte[] generateIv() throws NoSuchAlgorithmException {
         SecureRandom random = SecureRandom.getInstance(RANDOM_ALGORITHM);
         byte[] iv = new byte[IV_LENGTH];
@@ -159,10 +171,25 @@ public class KeyStoreUtils {
         return iv;
     }
 
+    /**
+     * Returns a Key instance to encrypt/decrypt the data encryption key.
+     *
+     * @return java.security.Key instance from Android KeyStore
+     * @throws UnrecoverableKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     */
     private static java.security.Key getSecretKey() throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException {
         return keyStore.getKey(KEY_ALIAS, null);
     }
 
+    /**
+     * Encrypts the user data's encryption key.
+     * Should be called only once from initialize().
+     *
+     * @param input String plain encryption key
+     * @return String|null encrypted encryption key or null if the encryption failed or the used KeyStore was not initialized
+     */
     private static String encryptKey(String input) {
         try {
             if (input != null && keyStore != null && keyStore.containsAlias(KEY_ALIAS)) {
@@ -183,6 +210,12 @@ public class KeyStoreUtils {
         return null;
     }
 
+    /**
+     * Decrypts the user data's encryption key.
+     *
+     * @param encrypted String encrypted encryption key
+     * @return String|null plain encryption key or null if the decryption failed or the used KeyStore was not initialized
+     */
     private static String decryptKey(String encrypted) {
         try {
             if (encrypted != null && keyStore != null && keyStore.containsAlias(KEY_ALIAS) && encrypted.length() >= IV_LENGTH) {
@@ -202,10 +235,10 @@ public class KeyStoreUtils {
     }
 
     /**
-     * Encrypt data using the Android KeyStore feature (to store it in SharedPreferences).
+     * Encrypt data using the SJCLCrypto library (to store it in SharedPreferences).
      *
      * @param input String
-     * @return String - encrypted input
+     * @return String encrypted data or original input data if encryption is not enabled or failed
      */
     public static String encrypt(String input) {
         if (input != null && keyStore != null) {
@@ -227,10 +260,10 @@ public class KeyStoreUtils {
     }
 
     /**
-     * Decrypt data using the Android KeyStore feature (to load encrypted data from SharedPreferences).
+     * Decrypt data using the SJCLCrypto library (to load encrypted data from SharedPreferences).
      *
      * @param encrypted String
-     * @return String - decrypted data
+     * @return String decrypted data or original input data if decryption is not enabled or failed
      */
     public static String decrypt(String encrypted) {
         if (encrypted != null && keyStore != null) {
@@ -266,7 +299,7 @@ public class KeyStoreUtils {
     /**
      * Encrypt data and store it in SharedPreferences.
      * Replace settings.edit().putString() with KeyStoreUtils.putString().
-     * Without the explicit commit() call, the backend will take care of storing the data asynchronously (recommended)
+     * Without the explicit commit() call, the backend will take care of storing the data asynchronously (recommended).
      *
      * @param key   String
      * @param value String
@@ -278,11 +311,11 @@ public class KeyStoreUtils {
     /**
      * Encrypt data and store it in SharedPreferences.
      * Replace settings.edit().putString().commit() with KeyStoreUtils.putStringAndCommit().
-     * With the explicit commit() call, data will be stored synchronously (not recommended for the most cases)
+     * With the explicit commit() call, data will be stored synchronously (not recommended for the most cases).
      *
      * @param key   String
      * @param value String
-     * @return boolean - Returns true if the value was successfully written to persistent storage.
+     * @return boolean returns true if the value was successfully written to persistent storage
      */
     public static boolean putStringAndCommit(String key, String value) {
         return settings.edit().putString(key, encrypt(value)).commit();
