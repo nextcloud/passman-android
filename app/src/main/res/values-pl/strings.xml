@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nieprawidłowy URL serwera Nextcloud lub brak połączenia</string>
     <string name="wrongNCSettings">Błędne ustawienia</string>
     <string name="net_error">Błąd sieci</string>
+    <string name="net_error_dialog_description">Nie można połączyć się z serwerem!\nZmiany nie mogą zostać zapisane bez działającego połączenia z serwerem.</string>
     <string name="unlock">Odblokuj</string>
     <string name="wrong_vault_pw">Nieprawidłowe hasło do sejfu</string>
     <string name="label">Etykieta</string>

@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nesprávná URL Nextcloud podpůrné vrstvy nebo se nedaří spojit</string>
     <string name="wrongNCSettings">Nesprávná nastavení</string>
     <string name="net_error">Chyba sítě</string>
+    <string name="net_error_dialog_description">Nedaří se připojit k serveru!\nBez funkčního připojení k serveru, nemohou být změny uloženy.</string>
     <string name="unlock">Odemknout</string>
     <string name="wrong_vault_pw">Nesprávné heslo k trezoru</string>
     <string name="label">Štítek</string>

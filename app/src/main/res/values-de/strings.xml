@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Falsche Nextcloud-Backend-URL oder keine Verbindung möglich</string>
     <string name="wrongNCSettings">Einstellungen falsch</string>
     <string name="net_error">Netzwerkfehler</string>
+    <string name="net_error_dialog_description">Es konnte keine Verbindung zum Server hergestellt werden!\nÄnderungen können ohne eine funktionierende Serververbindung nicht gespeichert werden.</string>
     <string name="unlock">Öffnen</string>
     <string name="wrong_vault_pw">Falsches Tresor-Passwort</string>
     <string name="label">Beschriftung</string>

@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">不正確的Nextcloud後端URL或無法連接</string>
     <string name="wrongNCSettings">設定不正確</string>
     <string name="net_error">網絡異常</string>
+    <string name="net_error_dialog_description">無法連接到伺服器！\n如果沒有有效的伺服器連接，則無法保存更改。</string>
     <string name="unlock">解鎖</string>
     <string name="wrong_vault_pw">保險庫密碼錯誤</string>
     <string name="label">標籤</string>
