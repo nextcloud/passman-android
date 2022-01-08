@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Verkeerde Nextcloud link of niet in staat te verbinden</string>
     <string name="wrongNCSettings">Onjuiste configuratie</string>
     <string name="net_error">Netwerk fout</string>
+    <string name="net_error_dialog_description">Kan geen verbinding maken met de server!\nWijzigingen kunnen niet worden opgeslagen zonder een werkende serververbinding.</string>
     <string name="unlock">Deblokkeren</string>
     <string name="wrong_vault_pw">Onjuist kluiswachtwoord</string>
     <string name="label">Label</string>
@@ -71,4 +72,5 @@
     <string name="password_generator_use_lowercase">Gebruik kleine letters</string>
     <string name="password_generator_use_uppercase">Gebruik hoofdletters</string>
     <string name="password_length">Wachtwoordlengte</string>
+    <string name="offline_cache">Off-line cache</string>
     </resources>
