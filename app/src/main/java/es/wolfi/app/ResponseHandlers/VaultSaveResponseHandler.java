@@ -44,6 +44,7 @@ import es.wolfi.utils.JSONUtils;
 
 public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
 
+    public static String labelPrefixForFirstVaultConsistencyCredential = "Test key for vault ";
     private final AtomicBoolean alreadySaving;
     private final boolean updateVault;
     private final Vault vault;
@@ -92,7 +93,7 @@ public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
                         Credential testCred = new Credential();
                         testCred.setVault(v);
 
-                        testCred.setLabel("Test key for vault " + v.getName());
+                        testCred.setLabel(labelPrefixForFirstVaultConsistencyCredential + v.getName());
                         testCred.setPassword("lorem ipsum");
                         testCred.setOtp("{}");
                         testCred.setTags("");
