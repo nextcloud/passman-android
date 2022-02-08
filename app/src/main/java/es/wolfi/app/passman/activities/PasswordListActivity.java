@@ -251,12 +251,6 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     public void showVaults() {
         this.VaultLockButton.setVisibility(View.INVISIBLE);
-        Core.getAPIVersion(this, new FutureCallback<String>() {
-            @Override
-            public void onCompleted(Exception e, String result) {
-
-            }
-        });
 
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
         if (vaults != null) {
