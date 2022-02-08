@@ -124,13 +124,16 @@ public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseH
                 }
             } catch (JSONException e1) {
                 e1.printStackTrace();
+                Toast.makeText(view.getContext(),
+                        view.getContext().getString(R.string.error_occurred).concat(e1.getMessage() != null ? e1.getMessage() : ""),
+                        Toast.LENGTH_LONG).show();
             }
         }
 
         if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
             Log.e("async http response", new String(responseBody));
-            Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(view.getContext(), view.getContext().getString(R.string.error_occurred).concat(error.getMessage()), Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
         }
