@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">URL del backend Nextcloud incorrecto o incapaz de conectar</string>
     <string name="wrongNCSettings">Configuraciones incorrectas</string>
     <string name="net_error">Error de red</string>
+    <string name="net_error_dialog_description">No se ha podido conectar al servidor.\nLos cambios no se pueden guardar sin una conexión al servidor funcionando.</string>
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">Contraseña errónea de la caja fuerte</string>
     <string name="label">Etiqueta</string>
@@ -71,4 +72,8 @@
     <string name="password_generator_use_lowercase">Usar letras minúsculas</string>
     <string name="password_generator_use_uppercase">Usar letras mayúsculas</string>
     <string name="password_length">Longitud de la contraseña</string>
-    </resources>
+    <string name="offline_cache">Caché sin conexión</string>
+    <string name="offline_cache_description">Guarda en caché las bóvedas cifradas si se han cargado manualmente</string>
+    <string name="enable_offline_cache">Activar caché sin conexión</string>
+    <string name="clear_offline_cache">Limpiar caché sin conexión</string>
+</resources>
