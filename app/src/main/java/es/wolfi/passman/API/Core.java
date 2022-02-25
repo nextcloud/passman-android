@@ -156,15 +156,20 @@ public abstract class Core {
         requestInternalAPIGET(c, "version", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                if (result != null) {
+                if (result != null && e == null) {
                     Log.d("getApiVersion", result);
                     if (applyVersionJSON(result)) {
                         OfflineStorage.getInstance().putObject(OfflineStorageValues.VERSION.toString(), result);
+                        OfflineStorage.getInstance().commit();
                         cb.onCompleted(null, version_name);
                     }
                 } else {
                     Log.d("getApiVersion", "Failure while getting api version, maybe offline?");
-                    if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString())) {
+                    Log.d("OfflineStorage state", OfflineStorage.getInstance().isEnabled() ? "enabled" : "disabled");
+                    Log.d("version stored", OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString()) ? "yes" : "no");
+                    if (OfflineStorage.getInstance().isEnabled() &&
+                            OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString()) &&
+                            OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
                         showConnectionErrorHint(c);
                         if (applyVersionJSON(OfflineStorage.getInstance().getString(OfflineStorageValues.VERSION.toString()))) {
                             cb.onCompleted(null, version_name);

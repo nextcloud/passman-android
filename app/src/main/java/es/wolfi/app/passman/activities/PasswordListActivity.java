@@ -885,7 +885,7 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     @Override
     public void onPause() {
-        super.onPause();
         OfflineStorage.getInstance().commit();
+        super.onPause();
     }
 }

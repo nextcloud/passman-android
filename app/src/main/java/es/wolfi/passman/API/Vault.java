@@ -199,6 +199,7 @@ public class Vault extends Core implements Filterable {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
+                    Log.d("vaults cached", OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString()) ? "yes" : "no");
                     if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
                         result = OfflineStorage.getInstance().getString(OfflineStorageValues.VAULTS.toString(), null);
                     }
@@ -220,6 +221,7 @@ public class Vault extends Core implements Filterable {
                     }
 
                     OfflineStorage.getInstance().putObject(OfflineStorageValues.VAULTS.toString(), result);
+                    OfflineStorage.getInstance().commit();
                     cb.onCompleted(null, l);
                 } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
