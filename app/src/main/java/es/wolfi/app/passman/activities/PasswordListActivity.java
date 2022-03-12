@@ -3,6 +3,7 @@
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -450,6 +451,20 @@ public class PasswordListActivity extends AppCompatActivity implements
         }
     }
 
+    public void addVaultToCurrentLocalVaultList(Vault vault) {
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+        vaults.put(vault.guid, vault);
+        ton.removeExtra(SettingValues.VAULTS.toString());
+        ton.addExtra(SettingValues.VAULTS.toString(), vaults);
+    }
+
+    public void deleteVaultInCurrentLocalVaultList(Vault vault) {
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+        vaults.remove(vault.guid);
+        ton.removeExtra(SettingValues.VAULTS.toString());
+        ton.addExtra(SettingValues.VAULTS.toString(), vaults);
+    }
+
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
@@ -870,7 +885,7 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     @Override
     public void onPause() {
-        super.onPause();
         OfflineStorage.getInstance().commit();
+        super.onPause();
     }
 }

@@ -3,6 +3,7 @@
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -23,14 +24,26 @@ package es.wolfi.passman.API;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Base64;
 import android.util.Log;
+import android.util.Pair;
 
 import com.koushikdutta.async.future.FutureCallback;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -53,11 +66,23 @@ public class Vault extends Core implements Filterable {
     public String public_sharing_key;
     public double last_access;
     public String challenge_password;
+    public int sharing_keys_generated;
+    public boolean delete_request_pending;
+    public JSONObject vault_settings = null;
+    public static Integer[] keyStrengths = {1024, 2048, 4096};
 
     ArrayList<Credential> credentials;
     HashMap<String, Integer> credential_guid;
 
     private String encryption_key = "";
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 
     public void setEncryptionKey(String k) {
         encryption_key = k;
@@ -174,6 +199,7 @@ public class Vault extends Core implements Filterable {
             @Override
             public void onCompleted(Exception e, String result) {
                 if (e != null) {
+                    Log.d("vaults cached", OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString()) ? "yes" : "no");
                     if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
                         result = OfflineStorage.getInstance().getString(OfflineStorageValues.VAULTS.toString(), null);
                     }
@@ -195,6 +221,7 @@ public class Vault extends Core implements Filterable {
                     }
 
                     OfflineStorage.getInstance().putObject(OfflineStorageValues.VAULTS.toString(), result);
+                    OfflineStorage.getInstance().commit();
                     cb.onCompleted(null, l);
                 } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
@@ -220,9 +247,7 @@ public class Vault extends Core implements Filterable {
 
                 try {
                     JSONObject data = new JSONObject(result);
-
                     Vault v = Vault.fromJSON(data);
-
                     OfflineStorage.getInstance().putObject(guid, result);
                     cb.onCompleted(null, v);
                 } catch (JSONException ex) {
@@ -242,7 +267,7 @@ public class Vault extends Core implements Filterable {
         v.public_sharing_key = o.getString("public_sharing_key");
         v.last_access = o.getDouble("last_access");
 
-        if (o.has("credentials")) {
+        if (o.has("credentials") && !o.getString("credentials").equals("null")) {
             JSONArray j = o.getJSONArray("credentials");
             v.credentials = new ArrayList<Credential>();
             v.credential_guid = new HashMap<>();
@@ -255,8 +280,24 @@ public class Vault extends Core implements Filterable {
                 }
             }
             v.challenge_password = v.credentials.get(0).password;
-        } else {
+        } else if (o.has("challenge_password")) {
             v.challenge_password = o.getString("challenge_password");
+        }
+
+        if (o.has("vault_settings") && !o.getString("vault_settings").equals("null")) {
+            v.vault_settings = new JSONObject(new String(Base64.decode(o.getString("vault_settings"), Base64.DEFAULT)));
+        } else {
+            v.vault_settings = new JSONObject();
+        }
+
+        if (o.has("delete_request_pending")) {
+            v.delete_request_pending = o.getBoolean("delete_request_pending");
+        } else {
+            v.delete_request_pending = false;
+        }
+
+        if (o.has("sharing_keys_generated")) {
+            v.sharing_keys_generated = o.getInt("sharing_keys_generated");
         }
 
         return v;
@@ -322,6 +363,9 @@ public class Vault extends Core implements Filterable {
         obj.put("created", vault.created);
         obj.put("public_sharing_key", vault.public_sharing_key);
         obj.put("last_access", vault.last_access);
+        obj.put("delete_request_pending", vault.delete_request_pending);
+        obj.put("sharing_keys_generated", vault.sharing_keys_generated);
+
         if (vault.getCredentials() != null) {
             JSONArray credentialArr = new JSONArray();
             for (Credential credential : vault.getCredentials()) {
@@ -335,7 +379,34 @@ public class Vault extends Core implements Filterable {
         } else {
             obj.put("challenge_password", vault.challenge_password);
         }
+
+        if (vault.vault_settings != null) {
+            obj.put("vault_settings", Base64.encodeToString(vault.vault_settings.toString().getBytes(StandardCharsets.UTF_8), Base64.DEFAULT));
+        }
+
         return obj.toString();
+    }
+
+    public static RequestParams getAsRequestParams(Vault vault, boolean useJsonStreamer, boolean forEdit) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(useJsonStreamer);
+
+        params.put("vault_id", vault.vault_id);
+        params.put("guid", vault.guid);
+        params.put("name", vault.name);
+        params.put("created", vault.created);
+        params.put("public_sharing_key", vault.public_sharing_key);
+        params.put("last_access", vault.last_access);
+
+        if (forEdit) {
+            params.put("delete_request_pending", vault.delete_request_pending);
+            params.put("sharing_keys_generated", vault.sharing_keys_generated);
+            if (vault.vault_settings != null) {
+                params.put("vault_settings", Base64.encodeToString(vault.vault_settings.toString().getBytes(StandardCharsets.UTF_8), Base64.DEFAULT));
+            }
+        }
+
+        return params;
     }
 
     public static void updateAutofillVault(Vault vault, SharedPreferences settings) {
@@ -347,6 +418,113 @@ public class Vault extends Core implements Filterable {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    public void updateSharingKeys(int keyStrength, Context context, AsyncHttpResponseHandler createInitialSharingKeysResponseHandler) {
+        Pair<String, String> keyPair = getNewPEMKeyPair(keyStrength);
+        if (keyPair != null) {
+            public_sharing_key = keyPair.first;
+
+            RequestParams params = getAsRequestParams(this, true, false);
+            params.put("private_sharing_key", encryptRawStringData(keyPair.second));
+
+            try {
+                Vault.requestAPI(context, "vaults/" + guid + "/sharing-keys", params, "POST", createInitialSharingKeysResponseHandler);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static Pair<String, String> getNewPEMKeyPair(int keyStrength) {
+        Pair<String, String> pairPublicPrivatePEM = null;
+        try {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(keyStrength);
+            KeyPair keyPair = kpg.generateKeyPair();
+
+            // Convert PublicKey to PEM format
+            StringWriter publicWriter = new StringWriter();
+            JcaPEMWriter publicPemWriter = new JcaPEMWriter(publicWriter);
+            publicPemWriter.writeObject(keyPair.getPublic());
+            publicPemWriter.flush();
+            publicPemWriter.close();
+            String publicPem = publicWriter.toString();
+
+            // Convert PrivateKey to PEM format
+            StringWriter privateWriter = new StringWriter();
+            JcaPEMWriter privatePemWriter = new JcaPEMWriter(privateWriter);
+            privatePemWriter.writeObject(keyPair.getPrivate());
+            privatePemWriter.flush();
+            privatePemWriter.close();
+            String privatePem = privateWriter.toString();
+
+            pairPublicPrivatePEM = new Pair<>(publicPem, privatePem);
+        } catch (NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return pairPublicPrivatePEM;
+    }
+
+    public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams params = new RequestParams();
+        params.setUseJsonStreamer(true);
+        params.put("vault_name", this.name);
+
+        try {
+            requestAPI(c, "vaults", params, "POST", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void edit(Context c, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams params = getAsRequestParams(this, true, true);
+
+        try {
+            requestAPI(c, "vaults/" + this.guid, params, "PATCH", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * deleteVaultContents() should be called before delete() to remove vaults credentials and files
+     *
+     * @param context
+     * @param responseHandler
+     */
+    public void deleteVaultContents(Context context, final AsyncHttpResponseHandler responseHandler) {
+        RequestParams collectionToDelete = new RequestParams();
+        JSONArray fileIds = new JSONArray();
+
+        for (Credential c : this.getCredentials()) {
+            for (File f : c.getFilesList()) {
+                fileIds.put(f.getFileId());
+            }
+        }
+
+        collectionToDelete.put("file_ids", fileIds);
+        try {
+            requestAPI(context, "files/delete", collectionToDelete, "POST", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * delete() is automatically called by the VaultDeleteResponseHandler when calling deleteVaultContents() with passing the isDeleteVaultContentRequest as true
+     *
+     * @param context
+     * @param responseHandler
+     */
+    public void delete(Context context, final AsyncHttpResponseHandler responseHandler) {
+        try {
+            requestAPI(context, "vaults/" + this.guid, new RequestParams(), "DELETE", responseHandler);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
         }
     }
 

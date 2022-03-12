@@ -37,26 +37,28 @@ import org.json.JSONObject;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import es.wolfi.app.passman.activities.PasswordListActivity;
+import cz.msebera.android.httpclient.Header;
 import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.SettingValues;
-import es.wolfi.app.passman.SingleTon;
-import es.wolfi.passman.API.Credential;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
 
-public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
+public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseHandler {
 
     private final AtomicBoolean alreadySaving;
+    private final Vault vault;
+    private final int keyStrength;
     private final ProgressDialog progress;
     private final View view;
     private final PasswordListActivity passwordListActivity;
     private final FragmentManager fragmentManager;
 
-    public CredentialDeleteResponseHandler(AtomicBoolean alreadySaving, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
+    public CredentialSaveForNewVaultResponseHandler(AtomicBoolean alreadySaving, Vault vault, int keyStrength, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
         super();
 
         this.alreadySaving = alreadySaving;
+        this.vault = vault;
+        this.keyStrength = keyStrength;
         this.progress = progress;
         this.view = view;
         this.passwordListActivity = passwordListActivity;
@@ -69,23 +71,32 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
         if (statusCode == 200) {
             try {
                 JSONObject credentialObject = new JSONObject(result);
-                Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
-                    Credential currentCredential = Credential.fromJSON(credentialObject, v);
+                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == vault.vault_id) {
 
-                    Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
+                    AsyncHttpResponseHandler createInitialSharingKeysResponseHandler = new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                            if (statusCode == 200) {
+                                Toast.makeText(view.getContext(), R.string.successfully_saved, Toast.LENGTH_LONG).show();
+                                Objects.requireNonNull(passwordListActivity).addVaultToCurrentLocalVaultList(vault);
+                                fragmentManager.popBackStack();
+                            } else {
+                                Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+                            }
 
-                    Objects.requireNonNull(passwordListActivity).deleteCredentialInCurrentLocalVaultList(currentCredential);
-                    Objects.requireNonNull(passwordListActivity).showLockVaultButton();
+                            alreadySaving.set(false);
+                            progress.dismiss();
+                        }
 
-                    int backStackCount = fragmentManager.getBackStackEntryCount();
-                    int backStackId = 0;
-                    if (backStackCount - 2 >= 0) {
-                        backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
-                    }
-                    alreadySaving.set(false);
-                    progress.dismiss();
-                    fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                        }
+                    };
+
+                    //create initial sharing keys
+                    vault.updateSharingKeys(keyStrength, view.getContext(), createInitialSharingKeysResponseHandler);
+
                     return;
                 }
             } catch (JSONException e) {
@@ -102,11 +113,7 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         alreadySaving.set(false);
         progress.dismiss();
-        String response = "";
-
-        if (responseBody != null && responseBody.length > 0) {
-            response = new String(responseBody);
-        }
+        String response = new String(responseBody);
 
         if (!response.equals("") && JSONUtils.isJSONObject(response)) {
             try {
@@ -117,13 +124,16 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
                 }
             } catch (JSONException e1) {
                 e1.printStackTrace();
+                Toast.makeText(view.getContext(),
+                        view.getContext().getString(R.string.error_occurred).concat(e1.getMessage() != null ? e1.getMessage() : ""),
+                        Toast.LENGTH_LONG).show();
             }
         }
 
         if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
-            Log.e("async http response", response);
-            Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e("async http response", new String(responseBody));
+            Toast.makeText(view.getContext(), view.getContext().getString(R.string.error_occurred).concat(error.getMessage()), Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
         }

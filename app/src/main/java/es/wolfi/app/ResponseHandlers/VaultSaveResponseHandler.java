@@ -34,29 +34,33 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.SettingValues;
-import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
 
-public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
+public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
 
+    public static String labelPrefixForFirstVaultConsistencyCredential = "Test key for vault ";
     private final AtomicBoolean alreadySaving;
+    private final boolean updateVault;
+    private final Vault vault;
+    private final int keyStrength;
     private final ProgressDialog progress;
     private final View view;
     private final PasswordListActivity passwordListActivity;
     private final FragmentManager fragmentManager;
 
-    public CredentialDeleteResponseHandler(AtomicBoolean alreadySaving, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
+    public VaultSaveResponseHandler(AtomicBoolean alreadySaving, boolean updateVault, Vault vault, int keyStrength, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
         super();
 
         this.alreadySaving = alreadySaving;
+        this.updateVault = updateVault;
+        this.vault = vault;
+        this.keyStrength = keyStrength;
         this.progress = progress;
         this.view = view;
         this.passwordListActivity = passwordListActivity;
@@ -68,25 +72,46 @@ public class CredentialDeleteResponseHandler extends AsyncHttpResponseHandler {
         String result = new String(responseBody);
         if (statusCode == 200) {
             try {
-                JSONObject credentialObject = new JSONObject(result);
-                Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
-                    Credential currentCredential = Credential.fromJSON(credentialObject, v);
-
-                    Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
-
-                    Objects.requireNonNull(passwordListActivity).deleteCredentialInCurrentLocalVaultList(currentCredential);
-                    Objects.requireNonNull(passwordListActivity).showLockVaultButton();
-
-                    int backStackCount = fragmentManager.getBackStackEntryCount();
-                    int backStackId = 0;
-                    if (backStackCount - 2 >= 0) {
-                        backStackId = fragmentManager.getBackStackEntryAt(backStackCount - 2).getId();
+                if (updateVault) {
+                    Vault localVaultInstance = Vault.getVaultByGuid(vault.guid);
+                    if (localVaultInstance != null) {
+                        localVaultInstance.setName(vault.getName());
                     }
                     alreadySaving.set(false);
                     progress.dismiss();
-                    fragmentManager.popBackStack(backStackId, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    fragmentManager.popBackStack();
                     return;
+                } else {
+                    JSONObject vaultObject = new JSONObject(result);
+                    Vault v = Vault.fromJSON(vaultObject);
+                    if (vaultObject.has("vault_id") && vaultObject.has("name") && vaultObject.getString("name").equals(vault.getName())) {
+                        v.setEncryptionKey(vault.getEncryptionKey());
+
+                        Toast.makeText(view.getContext(), "Vault created", Toast.LENGTH_LONG).show();
+
+                        //create test credential
+                        Credential testCred = new Credential();
+                        testCred.setVault(v);
+
+                        testCred.setLabel(labelPrefixForFirstVaultConsistencyCredential + v.getName());
+                        testCred.setPassword("lorem ipsum");
+                        testCred.setOtp("{}");
+                        testCred.setTags("");
+                        testCred.setFavicon("");
+                        testCred.setUsername("");
+                        testCred.setEmail("");
+                        testCred.setUrl("");
+                        testCred.setDescription("");
+                        testCred.setFiles("[]");
+                        testCred.setCustomFields("[]");
+                        testCred.setCompromised(false);
+                        testCred.setHidden(true);
+
+                        final AsyncHttpResponseHandler responseHandler = new CredentialSaveForNewVaultResponseHandler(alreadySaving, v, keyStrength, progress, view, passwordListActivity, fragmentManager);
+                        testCred.save(view.getContext(), responseHandler);
+
+                        return;
+                    }
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

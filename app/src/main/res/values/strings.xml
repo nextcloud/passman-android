@@ -61,6 +61,7 @@
     <string name="request_response_timeout">Request response timeout (in seconds)</string>
     <string name="expert_settings">Expert settings</string>
     <string name="confirm_credential_deletion">Are you sure you want to delete this credential?</string>
+    <string name="confirm_vault_deletion">Are you sure you want to delete this vault?</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
     <string name="enable_credential_list_icons">Enable credential list icons</string>
@@ -76,6 +77,9 @@
     <string name="password_generator_use_lowercase">Use lowercase characters</string>
     <string name="password_generator_use_uppercase">Use uppercase characters</string>
     <string name="password_length">Password length</string>
+    <string name="vault_name">Vault name</string>
+    <string name="sharing_key_strength">Sharing key strength</string>
+    <string name="new_vault_name">New vault name</string>
     <string name="offline_cache">Offline cache</string>
     <string name="offline_cache_description">Caches the encrypted vaults if they were loaded manually</string>
     <string name="enable_offline_cache">Enable offline cache</string>

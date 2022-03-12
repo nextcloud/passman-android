@@ -22,42 +22,46 @@
 
 package es.wolfi.app.ResponseHandlers;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.app.ProgressDialog;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
+
+import androidx.fragment.app.FragmentManager;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.SettingValues;
-import es.wolfi.app.passman.SingleTon;
-import es.wolfi.passman.API.Credential;
+import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
 
-public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHandler {
+public class VaultDeleteResponseHandler extends AsyncHttpResponseHandler {
 
+    private final AtomicBoolean alreadySaving;
     private final Vault vault;
-    private final Context baseContext;
-    private final Context applicationContext;
-    private final SingleTon ton;
-    private final String TAG;
+    private final boolean isDeleteVaultContentRequest;
+    private final ProgressDialog progress;
+    private final View view;
+    private final PasswordListActivity passwordListActivity;
+    private final FragmentManager fragmentManager;
 
-    public AutofillCredentialSaveResponseHandler(Vault vault, Context baseContext, Context applicationContext, SingleTon ton, String TAG) {
+    public VaultDeleteResponseHandler(AtomicBoolean alreadySaving, Vault vault, boolean isDeleteVaultContentRequest, ProgressDialog progress, View view, PasswordListActivity passwordListActivity, FragmentManager fragmentManager) {
         super();
 
+        this.alreadySaving = alreadySaving;
         this.vault = vault;
-        this.baseContext = baseContext;
-        this.applicationContext = applicationContext;
-        this.ton = ton;
-        this.TAG = TAG;
+        this.isDeleteVaultContentRequest = isDeleteVaultContentRequest;
+        this.progress = progress;
+        this.view = view;
+        this.passwordListActivity = passwordListActivity;
+        this.fragmentManager = fragmentManager;
     }
 
     @Override
@@ -65,35 +69,36 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
         String result = new String(responseBody);
         if (statusCode == 200) {
             try {
-                JSONObject credentialObject = new JSONObject(result);
+                JSONObject responseObject = new JSONObject(result);
+                if (responseObject.has("ok") && responseObject.getBoolean("ok")) {
+                    if (isDeleteVaultContentRequest) {
+                        final AsyncHttpResponseHandler responseHandler = new VaultDeleteResponseHandler(alreadySaving, vault, false, progress, view, passwordListActivity, fragmentManager);
+                        vault.delete(view.getContext(), responseHandler);
+                    } else {
+                        Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
 
-                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == vault.vault_id) {
-                    Credential currentCredential = Credential.fromJSON(credentialObject, vault);
-                    vault.addCredential(currentCredential);
-                    ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(vault.guid, vault);
-                    Vault activeVault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-                    if (vault.guid.equals(activeVault.guid)) {
-                        ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), vault);
+                        Objects.requireNonNull(passwordListActivity).deleteVaultInCurrentLocalVaultList(vault);
+
+                        alreadySaving.set(false);
+                        progress.dismiss();
+                        fragmentManager.popBackStack();
                     }
-
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(baseContext);
-                    Vault.updateAutofillVault(vault, settings);
-
-                    Toast.makeText(applicationContext, applicationContext.getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, applicationContext.getString(R.string.successfully_saved));
                     return;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            Toast.makeText(applicationContext, applicationContext.getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "onSaveRequest(), failed to save: " + R.string.error_occurred);
         }
+
+        alreadySaving.set(false);
+        progress.dismiss();
+        Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
+        alreadySaving.set(false);
+        progress.dismiss();
         String response = "";
 
         if (responseBody != null && responseBody.length > 0) {
@@ -104,9 +109,7 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
             try {
                 JSONObject o = new JSONObject(response);
                 if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-
-                    Toast.makeText(applicationContext, o.getString("message"), Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "onSaveRequest(), failed to save: " + o.getString("message"));
+                    Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
                     return;
                 }
             } catch (JSONException e1) {
@@ -117,11 +120,9 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
         if (error != null && error.getMessage() != null && statusCode != 302) {
             error.printStackTrace();
             Log.e("async http response", response);
-            Toast.makeText(applicationContext, error.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, error.getMessage());
+            Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(applicationContext, applicationContext.getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, applicationContext.getString(R.string.error_occurred));
+            Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
         }
     }
 

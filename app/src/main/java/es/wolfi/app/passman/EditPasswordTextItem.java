@@ -4,6 +4,7 @@
  * @copyright Copyright (c) 2017, Andy Scherzinger
  * @copyright Copyright (c) 2017, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2017, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -76,7 +77,7 @@ public class EditPasswordTextItem extends LinearLayout {
         ButterKnife.bind(this, v);
 
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        generate_password_btn.setVisibility(View.VISIBLE);
+        setPasswordGenerationButtonVisibility(true);
     }
 
     @Override
@@ -94,6 +95,14 @@ public class EditPasswordTextItem extends LinearLayout {
 
     public void setEnabled(boolean enabled) {
         password.setEnabled(enabled);
+    }
+
+    public void setPasswordGenerationButtonVisibility(boolean isVisible) {
+        if (isVisible) {
+            generate_password_btn.setVisibility(View.VISIBLE);
+        } else {
+            generate_password_btn.setVisibility(View.GONE);
+        }
     }
 
     @OnClick(R.id.toggle_password_visibility_btn)
