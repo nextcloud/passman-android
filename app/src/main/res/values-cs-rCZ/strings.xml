@@ -57,6 +57,7 @@
     <string name="request_response_timeout">Časový limit požadavku na odpověď (sekundy)</string>
     <string name="expert_settings">Nastavení pro pokročilé uživatele</string>
     <string name="confirm_credential_deletion">Opravdu chcete tento přihlašovací údaj smazat?</string>
+    <string name="confirm_vault_deletion">Opravdu chcete tento trezor smazat?</string>
     <string name="yes">Ano</string>
     <string name="cancel">Storno</string>
     <string name="enable_credential_list_icons">Zapnout ikony v seznamu přihlašovacích údajů</string>
@@ -72,6 +73,9 @@
     <string name="password_generator_use_lowercase">Použít malá písmena</string>
     <string name="password_generator_use_uppercase">Použít velká písmena</string>
     <string name="password_length">Délka hesla</string>
+    <string name="vault_name">Název trezoru</string>
+    <string name="sharing_key_strength">Odolnost klíče pro sdílení</string>
+    <string name="new_vault_name">Název pro nový trezor</string>
     <string name="offline_cache">Mezipaměť offline režimu</string>
     <string name="offline_cache_description">Uchovává zašifrované trezory, pokud byly načteny ručně, v mezipaměti</string>
     <string name="enable_offline_cache">Zapnout mezipaměť offline režimu</string>

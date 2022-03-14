@@ -57,6 +57,7 @@
     <string name="request_response_timeout">İstek yanıtı zaman aşımı (saniye)</string>
     <string name="expert_settings">Uzman ayarları</string>
     <string name="confirm_credential_deletion">Bu kimlik doğrulama bilgisini silmek istediğinize emin misiniz?</string>
+    <string name="confirm_vault_deletion">Bu kasayı silmek istediğinize emin misiniz?</string>
     <string name="yes">Evet</string>
     <string name="cancel">İptal</string>
     <string name="enable_credential_list_icons">Kimlik doğrulama listesi simgeleri kullanılsın</string>
@@ -72,6 +73,9 @@
     <string name="password_generator_use_lowercase">Küçük harf karakterler kullanılsın</string>
     <string name="password_generator_use_uppercase">Büyük harf karakterler kullanılsın</string>
     <string name="password_length">Parola uzunluğu</string>
+    <string name="vault_name">Kasa adı</string>
+    <string name="sharing_key_strength">Paylaşılan anahtar güçlüğü</string>
+    <string name="new_vault_name">Yeni kasa adı</string>
     <string name="offline_cache">Çevrimdışı ön bellek</string>
     <string name="offline_cache_description">El ile olarak yüklenmişlerse şifrelenmiş kasaları ön belleğe alır</string>
     <string name="enable_offline_cache">Çevrimdışı ön bellek kullanılsın</string>
