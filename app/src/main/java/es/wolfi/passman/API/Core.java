@@ -30,14 +30,15 @@ import android.widget.Toast;
 import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import cz.msebera.android.httpclient.entity.StringEntity;
 import es.wolfi.app.ResponseHandlers.CoreAPIGETResponseHandler;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.OfflineStorageValues;
@@ -49,6 +50,7 @@ import es.wolfi.utils.KeyStoreUtils;
 
 public abstract class Core {
     protected static final String LOG_TAG = "API_LIB";
+    protected static final String JSON_CONTENT_TYPE = "application/json";
 
     protected static String host;
     protected static String host_internal;
@@ -108,7 +110,7 @@ public abstract class Core {
         client.setConnectTimeout(getConnectTimeout(c));
         client.setResponseTimeout(getResponseTimeout(c));
         client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
-        client.addHeader("Content-Type", "application/json");
+        client.addHeader("Content-Type", JSON_CONTENT_TYPE);
         client.get(host_internal.concat(endpoint), responseHandler);
     }
 
@@ -119,12 +121,12 @@ public abstract class Core {
         client.setConnectTimeout(getConnectTimeout(c));
         client.setResponseTimeout(getResponseTimeout(c));
         client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
-        client.addHeader("Content-Type", "application/json");
+        client.addHeader("Content-Type", JSON_CONTENT_TYPE);
         client.get(host.concat(endpoint), responseHandler);
     }
 
-    public static void requestAPI(Context c, String endpoint, RequestParams postDataParams, String requestType, final AsyncHttpResponseHandler responseHandler)
-            throws MalformedURLException {
+    public static void requestAPI(Context c, String endpoint, JSONObject jsonPostData, String requestType, final AsyncHttpResponseHandler responseHandler)
+            throws MalformedURLException, UnsupportedEncodingException {
 
         URL url = new URL(host.concat(endpoint));
 
@@ -133,16 +135,16 @@ public abstract class Core {
         client.setConnectTimeout(getConnectTimeout(c));
         client.setResponseTimeout(getResponseTimeout(c));
         client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
-        //client.addHeader("Content-Type", "application/json; utf-8");
         client.addHeader("Accept", "application/json, text/plain, */*");
 
+        StringEntity entity = new StringEntity(jsonPostData.toString());
 
         if (requestType.equals("POST")) {
-            client.post(url.toString(), postDataParams, responseHandler);
+            client.post(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
         } else if (requestType.equals("PATCH")) {
-            client.patch(url.toString(), postDataParams, responseHandler);
+            client.patch(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
         } else if (requestType.equals("DELETE")) {
-            client.delete(url.toString(), postDataParams, responseHandler);
+            client.delete(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
         }
     }
 

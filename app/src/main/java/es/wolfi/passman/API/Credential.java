@@ -26,12 +26,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -385,10 +385,8 @@ public class Credential extends Core implements Filterable {
         return params;
     }
 
-    public RequestParams getAsRequestParams(boolean forUpdate, boolean useJsonStreamer) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(useJsonStreamer);
-
+    public JSONObject getAsJsonObjectForApiRequest(boolean forUpdate) throws JSONException {
+        JSONObject params = new JSONObject();
         JSONObject icon = null;
 
         if (forUpdate) {
@@ -496,32 +494,31 @@ public class Credential extends Core implements Filterable {
 
     public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
         try {
-            requestAPI(c, "credentials", getAsRequestParams(false, true), "POST", responseHandler);
-        } catch (MalformedURLException e) {
+            requestAPI(c, "credentials", getAsJsonObjectForApiRequest(false), "POST", responseHandler);
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void update(Context c, final AsyncHttpResponseHandler responseHandler) {
         try {
-            requestAPI(c, "credentials/" + getGuid(), getAsRequestParams(true, true), "PATCH", responseHandler);
-        } catch (MalformedURLException e) {
+            requestAPI(c, "credentials/" + getGuid(), getAsJsonObjectForApiRequest(true), "PATCH", responseHandler);
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void sendFileDeleteRequest(Context c, int file_id, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = new RequestParams();
+        JSONObject params = new JSONObject();
         try {
             requestAPI(c, "file/" + file_id, params, "DELETE", responseHandler);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler, ProgressDialog progress) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(true);
+        JSONObject params = new JSONObject();
 
         progress.setMessage(c.getString(R.string.wait_while_encrypting));
         try {
@@ -531,7 +528,7 @@ public class Credential extends Core implements Filterable {
             params.put("size", fileSize);
             progress.setMessage(c.getString(R.string.wait_while_uploading));
             requestAPI(c, "file", params, "POST", responseHandler);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }

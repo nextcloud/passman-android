@@ -30,7 +30,6 @@ import android.util.Pair;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.json.JSONArray;
@@ -39,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -387,9 +387,8 @@ public class Vault extends Core implements Filterable {
         return obj.toString();
     }
 
-    public static RequestParams getAsRequestParams(Vault vault, boolean useJsonStreamer, boolean forEdit) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(useJsonStreamer);
+    public static JSONObject getAsJsonObjectForApiRequest(Vault vault, boolean forEdit) throws JSONException {
+        JSONObject params = new JSONObject();
 
         params.put("vault_id", vault.vault_id);
         params.put("guid", vault.guid);
@@ -426,12 +425,11 @@ public class Vault extends Core implements Filterable {
         if (keyPair != null) {
             public_sharing_key = keyPair.first;
 
-            RequestParams params = getAsRequestParams(this, true, false);
-            params.put("private_sharing_key", encryptRawStringData(keyPair.second));
-
             try {
+                JSONObject params = getAsJsonObjectForApiRequest(this, false);
+                params.put("private_sharing_key", encryptRawStringData(keyPair.second));
                 Vault.requestAPI(context, "vaults/" + guid + "/sharing-keys", params, "POST", createInitialSharingKeysResponseHandler);
-            } catch (MalformedURLException e) {
+            } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
@@ -469,23 +467,21 @@ public class Vault extends Core implements Filterable {
     }
 
     public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(true);
-        params.put("vault_name", this.name);
+        JSONObject params = new JSONObject();
 
         try {
+            params.put("vault_name", this.name);
             requestAPI(c, "vaults", params, "POST", responseHandler);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void edit(Context c, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = getAsRequestParams(this, true, true);
-
         try {
+            JSONObject params = getAsJsonObjectForApiRequest(this, true);
             requestAPI(c, "vaults/" + this.guid, params, "PATCH", responseHandler);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -497,7 +493,7 @@ public class Vault extends Core implements Filterable {
      * @param responseHandler
      */
     public void deleteVaultContents(Context context, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams collectionToDelete = new RequestParams();
+        JSONObject collectionToDelete = new JSONObject();
         JSONArray fileIds = new JSONArray();
 
         for (Credential c : this.getCredentials()) {
@@ -506,10 +502,10 @@ public class Vault extends Core implements Filterable {
             }
         }
 
-        collectionToDelete.put("file_ids", fileIds);
         try {
+            collectionToDelete.put("file_ids", fileIds);
             requestAPI(context, "files/delete", collectionToDelete, "POST", responseHandler);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
@@ -522,8 +518,8 @@ public class Vault extends Core implements Filterable {
      */
     public void delete(Context context, final AsyncHttpResponseHandler responseHandler) {
         try {
-            requestAPI(context, "vaults/" + this.guid, new RequestParams(), "DELETE", responseHandler);
-        } catch (MalformedURLException e) {
+            requestAPI(context, "vaults/" + this.guid, new JSONObject(), "DELETE", responseHandler);
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
