@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Falsche Nextcloud-Backend-URL oder keine Verbindung möglich</string>
     <string name="wrongNCSettings">Einstellungen falsch</string>
     <string name="net_error">Netzwerkfehler</string>
+    <string name="net_error_dialog_description">Es konnte keine Verbindung zum Server hergestellt werden!\nÄnderungen können ohne eine funktionierende Serververbindung nicht gespeichert werden.</string>
     <string name="unlock">Öffnen</string>
     <string name="wrong_vault_pw">Falsches Tresor-Passwort</string>
     <string name="label">Beschriftung</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">Zeitüberschreitung bei der Beantwortung von Anfragen (in Sekunden)</string>
     <string name="expert_settings">Experteneinstellungen</string>
     <string name="confirm_credential_deletion">Möchten Sie diese Zugangsdaten wirklisch löschen?</string>
+    <string name="confirm_vault_deletion">Möchten Sie diesen Tresor wirklich löschen?</string>
     <string name="yes">Ja</string>
     <string name="cancel">Abbrechen</string>
     <string name="enable_credential_list_icons">Symbole für Anmeldeinformationen aktivieren</string>
@@ -71,4 +73,11 @@
     <string name="password_generator_use_lowercase">Kleinbuchstaben verwenden</string>
     <string name="password_generator_use_uppercase">Großbuchstaben verwenden</string>
     <string name="password_length">Passwortlänge</string>
+    <string name="vault_name">Tresorname</string>
+    <string name="sharing_key_strength">Schlüsselstärke teilen</string>
+    <string name="new_vault_name">Neuer Tresorname</string>
+    <string name="offline_cache">Offline-Cache</string>
+    <string name="offline_cache_description">Die verschlüsselten Tresore werden zwischengespeichert, wenn sie manuell geladen wurden.</string>
+    <string name="enable_offline_cache">Offline-Cache aktivieren</string>
+    <string name="clear_offline_cache">Offline-Cache leeren</string>
 </resources>

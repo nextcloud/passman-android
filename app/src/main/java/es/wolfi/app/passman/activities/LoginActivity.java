@@ -66,6 +66,7 @@ import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Core;
+import es.wolfi.utils.KeyStoreUtils;
 
 public class LoginActivity extends AppCompatActivity {
     public final static String LOG_TAG = "LoginActivity";
@@ -119,10 +120,11 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
+        KeyStoreUtils.initialize(settings);
         ton = SingleTon.getTon();
 
         try {
-            String host = settings.getString(SettingValues.HOST.toString(), null);
+            String host = KeyStoreUtils.getString(SettingValues.HOST.toString(), null);
             if (host != null) {
                 URL uri = new URL(host);
 
@@ -137,8 +139,8 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), getString(R.string.wrongNCUrl), Toast.LENGTH_LONG).show();
         }
 
-        input_user.setText(settings.getString(SettingValues.USER.toString(), null));
-        input_pass.setText(settings.getString(SettingValues.PASSWORD.toString(), null));
+        input_user.setText(KeyStoreUtils.getString(SettingValues.USER.toString(), null));
+        input_pass.setText(KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -212,11 +214,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCompleted(Exception e, Boolean loginSuccessful) {
                 if (loginSuccessful) {
-                    settings.edit()
-                            .putString(SettingValues.HOST.toString(), host)
-                            .putString(SettingValues.USER.toString(), user)
-                            .putString(SettingValues.PASSWORD.toString(), pass)
-                            .apply();
+                    KeyStoreUtils.putString(SettingValues.HOST.toString(), host);
+                    KeyStoreUtils.putString(SettingValues.USER.toString(), user);
+                    KeyStoreUtils.putString(SettingValues.PASSWORD.toString(), pass);
 
                     setResult(RESULT_OK);
                     LoginActivity.this.finish();

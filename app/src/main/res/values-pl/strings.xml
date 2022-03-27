@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nieprawidłowy URL serwera Nextcloud lub brak połączenia</string>
     <string name="wrongNCSettings">Błędne ustawienia</string>
     <string name="net_error">Błąd sieci</string>
+    <string name="net_error_dialog_description">Nie można połączyć się z serwerem!\nZmiany nie mogą zostać zapisane bez działającego połączenia z serwerem.</string>
     <string name="unlock">Odblokuj</string>
     <string name="wrong_vault_pw">Nieprawidłowe hasło do sejfu</string>
     <string name="label">Etykieta</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">Czas oczekiwania na odpowiedź (w sekundach)</string>
     <string name="expert_settings">Ustawienia eksperckie</string>
     <string name="confirm_credential_deletion">Czy na pewno chcesz usunąć to poświadczenie?</string>
+    <string name="confirm_vault_deletion">Czy na pewno chcesz usunąć ten sejf?</string>
     <string name="yes">Tak</string>
     <string name="cancel">Anuluj</string>
     <string name="enable_credential_list_icons">Włącz ikony listy poświadczeń</string>
@@ -71,4 +73,11 @@
     <string name="password_generator_use_lowercase">Użyj małych liter</string>
     <string name="password_generator_use_uppercase">Użyj wielkich liter</string>
     <string name="password_length">Długość hasła</string>
+    <string name="vault_name">Nazwa sejfu</string>
+    <string name="sharing_key_strength">Udostępnianie siły klucza</string>
+    <string name="new_vault_name">Nowa nazwa sejfu</string>
+    <string name="offline_cache">Pamięć podręczna offline</string>
+    <string name="offline_cache_description">Buforuje zaszyfrowane sejfy, jeśli zostały wczytane ręcznie</string>
+    <string name="enable_offline_cache">Włącz pamięć podręczną offline</string>
+    <string name="clear_offline_cache">Wyczyść pamięć podręczną offline</string>
 </resources>

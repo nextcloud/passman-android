@@ -1,4 +1,28 @@
+/**
+ * Passman Android App
+ *
+ * @copyright Copyright (c) 2021, Sander Brand (brantje@gmail.com)
+ * @copyright Copyright (c) 2021, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
+ * @license GNU AGPL version 3 or any later version
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package es.wolfi.app.passman.autofill;
+
+import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
 
 import android.app.assist.AssistStructure;
 import android.app.assist.AssistStructure.ViewNode;
@@ -36,7 +60,6 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,9 +70,7 @@ import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
-import es.wolfi.utils.JSONUtils;
-
-import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
+import es.wolfi.utils.KeyStoreUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public final class CredentialAutofillService extends AutofillService {
@@ -543,13 +564,14 @@ public final class CredentialAutofillService extends AutofillService {
 
     private Vault getAutofillVault(SingleTon ton) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        KeyStoreUtils.initialize(settings);
         Vault activeVault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         String autofillVaultGuid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
 
         if (activeVault != null && autofillVaultGuid != null && !activeVault.guid.equals(autofillVaultGuid) && !autofillVaultGuid.equals("")) {
             try {
-                Vault requestedVault = Vault.fromJSON(new JSONObject(settings.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
-                requestedVault.unlock(settings.getString(autofillVaultGuid, ""));
+                Vault requestedVault = Vault.fromJSON(new JSONObject(KeyStoreUtils.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
+                requestedVault.unlock(KeyStoreUtils.getString(autofillVaultGuid, ""));
                 return requestedVault;
             } catch (JSONException e) {
                 e.printStackTrace();

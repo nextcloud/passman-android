@@ -1,3 +1,25 @@
+/**
+ * Passman Android App
+ *
+ * @copyright Copyright (c) 2021, Sander Brand (brantje@gmail.com)
+ * @copyright Copyright (c) 2021, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
+ * @license GNU AGPL version 3 or any later version
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package es.wolfi.app.ResponseHandlers;
 
 import android.app.ProgressDialog;
@@ -84,12 +106,17 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         alreadySaving.set(false);
         progress.dismiss();
-        String response = new String(responseBody);
+        String response = "";
 
+        if (responseBody != null && responseBody.length > 0) {
+            response = new String(responseBody);
+        }
+
+        final String finalResponse = response;
         passwordListActivity.runOnUiThread(() -> {
-            if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+            if (!finalResponse.equals("") && JSONUtils.isJSONObject(finalResponse)) {
                 try {
-                    JSONObject o = new JSONObject(response);
+                    JSONObject o = new JSONObject(finalResponse);
                     if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
                         Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
                         return;

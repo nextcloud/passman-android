@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">URL del motore di Nextcloud non corretto o impossibile connettersi</string>
     <string name="wrongNCSettings">Impostazioni non corrette</string>
     <string name="net_error">Errore di rete</string>
+    <string name="net_error_dialog_description">Impossibile connettersi al server!\nLe modifiche non possono essere salvate senza una connessione funzionante al server.</string>
     <string name="unlock">Sblocca</string>
     <string name="wrong_vault_pw">Password della cassaforte errata</string>
     <string name="label">Etichetta</string>
@@ -41,6 +42,7 @@
     <string name="unlock_passman">Sblocca Passman</string>
     <string name="unlock_passman_message_device_auth">Autenticati per accedere a Passman</string>
     <string name="app_start_password">Password di avvio dell\'app</string>
+    <string name="app_start_password_android_auth_description">Attivare l\'autenticazione utente di Android all\'avvio dell\'app</string>
     <string name="wait_while_encrypting">Attendi la crittografia ...</string>
     <string name="wait_while_decrypting">Attendi la decifrazione ...</string>
     <string name="wait_while_uploading">Attendi l\'invio ...</string>
@@ -57,4 +59,21 @@
     <string name="confirm_credential_deletion">Vuoi davvero eliminare questa credenziale?</string>
     <string name="yes">Sì</string>
     <string name="cancel">Annulla</string>
-    </resources>
+    <string name="enable_credential_list_icons">Abilita le icone elenco credenziali</string>
+    <string name="credential_icon">Icona delle credenziali</string>
+    <string name="clear_clipboard_delay">Cancella appunti (dopo secondi)</string>
+    <string name="generate_password">Genera password</string>
+    <string name="generate_password_to_clipboard">Genera una password casuale e copiala negli appunti</string>
+    <string name="enable_password_generator_shortcut_description">Abilita collegamento all\'applicazione generatore di password</string>
+    <string name="password_generator_require_every_char_type">Richiedi ogni tipo di carattere</string>
+    <string name="password_generator_avoid_ambiguous_chars">Evita caratteri ambigui</string>
+    <string name="password_generator_use_special_chars">Utilizza caratteri speciali</string>
+    <string name="password_generator_use_digits">Usa cifre</string>
+    <string name="password_generator_use_lowercase">Utilizza caratteri minuscole</string>
+    <string name="password_generator_use_uppercase">Utilizza caratteri maiuscole</string>
+    <string name="password_length">Lunghezza della password</string>
+    <string name="offline_cache">Cache offline</string>
+    <string name="offline_cache_description">Memorizza nella cache i depositi crittografati se sono stati caricati manualmente</string>
+    <string name="enable_offline_cache">Abilita cache offline</string>
+    <string name="clear_offline_cache">Svuota la cache offline</string>
+</resources>

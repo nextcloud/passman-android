@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Hibás Nextcloud háttérszolgáltatás URL vagy sikertelen kapcsolódás</string>
     <string name="wrongNCSettings">Hibás beállítások</string>
     <string name="net_error">Hálózati hiba</string>
+    <string name="net_error_dialog_description">Nem sikerült kapcsolódni a kiszolgálóhoz!\nA módosítások nem menthetők működő kiszolgálókapcsolat nélkül.</string>
     <string name="unlock">Feloldás</string>
     <string name="wrong_vault_pw">Hibás széf jelszó</string>
     <string name="label">Címke</string>
@@ -71,4 +72,8 @@
     <string name="password_generator_use_lowercase">Kisbetűk használata</string>
     <string name="password_generator_use_uppercase">Nagybetűk használata</string>
     <string name="password_length">Jelszó hossza</string>
+    <string name="offline_cache">Offline gyorsítótár </string>
+    <string name="offline_cache_description">Gyorsítótárazza a titkosított széfeket, ha kézileg lettek betöltve</string>
+    <string name="enable_offline_cache">Offline gyorsítótár engedélyezése</string>
+    <string name="clear_offline_cache">Offline gyorsítótár törlése</string>
 </resources>

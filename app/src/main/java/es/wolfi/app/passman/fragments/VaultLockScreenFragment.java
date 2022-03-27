@@ -22,9 +22,7 @@
 package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +43,7 @@ import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.KeyStoreUtils;
 
 
 /**
@@ -127,8 +126,7 @@ public class VaultLockScreenFragment extends Fragment {
     void onBtnUnlockClick() {
         if (vault.unlock(vault_password.getText().toString())) {
             if (chk_save.isChecked()) {
-                SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(getContext());
-                p.edit().putString(vault.guid, vault_password.getText().toString()).commit();
+                KeyStoreUtils.putStringAndCommit(vault.guid, vault_password.getText().toString());
             }
             mListener.onVaultUnlock(vault);
             return;

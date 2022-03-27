@@ -125,6 +125,7 @@ public class CredentialDisplayFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
             if (v != null) {
@@ -212,51 +213,53 @@ public class CredentialDisplayFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        FloatingActionButton editCredentialButton = view.findViewById(R.id.editCredentialButton);
-        editCredentialButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParentFragmentManager()
-                        .beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                        .replace(R.id.content_password_list, CredentialEditFragment.newInstance(credential.getGuid()), "credentialEdit")
-                        .addToBackStack(null)
-                        .commit();
+        if (credential != null) {
+            FloatingActionButton editCredentialButton = view.findViewById(R.id.editCredentialButton);
+            editCredentialButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getParentFragmentManager()
+                            .beginTransaction()
+                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                            .replace(R.id.content_password_list, CredentialEditFragment.newInstance(credential.getGuid()), "credentialEdit")
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+            editCredentialButton.setVisibility(View.VISIBLE);
+
+
+            RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+            filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+
+            RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+            customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
+
+            if (credential.getCompromised().equals("true")) {
+                TextView passwordLabel = view.findViewById(R.id.credential_password_label);
+                passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
             }
-        });
-        editCredentialButton.setVisibility(View.VISIBLE);
 
+            label.setText(credential.getLabel());
+            user.setText(credential.getUsername());
+            password.setModePassword();
+            password.setText(credential.getPassword());
+            email.setModeEmail();
+            email.setText(credential.getEmail());
+            url.setText(credential.getUrl());
+            description.setText(credential.getDescription());
+            otp.setEnabled(false);
+            IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
 
-        RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
-        filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
+            if (URLUtil.isValidUrl(credential.getUrl())) {
+                url.setModeURL();
+            }
 
-        RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
-        customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
-
-        if (credential.getCompromised().equals("true")) {
-            TextView passwordLabel = view.findViewById(R.id.credential_password_label);
-            passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
-        }
-
-        label.setText(credential.getLabel());
-        user.setText(credential.getUsername());
-        password.setModePassword();
-        password.setText(credential.getPassword());
-        email.setModeEmail();
-        email.setText(credential.getEmail());
-        url.setText(credential.getUrl());
-        description.setText(credential.getDescription());
-        otp.setEnabled(false);
-        IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
-
-        if (URLUtil.isValidUrl(credential.getUrl())) {
-            url.setModeURL();
-        }
-
-        if (otp_refresh == null) {
-            otp_progress.setProgress(0);
+            if (otp_refresh == null) {
+                otp_progress.setProgress(0);
+            }
         }
     }
 

@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">不正確的Nextcloud後端URL或無法連接</string>
     <string name="wrongNCSettings">設定不正確</string>
     <string name="net_error">網絡異常</string>
+    <string name="net_error_dialog_description">無法連接到伺服器！\n如果沒有有效的伺服器連接，則無法保存更改。</string>
     <string name="unlock">解鎖</string>
     <string name="wrong_vault_pw">保險庫密碼錯誤</string>
     <string name="label">標籤</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">請求回應超時（秒）</string>
     <string name="expert_settings">專家設定</string>
     <string name="confirm_credential_deletion">您確定要刪除此身份驗證嗎？</string>
+    <string name="confirm_vault_deletion">您確定要刪除此保險庫？</string>
     <string name="yes">是</string>
     <string name="cancel">取消</string>
     <string name="enable_credential_list_icons">啟用身份驗證清單圖示</string>
@@ -71,4 +73,11 @@
     <string name="password_generator_use_lowercase">使用小寫字母</string>
     <string name="password_generator_use_uppercase">使用大寫字母 </string>
     <string name="password_length">密碼長度</string>
+    <string name="vault_name">保險庫名稱</string>
+    <string name="sharing_key_strength">分享密鑰強度</string>
+    <string name="new_vault_name">新保險庫名稱</string>
+    <string name="offline_cache">離線缓存</string>
+    <string name="offline_cache_description">緩存手動加載的已加密保管庫</string>
+    <string name="enable_offline_cache">啟用離線缓存</string>
+    <string name="clear_offline_cache">清除離線缓存</string>
 </resources>

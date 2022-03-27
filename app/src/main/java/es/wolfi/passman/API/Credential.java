@@ -3,6 +3,7 @@
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2022, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -26,12 +27,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -341,33 +342,26 @@ public class Credential extends Core implements Filterable {
         this.sharedKeyDecrypted = null;
     }
 
-    public JSONObject getAsJSONObject(boolean forUpdate) throws JSONException {
+    public JSONObject getAsJSONObject() throws JSONException {
         JSONObject params = new JSONObject();
 
         JSONObject icon = null;
 
-        if (forUpdate) {
-            params.put("credential_id", getId());
-            params.put("guid", getGuid());
-
+        try {
             if (favicon != null && !favicon.equals("") && !favicon.equals("null")) {
-                try {
-                    icon = new JSONObject(favicon);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            try {
+                icon = new JSONObject(favicon);
+            } else {
                 icon = new JSONObject();
                 icon.put("type", false);
                 icon.put("content", "");
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         params.put("user_id", getUserId());
+        params.put("credential_id", getId());
+        params.put("guid", getGuid());
         params.put("shared_key", getSharedKey());
         params.put("vault_id", getVaultId());
         params.put("label", label);
@@ -392,10 +386,8 @@ public class Credential extends Core implements Filterable {
         return params;
     }
 
-    public RequestParams getAsRequestParams(boolean forUpdate, boolean useJsonStreamer) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(useJsonStreamer);
-
+    public JSONObject getAsJsonObjectForApiRequest(boolean forUpdate) throws JSONException {
+        JSONObject params = new JSONObject();
         JSONObject icon = null;
 
         if (forUpdate) {
@@ -497,70 +489,48 @@ public class Credential extends Core implements Filterable {
         return c;
     }
 
+    public static Credential clone(Credential input) throws JSONException {
+        return Credential.fromJSON(input.getAsJSONObject(), input.getVault());
+    }
+
     public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
         try {
-            if (Core.ssoAccount != null) {
-                requestAPI(c, "credentials", getAsJSONObject(false), "POST", responseHandler);
-            } else {
-                requestAPI(c, "credentials", getAsRequestParams(false, true), "POST", responseHandler);
-            }
-        } catch (MalformedURLException | JSONException e) {
+            requestAPI(c, "credentials", getAsJsonObjectForApiRequest(false), "POST", responseHandler);
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void update(Context c, final AsyncHttpResponseHandler responseHandler) {
         try {
-            if (Core.ssoAccount != null) {
-                requestAPI(c, "credentials/" + getGuid(), getAsJSONObject(true), "PATCH", responseHandler);
-            } else {
-                requestAPI(c, "credentials/" + getGuid(), getAsRequestParams(true, true), "PATCH", responseHandler);
-            }
-        } catch (MalformedURLException | JSONException e) {
+            requestAPI(c, "credentials/" + getGuid(), getAsJsonObjectForApiRequest(true), "PATCH", responseHandler);
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void sendFileDeleteRequest(Context c, int file_id, final AsyncHttpResponseHandler responseHandler) {
+        JSONObject params = new JSONObject();
         try {
-            if (Core.ssoAccount != null) {
-                requestAPI(c, "file/" + file_id, new JSONObject(), "DELETE", responseHandler);
-            } else {
-                requestAPI(c, "file/" + file_id, new RequestParams(), "DELETE", responseHandler);
-            }
-        } catch (MalformedURLException e) {
+            requestAPI(c, "file/" + file_id, params, "DELETE", responseHandler);
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler, ProgressDialog progress) {
+        JSONObject params = new JSONObject();
+
         progress.setMessage(c.getString(R.string.wait_while_encrypting));
         try {
-            if (Core.ssoAccount != null) {
-                JSONObject params = new JSONObject();
-
-                params.put("filename", encryptString(fileName));
-                params.put("data", encryptRawStringData(encodedFile));
-                params.put("mimetype", mimeType);
-                params.put("size", fileSize);
-
-                progress.setMessage(c.getString(R.string.wait_while_uploading));
-                requestAPI(c, "file", params, "POST", responseHandler);
-            } else {
-                RequestParams params = new RequestParams();
-                params.setUseJsonStreamer(true);
-
-                params.put("filename", encryptString(fileName));
-                params.put("data", encryptRawStringData(encodedFile));
-                params.put("mimetype", mimeType);
-                params.put("size", fileSize);
-
-                progress.setMessage(c.getString(R.string.wait_while_uploading));
-                requestAPI(c, "file", params, "POST", responseHandler);
-            }
-        } catch (MalformedURLException | JSONException e) {
+            params.put("filename", encryptString(fileName));
+            params.put("data", encryptRawStringData(encodedFile));
+            params.put("mimetype", mimeType);
+            params.put("size", fileSize);
+            progress.setMessage(c.getString(R.string.wait_while_uploading));
+            requestAPI(c, "file", params, "POST", responseHandler);
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
-            progress.cancel();
         }
     }
 

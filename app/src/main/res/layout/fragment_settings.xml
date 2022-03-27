@@ -170,6 +170,26 @@
                 android:text="@string/enable_credential_list_icons" />
 
             <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/offline_cache" />
+
+            <TextView
+                style="@style/SettingsDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/offline_cache_description" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/enable_offline_cache_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/enable_offline_cache" />
+
+            <TextView
                 android:id="@+id/default_autofill_vault_title"
                 style="@style/Label"
                 android:layout_width="match_parent"
@@ -241,6 +261,15 @@
                 android:digits="0123456789"
                 android:inputType="number"
                 tools:ignore="LabelFor" />
+
+            <Button
+                android:id="@+id/clear_offline_cache_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="start"
+                android:text="@string/clear_offline_cache"
+                android:theme="@style/Button.Danger" />
 
         </LinearLayout>
 
