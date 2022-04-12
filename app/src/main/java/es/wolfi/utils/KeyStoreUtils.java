@@ -103,8 +103,8 @@ public class KeyStoreUtils {
                                         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                                         .setRandomizedEncryptionRequired(false)
                                         .build());
-                        SecretKey key = keyGenerator.generateKey();
-                        keyStore.setKeyEntry(KEY_ALIAS, key, null, null);
+
+                        keyGenerator.generateKey();
 
                         SecureRandom random = SecureRandom.getInstance(RANDOM_ALGORITHM);
                         byte[] encryptionKeyBytes = new byte[4096];
