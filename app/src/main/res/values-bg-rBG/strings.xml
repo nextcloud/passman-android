@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">URL адреса на Nextcloud сървъра е грешен или не може да се осъществи връзка</string>
     <string name="wrongNCSettings">Настройките са грешни</string>
     <string name="net_error">Мрежова грешка</string>
+    <string name="net_error_dialog_description">Неуспешно свързване със сървъра!\n Промените не могат да бъдат запазени без работеща връзка със сървъра.</string>
     <string name="unlock">Отключване</string>
     <string name="wrong_vault_pw">Грешна парола за хранилището</string>
     <string name="label">Етикет</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">Време за изчакване на отговор на заявката (в секунди)</string>
     <string name="expert_settings">Експертни настройки</string>
     <string name="confirm_credential_deletion">Сигурен ли сте, че искате да изтриете този идентификационен номер?</string>
+    <string name="confirm_vault_deletion">Сигурен ли сте, че искате да изтриете тозва хранилище?</string>
     <string name="yes">Да</string>
     <string name="cancel">Отказ</string>
     <string name="enable_credential_list_icons">Активиране на иконите на списъка с идентификационни данни</string>
@@ -71,4 +73,11 @@
     <string name="password_generator_use_lowercase">Използване на малки букви</string>
     <string name="password_generator_use_uppercase">Използване на главни букви</string>
     <string name="password_length">Дължина на паролата</string>
-    </resources>
+    <string name="vault_name">Име на хранилище</string>
+    <string name="sharing_key_strength">Сила на ключ за споделяне</string>
+    <string name="new_vault_name">Ново име за хранилище</string>
+    <string name="offline_cache">Офлайн кеш</string>
+    <string name="offline_cache_description">Кешира криптираните хранилища, ако са заредени ръчно</string>
+    <string name="enable_offline_cache">Активиране на офлайн кеш</string>
+    <string name="clear_offline_cache">Изчистване на офлайн кеш</string>
+</resources>
