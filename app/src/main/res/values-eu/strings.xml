@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nextcloud instantziaren helbidea ez da zuzena edo ezin da konektatu</string>
     <string name="wrongNCSettings">Ezarpen okerrak</string>
     <string name="net_error">Sare errorea</string>
+    <string name="net_error_dialog_description">Ezin izan da zerbitzarira konektatu!\nAldaketak ezin dira gorde zerbitzariaren konexiorik gabe.</string>
     <string name="unlock">Desblokeatu</string>
     <string name="wrong_vault_pw">Gordailuaren pasahitza ez da zuzena</string>
     <string name="label">Etiketa</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">Eskaeraren erantzunaren denbora-muga (segundutan)</string>
     <string name="expert_settings">Ezarpen adituak</string>
     <string name="confirm_credential_deletion">Ziur kredentzial hau ezabatu nahi duzula?</string>
+    <string name="confirm_vault_deletion">Ziur kutxa hau ezabatu nahi duzula?</string>
     <string name="yes">Bai</string>
     <string name="cancel">Ezeztatu</string>
     <string name="enable_credential_list_icons">Gaitu kredentzialen zerrenda-ikonoak</string>
@@ -71,8 +73,11 @@
     <string name="password_generator_use_lowercase">Erabili karaktere minuskulak</string>
     <string name="password_generator_use_uppercase">Erabili karaktere maiuskulak</string>
     <string name="password_length">Pasahitzaren luzera</string>
+    <string name="vault_name">Kutxa izena</string>
+    <string name="sharing_key_strength">Gako sendoa partekatzen</string>
     <string name="new_vault_name">Gordailu berriaren izena</string>
     <string name="offline_cache">Lineaz kanpoko cachea</string>
+    <string name="offline_cache_description">Enkriptatutako kutxak gordetzen ditu eskuz kargatu badira</string>
     <string name="enable_offline_cache">Gaitu lineaz kanpoko cachea</string>
     <string name="clear_offline_cache">Garbitu lineaz kanpoko cachea</string>
 </resources>
