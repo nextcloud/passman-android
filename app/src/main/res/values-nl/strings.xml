@@ -72,6 +72,7 @@
     <string name="password_generator_use_lowercase">Gebruik kleine letters</string>
     <string name="password_generator_use_uppercase">Gebruik hoofdletters</string>
     <string name="password_length">Wachtwoordlengte</string>
+    <string name="new_vault_name">Nieuwe naam kluis</string>
     <string name="offline_cache">Off-line cache</string>
     <string name="offline_cache_description">De gecodeerde kluizen worden in de cache opgeslagen als ze handmatig zijn geladen</string>
     <string name="enable_offline_cache">Inschakelen off-line cache</string>

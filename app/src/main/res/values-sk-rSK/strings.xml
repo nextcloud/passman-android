@@ -72,6 +72,7 @@
     <string name="password_generator_use_lowercase">Použiť malé znaky</string>
     <string name="password_generator_use_uppercase">Použiť veľké znaky</string>
     <string name="password_length">Dĺžka hesla</string>
+    <string name="new_vault_name">Nové meno trozora</string>
     <string name="offline_cache">Offline vyrovnávacia pamäť</string>
     <string name="offline_cache_description">Ukladá do vyrovnávacej pamäte šifrované trezory, ak boli načítané manuálne</string>
     <string name="enable_offline_cache">Zapnúť offline vyrovnávaciu pamäť</string>

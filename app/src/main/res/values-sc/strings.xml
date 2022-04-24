@@ -57,4 +57,10 @@
     <string name="confirm_credential_deletion">A beru boles cantzellare custa credentziale?</string>
     <string name="yes">Eja</string>
     <string name="cancel">Annulla</string>
+    <string name="generate_password">Gènera crae</string>
+    <string name="password_generator_require_every_char_type">Pedi cada genia de caràtere</string>
+    <string name="password_generator_avoid_ambiguous_chars">No imprees caràteres ambìguos</string>
+    <string name="password_generator_use_special_chars">Imprea caràteres ispetziales</string>
+    <string name="password_length">Longària de  sa crae</string>
+    <string name="new_vault_name">Nùmene nou de sa cassaforte</string>
     </resources>
