@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">URL backend de Nextcloud non valide ou erreur de connexion</string>
     <string name="wrongNCSettings">Paramètres incorrects</string>
     <string name="net_error">Erreur réseau</string>
+    <string name="net_error_dialog_description">Impossible de se connecter au serveur!\nLes modification ne peuvent être sauvegardées sans une connection au serveur fonctionelle.</string>
     <string name="unlock"> Déverrouiller</string>
     <string name="wrong_vault_pw">Mot de passe du coffre-fort erroné</string>
     <string name="label">Libellé</string>
