@@ -57,6 +57,7 @@
     <string name="request_response_timeout">Aanvraag antwoord-time-out (in seconden)</string>
     <string name="expert_settings">Expertinstellingen</string>
     <string name="confirm_credential_deletion">Weet je zeker dat je deze inloggegevens wil verwijderen?</string>
+    <string name="confirm_vault_deletion">Weet je zeker dat je deze kluis wilt verwijderen?</string>
     <string name="yes">Ja</string>
     <string name="cancel">Annuleren</string>
     <string name="enable_credential_list_icons">Schakel inloggegevenslijst iconen in</string>
@@ -72,6 +73,7 @@
     <string name="password_generator_use_lowercase">Gebruik kleine letters</string>
     <string name="password_generator_use_uppercase">Gebruik hoofdletters</string>
     <string name="password_length">Wachtwoordlengte</string>
+    <string name="vault_name">Naam van de kluis</string>
     <string name="new_vault_name">Nieuwe naam kluis</string>
     <string name="offline_cache">Off-line cache</string>
     <string name="offline_cache_description">De gecodeerde kluizen worden in de cache opgeslagen als ze handmatig zijn geladen</string>
