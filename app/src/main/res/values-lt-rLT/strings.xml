@@ -36,9 +36,12 @@
     <string name="wait_while_decrypting">Palaukite, kol iššifruojama…</string>
     <string name="yes">Taip</string>
     <string name="cancel">Atsisakyti</string>
+    <string name="generate_password">Generuoti slaptažodį</string>
+    <string name="password_generator_avoid_ambiguous_chars">Venkite nevienareikšmių simbolių</string>
     <string name="password_generator_use_special_chars">Naudoti specialiuosius simbolius</string>
     <string name="password_generator_use_digits">Naudoti skaitmenis</string>
     <string name="password_generator_use_lowercase">Naudoti mažąsias raides</string>
     <string name="password_generator_use_uppercase">Naudoti didžiąsias raides</string>
     <string name="password_length">Slaptažodžio ilgis</string>
+    <string name="new_vault_name">Naujas slėptuvės pavadinimas</string>
     </resources>

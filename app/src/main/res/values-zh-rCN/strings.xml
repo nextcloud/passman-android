@@ -72,6 +72,7 @@
     <string name="password_generator_use_lowercase">使用小写字符</string>
     <string name="password_generator_use_uppercase">使用大写字符</string>
     <string name="password_length">密码长度</string>
+    <string name="new_vault_name">新保险箱名称</string>
     <string name="offline_cache">离线缓存</string>
     <string name="offline_cache_description">缓存手动加载的密码库</string>
     <string name="enable_offline_cache">启用离线缓存</string>

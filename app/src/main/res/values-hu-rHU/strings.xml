@@ -57,6 +57,7 @@
     <string name="request_response_timeout">Kérés válaszának időtúllépése (másodpercben)</string>
     <string name="expert_settings">Szakértő beállítások</string>
     <string name="confirm_credential_deletion">Biztos, hogy törli ezt a hitelesítő adatot?</string>
+    <string name="confirm_vault_deletion">Biztos, hogy törli ezt a széfet?</string>
     <string name="yes">Igen</string>
     <string name="cancel">Mégse</string>
     <string name="enable_credential_list_icons">Hitelesítőadat-lista ikonjainak engedélyezése</string>
@@ -72,6 +73,9 @@
     <string name="password_generator_use_lowercase">Kisbetűk használata</string>
     <string name="password_generator_use_uppercase">Nagybetűk használata</string>
     <string name="password_length">Jelszó hossza</string>
+    <string name="vault_name">Széfnév</string>
+    <string name="sharing_key_strength">Megosztási kulcs erőssége</string>
+    <string name="new_vault_name">Új széfnév</string>
     <string name="offline_cache">Offline gyorsítótár </string>
     <string name="offline_cache_description">Gyorsítótárazza a titkosított széfeket, ha kézileg lettek betöltve</string>
     <string name="enable_offline_cache">Offline gyorsítótár engedélyezése</string>

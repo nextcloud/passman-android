@@ -57,6 +57,7 @@
     <string name="request_response_timeout">Límite de tiempo de la respuesta (en segundos)</string>
     <string name="expert_settings">Configuración avanzada</string>
     <string name="confirm_credential_deletion">¿Estás seguro de querer borrar esta credencial?</string>
+    <string name="confirm_vault_deletion">¿Seguro que quieres eliminar esta caja fuerte?</string>
     <string name="yes">Sí</string>
     <string name="cancel">Cancelar</string>
     <string name="enable_credential_list_icons">Habilitar los iconos en la lista de credenciales</string>
@@ -72,6 +73,9 @@
     <string name="password_generator_use_lowercase">Usar letras minúsculas</string>
     <string name="password_generator_use_uppercase">Usar letras mayúsculas</string>
     <string name="password_length">Longitud de la contraseña</string>
+    <string name="vault_name">Nombre de la caja fuerte</string>
+    <string name="sharing_key_strength">Fuerza de la clave compartida</string>
+    <string name="new_vault_name">Nombre de la caja fuerte nueva</string>
     <string name="offline_cache">Caché sin conexión</string>
     <string name="offline_cache_description">Guarda en caché las bóvedas cifradas si se han cargado manualmente</string>
     <string name="enable_offline_cache">Activar caché sin conexión</string>

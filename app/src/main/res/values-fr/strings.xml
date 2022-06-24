@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">URL backend de Nextcloud non valide ou erreur de connexion</string>
     <string name="wrongNCSettings">Paramètres incorrects</string>
     <string name="net_error">Erreur réseau</string>
+    <string name="net_error_dialog_description">Impossible de se connecter au serveur!\nLes modification ne peuvent être sauvegardées sans une connection au serveur fonctionelle.</string>
     <string name="unlock"> Déverrouiller</string>
     <string name="wrong_vault_pw">Mot de passe du coffre-fort erroné</string>
     <string name="label">Libellé</string>
@@ -41,10 +42,15 @@
     <string name="app_start_password">Mot de passe de démarrage de l\'appli</string>
     <string name="wait_while_uploading">Patienter pendant le téléchargement</string>
     <string name="automatically">automatiquement</string>
+    <string name="expert_settings">Paramètres expert</string>
     <string name="yes">Oui</string>
     <string name="cancel">Annuler</string>
     <string name="generate_password">Générer un mot de passe</string>
+    <string name="password_generator_require_every_char_type">Nécessite chaque type de caractère</string>
+    <string name="password_generator_avoid_ambiguous_chars">Éviter les caractères ambigus</string>
+    <string name="password_generator_use_special_chars">Utiliser des caractères spéciaux</string>
     <string name="password_generator_use_lowercase">Utiliser des lettres minuscules</string>
     <string name="password_generator_use_uppercase">Utiliser des lettres majuscules</string>
     <string name="password_length">Longueur du mot de passe</string>
+    <string name="new_vault_name">Nom du nouveau coffre-fort</string>
     </resources>
