@@ -259,7 +259,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                     .replace(R.id.content_password_list, new VaultFragment(), "vaults")
                     .addToBackStack(null)
-                    .commit();
+                    .commitAllowingStateLoss();
             Log.d("PL", "committed transaction");
         } else {
             final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
@@ -303,7 +303,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                         .replace(R.id.content_password_list, new CredentialItemFragment(), "vault")
                         .addToBackStack(null)
-                        .commit();
+                        .commitAllowingStateLoss();
             } else {
                 showUnlockVault();
             }
@@ -356,7 +356,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
                 .replace(R.id.content_password_list, new VaultLockScreenFragment(), "vault")
                 .addToBackStack(null)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     void lockVault() {
