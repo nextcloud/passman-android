@@ -42,6 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
+import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Core;
 import es.wolfi.utils.KeyStoreUtils;
@@ -69,7 +70,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
+        new SettingsCache().loadSharedPreferences(getBaseContext());
+        settings = SettingsCache.getSharedPreferences();
         KeyStoreUtils.initialize(settings);
         ton = SingleTon.getTon();
 
