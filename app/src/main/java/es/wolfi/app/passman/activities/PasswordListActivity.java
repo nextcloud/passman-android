@@ -332,7 +332,10 @@ public class PasswordListActivity extends AppCompatActivity implements
                     }
 
                     // Update the vault record to avoid future loads
-                    ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(result.guid, result);
+                    HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+                    if (vaults != null) {
+                        vaults.put(result.guid, result);
+                    }
 
                     ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
                     showActiveVault();
