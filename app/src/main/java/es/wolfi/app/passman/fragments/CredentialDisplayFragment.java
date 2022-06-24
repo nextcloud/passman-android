@@ -97,6 +97,7 @@ public class CredentialDisplayFragment extends Fragment {
     private Credential credential;
     private Handler handler;
     private Runnable otp_refresh = null;
+    private View fragmentView;
 
     private OnCredentialFragmentInteraction mListener;
     private OnListFragmentInteractionListener filelistListener;
@@ -122,16 +123,20 @@ public class CredentialDisplayFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void reloadCredentialFromActiveVaultIfPossible() {
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
             if (v != null) {
                 credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
             }
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        reloadCredentialFromActiveVaultIfPossible();
 
         if (credential != null) {
             handler = new Handler();
@@ -212,9 +217,13 @@ public class CredentialDisplayFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        fragmentView = view;
+        updateViewContent();
+    }
 
+    public void updateViewContent() {
         if (credential != null) {
-            FloatingActionButton editCredentialButton = view.findViewById(R.id.editCredentialButton);
+            FloatingActionButton editCredentialButton = fragmentView.findViewById(R.id.editCredentialButton);
             editCredentialButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -229,16 +238,16 @@ public class CredentialDisplayFragment extends Fragment {
             editCredentialButton.setVisibility(View.VISIBLE);
 
 
-            RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+            RecyclerView filesListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.filesList);
             filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
 
-            RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+            RecyclerView customFieldsListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.customFieldsList);
             customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
 
             if (credential.getCompromised().equals("true")) {
-                TextView passwordLabel = view.findViewById(R.id.credential_password_label);
+                TextView passwordLabel = fragmentView.findViewById(R.id.credential_password_label);
                 passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
             }
 
