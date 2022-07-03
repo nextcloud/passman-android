@@ -111,7 +111,12 @@ public abstract class Core {
         client.setResponseTimeout(getResponseTimeout(c));
         client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
         client.addHeader("Content-Type", JSON_CONTENT_TYPE);
-        client.get(host_internal.concat(endpoint), responseHandler);
+
+        try {
+            client.get(host_internal.concat(endpoint), responseHandler);
+        } catch (Exception e) {
+            responseHandler.onFailure(0, null, null, e);
+        }
     }
 
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
@@ -122,7 +127,12 @@ public abstract class Core {
         client.setResponseTimeout(getResponseTimeout(c));
         client.setMaxRetriesAndTimeout(getConnectRetries(c), getConnectTimeout(c));
         client.addHeader("Content-Type", JSON_CONTENT_TYPE);
-        client.get(host.concat(endpoint), responseHandler);
+
+        try {
+            client.get(host.concat(endpoint), responseHandler);
+        } catch (Exception e) {
+            responseHandler.onFailure(0, null, null, e);
+        }
     }
 
     public static void requestAPI(Context c, String endpoint, JSONObject jsonPostData, String requestType, final AsyncHttpResponseHandler responseHandler)
@@ -139,12 +149,16 @@ public abstract class Core {
 
         StringEntity entity = new StringEntity(jsonPostData.toString());
 
-        if (requestType.equals("POST")) {
-            client.post(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
-        } else if (requestType.equals("PATCH")) {
-            client.patch(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
-        } else if (requestType.equals("DELETE")) {
-            client.delete(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
+        try {
+            if (requestType.equals("POST")) {
+                client.post(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
+            } else if (requestType.equals("PATCH")) {
+                client.patch(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
+            } else if (requestType.equals("DELETE")) {
+                client.delete(c, url.toString(), entity, JSON_CONTENT_TYPE, responseHandler);
+            }
+        } catch (Exception e) {
+            responseHandler.onFailure(0, null, null, e);
         }
     }
 
