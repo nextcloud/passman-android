@@ -1,0 +1,4 @@
+- fix KeyStore initialization
+- fix reloading credential in the fragment view after editing
+- fix some null pointer exceptions
+- add privacy policy to the repository
