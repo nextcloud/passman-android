@@ -222,12 +222,13 @@ public class SettingsFragment extends Fragment {
         enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
         enable_offline_cache_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true));
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O && vaults != null) {
             String last_selected_guid = "";
             if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null) != null) {
                 last_selected_guid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
             }
-            Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
+
             String[] vault_names = new String[vaults.size() + 1];
             vault_names[0] = getContext().getString(R.string.automatically);
             int i = 1;
@@ -257,7 +258,7 @@ public class SettingsFragment extends Fragment {
 
     private Set<Map.Entry<String, Vault>> getVaultsEntrySet() {
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
-        return vaults.entrySet();
+        return vaults != null ? vaults.entrySet() : null;
     }
 
     @Override
@@ -334,22 +335,24 @@ public class SettingsFragment extends Fragment {
                         settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").commit();
                     } else {
                         Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
-                        for (Map.Entry<String, Vault> vault_entry : vaults) {
-                            if (vault_entry.getValue().name.equals(default_autofill_vault.getSelectedItem().toString())) {
-                                ton.addExtra(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid);
-                                settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid).commit();
+                        if (vaults != null) {
+                            for (Map.Entry<String, Vault> vault_entry : vaults) {
+                                if (vault_entry.getValue().name.equals(default_autofill_vault.getSelectedItem().toString())) {
+                                    ton.addExtra(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid);
+                                    settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid).commit();
 
-                                Vault.getVault(getContext(), vault_entry.getValue().guid, new FutureCallback<Vault>() {
-                                    @Override
-                                    public void onCompleted(Exception e, Vault result) {
-                                        if (e != null) {
-                                            return;
+                                    Vault.getVault(getContext(), vault_entry.getValue().guid, new FutureCallback<Vault>() {
+                                        @Override
+                                        public void onCompleted(Exception e, Vault result) {
+                                            if (e != null) {
+                                                return;
+                                            }
+                                            Vault.updateAutofillVault(result, settings);
                                         }
-                                        Vault.updateAutofillVault(result, settings);
-                                    }
-                                });
+                                    });
 
-                                break;
+                                    break;
+                                }
                             }
                         }
                     }

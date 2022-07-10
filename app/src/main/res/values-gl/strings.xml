@@ -33,6 +33,8 @@
     <string name="error_downloading_file">Produciuse un erro ao descargar o ficheiro</string>
     <string name="error_writing_file">Produciuse un erro ao gravar o ficheiro</string>
     <string name="files">Ficheiros</string>
+    <string name="add_file">Engadir ficheiro</string>
+    <string name="add_custom_field">Engadir campo personalizado</string>
     <string name="expert_settings">Axustes para expertos</string>
     <string name="yes">Si</string>
     <string name="cancel">Cancelar</string>

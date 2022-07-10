@@ -259,7 +259,8 @@ public class PasswordListActivity extends AppCompatActivity implements
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                     .replace(R.id.content_password_list, new VaultFragment(), "vaults")
                     .addToBackStack(null)
-                    .commit();
+                    .commitAllowingStateLoss();
+            Log.d("PL", "committed transaction");
         } else {
             this.runOnUiThread(() -> {
                 final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
@@ -305,7 +306,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                         .replace(R.id.content_password_list, new CredentialItemFragment(), "vault")
                         .addToBackStack(null)
-                        .commit();
+                        .commitAllowingStateLoss();
             } else {
                 showUnlockVault();
             }
@@ -335,7 +336,10 @@ public class PasswordListActivity extends AppCompatActivity implements
                     }
 
                     // Update the vault record to avoid future loads
-                    ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(result.guid, result);
+                    HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+                    if (vaults != null) {
+                        vaults.put(result.guid, result);
+                    }
 
                     ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
                     self.runOnUiThread(() -> {
@@ -358,9 +362,9 @@ public class PasswordListActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                .replace(R.id.content_password_list, new VaultLockScreenFragment(), "vault")
+                .replace(R.id.content_password_list, VaultLockScreenFragment.newInstance(v), "vault")
                 .addToBackStack(null)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     void lockVault() {
@@ -390,6 +394,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         Vault.updateAutofillVault(v, settings);
         try {
             OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+            OfflineStorage.getInstance().commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -415,18 +420,25 @@ public class PasswordListActivity extends AppCompatActivity implements
         Vault.updateAutofillVault(v, settings);
         try {
             OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+            OfflineStorage.getInstance().commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
-
         if (vaultFragment != null && vaultFragment.isVisible()) {
-            Log.e("refreshVault", "load credentials into content password list");
+            Log.d("refreshVault", "load credentials into content password list");
             CredentialItemFragment credentialItems = (CredentialItemFragment)
                     getSupportFragmentManager().findFragmentById(R.id.content_password_list);
             assert credentialItems != null;
             credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+        }
+
+        CredentialDisplayFragment credentialDisplayFragment = (CredentialDisplayFragment) getSupportFragmentManager().findFragmentByTag("credential");
+        if (credentialDisplayFragment != null) {
+            Log.d("refreshCredential", "load credential into current credential display fragment");
+            credentialDisplayFragment.reloadCredentialFromActiveVaultIfPossible();
+            credentialDisplayFragment.updateViewContent();
         }
     }
 
@@ -440,6 +452,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         Vault.updateAutofillVault(v, settings);
         try {
             OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+            OfflineStorage.getInstance().commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }
