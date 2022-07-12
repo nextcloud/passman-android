@@ -41,7 +41,10 @@
     <string name="add_custom_field">Ajouter un champ personnalisé</string>
     <string name="app_start_password">Mot de passe de démarrage de l\'appli</string>
     <string name="wait_while_uploading">Patienter pendant le téléchargement</string>
+    <string name="wait_while_downloading">Patientez pendant le téléchargement...</string>
     <string name="automatically">automatiquement</string>
+    <string name="request_connect_timeout">Délai d\'expiration de la demande de connexion (en secondes)</string>
+    <string name="request_response_timeout">Délai d\'expiration des requêtes (en secondes)</string>
     <string name="expert_settings">Paramètres expert</string>
     <string name="yes">Oui</string>
     <string name="cancel">Annuler</string>
