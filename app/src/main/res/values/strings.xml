@@ -84,4 +84,7 @@
     <string name="offline_cache_description">Caches the encrypted vaults if they were loaded manually</string>
     <string name="enable_offline_cache">Enable offline cache</string>
     <string name="clear_offline_cache">Clear offline cache</string>
+    <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
+    <string name="manual_login">Manual Login</string>
+    <string name="confirm_account_logout">Are you sure you want to log out?</string>
 </resources>
