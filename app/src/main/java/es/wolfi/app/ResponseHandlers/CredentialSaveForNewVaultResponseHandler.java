@@ -23,6 +23,8 @@
 package es.wolfi.app.ResponseHandlers;
 
 import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -68,45 +70,56 @@ public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseH
     @Override
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         String result = new String(responseBody);
-        if (statusCode == 200) {
-            try {
-                JSONObject credentialObject = new JSONObject(result);
-                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == vault.vault_id) {
 
-                    AsyncHttpResponseHandler createInitialSharingKeysResponseHandler = new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            if (statusCode == 200) {
-                                Toast.makeText(view.getContext(), R.string.successfully_saved, Toast.LENGTH_LONG).show();
-                                Objects.requireNonNull(passwordListActivity).addVaultToCurrentLocalVaultList(vault);
-                                fragmentManager.popBackStack();
-                            } else {
-                                Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
-                            }
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (statusCode == 200) {
+                    try {
+                        JSONObject credentialObject = new JSONObject(result);
+                        if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == vault.vault_id) {
 
-                            alreadySaving.set(false);
-                            progress.dismiss();
+                            AsyncHttpResponseHandler createInitialSharingKeysResponseHandler = new AsyncHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (statusCode == 200) {
+                                                Toast.makeText(view.getContext(), R.string.successfully_saved, Toast.LENGTH_LONG).show();
+                                                Objects.requireNonNull(passwordListActivity).addVaultToCurrentLocalVaultList(vault);
+                                                fragmentManager.popBackStack();
+                                            } else {
+                                                Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+                                            }
+
+                                            alreadySaving.set(false);
+                                            progress.dismiss();
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+
+                                }
+                            };
+
+                            //create initial sharing keys
+                            vault.updateSharingKeys(keyStrength, view.getContext(), createInitialSharingKeysResponseHandler);
+
+                            return;
                         }
-
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-
-                        }
-                    };
-
-                    //create initial sharing keys
-                    vault.updateSharingKeys(keyStrength, view.getContext(), createInitialSharingKeysResponseHandler);
-
-                    return;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
-        alreadySaving.set(false);
-        progress.dismiss();
-        Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+                alreadySaving.set(false);
+                progress.dismiss();
+                Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -115,28 +128,33 @@ public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseH
         progress.dismiss();
         String response = new String(responseBody);
 
-        if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-            try {
-                JSONObject o = new JSONObject(response);
-                if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                    Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
-                    return;
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+                    try {
+                        JSONObject o = new JSONObject(response);
+                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                            Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                        Toast.makeText(view.getContext(),
+                                view.getContext().getString(R.string.error_occurred).concat(e1.getMessage() != null ? e1.getMessage() : ""),
+                                Toast.LENGTH_LONG).show();
+                    }
                 }
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-                Toast.makeText(view.getContext(),
-                        view.getContext().getString(R.string.error_occurred).concat(e1.getMessage() != null ? e1.getMessage() : ""),
-                        Toast.LENGTH_LONG).show();
-            }
-        }
 
-        if (error != null && error.getMessage() != null && statusCode != 302) {
-            error.printStackTrace();
-            Log.e("async http response", new String(responseBody));
-            Toast.makeText(view.getContext(), view.getContext().getString(R.string.error_occurred).concat(error.getMessage()), Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
-        }
+                if (error != null && error.getMessage() != null && statusCode != 302) {
+                    error.printStackTrace();
+                    Log.e("async http response", new String(responseBody));
+                    Toast.makeText(view.getContext(), view.getContext().getString(R.string.error_occurred).concat(error.getMessage()), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     @Override

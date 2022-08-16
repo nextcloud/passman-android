@@ -6,6 +6,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        apply plugin: 'maven-publish'
         classpath 'com.android.tools.build:gradle:7.1.2'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -16,6 +17,7 @@ buildscript {
 allprojects {
     repositories {
         google()
+        maven { url "https://jitpack.io" }
         mavenCentral()
     }
 }

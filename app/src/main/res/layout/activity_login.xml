@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     *  Passman Android App
     *
     * @copyright Copyright (c) 2017, Andy Scherzinger
@@ -28,6 +27,48 @@
     android:fitsSystemWindows="true"
     tools:context="es.wolfi.app.passman.activities.LoginActivity">
 
-    <include layout="@layout/content_login" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:src="@drawable/nc_background" />
+
+    <ImageView
+        android:id="@+id/login_options_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:contentDescription="@string/app_name_release"
+        android:src="@drawable/logo_horizontal" />
+
+    <include layout="@layout/content_legacy_login" />
+
+    <LinearLayout
+        android:id="@+id/login_options"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/load_sso_login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="@drawable/login_decision_button"
+            android:text="@string/nextcloud_single_sign_on"
+            android:textColor="@color/colorPrimary" />
+
+        <Button
+            android:id="@+id/load_legacy_login_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:background="@drawable/login_decision_button"
+            android:text="@string/manual_login"
+            android:textColor="@color/colorPrimary" />
+
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

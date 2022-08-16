@@ -23,6 +23,8 @@
 package es.wolfi.app.ResponseHandlers;
 
 import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -67,32 +69,37 @@ public class VaultDeleteResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         String result = new String(responseBody);
-        if (statusCode == 200) {
-            try {
-                JSONObject responseObject = new JSONObject(result);
-                if (responseObject.has("ok") && responseObject.getBoolean("ok")) {
-                    if (isDeleteVaultContentRequest) {
-                        final AsyncHttpResponseHandler responseHandler = new VaultDeleteResponseHandler(alreadySaving, vault, false, progress, view, passwordListActivity, fragmentManager);
-                        vault.delete(view.getContext(), responseHandler);
-                    } else {
-                        Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (statusCode == 200) {
+                    try {
+                        JSONObject responseObject = new JSONObject(result);
+                        if (responseObject.has("ok") && responseObject.getBoolean("ok")) {
+                            if (isDeleteVaultContentRequest) {
+                                final AsyncHttpResponseHandler responseHandler = new VaultDeleteResponseHandler(alreadySaving, vault, false, progress, view, passwordListActivity, fragmentManager);
+                                vault.delete(view.getContext(), responseHandler);
+                            } else {
+                                Toast.makeText(view.getContext(), R.string.successfully_deleted, Toast.LENGTH_LONG).show();
 
-                        Objects.requireNonNull(passwordListActivity).deleteVaultInCurrentLocalVaultList(vault);
+                                Objects.requireNonNull(passwordListActivity).deleteVaultInCurrentLocalVaultList(vault);
 
-                        alreadySaving.set(false);
-                        progress.dismiss();
-                        fragmentManager.popBackStack();
+                                alreadySaving.set(false);
+                                progress.dismiss();
+                                fragmentManager.popBackStack();
+                            }
+                            return;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    return;
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
-        alreadySaving.set(false);
-        progress.dismiss();
-        Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+                alreadySaving.set(false);
+                progress.dismiss();
+                Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -105,25 +112,31 @@ public class VaultDeleteResponseHandler extends AsyncHttpResponseHandler {
             response = new String(responseBody);
         }
 
-        if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-            try {
-                JSONObject o = new JSONObject(response);
-                if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                    Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
-                    return;
+        final String finalResponse = response;
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (!finalResponse.equals("") && JSONUtils.isJSONObject(finalResponse)) {
+                    try {
+                        JSONObject o = new JSONObject(finalResponse);
+                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                            Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
                 }
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
-        }
 
-        if (error != null && error.getMessage() != null && statusCode != 302) {
-            error.printStackTrace();
-            Log.e("async http response", response);
-            Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
-        }
+                if (error != null && error.getMessage() != null && statusCode != 302) {
+                    error.printStackTrace();
+                    Log.e("async http response", finalResponse);
+                    Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     @Override

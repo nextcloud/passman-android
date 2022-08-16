@@ -262,29 +262,32 @@ public class PasswordListActivity extends AppCompatActivity implements
                     .commitAllowingStateLoss();
             Log.d("PL", "committed transaction");
         } else {
-            final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
-            progress.show();
-            Vault.getVaults(this, (e, result) -> {
-                progress.dismiss();
-                if (e != null) {
-                    // Not logged in, restart activity
-                    if (Objects.equals(e.getMessage(), "401")) {
-                        recreate();
+            this.runOnUiThread(() -> {
+                final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
+                progress.show();
+
+                Vault.getVaults(this, (e, result) -> {
+                    progress.dismiss();
+                    if (e != null) {
+                        // Not logged in, restart activity
+                        if (Objects.equals(e.getMessage(), "401")) {
+                            recreate();
+                        }
+
+                        Toast.makeText(getApplicationContext(), getString(R.string.net_error), Toast.LENGTH_LONG).show();
+
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                showVaults();
+                            }
+                        }, 30000);
+                        return;
                     }
 
-                    Toast.makeText(getApplicationContext(), getString(R.string.net_error), Toast.LENGTH_LONG).show();
-
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showVaults();
-                        }
-                    }, 30000);
-                    return;
-                }
-
-                ton.addExtra(SettingValues.VAULTS.toString(), result);
-                showVaults();
+                    ton.addExtra(SettingValues.VAULTS.toString(), result);
+                    showVaults();
+                });
             });
         }
     }
@@ -309,6 +312,7 @@ public class PasswordListActivity extends AppCompatActivity implements
             }
             progress.dismiss();
         } else {
+            final AppCompatActivity self = this;
             Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
                 @Override
                 public void onCompleted(Exception e, Vault result) {
@@ -338,9 +342,10 @@ public class PasswordListActivity extends AppCompatActivity implements
                     }
 
                     ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
-                    showActiveVault();
-
-                    Vault.updateAutofillVault(result, settings);
+                    self.runOnUiThread(() -> {
+                        showActiveVault();
+                        Vault.updateAutofillVault(result, settings);
+                    });
                 }
             });
         }
@@ -521,7 +526,12 @@ public class PasswordListActivity extends AppCompatActivity implements
                     CredentialItemFragment credentialItems = (CredentialItemFragment)
                             getSupportFragmentManager().findFragmentById(R.id.content_password_list);
                     assert credentialItems != null;
-                    credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+                        }
+                    });
                 }
             }
         });
@@ -636,7 +646,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     }
 
     public void showLockVaultButton() {
-        this.VaultLockButton.setVisibility(View.VISIBLE);
+        this.runOnUiThread(() -> this.VaultLockButton.setVisibility(View.VISIBLE));
     }
 
     private void showNotImplementedMessage() {
@@ -700,7 +710,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                     try {
                         JSONObject o = new JSONObject(result);
                         if (o.has("file_data")) {
-                            progress.setMessage(getString(R.string.wait_while_decrypting));
+                            runOnUiThread(() -> progress.setMessage(getString(R.string.wait_while_decrypting)));
                             String[] decryptedSplitString = v.decryptString(o.getString("file_data")).split(",");
                             if (decryptedSplitString.length == 2) {
                                 Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);

@@ -24,6 +24,8 @@ package es.wolfi.app.ResponseHandlers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -63,66 +65,71 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
     @Override
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         String result = new String(responseBody);
-        if (statusCode == 200) {
-            try {
-                JSONObject credentialObject = new JSONObject(result);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (statusCode == 200) {
+                    try {
+                        JSONObject credentialObject = new JSONObject(result);
 
-                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == vault.vault_id) {
-                    Credential currentCredential = Credential.fromJSON(credentialObject, vault);
-                    vault.addCredential(currentCredential);
-                    ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(vault.guid, vault);
-                    Vault activeVault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-                    if (vault.guid.equals(activeVault.guid)) {
-                        ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), vault);
+                        if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == vault.vault_id) {
+                            Credential currentCredential = Credential.fromJSON(credentialObject, vault);
+                            vault.addCredential(currentCredential);
+                            ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(vault.guid, vault);
+                            Vault activeVault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+                            if (vault.guid.equals(activeVault.guid)) {
+                                ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), vault);
+                            }
+
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(baseContext);
+                            Vault.updateAutofillVault(vault, settings);
+
+                            Toast.makeText(applicationContext, applicationContext.getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, applicationContext.getString(R.string.successfully_saved));
+                            return;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
-                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(baseContext);
-                    Vault.updateAutofillVault(vault, settings);
-
-                    Toast.makeText(applicationContext, applicationContext.getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, applicationContext.getString(R.string.successfully_saved));
-                    return;
+                    Toast.makeText(applicationContext, applicationContext.getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onSaveRequest(), failed to save: " + R.string.error_occurred);
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-
-            Toast.makeText(applicationContext, applicationContext.getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "onSaveRequest(), failed to save: " + R.string.error_occurred);
-        }
+        });
     }
 
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-        String response = "";
+        String response = new String(responseBody);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+                    try {
+                        JSONObject o = new JSONObject(response);
+                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
 
-        if (responseBody != null && responseBody.length > 0) {
-            response = new String(responseBody);
-        }
-
-        if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-            try {
-                JSONObject o = new JSONObject(response);
-                if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-
-                    Toast.makeText(applicationContext, o.getString("message"), Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "onSaveRequest(), failed to save: " + o.getString("message"));
-                    return;
+                            Toast.makeText(applicationContext, o.getString("message"), Toast.LENGTH_LONG).show();
+                            Log.d(TAG, "onSaveRequest(), failed to save: " + o.getString("message"));
+                            return;
+                        }
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
                 }
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
-        }
 
-        if (error != null && error.getMessage() != null && statusCode != 302) {
-            error.printStackTrace();
-            Log.e("async http response", response);
-            Toast.makeText(applicationContext, error.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, error.getMessage());
-        } else {
-            Toast.makeText(applicationContext, applicationContext.getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, applicationContext.getString(R.string.error_occurred));
-        }
+                if (error != null && error.getMessage() != null && statusCode != 302) {
+                    error.printStackTrace();
+                    Log.e("async http response", new String(responseBody));
+                    Toast.makeText(applicationContext, error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, error.getMessage());
+                } else {
+                    Toast.makeText(applicationContext, applicationContext.getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, applicationContext.getString(R.string.error_occurred));
+                }
+            }
+        });
     }
 
     @Override

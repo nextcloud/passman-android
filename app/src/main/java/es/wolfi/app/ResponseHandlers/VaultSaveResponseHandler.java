@@ -23,6 +23,8 @@
 package es.wolfi.app.ResponseHandlers;
 
 import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -70,57 +72,62 @@ public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onSuccess(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody) {
         String result = new String(responseBody);
-        if (statusCode == 200) {
-            try {
-                if (updateVault) {
-                    Vault localVaultInstance = Vault.getVaultByGuid(vault.guid);
-                    if (localVaultInstance != null) {
-                        localVaultInstance.setName(vault.getName());
-                    }
-                    alreadySaving.set(false);
-                    progress.dismiss();
-                    fragmentManager.popBackStack();
-                    return;
-                } else {
-                    JSONObject vaultObject = new JSONObject(result);
-                    Vault v = Vault.fromJSON(vaultObject);
-                    if (vaultObject.has("vault_id") && vaultObject.has("name") && vaultObject.getString("name").equals(vault.getName())) {
-                        v.setEncryptionKey(vault.getEncryptionKey());
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (statusCode == 200) {
+                    try {
+                        if (updateVault) {
+                            Vault localVaultInstance = Vault.getVaultByGuid(vault.guid);
+                            if (localVaultInstance != null) {
+                                localVaultInstance.setName(vault.getName());
+                            }
+                            alreadySaving.set(false);
+                            progress.dismiss();
+                            fragmentManager.popBackStack();
+                            return;
+                        } else {
+                            JSONObject vaultObject = new JSONObject(result);
+                            Vault v = Vault.fromJSON(vaultObject);
+                            if (vaultObject.has("vault_id") && vaultObject.has("name") && vaultObject.getString("name").equals(vault.getName())) {
+                                v.setEncryptionKey(vault.getEncryptionKey());
 
-                        Toast.makeText(view.getContext(), "Vault created", Toast.LENGTH_LONG).show();
+                                Toast.makeText(view.getContext(), "Vault created", Toast.LENGTH_LONG).show();
 
-                        //create test credential
-                        Credential testCred = new Credential();
-                        testCred.setVault(v);
+                                //create test credential
+                                Credential testCred = new Credential();
+                                testCred.setVault(v);
 
-                        testCred.setLabel(labelPrefixForFirstVaultConsistencyCredential + v.getName());
-                        testCred.setPassword("lorem ipsum");
-                        testCred.setOtp("{}");
-                        testCred.setTags("");
-                        testCred.setFavicon("");
-                        testCred.setUsername("");
-                        testCred.setEmail("");
-                        testCred.setUrl("");
-                        testCred.setDescription("");
-                        testCred.setFiles("[]");
-                        testCred.setCustomFields("[]");
-                        testCred.setCompromised(false);
-                        testCred.setHidden(true);
+                                testCred.setLabel(labelPrefixForFirstVaultConsistencyCredential + v.getName());
+                                testCred.setPassword("lorem ipsum");
+                                testCred.setOtp("{}");
+                                testCred.setTags("");
+                                testCred.setFavicon("");
+                                testCred.setUsername("");
+                                testCred.setEmail("");
+                                testCred.setUrl("");
+                                testCred.setDescription("");
+                                testCred.setFiles("[]");
+                                testCred.setCustomFields("[]");
+                                testCred.setCompromised(false);
+                                testCred.setHidden(true);
 
-                        final AsyncHttpResponseHandler responseHandler = new CredentialSaveForNewVaultResponseHandler(alreadySaving, v, keyStrength, progress, view, passwordListActivity, fragmentManager);
-                        testCred.save(view.getContext(), responseHandler);
+                                final AsyncHttpResponseHandler responseHandler = new CredentialSaveForNewVaultResponseHandler(alreadySaving, v, keyStrength, progress, view, passwordListActivity, fragmentManager);
+                                testCred.save(view.getContext(), responseHandler);
 
-                        return;
+                                return;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
-        alreadySaving.set(false);
-        progress.dismiss();
-        Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+                alreadySaving.set(false);
+                progress.dismiss();
+                Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -133,25 +140,31 @@ public class VaultSaveResponseHandler extends AsyncHttpResponseHandler {
             response = new String(responseBody);
         }
 
-        if (!response.equals("") && JSONUtils.isJSONObject(response)) {
-            try {
-                JSONObject o = new JSONObject(response);
-                if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
-                    Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
-                    return;
+        final String finalResponse = response;
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                if (!finalResponse.equals("") && JSONUtils.isJSONObject(finalResponse)) {
+                    try {
+                        JSONObject o = new JSONObject(finalResponse);
+                        if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
+                            Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
                 }
-            } catch (JSONException e1) {
-                e1.printStackTrace();
-            }
-        }
 
-        if (error != null && error.getMessage() != null && statusCode != 302) {
-            error.printStackTrace();
-            Log.e("async http response", response);
-            Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
-        }
+                if (error != null && error.getMessage() != null && statusCode != 302) {
+                    error.printStackTrace();
+                    Log.e("async http response", finalResponse);
+                    Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     @Override

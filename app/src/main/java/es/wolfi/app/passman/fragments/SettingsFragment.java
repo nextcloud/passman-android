@@ -3,6 +3,7 @@
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2022, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -22,11 +23,14 @@
 package es.wolfi.app.passman.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +38,7 @@ import android.view.ViewManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -43,7 +48,14 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
+import com.nextcloud.android.sso.AccountImporter;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -62,6 +74,11 @@ import es.wolfi.utils.PasswordGenerator;
 
 
 public class SettingsFragment extends Fragment {
+
+    RelativeLayout manual_server_connection_settings;
+    RelativeLayout sso_settings;
+
+    TextView sso_user_server;
 
     EditText settings_nextcloud_url;
     EditText settings_nextcloud_user;
@@ -90,6 +107,7 @@ public class SettingsFragment extends Fragment {
     Button clear_offline_cache_button;
 
     SharedPreferences settings;
+    SingleSignOnAccount ssoAccount;
     PasswordGenerator passwordGenerator;
 
     public SettingsFragment() {
@@ -102,9 +120,7 @@ public class SettingsFragment extends Fragment {
      * @return A new instance of fragment SettingsFragment.
      */
     public static SettingsFragment newInstance() {
-        SettingsFragment fragment = new SettingsFragment();
-
-        return fragment;
+        return new SettingsFragment();
     }
 
     @Override
@@ -113,8 +129,16 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
+        manual_server_connection_settings = view.findViewById(R.id.manual_server_connection_settings);
+        sso_settings = view.findViewById(R.id.sso_settings);
+
         FloatingActionButton settingsSaveButton = view.findViewById(R.id.settings_save_button);
         settingsSaveButton.setOnClickListener(this.getSaveButtonListener());
+
+        Button sso_user_server_logout_button = view.findViewById(R.id.sso_user_server_logout_button);
+        sso_user_server_logout_button.setOnClickListener(this.getSSOLogoutButtonListener());
+
+        sso_user_server = view.findViewById(R.id.sso_user_server);
 
         settings_nextcloud_url = view.findViewById(R.id.settings_nextcloud_url);
         settings_nextcloud_user = view.findViewById(R.id.settings_nextcloud_user);
@@ -155,6 +179,24 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+
+        try {
+            ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(getContext());
+            manual_server_connection_settings.removeAllViews();
+            sso_settings.setVisibility(View.VISIBLE);
+
+            String hostname = "";
+            try {
+                URL uri = new URL(ssoAccount.url);
+                hostname = uri.getHost();
+            } catch (MalformedURLException e) {
+                Log.d("SettingsFragment", "Error parsing host from sso account");
+            }
+            sso_user_server.setText(String.format("%s@%s", ssoAccount.userId, hostname));
+        } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+            manual_server_connection_settings.setVisibility(View.VISIBLE);
+            sso_settings.removeAllViews();
+        }
 
         settings_nextcloud_url.setText(KeyStoreUtils.getString(SettingValues.HOST.toString(), null));
         settings_nextcloud_user.setText(KeyStoreUtils.getString(SettingValues.USER.toString(), null));
@@ -230,6 +272,33 @@ public class SettingsFragment extends Fragment {
         super.onDetach();
     }
 
+    public View.OnClickListener getSSOLogoutButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage(R.string.confirm_account_logout);
+                builder.setCancelable(false);
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AccountImporter.clearAllAuthTokens(getContext());
+                        SingleAccountHelper.setCurrentAccount(getContext(), null);
+
+                        settings.edit().remove(SettingValues.HOST.toString()).commit();
+                        settings.edit().remove(SettingValues.USER.toString()).commit();
+                        settings.edit().remove(SettingValues.PASSWORD.toString()).commit();
+
+                        dialogInterface.dismiss();
+                        PasswordListActivity.triggerRebirth(Objects.requireNonNull(((PasswordListActivity) getActivity())));
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+            }
+        };
+    }
+
     public View.OnClickListener getSaveButtonListener() {
         return new View.OnClickListener() {
             @SuppressLint("ApplySharedPref")
@@ -290,9 +359,9 @@ public class SettingsFragment extends Fragment {
                 }
 
                 SettingsCache.clear();
-                if (!KeyStoreUtils.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
+                if (ssoAccount == null && (!KeyStoreUtils.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
                         !KeyStoreUtils.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
-                        !KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {
+                        !KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString()))) {
                     ton.removeString(SettingValues.HOST.toString());
                     ton.removeString(SettingValues.USER.toString());
                     ton.removeString(SettingValues.PASSWORD.toString());
