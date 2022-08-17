@@ -77,4 +77,4 @@
     <string name="offline_cache_description">Ukladá do vyrovnávacej pamäte šifrované trezory, ak boli načítané manuálne</string>
     <string name="enable_offline_cache">Zapnúť offline vyrovnávaciu pamäť</string>
     <string name="clear_offline_cache">Vyčistiť offline vyrovnávaciu pamäť</string>
-</resources>
+    </resources>

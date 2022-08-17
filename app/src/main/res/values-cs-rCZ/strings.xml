@@ -80,4 +80,5 @@
     <string name="offline_cache_description">Uchovává zašifrované trezory, pokud byly načteny ručně, v mezipaměti</string>
     <string name="enable_offline_cache">Zapnout mezipaměť offline režimu</string>
     <string name="clear_offline_cache">Vymazat mezipaměť offline režimu</string>
-</resources>
+    <string name="nextcloud_single_sign_on">Nextcloud sjednocené přihlašování</string>
+    </resources>

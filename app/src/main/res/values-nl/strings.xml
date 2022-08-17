@@ -79,4 +79,5 @@
     <string name="offline_cache_description">De gecodeerde kluizen worden in de cache opgeslagen als ze handmatig zijn geladen</string>
     <string name="enable_offline_cache">Inschakelen off-line cache</string>
     <string name="clear_offline_cache">Leesgmaken off-line cache</string>
-</resources>
+    <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
+    </resources>

@@ -80,4 +80,5 @@
     <string name="offline_cache_description">Guarda en caché las bóvedas cifradas si se han cargado manualmente</string>
     <string name="enable_offline_cache">Activar caché sin conexión</string>
     <string name="clear_offline_cache">Limpiar caché sin conexión</string>
-</resources>
+    <string name="nextcloud_single_sign_on">Autenticación única de Nextcloud</string>
+    </resources>

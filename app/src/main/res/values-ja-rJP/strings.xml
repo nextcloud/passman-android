@@ -43,4 +43,5 @@
     <string name="password_length">パスワードの長さ</string>
     <string name="new_vault_name">新しい保管庫の名前</string>
     <string name="offline_cache">オフラインキャッシュ</string>
+    <string name="nextcloud_single_sign_on">Nextcloud シングルサインオン</string>
     </resources>

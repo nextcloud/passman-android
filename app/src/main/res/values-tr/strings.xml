@@ -80,4 +80,5 @@
     <string name="offline_cache_description">El ile olarak yüklenmişlerse şifrelenmiş kasaları ön belleğe alır</string>
     <string name="enable_offline_cache">Çevrimdışı ön bellek kullanılsın</string>
     <string name="clear_offline_cache">Çevrimdışı ön belleği temizle</string>
-</resources>
+    <string name="nextcloud_single_sign_on">Nextcloud Tek Oturum Açma</string>
+    </resources>

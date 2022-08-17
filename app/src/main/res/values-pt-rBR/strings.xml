@@ -80,4 +80,5 @@
     <string name="offline_cache_description">Armazena em cache os cofres criptografados se eles foram carregados manualmente</string>
     <string name="enable_offline_cache">Habilitar cache offline</string>
     <string name="clear_offline_cache">Limpar cache offline</string>
-</resources>
+    <string name="nextcloud_single_sign_on">Nextcloud Single Sign Ligado</string>
+    </resources>

@@ -77,4 +77,5 @@
     <string name="offline_cache_description">缓存手动加载的密码库</string>
     <string name="enable_offline_cache">启用离线缓存</string>
     <string name="clear_offline_cache">清除离线缓存</string>
-</resources>
+    <string name="nextcloud_single_sign_on">Nextcloud单点登陆</string>
+    </resources>
