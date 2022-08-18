@@ -81,4 +81,6 @@
     <string name="enable_offline_cache">Zapnout mezipaměť offline režimu</string>
     <string name="clear_offline_cache">Vymazat mezipaměť offline režimu</string>
     <string name="nextcloud_single_sign_on">Nextcloud sjednocené přihlašování</string>
-    </resources>
+    <string name="manual_login">Ruční přihlášení</string>
+    <string name="confirm_account_logout">Opravdu se chcete odhlásit?</string>
+</resources>

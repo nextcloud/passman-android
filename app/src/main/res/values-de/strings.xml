@@ -80,4 +80,7 @@
     <string name="offline_cache_description">Die verschlüsselten Tresore werden zwischengespeichert, wenn sie manuell geladen wurden.</string>
     <string name="enable_offline_cache">Offline-Cache aktivieren</string>
     <string name="clear_offline_cache">Offline-Cache leeren</string>
-    </resources>
+    <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
+    <string name="manual_login">Manuelles Anmelden</string>
+    <string name="confirm_account_logout">Möchten Sie sich wirklich abmelden?</string>
+</resources>
