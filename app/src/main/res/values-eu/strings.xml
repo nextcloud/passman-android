@@ -80,6 +80,7 @@
     <string name="offline_cache_description">Enkriptatutako kutxak gordetzen ditu eskuz kargatu badira</string>
     <string name="enable_offline_cache">Gaitu lineaz kanpoko cachea</string>
     <string name="clear_offline_cache">Garbitu lineaz kanpoko cachea</string>
+    <string name="nextcloud_single_sign_on">Nextcloud saio-hasiera bakarra</string>
     <string name="manual_login">Eskuzko saio hasiera</string>
     <string name="confirm_account_logout">Ziur zaude saioa bukatu nahi duzula?</string>
 </resources>
