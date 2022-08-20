@@ -81,4 +81,6 @@
     <string name="enable_offline_cache">Włącz pamięć podręczną offline</string>
     <string name="clear_offline_cache">Wyczyść pamięć podręczną offline</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
-    </resources>
+    <string name="manual_login">Ręczne logowanie</string>
+    <string name="confirm_account_logout">Czy na pewno chcesz się wylogować?</string>
+</resources>

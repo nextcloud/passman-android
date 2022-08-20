@@ -80,4 +80,7 @@
     <string name="offline_cache_description">緩存手動加載的已加密保管庫</string>
     <string name="enable_offline_cache">啟用離線缓存</string>
     <string name="clear_offline_cache">清除離線缓存</string>
-    </resources>
+    <string name="nextcloud_single_sign_on">Nextcloud 單點登錄</string>
+    <string name="manual_login">手動登入</string>
+    <string name="confirm_account_logout">您確定要登出嗎？</string>
+</resources>
