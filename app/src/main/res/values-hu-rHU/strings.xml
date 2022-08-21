@@ -80,5 +80,7 @@
     <string name="offline_cache_description">Gyorsítótárazza a titkosított széfeket, ha kézileg lettek betöltve</string>
     <string name="enable_offline_cache">Offline gyorsítótár engedélyezése</string>
     <string name="clear_offline_cache">Offline gyorsítótár törlése</string>
-    <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
-    </resources>
+    <string name="nextcloud_single_sign_on">Nextcloud egyszeri bejelentkezés</string>
+    <string name="manual_login">Kézi bejelentkezés</string>
+    <string name="confirm_account_logout">Biztos, hogy kilép?</string>
+</resources>
