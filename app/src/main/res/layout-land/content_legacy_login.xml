@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     *  Passman Android App
     *
     * @copyright Copyright (c) 2017, Andy Scherzinger
@@ -22,13 +21,17 @@
     *
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:layout_above="@+id/bottom_block"
-              android:layout_alignParentTop="true"
-              android:orientation="horizontal">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_legacy_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/bottom_block"
+    android:layout_alignParentTop="true"
+    android:orientation="horizontal"
+    android:visibility="invisible"
+    tools:context="es.wolfi.app.passman.activities.LoginActivity"
+    tools:showIn="@layout/activity_login">
 
     <ImageView
         android:id="@+id/thumbnail"
@@ -37,29 +40,26 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:contentDescription="@string/app_name_release"
-        android:src="@drawable/logo_vertical"
-        android:padding="64dp"/>
+        android:padding="64dp"
+        android:src="@drawable/logo_vertical" />
 
     <ScrollView
+        android:id="@+id/scroll"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:id="@+id/scroll"
         android:fillViewport="true"
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/LinearLayout1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingRight="32dp"
             android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingRight="32dp"
             android:paddingBottom="@dimen/activity_vertical_margin"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:context="es.wolfi.app.passman.activities.LoginActivity"
-            tools:showIn="@layout/activity_login">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/input_layout_host"
@@ -73,13 +73,13 @@
 
                     <Spinner
                         android:id="@+id/protocol"
-                        android:minWidth="@dimen/protocol_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_weight="1"
-                        android:spinnerMode="dropdown"
-                        android:entries="@array/protocols"/>
+                        android:entries="@array/protocols"
+                        android:minWidth="@dimen/protocol_spinner"
+                        android:spinnerMode="dropdown" />
 
                     <EditText
                         android:id="@+id/host"
@@ -114,7 +114,7 @@
                     android:hint="@string/username"
                     android:inputType="textPersonName"
                     android:textColor="@color/login_text_color"
-                    android:textColorHint="@color/login_text_hint_color"/>
+                    android:textColorHint="@color/login_text_hint_color" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -133,7 +133,7 @@
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:textColor="@color/login_text_color"
-                    android:textColorHint="@color/login_text_hint_color"/>
+                    android:textColorHint="@color/login_text_hint_color" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -144,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/activity_vertical_margin"
                 android:text="@string/connect"
-                android:theme="@style/Button.Login"/>
+                android:theme="@style/Button.Login" />
 
         </LinearLayout>
     </ScrollView>
