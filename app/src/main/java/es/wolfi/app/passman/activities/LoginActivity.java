@@ -114,6 +114,13 @@ public class LoginActivity extends AppCompatActivity {
         EditText hostForm = findViewById(R.id.host);
         hostForm.requestFocus();
 
+        bt_next.setOnFocusChangeListener((View view, boolean buttonEnabled) -> {
+            if (buttonEnabled) {
+                Log.i(LOG_TAG, "Next button focus enabled");
+                onNextClick();
+            }
+        });
+
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
@@ -202,9 +209,16 @@ public class LoginActivity extends AppCompatActivity {
     public void onNextClick() {
         Log.e("Login", "begin");
         final String protocol = input_protocol.getSelectedItem().toString().toLowerCase();
-        final String host = protocol + "://" + input_host.getText().toString().trim();
+        final String hostInput = input_host.getText().toString().trim();
+        final String host = protocol + "://" + hostInput;
         final String user = input_user.getText().toString().trim();
         final String pass = input_pass.getText().toString();
+
+        if (hostInput.isEmpty() || user.isEmpty() || pass.isEmpty()) {
+            Log.e("Login", "abort");
+            Toast.makeText(getApplicationContext(), getString(R.string.wrongNCSettings), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         ton.addString(SettingValues.HOST.toString(), host);
         ton.addString(SettingValues.USER.toString(), user);
