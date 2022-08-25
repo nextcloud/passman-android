@@ -26,6 +26,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -85,12 +86,20 @@ public class EditPasswordTextItem extends LinearLayout {
         super.onDraw(canvas);
     }
 
+    public void addTextChangedListener(TextWatcher watcher) {
+        this.password.addTextChangedListener(watcher);
+    }
+
     public void setText(String password) {
         this.password.setText(password);
     }
 
     public Editable getText() {
         return this.password.getText();
+    }
+
+    public void setHint(String hint) {
+        this.password.setHint(hint);
     }
 
     public void setEnabled(boolean enabled) {
