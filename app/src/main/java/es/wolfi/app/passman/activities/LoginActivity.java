@@ -62,6 +62,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
@@ -94,6 +95,8 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        new OfflineStorage(getBaseContext());
 
         if (!isNextcloudFilesAppInstalled(this)) {
             isLegacyOnly = true;

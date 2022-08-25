@@ -127,7 +127,10 @@ public class CredentialDisplayFragment extends Fragment {
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
             if (v != null) {
-                credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+                Credential credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+                if (credential != null) {   // credential may have been removed from vault in the meantime
+                    this.credential = credential;
+                }
             }
         }
     }
