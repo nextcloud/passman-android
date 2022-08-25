@@ -10,6 +10,7 @@
 - [What means "Encrypted offline cache"?](#what-means-encrypted-offline-cache)
 - [How far can I trust the local storage encryption?](#how-far-can-i-trust-the-local-storage-encryption-is-it-save-to-store-my-vault-password-on-the-device)
 - [How can I use a self signed certificate to connect the my Nextcloud server?](#how-can-i-use-a-self-signed-certificate-to-connect-the-my-nextcloud-server)
+- [How can I connect to my 2FA secured account?](#how-can-i-connect-to-my-2fa-secured-account)
 
 
 ## How do I setup the app correctly after installation?
@@ -114,4 +115,9 @@ Remove the passphrase from the certificate key to use it with apache2 without en
 Use `server.crt` as certificate and `server.key.insecure` as key for your apache2 host configuration.
 
 Import `CA.der.crt` as android user certificate.
+
+## How can I connect to my 2FA secured account?
+- Unfortunately Passman Android does not implement a native 2FA login
+- Workaround 1: Connect Passman Android using Single-Sign-On (SSO) with the Nextcloud Files App
+- Workaround 2: You need to create a device password (see https://github.com/nextcloud/passman-android/issues/70#issuecomment-691544624)
 
