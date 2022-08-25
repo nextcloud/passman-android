@@ -242,42 +242,44 @@ public abstract class Core {
         requestInternalAPIGET(c, "version", new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                if (result != null && e == null) {
-                    Log.d("getApiVersion", result);
-                    if (applyVersionJSON(result)) {
-                        OfflineStorage.getInstance().putObject(OfflineStorageValues.VERSION.toString(), result);
-                        OfflineStorage.getInstance().commit();
-                        cb.onCompleted(null, version_name);
-                    }
-                } else {
-                    Log.d("getApiVersion", "Failure while getting api version, maybe offline?");
-                    Log.d("OfflineStorage state", OfflineStorage.getInstance().isEnabled() ? "enabled" : "disabled");
-                    Log.d("version stored", OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString()) ? "yes" : "no");
-                    if (OfflineStorage.getInstance().isEnabled() &&
-                            OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString()) &&
-                            OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
-                        showConnectionErrorHint(c);
-                        if (applyVersionJSON(OfflineStorage.getInstance().getString(OfflineStorageValues.VERSION.toString()))) {
+                try {
+                    if (result != null && e == null) {
+                        Log.d("getApiVersion", result);
+                        if (applyVersionJSON(result)) {
+                            OfflineStorage.getInstance().putObject(OfflineStorageValues.VERSION.toString(), result);
+                            OfflineStorage.getInstance().commit();
                             cb.onCompleted(null, version_name);
-                            return;
                         }
+                    } else {
+                        Log.d("getApiVersion", "Failure while getting api version, maybe offline?");
+                        Log.d("OfflineStorage state", OfflineStorage.getInstance().isEnabled() ? "enabled" : "disabled");
+                        Log.d("version stored", OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString()) ? "yes" : "no");
+                        if (OfflineStorage.getInstance().isEnabled() &&
+                                OfflineStorage.getInstance().has(OfflineStorageValues.VERSION.toString()) &&
+                                OfflineStorage.getInstance().has(OfflineStorageValues.VAULTS.toString())) {
+                            showConnectionErrorHint(c);
+                            if (applyVersionJSON(OfflineStorage.getInstance().getString(OfflineStorageValues.VERSION.toString()))) {
+                                cb.onCompleted(null, version_name);
+                                return;
+                            }
+                        }
+                        cb.onCompleted(e, null);
                     }
-                    cb.onCompleted(e, null);
+                } catch (JSONException | NumberFormatException jsonException) {
+                    jsonException.printStackTrace();
+                    Toast.makeText(c, c.getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                    cb.onCompleted(jsonException, null);
                 }
             }
         });
     }
 
-    public static boolean applyVersionJSON(String version) {
-        try {
-            JSONObject parsedResult = new JSONObject(version);
-            if (parsedResult.has("version")) {
-                version_name = parsedResult.getString("version");
-                version_number = Integer.parseInt(version_name.replace(".", ""));
-                return true;
-            }
-        } catch (JSONException | NumberFormatException jsonException) {
-            jsonException.printStackTrace();
+    public static boolean applyVersionJSON(String version) throws JSONException, NumberFormatException {
+        JSONObject parsedResult = new JSONObject(version);
+        if (parsedResult.has("version")) {
+            version_name = parsedResult.getString("version");
+            version_number = Integer.parseInt(version_name.replace(".", ""));
+            return true;
         }
         return false;
     }
@@ -328,7 +330,7 @@ public abstract class Core {
         String host = ton.getString(SettingValues.HOST.toString());
         String user = ton.getString(SettingValues.USER.toString());
         String pass = ton.getString(SettingValues.PASSWORD.toString());
-        Toast.makeText(c, host, Toast.LENGTH_LONG).show();
+
         Log.d(LOG_TAG, "Host: " + host);
         Log.d(LOG_TAG, "User: " + user);
         //Log.d(LOG_TAG, "Pass: " + pass);
@@ -358,6 +360,8 @@ public abstract class Core {
                         }
                         ret = false;
                     }
+                } else {
+                    Toast.makeText(c, host, Toast.LENGTH_LONG).show();
                 }
 
                 cb.onCompleted(e, ret);

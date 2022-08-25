@@ -225,7 +225,6 @@ public class LoginActivity extends AppCompatActivity {
                     ton.removeString(SettingValues.USER.toString());
                     ton.removeString(SettingValues.PASSWORD.toString());
                 }
-
             }
         });
     }
