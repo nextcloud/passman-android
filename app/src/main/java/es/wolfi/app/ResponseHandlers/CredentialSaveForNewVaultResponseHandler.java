@@ -44,6 +44,7 @@ import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
+import es.wolfi.utils.ProgressUtils;
 
 public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseHandler {
 
@@ -94,7 +95,7 @@ public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseH
                                             }
 
                                             alreadySaving.set(false);
-                                            progress.dismiss();
+                                            ProgressUtils.dismiss(progress);
                                         }
                                     });
                                 }
@@ -116,7 +117,7 @@ public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseH
                 }
 
                 alreadySaving.set(false);
-                progress.dismiss();
+                ProgressUtils.dismiss(progress);
                 Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
             }
         });
@@ -125,7 +126,7 @@ public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseH
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         alreadySaving.set(false);
-        progress.dismiss();
+        ProgressUtils.dismiss(progress);
         String response = new String(responseBody);
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {

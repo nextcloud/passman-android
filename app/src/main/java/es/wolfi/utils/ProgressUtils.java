@@ -56,4 +56,17 @@ public class ProgressUtils {
 
         return progress;
     }
+
+    /**
+     * Checks if a dialog is shown and calls dismiss() on it if possible
+     *
+     * @param progress progress dialog to dismiss
+     */
+    public static void dismiss(ProgressDialog progress) {
+        if (progress != null) {
+            if (progress.isShowing()) {
+                progress.dismiss();
+            }
+        }
+    }
 }

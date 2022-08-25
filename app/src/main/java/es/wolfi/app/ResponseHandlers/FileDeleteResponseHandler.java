@@ -35,6 +35,7 @@ import java.util.List;
 import es.wolfi.app.passman.adapters.FileEditAdapter;
 import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.File;
+import es.wolfi.utils.ProgressUtils;
 
 public class FileDeleteResponseHandler extends AsyncHttpResponseHandler {
 
@@ -65,7 +66,7 @@ public class FileDeleteResponseHandler extends AsyncHttpResponseHandler {
                 }
             });
         }
-        progress.dismiss();
+        ProgressUtils.dismiss(progress);
     }
 
     @Override
@@ -77,7 +78,7 @@ public class FileDeleteResponseHandler extends AsyncHttpResponseHandler {
                 Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
             }
         });
-        progress.dismiss();
+        ProgressUtils.dismiss(progress);
     }
 
     @Override

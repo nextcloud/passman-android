@@ -34,6 +34,7 @@ import java.util.List;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
 import es.wolfi.passman.API.CustomField;
+import es.wolfi.utils.ProgressUtils;
 
 public class CustomFieldFileDeleteResponseHandler extends AsyncHttpResponseHandler {
 
@@ -62,7 +63,7 @@ public class CustomFieldFileDeleteResponseHandler extends AsyncHttpResponseHandl
                 }
             });
         }
-        progress.dismiss();
+        ProgressUtils.dismiss(progress);
     }
 
     @Override
@@ -74,7 +75,7 @@ public class CustomFieldFileDeleteResponseHandler extends AsyncHttpResponseHandl
                 Toast.makeText(progress.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
             }
         });
-        progress.dismiss();
+        ProgressUtils.dismiss(progress);
     }
 
     @Override

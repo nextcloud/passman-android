@@ -38,6 +38,7 @@ import es.wolfi.app.passman.adapters.FileEditAdapter;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;
+import es.wolfi.utils.ProgressUtils;
 
 public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
 
@@ -97,7 +98,7 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
                 } else {
                     Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
                 }
-                progress.dismiss();
+                ProgressUtils.dismiss(progress);
             }
         });
     }
@@ -111,7 +112,7 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
                 Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
             }
         });
-        progress.dismiss();
+        ProgressUtils.dismiss(progress);
     }
 
     @Override
