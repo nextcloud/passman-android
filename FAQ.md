@@ -77,3 +77,41 @@
 - The custom CA has to be imported in the Android trusted certificates section.
     - It should be somewhere like `Android Settings -> Security -> Install certificate from storage`
 
+**This is an example how a CA and certificate could be generated that will be accepted by Android and an apache2 webserver:**
+
+Create an auxiliary file "android_options.txt" with this line inside:
+
+    basicConstraints=CA:true
+
+
+Create self-signed certificate using these commands:
+
+    openssl genrsa -out CA.key 2048
+    openssl req -new -days 3650 -key CA.key -out CA.pem
+    openssl x509 -req -days 3650 -in CA.pem -signkey CA.key -extfile ./android_options.txt -out CA.crt 
+
+Now our CA.crt certificate is almost ready.
+Convert certificate to DER format:
+
+    openssl x509 -inform PEM -outform DER -in CA.crt -out CA.der.crt
+
+
+Generate a server key and request for signing (CSR):
+
+Make sure the "Common Name" matches the used host name (or ip address if no host name is used).
+
+    openssl genrsa -des3 -out server.key 4096
+    openssl req -new -key server.key -out server.csr
+
+Sign a certificate with CA:
+
+    openssl x509 -req -days 365 -in server.csr -CA CA.crt -CAkey CA.key -CAcreateserial -out server.crt
+
+Remove the passphrase from the certificate key to use it with apache2 without entering the password on service start:
+
+    openssl rsa -in server.key -out server.key.insecure
+
+Use `server.crt` as certificate and `server.key.insecure` as key for your apache2 host configuration.
+
+Import `CA.der.crt` as android user certificate.
+
