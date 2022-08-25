@@ -36,6 +36,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -62,7 +64,7 @@ public class VaultLockScreenFragment extends Fragment {
     @BindView(R.id.fragment_vault_password)
     EditText vault_password;
     @BindView(R.id.fragment_vault_unlock)
-    Button btn_unlock;
+    FloatingActionButton btn_unlock;
     @BindView(R.id.vault_lock_screen_chk_save_pw)
     CheckBox chk_save;
 
