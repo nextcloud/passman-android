@@ -24,15 +24,14 @@ import javax.crypto.spec.SecretKeySpec;
 public class TOTPHelper {
     public static final String SHA1 = "HmacSHA1";
 
-    public static String generate(byte[] secret) {
-        return String.format("%06d", generate(secret, System.currentTimeMillis() / 1000, 6));
+    public static String generate(byte[] secret, int digits, int period) {
+        return String.format("%06d", generate(secret, System.currentTimeMillis() / 1000, digits, period));
     }
 
-    public static int generate(byte[] key, long t, int digits)
-    {
+    public static int generate(byte[] key, long t, int digits, int period) {
         int r = 0;
         try {
-            t /= 30;
+            t /= period;
             byte[] data = new byte[8];
             long value = t;
             for (int i = 8; i-- > 0; value >>>= 8) {
@@ -54,12 +53,10 @@ public class TOTPHelper {
             }
 
             truncatedHash &= 0x7FFFFFFF;
-            truncatedHash %= Math.pow(10,digits);
+            truncatedHash %= Math.pow(10, digits);
 
-            r  = (int) truncatedHash;
-        }
-
-        catch(Exception e){
+            r = (int) truncatedHash;
+        } catch (Exception e) {
         }
 
         return r;

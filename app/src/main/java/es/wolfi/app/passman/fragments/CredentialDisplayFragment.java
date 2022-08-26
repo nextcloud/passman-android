@@ -144,10 +144,21 @@ public class CredentialDisplayFragment extends Fragment {
                 JSONObject otpObj = new JSONObject(credential.getOtp());
                 if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
                     String otpSecret = otpObj.getString("secret");
+                    int otpDigits = 6;
+                    if (otpObj.has("digits")) {
+                        otpDigits = otpObj.getInt("digits");
+                    }
+                    int otpPeriod = 30;
+                    if (otpObj.has("period")) {
+                        otpPeriod = otpObj.getInt("period");
+                    }
+
+                    int finalOtpDigits = otpDigits;
+                    int finalOtpPeriod = otpPeriod;
                     otp_refresh = new Runnable() {
                         @Override
                         public void run() {
-                            int progress = (int) (System.currentTimeMillis() / 1000) % 30;
+                            int progress = (int) (System.currentTimeMillis() / 1000) % finalOtpPeriod;
                             otp_progress.setProgress(progress * 100);
 
                             ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
@@ -155,7 +166,7 @@ public class CredentialDisplayFragment extends Fragment {
                             animation.setInterpolator(new LinearInterpolator());
                             animation.start();
 
-                            otp.setText(TOTPHelper.generate(new Base32().decode(otpSecret)));
+                            otp.setText(TOTPHelper.generate(new Base32().decode(otpSecret), finalOtpDigits, finalOtpPeriod));
                             handler.postDelayed(this, 1000);
                         }
                     };
