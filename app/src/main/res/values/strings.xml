@@ -90,4 +90,5 @@
     <string name="digits">Digits</string>
     <string name="period">Period</string>
     <string name="secret">Secret</string>
+    <string name="issuer">Issuer</string>
 </resources>

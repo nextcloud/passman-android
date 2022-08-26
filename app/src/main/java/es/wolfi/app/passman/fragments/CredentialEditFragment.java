@@ -25,9 +25,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +104,8 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     EditText otp_secret;
     EditText otp_digits;
     EditText otp_period;
+    EditText otp_label;
+    EditText otp_issuer;
     TextView credential_otp;
     ProgressBar otp_progress;
 
@@ -177,6 +181,8 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         otp_secret = view.findViewById(R.id.edit_credential_otp_secret);
         otp_digits = view.findViewById(R.id.edit_credential_otp_digits);
         otp_period = view.findViewById(R.id.edit_credential_otp_period);
+        otp_label = view.findViewById(R.id.otp_label);
+        otp_issuer = view.findViewById(R.id.otp_issuer);
         credential_otp = view.findViewById(R.id.credential_otp);
         otp_progress = view.findViewById(R.id.credential_otp_progress);
 
@@ -228,10 +234,10 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
             if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
                 String otpSecret = otpObj.getString("secret");
                 otp_secret.setText(otpSecret);
-
-                handler = new Handler();
-                otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret);
             }
+
+            handler = new Handler();
+            otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -285,11 +291,46 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         }, 100);
     }
 
+    public void processScannedQRCodeData(String value, int requestCode) {
+        Log.d("CredentialEdit", "processScannedQRCodeData begins");
+
+        try {
+            JSONObject otpObj = new JSONObject(credential.getOtp());
+            otpObj.put("qr_uri", value);
+
+            Uri uri = Uri.parse(value);
+
+            String type = uri.getHost().equals("totp") ? "totp" : "hotp";
+            otpObj.put("type", type);
+
+            String label = uri.getPath().replaceFirst("/", "");
+            otpObj.put("label", label);
+
+            String algo = uri.getQueryParameter("algorithm");
+            String period = uri.getQueryParameter("period");
+            String digits = uri.getQueryParameter("digits");
+            String issuer = uri.getQueryParameter("issuer");
+
+            otpObj.put("algorithm", algo != null && !algo.isEmpty() ? uri.getQueryParameter("algorithm") : "SHA1");
+
+            otp_period.setText(period != null && !period.isEmpty() ? uri.getQueryParameter("period") : "30");
+            otp_digits.setText(digits != null && !digits.isEmpty() ? uri.getQueryParameter("digits") : "6");
+            otp_label.setText(label);
+            otp_issuer.setText(issuer != null && !issuer.isEmpty() ? issuer : "");
+            otp_secret.setText(uri.getQueryParameter("secret") != null ? uri.getQueryParameter("secret") : "");
+
+            Log.d("CredentialEdit", "processScannedQRCodeData done");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.d("CredentialEdit", "processScannedQRCodeData failed");
+        }
+    }
+
     public View.OnClickListener getScanOtpQRCodeButtonListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // todo
+                ((PasswordListActivity) requireActivity()).scanQRCodeForOTP();
             }
         };
     }
@@ -299,7 +340,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
             @Override
             public void onClick(View view) {
                 if (otp_edit_extended.getVisibility() == View.VISIBLE) {
-                    otp_edit_extended.setVisibility(View.INVISIBLE);
+                    otp_edit_extended.setVisibility(View.GONE);
                     otpEditCollapseExtendedButton.setRotation(-90);
                 } else {
                     otp_edit_extended.setVisibility(View.VISIBLE);
