@@ -33,6 +33,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -45,7 +47,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import net.bierbaumer.otp_authenticator.TOTPHelper;
+
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -91,6 +96,15 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     EditText url;
     @BindView(R.id.edit_credential_description)
     EditText description;
+
+    AppCompatImageButton otpEditCollapseExtendedButton;
+    LinearLayout otp_edit_extended;
+    EditText otp_secret;
+    EditText otp_digits;
+    EditText otp_period;
+    TextView credential_otp;
+    ProgressBar otp_progress;
+
     @BindView(R.id.filesList)
     RecyclerView filesList;
     @BindView(R.id.customFieldsList)
@@ -104,6 +118,8 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     private CustomFieldEditAdapter cfed;
     private RecyclerView filesListRecyclerView;
     private RecyclerView customFieldsListRecyclerView;
+    private Handler handler = null;
+    private Runnable otp_refresh = null;
 
     public CredentialEditFragment() {
         // Required empty public constructor
@@ -142,6 +158,10 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         scanOtpQRCodeButton.setOnClickListener(this.getScanOtpQRCodeButtonListener());
         scanOtpQRCodeButton.setVisibility(View.VISIBLE);
 
+        otpEditCollapseExtendedButton = (AppCompatImageButton) view.findViewById(R.id.otpEditCollapseExtendedButton);
+        otpEditCollapseExtendedButton.setOnClickListener(this.getOtpEditCollapseExtendedButtonListener());
+        otpEditCollapseExtendedButton.setVisibility(View.VISIBLE);
+
         Button addFileButton = (Button) view.findViewById(R.id.AddFileButton);
         addFileButton.setOnClickListener(this.getAddFileButtonListener());
         addFileButton.setVisibility(View.VISIBLE);
@@ -152,6 +172,13 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
 
         fed = new FileEditAdapter(credential);
         cfed = new CustomFieldEditAdapter(credential);
+
+        otp_edit_extended = (LinearLayout) view.findViewById(R.id.otp_edit_extended);
+        otp_secret = view.findViewById(R.id.edit_credential_otp_secret);
+        otp_digits = view.findViewById(R.id.edit_credential_otp_digits);
+        otp_period = view.findViewById(R.id.edit_credential_otp_period);
+        credential_otp = view.findViewById(R.id.credential_otp);
+        otp_progress = view.findViewById(R.id.credential_otp_progress);
 
         return view;
     }
@@ -182,6 +209,34 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         email.setText(this.credential.getEmail());
         url.setText(this.credential.getUrl());
         description.setText(this.credential.getDescription());
+
+        try {
+            JSONObject otpObj = new JSONObject(this.credential.getOtp());
+
+            int otpDigits = 6;
+            if (otpObj.has("digits")) {
+                otpDigits = otpObj.getInt("digits");
+            }
+            int otpPeriod = 30;
+            if (otpObj.has("period")) {
+                otpPeriod = otpObj.getInt("period");
+            }
+
+            int finalOtpDigits = otpDigits;
+            int finalOtpPeriod = otpPeriod;
+            otp_digits.setText(String.valueOf(finalOtpDigits));
+            otp_period.setText(String.valueOf(finalOtpPeriod));
+
+            if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
+                String otpSecret = otpObj.getString("secret");
+                otp_secret.setText(otpSecret);
+
+                handler = new Handler();
+                otp_refresh = TOTPHelper.run(handler, otp_progress, credential_otp, finalOtpDigits, finalOtpPeriod, otpSecret);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -200,6 +255,22 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (otp_refresh != null) {
+            handler.post(otp_refresh);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (otp_refresh != null) {
+            handler.removeCallbacks(otp_refresh);
+        }
     }
 
     public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) throws JSONException {
@@ -221,6 +292,21 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
             @Override
             public void onClick(View view) {
                 // todo
+            }
+        };
+    }
+
+    public View.OnClickListener getOtpEditCollapseExtendedButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(otp_edit_extended.getVisibility() == View.VISIBLE) {
+                    otp_edit_extended.setVisibility(View.INVISIBLE);
+                    otpEditCollapseExtendedButton.setRotation(-90);
+                } else {
+                    otp_edit_extended.setVisibility(View.VISIBLE);
+                    otpEditCollapseExtendedButton.setRotation(0);
+                }
             }
         };
     }

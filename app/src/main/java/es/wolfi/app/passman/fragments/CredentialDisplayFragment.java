@@ -21,7 +21,6 @@
 
 package es.wolfi.app.passman.fragments;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,7 +28,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -45,7 +43,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.bierbaumer.otp_authenticator.TOTPHelper;
 
-import org.apache.commons.codec.binary.Base32;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -138,43 +135,7 @@ public class CredentialDisplayFragment extends Fragment {
 
         reloadCredentialFromActiveVaultIfPossible();
 
-        if (credential != null) {
-            handler = new Handler();
-            try {
-                JSONObject otpObj = new JSONObject(credential.getOtp());
-                if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
-                    String otpSecret = otpObj.getString("secret");
-                    int otpDigits = 6;
-                    if (otpObj.has("digits")) {
-                        otpDigits = otpObj.getInt("digits");
-                    }
-                    int otpPeriod = 30;
-                    if (otpObj.has("period")) {
-                        otpPeriod = otpObj.getInt("period");
-                    }
-
-                    int finalOtpDigits = otpDigits;
-                    int finalOtpPeriod = otpPeriod;
-                    otp_refresh = new Runnable() {
-                        @Override
-                        public void run() {
-                            int progress = (int) (System.currentTimeMillis() / 1000) % finalOtpPeriod;
-                            otp_progress.setProgress(progress * 100);
-
-                            ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
-                            animation.setDuration(1000);
-                            animation.setInterpolator(new LinearInterpolator());
-                            animation.start();
-
-                            otp.setText(TOTPHelper.generate(new Base32().decode(otpSecret), finalOtpDigits, finalOtpPeriod));
-                            handler.postDelayed(this, 1000);
-                        }
-                    };
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
+        if (credential == null) {
             Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
             Log.e("CredentialDisplayFrag", "credential or vault is null");
         }
@@ -279,6 +240,28 @@ public class CredentialDisplayFragment extends Fragment {
 
             if (otp_refresh == null) {
                 otp_progress.setProgress(0);
+
+                handler = new Handler();
+                try {
+                    JSONObject otpObj = new JSONObject(credential.getOtp());
+                    if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
+                        String otpSecret = otpObj.getString("secret");
+                        int otpDigits = 6;
+                        if (otpObj.has("digits")) {
+                            otpDigits = otpObj.getInt("digits");
+                        }
+                        int otpPeriod = 30;
+                        if (otpObj.has("period")) {
+                            otpPeriod = otpObj.getInt("period");
+                        }
+
+                        int finalOtpDigits = otpDigits;
+                        int finalOtpPeriod = otpPeriod;
+                        otp_refresh = TOTPHelper.run(handler, otp_progress, otp.getTextView(), finalOtpDigits, finalOtpPeriod, otpSecret);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

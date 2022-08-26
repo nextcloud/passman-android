@@ -27,8 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginTop="0dp"
             android:layout_marginStart="-27dp"
+            android:layout_marginTop="0dp"
             android:backgroundTint="@color/transparent"
             android:src="@drawable/ic_baseline_qr_code_scanner_24" />
 
@@ -37,55 +37,94 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="-10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/credential_otp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <include layout="@layout/content_otp_progress" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/otpEditCollapseExtendedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:backgroundTint="@color/transparent"
+            android:rotation="-90"
+            android:src="@drawable/ic_baseline_expand_more_24" />
 
         <LinearLayout
-            android:layout_width="150dp"
+            android:id="@+id/otp_edit_extended"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:animateLayoutChanges="true"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="invisible">
 
-            <TextView
-                style="@style/Label"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:text="@string/digits" />
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/edit_credential_otp_digits"
-                style="@style/FormText"
-                android:layout_width="match_parent"
+                <TextView
+                    style="@style/Label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/digits" />
+
+                <EditText
+                    android:id="@+id/edit_credential_otp_digits"
+                    style="@style/FormText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="30dp"
+                    android:digits="0123456789"
+                    android:hint="6"
+                    android:inputType="number" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="30dp"
-                android:digits="0123456789"
-                android:inputType="number"
-                android:hint="6" />
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/period" />
+
+                <EditText
+                    android:id="@+id/edit_credential_otp_period"
+                    style="@style/FormText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="30dp"
+                    android:digits="0123456789"
+                    android:hint="30"
+                    android:inputType="number" />
+
+            </LinearLayout>
 
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                style="@style/Label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/period" />
-
-            <EditText
-                android:id="@+id/edit_credential_otp_period"
-                style="@style/FormText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="30dp"
-                android:digits="0123456789"
-                android:inputType="number"
-                android:hint="30" />
-
-        </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>

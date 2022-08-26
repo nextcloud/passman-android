@@ -17,6 +17,14 @@
  */
 package net.bierbaumer.otp_authenticator;
 
+import android.animation.ObjectAnimator;
+import android.os.Handler;
+import android.view.animation.LinearInterpolator;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import org.apache.commons.codec.binary.Base32;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -60,5 +68,24 @@ public class TOTPHelper {
         }
 
         return r;
+    }
+
+    public static Runnable run(Handler handler, ProgressBar otp_progress, TextView credential_otp,
+                           int finalOtpDigits, int finalOtpPeriod, String otpSecret) {
+        return new Runnable() {
+            @Override
+            public void run() {
+                int progress = (int) (System.currentTimeMillis() / 1000) % finalOtpPeriod;
+                otp_progress.setProgress(progress * 100);
+
+                ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
+                animation.setDuration(1000);
+                animation.setInterpolator(new LinearInterpolator());
+                animation.start();
+
+                credential_otp.setText(TOTPHelper.generate(new Base32().decode(otpSecret), finalOtpDigits, finalOtpPeriod));
+                handler.postDelayed(this, 1000);
+            }
+        };
     }
 }
