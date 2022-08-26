@@ -222,17 +222,15 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
                 otpPeriod = otpObj.getInt("period");
             }
 
-            int finalOtpDigits = otpDigits;
-            int finalOtpPeriod = otpPeriod;
-            otp_digits.setText(String.valueOf(finalOtpDigits));
-            otp_period.setText(String.valueOf(finalOtpPeriod));
+            otp_digits.setText(String.valueOf(otpDigits));
+            otp_period.setText(String.valueOf(otpPeriod));
 
             if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
                 String otpSecret = otpObj.getString("secret");
                 otp_secret.setText(otpSecret);
 
                 handler = new Handler();
-                otp_refresh = TOTPHelper.run(handler, otp_progress, credential_otp, finalOtpDigits, finalOtpPeriod, otpSecret);
+                otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -300,7 +298,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(otp_edit_extended.getVisibility() == View.VISIBLE) {
+                if (otp_edit_extended.getVisibility() == View.VISIBLE) {
                     otp_edit_extended.setVisibility(View.INVISIBLE);
                     otpEditCollapseExtendedButton.setRotation(-90);
                 } else {
