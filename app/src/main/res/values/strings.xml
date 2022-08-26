@@ -87,4 +87,7 @@
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
     <string name="manual_login">Manual Login</string>
     <string name="confirm_account_logout">Are you sure you want to log out?</string>
+    <string name="digits">Digits</string>
+    <string name="period">Period</string>
+    <string name="secret">Secret</string>
 </resources>

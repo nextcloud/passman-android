@@ -37,6 +37,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -137,6 +138,10 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         deleteCredentialButton.setOnClickListener(this.getDeleteButtonListener());
         deleteCredentialButton.setVisibility(View.VISIBLE);
 
+        AppCompatImageButton scanOtpQRCodeButton = (AppCompatImageButton) view.findViewById(R.id.scanOtpQRCodeButton);
+        scanOtpQRCodeButton.setOnClickListener(this.getScanOtpQRCodeButtonListener());
+        scanOtpQRCodeButton.setVisibility(View.VISIBLE);
+
         Button addFileButton = (Button) view.findViewById(R.id.AddFileButton);
         addFileButton.setOnClickListener(this.getAddFileButtonListener());
         addFileButton.setVisibility(View.VISIBLE);
@@ -209,6 +214,15 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
                 credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler, progress);
             }
         }, 100);
+    }
+
+    public View.OnClickListener getScanOtpQRCodeButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // todo
+            }
+        };
     }
 
     public View.OnClickListener getAddFileButtonListener() {
