@@ -25,7 +25,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -124,6 +123,9 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     private RecyclerView customFieldsListRecyclerView;
     private Handler handler = null;
     private Runnable otp_refresh = null;
+    private String otp_qr_uri = "";
+    private String otp_algorithm = "SHA1";
+    private String otp_type = "totp";
 
     public CredentialEditFragment() {
         // Required empty public constructor
@@ -217,19 +219,10 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         description.setText(this.credential.getDescription());
 
         try {
+            Log.d("EditJSString", this.credential.getOtp());
             JSONObject otpObj = new JSONObject(this.credential.getOtp());
 
-            int otpDigits = 6;
-            if (otpObj.has("digits")) {
-                otpDigits = otpObj.getInt("digits");
-            }
-            int otpPeriod = 30;
-            if (otpObj.has("period")) {
-                otpPeriod = otpObj.getInt("period");
-            }
-
-            otp_digits.setText(String.valueOf(otpDigits));
-            otp_period.setText(String.valueOf(otpPeriod));
+            setOTPValuesFromJSON(otpObj);
 
             if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
                 String otpSecret = otpObj.getString("secret");
@@ -291,34 +284,48 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         }, 100);
     }
 
-    public void processScannedQRCodeData(String value, int requestCode) {
+    private void setOTPValuesFromJSON(JSONObject otpObj) {
+        try {
+            if (otpObj.has("type")) {
+                otp_type = otpObj.getString("type");
+            }
+            if (otpObj.has("algorithm")) {
+                otp_algorithm = otpObj.getString("algorithm");
+            }
+            if (otpObj.has("qr_uri")) {
+                otp_qr_uri = otpObj.getString("qr_uri");
+            }
+
+            otp_secret.setText(otpObj.getString("secret"));
+
+            int period = 30;
+            if (otpObj.has("period")) {
+                period = otpObj.getInt("period");
+            }
+            otp_period.setText(String.valueOf(period));
+
+            int digits = 6;
+            if (otpObj.has("digits")) {
+                digits = otpObj.getInt("digits");
+            }
+            otp_digits.setText(String.valueOf(digits));
+
+            if (otpObj.has("label")) {
+                otp_label.setText(otpObj.getString("label"));
+            }
+            if (otpObj.has("issuer")) {
+                otp_issuer.setText(otpObj.getString("issuer"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processScannedQRCodeData(String qr_uri, int requestCode) {
         Log.d("CredentialEdit", "processScannedQRCodeData begins");
 
         try {
-            JSONObject otpObj = new JSONObject(credential.getOtp());
-            otpObj.put("qr_uri", value);
-
-            Uri uri = Uri.parse(value);
-
-            String type = uri.getHost().equals("totp") ? "totp" : "hotp";
-            otpObj.put("type", type);
-
-            String label = uri.getPath().replaceFirst("/", "");
-            otpObj.put("label", label);
-
-            String algo = uri.getQueryParameter("algorithm");
-            String period = uri.getQueryParameter("period");
-            String digits = uri.getQueryParameter("digits");
-            String issuer = uri.getQueryParameter("issuer");
-
-            otpObj.put("algorithm", algo != null && !algo.isEmpty() ? uri.getQueryParameter("algorithm") : "SHA1");
-
-            otp_period.setText(period != null && !period.isEmpty() ? uri.getQueryParameter("period") : "30");
-            otp_digits.setText(digits != null && !digits.isEmpty() ? uri.getQueryParameter("digits") : "6");
-            otp_label.setText(label);
-            otp_issuer.setText(issuer != null && !issuer.isEmpty() ? issuer : "");
-            otp_secret.setText(uri.getQueryParameter("secret") != null ? uri.getQueryParameter("secret") : "");
-
+            setOTPValuesFromJSON(TOTPHelper.getCompleteOTPDataFromQrUrl(qr_uri));
             Log.d("CredentialEdit", "processScannedQRCodeData done");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -440,6 +447,17 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         this.credential.setDescription(description.getText().toString());
         this.credential.setFiles(fed.getFilesString());
         this.credential.setCustomFields(cfed.getCustomFieldsString());
+
+        JSONObject otpObj = TOTPHelper.getCompleteOTPDataAsJSONObject(otp_secret,
+                otp_digits,
+                otp_period,
+                otp_label,
+                otp_issuer,
+                otp_qr_uri,
+                otp_algorithm,
+                otp_type
+        );
+        this.credential.setOtp(otpObj.toString());
 
         alreadySaving.set(true);
 

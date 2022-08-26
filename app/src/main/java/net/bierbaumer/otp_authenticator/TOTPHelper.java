@@ -18,13 +18,17 @@
 package net.bierbaumer.otp_authenticator;
 
 import android.animation.ObjectAnimator;
+import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.commons.codec.binary.Base32;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -118,5 +122,82 @@ public class TOTPHelper {
                 handler.postDelayed(this, 1000);
             }
         };
+    }
+
+    public static JSONObject getCompleteOTPDataAsJSONObject(EditText otp_secret,
+                                                            EditText otp_digits,
+                                                            EditText otp_period,
+                                                            EditText otp_label,
+                                                            EditText otp_issuer,
+                                                            String qr_uri,
+                                                            String algorithm,
+                                                            String type) {
+
+        JSONObject otpObj = new JSONObject();
+
+        try {
+            if (qr_uri != null && !qr_uri.isEmpty()) {
+                otpObj.put("qr_uri", qr_uri);
+            }
+            if (type != null && !type.isEmpty()) {
+                otpObj.put("type", type);
+            }
+
+            String label = otp_label.getText().toString();
+            if (!label.isEmpty()) {
+                otpObj.put("label", label);
+            }
+
+            String period = otp_period.getText().toString();
+            otpObj.put("period", !period.isEmpty() ? Integer.parseInt(period) : 30);
+
+            String digits = otp_digits.getText().toString();
+            otpObj.put("digits", !digits.isEmpty() ? Integer.parseInt(digits) : 6);
+
+            String issuer = otp_issuer.getText().toString();
+            if (!issuer.isEmpty()) {
+                otpObj.put("issuer", issuer);
+            }
+
+            otpObj.put("algorithm", algorithm != null && !algorithm.isEmpty() ? algorithm : "SHA1");
+
+            String secret = otp_secret.getText().toString();
+            otpObj.put("secret", !secret.isEmpty() ? secret : "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("TOTPHelper", otpObj.toString());
+        return otpObj;
+    }
+
+    public static JSONObject getCompleteOTPDataFromQrUrl(String qr_uri) throws JSONException {
+        JSONObject otpObj = new JSONObject();
+
+        Uri uri = Uri.parse(qr_uri);
+        otpObj.put("qr_uri", qr_uri);
+
+        String type = uri.getHost().equals("totp") ? "totp" : "hotp";
+        otpObj.put("type", type);
+
+        String label = uri.getPath().replaceFirst("/", "");
+        String algorithm = uri.getQueryParameter("algorithm");
+        String period = uri.getQueryParameter("period");
+        String digits = uri.getQueryParameter("digits");
+        String issuer = uri.getQueryParameter("issuer");
+
+        if (!label.isEmpty()) {
+            otpObj.put("label", label);
+        }
+        if (issuer != null && !issuer.isEmpty()) {
+            otpObj.put("issuer", issuer);
+        }
+
+        otpObj.put("period", period != null && !period.isEmpty() ? Integer.parseInt(period) : 30);
+        otpObj.put("digits", digits != null && !digits.isEmpty() ? Integer.parseInt(digits) : 6);
+        otpObj.put("algorithm", algorithm != null && !algorithm.isEmpty() ? algorithm : "SHA1");
+        otpObj.put("secret", uri.getQueryParameter("secret"));
+
+        return otpObj;
     }
 }
