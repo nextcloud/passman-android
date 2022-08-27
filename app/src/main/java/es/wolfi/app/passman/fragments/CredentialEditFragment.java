@@ -25,6 +25,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -162,7 +163,9 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
 
         AppCompatImageButton scanOtpQRCodeButton = (AppCompatImageButton) view.findViewById(R.id.scanOtpQRCodeButton);
         scanOtpQRCodeButton.setOnClickListener(this.getScanOtpQRCodeButtonListener());
-        scanOtpQRCodeButton.setVisibility(View.VISIBLE);
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
+            scanOtpQRCodeButton.setVisibility(View.INVISIBLE);
+        }
 
         otpEditCollapseExtendedButton = (AppCompatImageButton) view.findViewById(R.id.otpEditCollapseExtendedButton);
         otpEditCollapseExtendedButton.setOnClickListener(this.getOtpEditCollapseExtendedButtonListener());

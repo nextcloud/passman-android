@@ -76,7 +76,7 @@
             android:animateLayoutChanges="true"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 style="@style/Label"
