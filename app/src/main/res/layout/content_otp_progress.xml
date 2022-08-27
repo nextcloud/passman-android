@@ -10,6 +10,6 @@
         android:layout_height="30dp"
         android:layout_marginTop="-16dp"
         android:max="3000"
-        android:progress="1500"/>
+        android:progress="0"/>
 
 </LinearLayout>

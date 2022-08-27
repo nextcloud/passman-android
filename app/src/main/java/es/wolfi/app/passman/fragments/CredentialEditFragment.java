@@ -219,7 +219,6 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         description.setText(this.credential.getDescription());
 
         try {
-            Log.d("EditJSString", this.credential.getOtp());
             JSONObject otpObj = new JSONObject(this.credential.getOtp());
 
             setOTPValuesFromJSON(otpObj);
@@ -286,42 +285,44 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
 
     private void setOTPValuesFromJSON(JSONObject otpObj) {
         try {
-            if (otpObj.has("type")) {
-                otp_type = otpObj.getString("type");
-            }
-            if (otpObj.has("algorithm")) {
-                otp_algorithm = otpObj.getString("algorithm");
-            }
-            if (otpObj.has("qr_uri")) {
-                otp_qr_uri = otpObj.getString("qr_uri");
-            }
+            if (otpObj.has("secret")) {
+                if (otpObj.has("type")) {
+                    otp_type = otpObj.getString("type");
+                }
+                if (otpObj.has("algorithm")) {
+                    otp_algorithm = otpObj.getString("algorithm");
+                }
+                if (otpObj.has("qr_uri")) {
+                    otp_qr_uri = otpObj.getString("qr_uri");
+                }
 
-            otp_secret.setText(otpObj.getString("secret"));
+                otp_secret.setText(otpObj.getString("secret"));
 
-            int period = 30;
-            if (otpObj.has("period")) {
-                period = otpObj.getInt("period");
-            }
-            otp_period.setText(String.valueOf(period));
+                int period = 30;
+                if (otpObj.has("period")) {
+                    period = otpObj.getInt("period");
+                }
+                otp_period.setText(String.valueOf(period));
 
-            int digits = 6;
-            if (otpObj.has("digits")) {
-                digits = otpObj.getInt("digits");
-            }
-            otp_digits.setText(String.valueOf(digits));
+                int digits = 6;
+                if (otpObj.has("digits")) {
+                    digits = otpObj.getInt("digits");
+                }
+                otp_digits.setText(String.valueOf(digits));
 
-            if (otpObj.has("label")) {
-                otp_label.setText(otpObj.getString("label"));
-            }
-            if (otpObj.has("issuer")) {
-                otp_issuer.setText(otpObj.getString("issuer"));
+                if (otpObj.has("label")) {
+                    otp_label.setText(otpObj.getString("label"));
+                }
+                if (otpObj.has("issuer")) {
+                    otp_issuer.setText(otpObj.getString("issuer"));
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void processScannedQRCodeData(String qr_uri, int requestCode) {
+    public void processScannedQRCodeData(String qr_uri) {
         Log.d("CredentialEdit", "processScannedQRCodeData begins");
 
         try {
@@ -329,7 +330,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
             Log.d("CredentialEdit", "processScannedQRCodeData done");
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.d("CredentialEdit", "processScannedQRCodeData failed");
+            Log.e("CredentialEdit", "processScannedQRCodeData failed");
         }
     }
 
@@ -337,7 +338,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordListActivity) requireActivity()).scanQRCodeForOTP();
+                ((PasswordListActivity) requireActivity()).scanQRCodeForOTP(PasswordListActivity.REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_EDIT);
             }
         };
     }
@@ -448,16 +449,20 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         this.credential.setFiles(fed.getFilesString());
         this.credential.setCustomFields(cfed.getCustomFieldsString());
 
-        JSONObject otpObj = TOTPHelper.getCompleteOTPDataAsJSONObject(otp_secret,
-                otp_digits,
-                otp_period,
-                otp_label,
-                otp_issuer,
-                otp_qr_uri,
-                otp_algorithm,
-                otp_type
-        );
-        this.credential.setOtp(otpObj.toString());
+        if (otp_secret.getText().toString().isEmpty()) {
+            this.credential.setOtp(new JSONObject().toString());
+        } else {
+            JSONObject otpObj = TOTPHelper.getCompleteOTPDataAsJSONObject(otp_secret,
+                    otp_digits,
+                    otp_period,
+                    otp_label,
+                    otp_issuer,
+                    otp_qr_uri,
+                    otp_algorithm,
+                    otp_type
+            );
+            this.credential.setOtp(otpObj.toString());
+        }
 
         alreadySaving.set(true);
 
