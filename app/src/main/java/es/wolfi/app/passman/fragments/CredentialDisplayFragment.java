@@ -132,6 +132,7 @@ public class CredentialDisplayFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler();
 
         reloadCredentialFromActiveVaultIfPossible();
 
@@ -195,6 +196,11 @@ public class CredentialDisplayFragment extends Fragment {
 
     public void updateViewContent() {
         if (credential != null) {
+            if (fragmentView == null) {
+                Log.d("updateViewContent", "fragmentView is null (due to a previous activity unload)");
+                return;
+            }
+
             FloatingActionButton editCredentialButton = fragmentView.findViewById(R.id.editCredentialButton);
             editCredentialButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -238,30 +244,27 @@ public class CredentialDisplayFragment extends Fragment {
                 url.setModeURL();
             }
 
-            if (otp_refresh == null) {
-                otp_progress.setProgress(0);
+            otp_progress.setProgress(0);
 
-                handler = new Handler();
-                try {
-                    JSONObject otpObj = new JSONObject(credential.getOtp());
-                    if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
-                        String otpSecret = otpObj.getString("secret");
-                        int otpDigits = 6;
-                        if (otpObj.has("digits")) {
-                            otpDigits = otpObj.getInt("digits");
-                        }
-                        int otpPeriod = 30;
-                        if (otpObj.has("period")) {
-                            otpPeriod = otpObj.getInt("period");
-                        }
-
-                        int finalOtpDigits = otpDigits;
-                        int finalOtpPeriod = otpPeriod;
-                        otp_refresh = TOTPHelper.run(handler, otp_progress, otp.getTextView(), finalOtpDigits, finalOtpPeriod, otpSecret);
+            try {
+                JSONObject otpObj = new JSONObject(credential.getOtp());
+                if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
+                    String otpSecret = otpObj.getString("secret");
+                    int otpDigits = 6;
+                    if (otpObj.has("digits")) {
+                        otpDigits = otpObj.getInt("digits");
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    int otpPeriod = 30;
+                    if (otpObj.has("period")) {
+                        otpPeriod = otpObj.getInt("period");
+                    }
+
+                    int finalOtpDigits = otpDigits;
+                    int finalOtpPeriod = otpPeriod;
+                    otp_refresh = TOTPHelper.run(handler, otp_progress, otp.getTextView(), finalOtpDigits, finalOtpPeriod, otpSecret);
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     }
