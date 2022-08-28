@@ -22,8 +22,6 @@
 
 package es.wolfi.app.passman.activities;
 
-import static com.google.zxing.integration.android.IntentIntegrator.parseActivityResult;
-
 import android.app.KeyguardManager;
 import android.app.ProgressDialog;
 import android.content.ClipData;
@@ -58,9 +56,6 @@ import androidx.core.graphics.drawable.IconCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import com.google.zxing.integration.android.IntentResult;
-import com.journeyapps.barcodescanner.ScanContract;
-import com.journeyapps.barcodescanner.ScanOptions;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONException;
@@ -762,14 +757,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     }
 
     public void scanQRCodeForOTP(int requestCode) {
-        ScanOptions scanOptions = new ScanOptions();
-        scanOptions.setDesiredBarcodeFormats(ScanOptions.QR_CODE);  // optional
-        scanOptions.setOrientationLocked(false);                    // allow barcode scanner in portrait mode
-
-        ScanContract scanContract = new ScanContract();
-        Intent intent = scanContract.createIntent(this, scanOptions);
-
-        startActivityForResult(intent, requestCode);
+        startActivityForResult(new Intent(this, ScanQRCodeActivity.class), requestCode);
     }
 
     @Override
@@ -797,30 +785,24 @@ public class PasswordListActivity extends AppCompatActivity implements
 
         if (requestCode == REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_EDIT) { // scan qr code as otp config in credential edit
             if (resultCode != RESULT_OK) {
-                Log.e("otp qr scan", "failed");
                 return;
             }
 
             CredentialEditFragment credentialEditFragment = (CredentialEditFragment) getSupportFragmentManager().findFragmentByTag("credentialEdit");
             if (credentialEditFragment != null) {
-                IntentResult result = parseActivityResult(resultCode, data);
-                credentialEditFragment.processScannedQRCodeData(result.getContents());
+                credentialEditFragment.processScannedQRCodeData(data.getData().toString());
             }
-            Log.d("otp qr scan", "successful");
         }
 
         if (requestCode == REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD) { // scan qr code as otp config in credential add
             if (resultCode != RESULT_OK) {
-                Log.e("otp qr scan", "failed");
                 return;
             }
 
             CredentialAddFragment credentialAddFragment = (CredentialAddFragment) getSupportFragmentManager().findFragmentByTag("credentialAdd");
             if (credentialAddFragment != null) {
-                IntentResult result = parseActivityResult(resultCode, data);
-                credentialAddFragment.processScannedQRCodeData(result.getContents());
+                credentialAddFragment.processScannedQRCodeData(data.getData().toString());
             }
-            Log.d("otp qr scan", "successful");
         }
 
         // Following cases should only be handled on positive result

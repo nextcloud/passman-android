@@ -163,9 +163,6 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
 
         AppCompatImageButton scanOtpQRCodeButton = (AppCompatImageButton) view.findViewById(R.id.scanOtpQRCodeButton);
         scanOtpQRCodeButton.setOnClickListener(this.getScanOtpQRCodeButtonListener());
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            scanOtpQRCodeButton.setVisibility(View.INVISIBLE);
-        }
 
         otpEditCollapseExtendedButton = (AppCompatImageButton) view.findViewById(R.id.otpEditCollapseExtendedButton);
         otpEditCollapseExtendedButton.setOnClickListener(this.getOtpEditCollapseExtendedButtonListener());
