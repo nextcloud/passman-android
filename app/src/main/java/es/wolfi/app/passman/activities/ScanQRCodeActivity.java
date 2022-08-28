@@ -72,7 +72,7 @@ public class ScanQRCodeActivity extends AppCompatActivity {
             if (allPermissionsGranted()) {
                 startCamera();
             } else {
-                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.camera_permission_denied), Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
@@ -126,12 +126,12 @@ public class ScanQRCodeActivity extends AppCompatActivity {
                         }
                         if (e != null) {
                             e.printStackTrace();
-                            Log.e(LOG_TAG, "error parsing qr code", e);
+                            Log.e(LOG_TAG, getString(R.string.error_parsing_qr_code), e);
 
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(c, "Error parsing qr code", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(c, getString(R.string.error_parsing_qr_code), Toast.LENGTH_SHORT).show();
                                 }
                             });
                         }
