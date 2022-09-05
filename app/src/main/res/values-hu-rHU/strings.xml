@@ -33,7 +33,7 @@
     <string name="app_settings">Alkalmazásbeállítások</string>
     <string name="wait_while_loading">Várjon a betöltésre…</string>
     <string name="loading">Betöltés</string>
-    <string name="error_downloading_file">Hiba a fájl letöltése sorá</string>
+    <string name="error_downloading_file">Hiba a fájl letöltése során</string>
     <string name="error_writing_file">Hiba a fájl írása írása során</string>
     <string name="files">Fájlok</string>
     <string name="custom_fields">Egyéni mező</string>
