@@ -268,7 +268,7 @@ public class Credential extends Core implements Filterable {
     }
 
     public void setOtp(String otp) {
-        this.otp = encryptString(otp);
+        this.otp = encryptRawStringData(otp);
     }
 
     public boolean isHidden() {

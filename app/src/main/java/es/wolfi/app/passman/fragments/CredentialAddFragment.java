@@ -23,6 +23,7 @@ package es.wolfi.app.passman.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,10 +33,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,6 +47,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import net.bierbaumer.otp_authenticator.TOTPHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -86,6 +95,17 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     EditText url;
     @BindView(R.id.add_credential_description)
     EditText description;
+
+    AppCompatImageButton otpEditCollapseExtendedButton;
+    LinearLayout otp_edit_extended;
+    EditText otp_secret;
+    EditText otp_digits;
+    EditText otp_period;
+    EditText otp_label;
+    EditText otp_issuer;
+    TextView credential_otp;
+    ProgressBar otp_progress;
+
     @BindView(R.id.filesList)
     RecyclerView filesList;
     @BindView(R.id.customFieldsList)
@@ -100,6 +120,11 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     private RecyclerView filesListRecyclerView;
     private RecyclerView customFieldsListRecyclerView;
     private AtomicBoolean alreadySaving = new AtomicBoolean(false);
+    private Handler handler = null;
+    private Runnable otp_refresh = null;
+    private String otp_qr_uri = "";
+    private String otp_algorithm = "SHA1";
+    private String otp_type = "totp";
 
     public CredentialAddFragment() {
         // Required empty public constructor
@@ -124,6 +149,13 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
         saveCredentialButton.setOnClickListener(this);
         saveCredentialButton.setVisibility(View.VISIBLE);
 
+        AppCompatImageButton scanOtpQRCodeButton = (AppCompatImageButton) view.findViewById(R.id.scanOtpQRCodeButton);
+        scanOtpQRCodeButton.setOnClickListener(this.getScanOtpQRCodeButtonListener());
+
+        otpEditCollapseExtendedButton = (AppCompatImageButton) view.findViewById(R.id.otpEditCollapseExtendedButton);
+        otpEditCollapseExtendedButton.setOnClickListener(this.getOtpEditCollapseExtendedButtonListener());
+        otpEditCollapseExtendedButton.setVisibility(View.VISIBLE);
+
         Button addFileButton = (Button) view.findViewById(R.id.AddFileButton);
         addFileButton.setOnClickListener(this.getAddFileButtonListener());
         addFileButton.setVisibility(View.VISIBLE);
@@ -134,6 +166,15 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
 
         fed = new FileEditAdapter(credential);
         cfed = new CustomFieldEditAdapter(credential);
+
+        otp_edit_extended = (LinearLayout) view.findViewById(R.id.otp_edit_extended);
+        otp_secret = view.findViewById(R.id.edit_credential_otp_secret);
+        otp_digits = view.findViewById(R.id.edit_credential_otp_digits);
+        otp_period = view.findViewById(R.id.edit_credential_otp_period);
+        otp_label = view.findViewById(R.id.otp_label);
+        otp_issuer = view.findViewById(R.id.otp_issuer);
+        credential_otp = view.findViewById(R.id.credential_otp);
+        otp_progress = view.findViewById(R.id.credential_otp_progress);
 
         return view;
     }
@@ -158,6 +199,9 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
         customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(cfed);
+
+        handler = new Handler();
+        otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret);
     }
 
     @Override
@@ -174,6 +218,22 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
         mListener = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (otp_refresh != null) {
+            handler.post(otp_refresh);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (otp_refresh != null) {
+            handler.removeCallbacks(otp_refresh);
+        }
+    }
+
     public void addSelectedFile(String encodedFile, String fileName, String mimeType, int fileSize, int requestCode) {
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
@@ -186,6 +246,81 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
                 credential.uploadFile(context, encodedFile, fileName, mimeType, fileSize, responseHandler, progress);
             }
         }, 100);
+    }
+
+    private void setOTPValuesFromJSON(JSONObject otpObj) {
+        try {
+            if (otpObj.has("secret")) {
+                if (otpObj.has("type")) {
+                    otp_type = otpObj.getString("type");
+                }
+                if (otpObj.has("algorithm")) {
+                    otp_algorithm = otpObj.getString("algorithm");
+                }
+                if (otpObj.has("qr_uri")) {
+                    otp_qr_uri = otpObj.getString("qr_uri");
+                }
+
+                otp_secret.setText(otpObj.getString("secret"));
+
+                int period = 30;
+                if (otpObj.has("period")) {
+                    period = otpObj.getInt("period");
+                }
+                otp_period.setText(String.valueOf(period));
+
+                int digits = 6;
+                if (otpObj.has("digits")) {
+                    digits = otpObj.getInt("digits");
+                }
+                otp_digits.setText(String.valueOf(digits));
+
+                if (otpObj.has("label")) {
+                    otp_label.setText(otpObj.getString("label"));
+                }
+                if (otpObj.has("issuer")) {
+                    otp_issuer.setText(otpObj.getString("issuer"));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void processScannedQRCodeData(String qr_uri) {
+        Log.d("CredentialAdd", "processScannedQRCodeData begins");
+
+        try {
+            setOTPValuesFromJSON(TOTPHelper.getCompleteOTPDataFromQrUrl(qr_uri));
+            Log.d("CredentialAdd", "processScannedQRCodeData done");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("CredentialAdd", "processScannedQRCodeData failed");
+        }
+    }
+
+    public View.OnClickListener getScanOtpQRCodeButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((PasswordListActivity) requireActivity()).scanQRCodeForOTP(PasswordListActivity.REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD);
+            }
+        };
+    }
+
+    public View.OnClickListener getOtpEditCollapseExtendedButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (otp_edit_extended.getVisibility() == View.VISIBLE) {
+                    otp_edit_extended.setVisibility(View.GONE);
+                    otpEditCollapseExtendedButton.setRotation(-90);
+                } else {
+                    otp_edit_extended.setVisibility(View.VISIBLE);
+                    otpEditCollapseExtendedButton.setRotation(0);
+                }
+            }
+        };
     }
 
     public View.OnClickListener getAddFileButtonListener() {
@@ -234,13 +369,27 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
         this.credential.setEmail(email.getText().toString());
         this.credential.setUrl(url.getText().toString());
         this.credential.setDescription(description.getText().toString());
-        this.credential.setOtp("{}");
         this.credential.setFiles(fed.getFilesString());
         this.credential.setCustomFields(cfed.getCustomFieldsString());
         this.credential.setTags("");
         this.credential.setFavicon("");
         this.credential.setCompromised(false);
         this.credential.setHidden(false);
+
+        if (otp_secret.getText().toString().isEmpty()) {
+            this.credential.setOtp(new JSONObject().toString());
+        } else {
+            JSONObject otpObj = TOTPHelper.getCompleteOTPDataAsJSONObject(otp_secret,
+                    otp_digits,
+                    otp_period,
+                    otp_label,
+                    otp_issuer,
+                    otp_qr_uri,
+                    otp_algorithm,
+                    otp_type
+            );
+            this.credential.setOtp(otpObj.toString());
+        }
 
         alreadySaving.set(true);
 

@@ -87,6 +87,12 @@ s<resources>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
     <string name="manual_login">Manual Login</string>
     <string name="confirm_account_logout">Are you sure you want to log out?</string>
+    <string name="digits">Digits</string>
+    <string name="period">Period</string>
     <string name="value">Value</string>
     <string name="faq">FAQ</string>
+    <string name="secret">Secret</string>
+    <string name="issuer">Issuer</string>
+    <string name="error_parsing_qr_code">Error parsing QR code</string>
+    <string name="camera_permission_denied">Camera permission denied</string>
 </resources>

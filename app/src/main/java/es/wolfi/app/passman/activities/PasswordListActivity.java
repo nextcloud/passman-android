@@ -100,6 +100,8 @@ public class PasswordListActivity extends AppCompatActivity implements
     private static final int REQUEST_CODE_KEYGUARD = 0;
     private static final int REQUEST_CODE_AUTHENTICATE = 1;
     private static final int REQUEST_CODE_CREATE_DOCUMENT = 2;
+    public static final int REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_EDIT = 7;
+    public static final int REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD = 8;
 
     static boolean running = false;
 
@@ -759,6 +761,10 @@ public class PasswordListActivity extends AppCompatActivity implements
         startActivityForResult(intent, activityRequestFileCode);
     }
 
+    public void scanQRCodeForOTP(int requestCode) {
+        startActivityForResult(new Intent(this, ScanQRCodeActivity.class), requestCode);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -779,6 +785,28 @@ public class PasswordListActivity extends AppCompatActivity implements
             } else {
                 // Proceed
                 showVaults();
+            }
+        }
+
+        if (requestCode == REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_EDIT) { // scan qr code as otp config in credential edit
+            if (resultCode != RESULT_OK) {
+                return;
+            }
+
+            CredentialEditFragment credentialEditFragment = (CredentialEditFragment) getSupportFragmentManager().findFragmentByTag("credentialEdit");
+            if (credentialEditFragment != null) {
+                credentialEditFragment.processScannedQRCodeData(data.getData().toString());
+            }
+        }
+
+        if (requestCode == REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD) { // scan qr code as otp config in credential add
+            if (resultCode != RESULT_OK) {
+                return;
+            }
+
+            CredentialAddFragment credentialAddFragment = (CredentialAddFragment) getSupportFragmentManager().findFragmentByTag("credentialAdd");
+            if (credentialAddFragment != null) {
+                credentialAddFragment.processScannedQRCodeData(data.getData().toString());
             }
         }
 

@@ -98,6 +98,10 @@ public class CopyTextItem extends LinearLayout {
         this.text.setText(text);
     }
 
+    public TextView getTextView() {
+        return this.text;
+    }
+
     public void setModePassword() {
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         toggle.setVisibility(View.VISIBLE);
