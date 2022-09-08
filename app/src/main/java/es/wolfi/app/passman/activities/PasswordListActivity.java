@@ -634,6 +634,11 @@ public class PasswordListActivity extends AppCompatActivity implements
             case R.id.action_settings:
                 settingsButtonPressed();
                 return true;
+            case R.id.action_faq:
+                String url = "https://github.com/nextcloud/passman-android/blob/master/FAQ.md";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(Intent.createChooser(intent, "Browse with"));
+                return true;
             case R.id.action_refresh:
                 refreshButtonPressed();
                 return true;

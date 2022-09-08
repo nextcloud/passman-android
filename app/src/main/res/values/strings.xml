@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="app_name_release" translatable="false">Passman</string>
     <string name="app_name_alpha" translatable="false">Passman - Alpha</string>
     <string name="action_settings">Settings</string>
@@ -88,4 +88,5 @@
     <string name="manual_login">Manual Login</string>
     <string name="confirm_account_logout">Are you sure you want to log out?</string>
     <string name="value">Value</string>
+    <string name="faq">FAQ</string>
 </resources>
