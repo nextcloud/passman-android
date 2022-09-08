@@ -228,7 +228,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
                     ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal());
                 } else {
                     CustomField cf = new CustomField();
-                    cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
+                    //cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
                     cf.setSecret(customFieldType.getSelectedItem().toString().toLowerCase().equals("password"));
                     cf.setFieldType(customFieldType.getSelectedItem().toString().toLowerCase());
                     cf.setValue("");
