@@ -36,12 +36,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.SettingValues;
-import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.KeyStoreUtils;
 
@@ -64,7 +64,7 @@ public class VaultLockScreenFragment extends Fragment {
     @BindView(R.id.fragment_vault_password)
     EditText vault_password;
     @BindView(R.id.fragment_vault_unlock)
-    Button btn_unlock;
+    FloatingActionButton btn_unlock;
     @BindView(R.id.vault_lock_screen_chk_save_pw)
     CheckBox chk_save;
 
@@ -110,9 +110,13 @@ public class VaultLockScreenFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-        Log.e("VaultLockScreenFragment", "Vault guid: ".concat(vault.guid));
-        vault_name.setText(vault.name);
+        if (vault != null) {
+            ButterKnife.bind(this, view);
+            Log.e("VaultLockScreenFragment", "Vault guid: ".concat(vault.guid));
+            vault_name.setText(vault.name);
+        } else {
+            Toast.makeText(getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -44,6 +44,7 @@ import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.JSONUtils;
+import es.wolfi.utils.ProgressUtils;
 
 public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
 
@@ -86,7 +87,7 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
                     }
 
                     alreadySaving.set(false);
-                    progress.dismiss();
+                    ProgressUtils.dismiss(progress);
                     fragmentManager.popBackStack();
                     return;
                 }
@@ -96,7 +97,7 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
         }
 
         alreadySaving.set(false);
-        progress.dismiss();
+        ProgressUtils.dismiss(progress);
         passwordListActivity.runOnUiThread(() -> {
             Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
         });
@@ -105,7 +106,7 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
     @Override
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         alreadySaving.set(false);
-        progress.dismiss();
+        ProgressUtils.dismiss(progress);
         String response = "";
 
         if (responseBody != null && responseBody.length > 0) {

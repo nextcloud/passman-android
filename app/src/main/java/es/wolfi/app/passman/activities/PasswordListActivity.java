@@ -165,7 +165,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                 @Override
                 public void onCompleted(Exception e, Boolean loggedIn) {
                     // To dismiss the dialog
-                    progress.dismiss();
+                    ProgressUtils.dismiss(progress);
 
                     attachClipboardListener();
 
@@ -267,7 +267,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                 progress.show();
 
                 Vault.getVaults(this, (e, result) -> {
-                    progress.dismiss();
+                    ProgressUtils.dismiss(progress);
                     if (e != null) {
                         // Not logged in, restart activity
                         if (Objects.equals(e.getMessage(), "401")) {
@@ -310,13 +310,13 @@ public class PasswordListActivity extends AppCompatActivity implements
             } else {
                 showUnlockVault();
             }
-            progress.dismiss();
+            ProgressUtils.dismiss(progress);
         } else {
             final AppCompatActivity self = this;
             Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
                 @Override
                 public void onCompleted(Exception e, Vault result) {
-                    progress.dismiss();
+                    ProgressUtils.dismiss(progress);
                     if (e != null) {
                         // Not logged in, restart activity
                         if (e.getMessage() != null && e.getMessage().equals("401")) {
@@ -489,7 +489,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
             @Override
             public void onCompleted(Exception e, Vault result) {
-                progress.dismiss();
+                ProgressUtils.dismiss(progress);
                 if (e != null) {
                     // Not logged in, restart activity
                     if (e.getMessage() != null && e.getMessage().equals("401")) {
@@ -565,7 +565,7 @@ public class PasswordListActivity extends AppCompatActivity implements
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
                 public void onCompleted(Exception e, Boolean loggedIn) {
-                    progress.dismiss();
+                    ProgressUtils.dismiss(progress);
 
                     if (loggedIn) {
                         showVaults();
@@ -736,7 +736,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                     Toast.makeText(getApplicationContext(), getString(R.string.error_downloading_file), Toast.LENGTH_SHORT).show();
                     Log.e("FileSave", getString(R.string.error_downloading_file));
                 }
-                progress.dismiss();
+                ProgressUtils.dismiss(progress);
             }
         };
         item.download(getApplicationContext(), cb);

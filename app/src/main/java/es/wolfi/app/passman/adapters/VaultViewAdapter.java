@@ -113,7 +113,7 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
                 Vault.getVault(context, holder.mItem.guid, new FutureCallback<Vault>() {
                     @Override
                     public void onCompleted(Exception e, Vault result) {
-                        progress.dismiss();
+                        ProgressUtils.dismiss(progress);
                         if (e != null) {
                             Log.e(TAG, "Unknown network error", e);
 
@@ -150,7 +150,7 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
                             Vault.getVault(context, holder.mItem.guid, new FutureCallback<Vault>() {
                                 @Override
                                 public void onCompleted(Exception e, Vault result) {
-                                    progress.dismiss();
+                                    ProgressUtils.dismiss(progress);
                                     if (e != null) {
                                         Log.e(TAG, "Unknown network error", e);
 

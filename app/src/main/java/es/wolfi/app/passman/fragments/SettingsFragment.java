@@ -330,7 +330,7 @@ public class SettingsFragment extends Fragment {
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    if (default_autofill_vault.getSelectedItem().toString().equals(getContext().getString(R.string.automatically))) {
+                    if (default_autofill_vault.getSelectedItem() == null || default_autofill_vault.getSelectedItem().toString().equals(getContext().getString(R.string.automatically))) {
                         ton.removeExtra(SettingValues.AUTOFILL_VAULT_GUID.toString());
                         settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").commit();
                     } else {

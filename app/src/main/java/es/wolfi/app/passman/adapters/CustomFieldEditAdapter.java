@@ -194,7 +194,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
                         credential.sendFileDeleteRequest(context, file.getFileId(), responseHandler);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        progress.dismiss();
+                        ProgressUtils.dismiss(progress);
                     }
                 } else {
                     mValues.remove(holder.mItem);

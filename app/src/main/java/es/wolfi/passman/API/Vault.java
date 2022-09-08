@@ -72,7 +72,7 @@ public class Vault extends Core implements Filterable {
     public static Integer[] keyStrengths = {1024, 2048, 4096};
 
     ArrayList<Credential> credentials;
-    HashMap<String, Integer> credential_guid;
+    HashMap<String, Integer> credential_guid = new HashMap<>();
 
     private String encryption_key = "";
 
@@ -182,8 +182,15 @@ public class Vault extends Core implements Filterable {
     }
 
     public Credential findCredentialByGUID(String guid) {
-        Log.e("Vault", "GUID: ".concat(guid).concat(" Arr pos: ").concat(String.valueOf(credential_guid.get(guid))));
-        return credentials.get(credential_guid.get(guid));
+        if (credential_guid != null && guid != null) {
+            Integer arrPos = credential_guid.get(guid);
+
+            Log.e("Vault", "GUID: ".concat(guid).concat(" Arr pos: ").concat(String.valueOf(arrPos)));
+            if (arrPos != null) {
+                return credentials.get(arrPos);
+            }
+        }
+        return null;
     }
 
     public Date getLastAccessTime() {
