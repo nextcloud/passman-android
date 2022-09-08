@@ -80,4 +80,7 @@
     <string name="offline_cache_description">Кешира криптираните хранилища, ако са заредени ръчно</string>
     <string name="enable_offline_cache">Активиране на офлайн кеш</string>
     <string name="clear_offline_cache">Изчистване на офлайн кеш</string>
-    </resources>
+    <string name="nextcloud_single_sign_on">Еднократна идентификация Nextcloud</string>
+    <string name="manual_login">Ръчно влизане</string>
+    <string name="confirm_account_logout">Сигурни ли сте, че искате да излезете?</string>
+</resources>
