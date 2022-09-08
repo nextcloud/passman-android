@@ -10,6 +10,7 @@
 - [What means "Encrypted offline cache"?](#what-means-encrypted-offline-cache)
 - [How far can I trust the local storage encryption?](#how-far-can-i-trust-the-local-storage-encryption-is-it-save-to-store-my-vault-password-on-the-device)
 - [How can I use a self signed certificate to connect the my Nextcloud server?](#how-can-i-use-a-self-signed-certificate-to-connect-the-my-nextcloud-server)
+- [How can I connect to my 2FA secured account?](#how-can-i-connect-to-my-2fa-secured-account)
 
 
 ## How do I setup the app correctly after installation?
@@ -76,4 +77,47 @@
 - Since version 1.0.0 the app supports user CA (certificate authority) certificates (requires at least Android 7 / API level 24).
 - The custom CA has to be imported in the Android trusted certificates section.
     - It should be somewhere like `Android Settings -> Security -> Install certificate from storage`
+
+**This is an example how a CA and certificate could be generated that will be accepted by Android and an apache2 webserver:**
+
+Create an auxiliary file "android_options.txt" with this line inside:
+
+    basicConstraints=CA:true
+
+
+Create self-signed certificate using these commands:
+
+    openssl genrsa -out CA.key 2048
+    openssl req -new -days 3650 -key CA.key -out CA.pem
+    openssl x509 -req -days 3650 -in CA.pem -signkey CA.key -extfile ./android_options.txt -out CA.crt 
+
+Now our CA.crt certificate is almost ready.
+Convert certificate to DER format:
+
+    openssl x509 -inform PEM -outform DER -in CA.crt -out CA.der.crt
+
+
+Generate a server key and request for signing (CSR):
+
+Make sure the "Common Name" matches the used host name (or ip address if no host name is used).
+
+    openssl genrsa -des3 -out server.key 4096
+    openssl req -new -key server.key -out server.csr
+
+Sign a certificate with CA:
+
+    openssl x509 -req -days 365 -in server.csr -CA CA.crt -CAkey CA.key -CAcreateserial -out server.crt
+
+Remove the passphrase from the certificate key to use it with apache2 without entering the password on service start:
+
+    openssl rsa -in server.key -out server.key.insecure
+
+Use `server.crt` as certificate and `server.key.insecure` as key for your apache2 host configuration.
+
+Import `CA.der.crt` as android user certificate.
+
+## How can I connect to my 2FA secured account?
+- Unfortunately Passman Android does not implement a native 2FA login
+- Workaround 1: Connect Passman Android using Single-Sign-On (SSO) with the Nextcloud Files App
+- Workaround 2: You need to create a device password (see https://github.com/nextcloud/passman-android/issues/70#issuecomment-691544624)
 
