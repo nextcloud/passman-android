@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Nustatymai</string>
     <string name="action_refresh">Įkelti iš naujo</string>
     <string name="nchost">Serverio adresas</string>
@@ -44,4 +44,6 @@
     <string name="password_generator_use_uppercase">Naudoti didžiąsias raides</string>
     <string name="password_length">Slaptažodžio ilgis</string>
     <string name="new_vault_name">Naujas slėptuvės pavadinimas</string>
+    <string name="value">Reikšmė</string>
+    <string name="secret">Paslaptis</string>
     </resources>

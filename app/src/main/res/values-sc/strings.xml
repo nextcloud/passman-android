@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Impostatziones</string>
     <string name="action_refresh">Agiorna</string>
     <string name="nchost">Indiritzu de su serbidore</string>
@@ -63,4 +63,7 @@
     <string name="password_generator_use_special_chars">Imprea caràteres ispetziales</string>
     <string name="password_length">Longària de  sa crae</string>
     <string name="new_vault_name">Nùmene nou de sa cassaforte</string>
+    <string name="value">Balore</string>
+    <string name="secret">Segretu</string>
+    <string name="issuer">Mitente:</string>
     </resources>

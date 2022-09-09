@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Ayarlar</string>
     <string name="action_refresh">Yenile</string>
     <string name="nchost">Sunucu adresi</string>
@@ -83,4 +83,7 @@
     <string name="nextcloud_single_sign_on">Nextcloud tek oturum açma</string>
     <string name="manual_login">El ile oturum açma</string>
     <string name="confirm_account_logout">Oturumu kapatmak istediğinize emin misiniz?</string>
-</resources>
+    <string name="value">Değer</string>
+    <string name="secret">Parola</string>
+    <string name="issuer">Yayınlayan</string>
+    </resources>

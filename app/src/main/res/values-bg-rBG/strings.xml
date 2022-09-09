@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Настройки</string>
     <string name="action_refresh">Опресняване</string>
     <string name="nchost">Адрес на сървъра</string>
@@ -83,4 +83,7 @@
     <string name="nextcloud_single_sign_on">Еднократна идентификация Nextcloud</string>
     <string name="manual_login">Ръчно влизане</string>
     <string name="confirm_account_logout">Сигурни ли сте, че искате да излезете?</string>
-</resources>
+    <string name="value">Стойност</string>
+    <string name="secret">Тайна</string>
+    <string name="issuer">Издател</string>
+    </resources>

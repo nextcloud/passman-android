@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Beállítások</string>
     <string name="action_refresh">Frissítés</string>
     <string name="nchost">Kiszolgálócím</string>
@@ -83,4 +83,7 @@
     <string name="nextcloud_single_sign_on">Nextcloud egyszeri bejelentkezés</string>
     <string name="manual_login">Kézi bejelentkezés</string>
     <string name="confirm_account_logout">Biztos, hogy kilép?</string>
-</resources>
+    <string name="value">Érték</string>
+    <string name="secret">Titok</string>
+    <string name="issuer">Kibocsátó</string>
+    </resources>

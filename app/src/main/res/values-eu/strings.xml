@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Ezarpenak</string>
     <string name="action_refresh">Berritu</string>
     <string name="nchost">Zerbitzariaren helbidea</string>
@@ -83,4 +83,7 @@
     <string name="nextcloud_single_sign_on">Nextcloud saio-hasiera bakarra</string>
     <string name="manual_login">Eskuzko saio hasiera</string>
     <string name="confirm_account_logout">Ziur zaude saioa bukatu nahi duzula?</string>
-</resources>
+    <string name="value">Balioa</string>
+    <string name="secret">Sekretua</string>
+    <string name="issuer">Jaulkitzailea</string>
+    </resources>

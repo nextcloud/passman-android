@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">设置</string>
     <string name="action_refresh">刷新</string>
     <string name="nchost">服务器地址</string>
@@ -78,4 +78,7 @@
     <string name="enable_offline_cache">启用离线缓存</string>
     <string name="clear_offline_cache">清除离线缓存</string>
     <string name="nextcloud_single_sign_on">Nextcloud单点登陆</string>
+    <string name="value">值</string>
+    <string name="secret">Secret</string>
+    <string name="issuer">发行者 </string>
     </resources>

@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Nastavenia</string>
     <string name="action_refresh">Obnoviť</string>
     <string name="nchost">Adresa servera</string>
@@ -77,4 +77,7 @@
     <string name="offline_cache_description">Ukladá do vyrovnávacej pamäte šifrované trezory, ak boli načítané manuálne</string>
     <string name="enable_offline_cache">Zapnúť offline vyrovnávaciu pamäť</string>
     <string name="clear_offline_cache">Vyčistiť offline vyrovnávaciu pamäť</string>
+    <string name="value">Hodnota</string>
+    <string name="secret">Tajný kľúč</string>
+    <string name="issuer">Vydavateľ</string>
     </resources>

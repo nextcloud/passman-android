@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Nastavení</string>
     <string name="action_refresh">Načíst znovu</string>
     <string name="nchost">Adresa serveru</string>
@@ -83,4 +83,7 @@
     <string name="nextcloud_single_sign_on">Nextcloud sjednocené přihlašování</string>
     <string name="manual_login">Ruční přihlášení</string>
     <string name="confirm_account_logout">Opravdu se chcete odhlásit?</string>
-</resources>
+    <string name="value">Hodnota</string>
+    <string name="secret">Soukromý</string>
+    <string name="issuer">Vydavatel</string>
+    </resources>

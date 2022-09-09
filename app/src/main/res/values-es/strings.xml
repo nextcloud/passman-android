@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Configuración</string>
     <string name="action_refresh">Actualizar</string>
     <string name="nchost">Dirección del servidor</string>
@@ -81,4 +81,7 @@
     <string name="enable_offline_cache">Activar caché sin conexión</string>
     <string name="clear_offline_cache">Limpiar caché sin conexión</string>
     <string name="nextcloud_single_sign_on">Autenticación única de Nextcloud</string>
+    <string name="value">Valor</string>
+    <string name="secret">Secreto</string>
+    <string name="issuer">Editor</string>
     </resources>

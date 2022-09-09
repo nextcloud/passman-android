@@ -1,4 +1,4 @@
-<resources>
+s<resources>
     <string name="action_settings">Ustawienia</string>
     <string name="action_refresh">Odśwież</string>
     <string name="nchost">Adres serwera</string>
@@ -83,4 +83,7 @@
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
     <string name="manual_login">Ręczne logowanie</string>
     <string name="confirm_account_logout">Czy na pewno chcesz się wylogować?</string>
-</resources>
+    <string name="value">Wartość</string>
+    <string name="secret">Tajny klucz</string>
+    <string name="issuer">Zgłaszający</string>
+    </resources>
