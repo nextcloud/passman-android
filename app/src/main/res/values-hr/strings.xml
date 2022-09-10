@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Postavke</string>
     <string name="action_refresh">Osvježi</string>
     <string name="nchost">Adresa poslužitelja</string>
@@ -72,4 +72,7 @@ s<resources>
     <string name="password_generator_use_uppercase">Koristi velika slova</string>
     <string name="password_length">Dužina zaporke</string>
     <string name="new_vault_name">Novi naziv trezora</string>
+    <string name="value">Vrijednost</string>
+    <string name="secret">Tajno</string>
+    <string name="issuer">Izdavatelj</string>
     </resources>

@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Paramètres</string>
     <string name="action_refresh">Actualiser</string>
     <string name="nchost">Adresse du serveur</string>
@@ -59,4 +59,7 @@ s<resources>
     <string name="new_vault_name">Nom du nouveau coffre-fort</string>
     <string name="clear_offline_cache">Vider le cache hors-ligne</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
+    <string name="value">Valeur</string>
+    <string name="secret">Caché</string>
+    <string name="issuer">Émetteur</string>
     </resources>

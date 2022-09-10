@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Impostatziones</string>
     <string name="action_refresh">Agiorna</string>
     <string name="nchost">Indiritzu de su serbidore</string>

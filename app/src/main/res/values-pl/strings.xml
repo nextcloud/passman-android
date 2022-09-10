@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Ustawienia</string>
     <string name="action_refresh">Odśwież</string>
     <string name="nchost">Adres serwera</string>
@@ -83,7 +83,12 @@ s<resources>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
     <string name="manual_login">Ręczne logowanie</string>
     <string name="confirm_account_logout">Czy na pewno chcesz się wylogować?</string>
+    <string name="digits">Cyfry</string>
+    <string name="period">Kropka</string>
     <string name="value">Wartość</string>
+    <string name="faq">FAQ</string>
     <string name="secret">Tajny klucz</string>
     <string name="issuer">Zgłaszający</string>
-    </resources>
+    <string name="error_parsing_qr_code">Błąd podczas analizowania kodu QR</string>
+    <string name="camera_permission_denied">Odmowa dostępu do kamery</string>
+</resources>

@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Configuración</string>
     <string name="action_refresh">Actualizar</string>
     <string name="nchost">Dirección del servidor</string>

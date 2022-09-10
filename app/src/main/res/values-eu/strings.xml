@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Ezarpenak</string>
     <string name="action_refresh">Berritu</string>
     <string name="nchost">Zerbitzariaren helbidea</string>

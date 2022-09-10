@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Beállítások</string>
     <string name="action_refresh">Frissítés</string>
     <string name="nchost">Kiszolgálócím</string>

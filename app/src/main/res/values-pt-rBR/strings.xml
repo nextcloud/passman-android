@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Configurações</string>
     <string name="action_refresh">Atualizar</string>
     <string name="nchost">Endereço do servidor</string>
@@ -82,4 +82,6 @@ s<resources>
     <string name="clear_offline_cache">Limpar cache offline</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign Ligado</string>
     <string name="value">Valor</string>
+    <string name="secret">Secreto</string>
+    <string name="issuer">Emissor</string>
     </resources>

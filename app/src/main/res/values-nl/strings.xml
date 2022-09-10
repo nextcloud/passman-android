@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Instellingen</string>
     <string name="action_refresh">Verversen</string>
     <string name="nchost">Server adres</string>
@@ -80,4 +80,7 @@ s<resources>
     <string name="enable_offline_cache">Inschakelen off-line cache</string>
     <string name="clear_offline_cache">Leesgmaken off-line cache</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
+    <string name="value">Waarden</string>
+    <string name="secret">Vertrouwelijk</string>
+    <string name="issuer">Uitgever</string>
     </resources>

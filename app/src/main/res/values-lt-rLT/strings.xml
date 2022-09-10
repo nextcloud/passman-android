@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Nustatymai</string>
     <string name="action_refresh">Įkelti iš naujo</string>
     <string name="nchost">Serverio adresas</string>

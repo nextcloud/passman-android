@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Настройки</string>
     <string name="action_refresh">Опресняване</string>
     <string name="nchost">Адрес на сървъра</string>

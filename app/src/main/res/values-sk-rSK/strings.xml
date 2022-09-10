@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Nastavenia</string>
     <string name="action_refresh">Obnoviť</string>
     <string name="nchost">Adresa servera</string>

@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">Настройки</string>
     <string name="action_refresh">Обновить</string>
     <string name="nchost">Адрес сервера</string>
@@ -55,4 +55,6 @@ s<resources>
     <string name="new_vault_name">Новое название хранилища</string>
     <string name="nextcloud_single_sign_on">Технология единого входа Nextcloud</string>
     <string name="value">Значение</string>
+    <string name="secret">Секретный</string>
+    <string name="issuer">Выпустил</string>
     </resources>

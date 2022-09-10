@@ -1,4 +1,4 @@
-s<resources>
+<resources>
     <string name="action_settings">設定</string>
     <string name="action_refresh">同期</string>
     <string name="nchost">サーバーアドレス</string>
@@ -44,4 +44,7 @@ s<resources>
     <string name="new_vault_name">新しい保管庫の名前</string>
     <string name="offline_cache">オフラインキャッシュ</string>
     <string name="nextcloud_single_sign_on">Nextcloud シングルサインオン</string>
+    <string name="value">値</string>
+    <string name="secret">シークレットキー</string>
+    <string name="issuer">発行者</string>
     </resources>
