@@ -96,7 +96,8 @@ public abstract class Core {
 
         try {
             Core.ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(c);
-        } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+        } catch (java.lang.NoSuchMethodError |
+                NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
             e.printStackTrace();
         }
     }

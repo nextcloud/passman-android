@@ -193,7 +193,8 @@ public class SettingsFragment extends Fragment {
                 Log.d("SettingsFragment", "Error parsing host from sso account");
             }
             sso_user_server.setText(String.format("%s@%s", ssoAccount.userId, hostname));
-        } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+        } catch (java.lang.NoSuchMethodError |
+                NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
             manual_server_connection_settings.setVisibility(View.VISIBLE);
             sso_settings.removeAllViews();
         }
