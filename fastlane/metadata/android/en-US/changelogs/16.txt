@@ -1,0 +1,10 @@
+- add Nextcloud Files app based Single-Sign-On (SSO) login option
+    - SSO requires Nextcloud Files app version >= 3.18
+- add/edit OTP manually or scan from QR code
+- add FAQ GitHub link to menu
+- unify unlock button as hover button
+- update custom field value design
+- update compileSdkVersion to 32
+- show error message if login fails #135
+- fix login screen in landscape orientation
+- general fixes and improvements
