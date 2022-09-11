@@ -3,6 +3,7 @@
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2022, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -23,8 +24,6 @@ package es.wolfi.app.passman.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -44,7 +43,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.koushikdutta.async.future.FutureCallback;
 import com.nextcloud.android.sso.AccountImporter;
-import com.nextcloud.android.sso.Constants;
 import com.nextcloud.android.sso.exceptions.AccountImportCancelledException;
 import com.nextcloud.android.sso.exceptions.AndroidGetAccountsPermissionNotGranted;
 import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
@@ -56,8 +54,6 @@ import com.nextcloud.android.sso.ui.UiExceptionManager;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,6 +64,7 @@ import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.passman.API.Core;
 import es.wolfi.utils.KeyStoreUtils;
+import es.wolfi.utils.SSOUtils;
 
 public class LoginActivity extends AppCompatActivity {
     public final static String LOG_TAG = "LoginActivity";
@@ -98,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
 
         new OfflineStorage(getBaseContext());
 
-        if (!isNextcloudFilesAppInstalled(this)) {
+        if (!SSOUtils.isNextcloudFilesAppInstalled(this)) {
             isLegacyOnly = true;
             loadLegacyLogin();
         }
@@ -186,26 +183,6 @@ public class LoginActivity extends AppCompatActivity {
     private void hideLoginOptions() {
         LinearLayout login_options = findViewById(R.id.login_options);
         login_options.setVisibility(View.INVISIBLE);
-    }
-
-    private static boolean isNextcloudFilesAppInstalled(Context context) {
-        List<String> APPS = Arrays.asList(Constants.PACKAGE_NAME_PROD, Constants.PACKAGE_NAME_DEV);
-
-        boolean returnValue = false;
-        PackageManager pm = context.getPackageManager();
-        for (String app : APPS) {
-            try {
-                PackageInfo pi = pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
-                // check if Nextcloud Files App version with the required PATCH request fix is installed
-                if ((pi.versionCode >= 30180052 && pi.packageName.equals("com.nextcloud.client")) ||
-                        pi.versionCode >= 20211027 && pi.packageName.equals("com.nextcloud.android.beta")) {
-                    returnValue = true;
-                    break;
-                }
-            } catch (PackageManager.NameNotFoundException ignored) {
-            }
-        }
-        return returnValue;
     }
 
     @OnClick(R.id.next)
