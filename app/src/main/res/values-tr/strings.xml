@@ -83,7 +83,12 @@
     <string name="nextcloud_single_sign_on">Nextcloud tek oturum açma</string>
     <string name="manual_login">El ile oturum açma</string>
     <string name="confirm_account_logout">Oturumu kapatmak istediğinize emin misiniz?</string>
+    <string name="digits">Rakamlar</string>
+    <string name="period">Aralık</string>
     <string name="value">Değer</string>
+    <string name="faq">SSS</string>
     <string name="secret">Parola</string>
     <string name="issuer">Yayınlayan</string>
-    </resources>
+    <string name="error_parsing_qr_code">QR kodu işlenirken sorun çıktı</string>
+    <string name="camera_permission_denied">Kamera izni reddedildi</string>
+</resources>
