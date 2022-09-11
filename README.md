@@ -16,7 +16,7 @@ This app is only compatible with Passman V2.x or higher.
 The passwords will be provided by [Passman](https://github.com/nextcloud/passman).
 
 ## Current features
-- Setup app (enter the nextcloud server settings)
+- Setup app (enter the nextcloud server settings or use SSO)
 - App start password option based on the android user authentication
 - View, add, rename and delete vaults
 - Login to vault
