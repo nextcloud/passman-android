@@ -83,7 +83,12 @@
     <string name="nextcloud_single_sign_on">Nextcloud egyszeri bejelentkezés</string>
     <string name="manual_login">Kézi bejelentkezés</string>
     <string name="confirm_account_logout">Biztos, hogy kilép?</string>
+    <string name="digits">Számjegyek</string>
+    <string name="period">Pont</string>
     <string name="value">Érték</string>
+    <string name="faq">GYIK</string>
     <string name="secret">Titok</string>
     <string name="issuer">Kibocsátó</string>
-    </resources>
+    <string name="error_parsing_qr_code">Hiba a QR-kód feldolgozása során</string>
+    <string name="camera_permission_denied">Kamera engedély megtagadva</string>
+</resources>
