@@ -83,7 +83,12 @@
     <string name="nextcloud_single_sign_on">Еднократна идентификация Nextcloud</string>
     <string name="manual_login">Ръчно влизане</string>
     <string name="confirm_account_logout">Сигурни ли сте, че искате да излезете?</string>
+    <string name="digits">Цифри</string>
+    <string name="period">Период</string>
     <string name="value">Стойност</string>
+    <string name="faq">ЧЗВ</string>
     <string name="secret">Тайна</string>
     <string name="issuer">Издател</string>
-    </resources>
+    <string name="error_parsing_qr_code">Грешка при анализ на QR кода</string>
+    <string name="camera_permission_denied">Отказано е разрешението /право/ за камера</string>
+</resources>
