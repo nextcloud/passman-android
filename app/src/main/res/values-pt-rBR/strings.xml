@@ -81,6 +81,8 @@
     <string name="enable_offline_cache">Habilitar cache offline</string>
     <string name="clear_offline_cache">Limpar cache offline</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign Ligado</string>
+    <string name="manual_login">Login Manual</string>
+    <string name="confirm_account_logout">Tem certeza que deseja sair?</string>
     <string name="value">Valor</string>
     <string name="secret">Secreto</string>
     <string name="issuer">Emissor</string>

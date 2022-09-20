@@ -83,7 +83,9 @@
     <string name="nextcloud_single_sign_on">Nextcloud saio-hasiera bakarra</string>
     <string name="manual_login">Eskuzko saio hasiera</string>
     <string name="confirm_account_logout">Ziur zaude saioa bukatu nahi duzula?</string>
+    <string name="digits">Digituak</string>
     <string name="value">Balioa</string>
+    <string name="faq">FAQ</string>
     <string name="secret">Sekretua</string>
     <string name="issuer">Jaulkitzailea</string>
     </resources>
