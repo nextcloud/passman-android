@@ -83,7 +83,12 @@
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign Ligado</string>
     <string name="manual_login">Login Manual</string>
     <string name="confirm_account_logout">Tem certeza que deseja sair?</string>
+    <string name="digits">Dígitos</string>
+    <string name="period">Período</string>
     <string name="value">Valor</string>
+    <string name="faq">FAQ</string>
     <string name="secret">Secreto</string>
     <string name="issuer">Emissor</string>
-    </resources>
+    <string name="error_parsing_qr_code">Erro ao analisar o código QR</string>
+    <string name="camera_permission_denied">Permissão da câmera negada</string>
+</resources>
