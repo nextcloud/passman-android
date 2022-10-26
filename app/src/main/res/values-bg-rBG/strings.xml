@@ -56,8 +56,8 @@
     <string name="request_connect_timeout">Време за изчакване на свързване (в секунди)</string>
     <string name="request_response_timeout">Време за изчакване на отговор на заявката (в секунди)</string>
     <string name="expert_settings">Експертни настройки</string>
-    <string name="confirm_credential_deletion">Сигурен ли сте, че искате да изтриете този идентификационен номер?</string>
-    <string name="confirm_vault_deletion">Сигурен ли сте, че искате да изтриете тозва хранилище?</string>
+    <string name="confirm_credential_deletion">Сигурни ли сте, че искате да изтриете този идентификационен номер?</string>
+    <string name="confirm_vault_deletion">Сигурни ли сте, че искате да изтриете тозва хранилище?</string>
     <string name="yes">Да</string>
     <string name="cancel">Отказ</string>
     <string name="enable_credential_list_icons">Активиране на иконите на списъка с идентификационни данни</string>
