@@ -40,6 +40,7 @@
     <string name="add_file">Ajouter un fichier</string>
     <string name="add_custom_field">Ajouter un champ personnalisé</string>
     <string name="unlock_passman">Déverrouillez Passman</string>
+    <string name="unlock_passman_message_device_auth">Merci de vous authentifier pour accéder à Passman</string>
     <string name="app_start_password">Mot de passe de démarrage de l\'appli</string>
     <string name="app_start_password_android_auth_description">Autoriser authentification utilisateur au démarrage de l\'application. </string>
     <string name="wait_while_encrypting">Patientez pendant le chiffrement…</string>
@@ -49,6 +50,8 @@
     <string name="autofill_noactivevault">Aucun coffre-fort actif </string>
     <string name="autofill_vaultlocked">Le coffre-fort doit être déverrouillé </string>
     <string name="autofill_vaultempty">Aucune informations d\'identification dans le coffre-fort </string>
+    <string name="autofill_createdbyautofillservice">Créé par le service d\'auto-complétion</string>
+    <string name="default_autofill_vault">Coffre d\'auto-complétion par défaut</string>
     <string name="automatically">automatiquement</string>
     <string name="request_connect_timeout">Délai d\'expiration de la demande de connexion (en secondes)</string>
     <string name="request_response_timeout">Délai d\'expiration des requêtes (en secondes)</string>
@@ -56,6 +59,8 @@
     <string name="confirm_credential_deletion">Êtes-vous sur de vouloir supprimer cette information d\'identification?</string>
     <string name="yes">Oui</string>
     <string name="cancel">Annuler</string>
+    <string name="enable_credential_list_icons">Activer les icônes de liste d\'identifiants</string>
+    <string name="credential_icon">Icône d\'identifiants</string>
     <string name="clear_clipboard_delay">Vider le presse-papiers (après quelques secondes)</string>
     <string name="generate_password">Générer un mot de passe</string>
     <string name="generate_password_to_clipboard">Générer un mot de passe aléatoire et le copier dans le presse-papiers</string>
@@ -69,6 +74,9 @@
     <string name="password_length">Longueur du mot de passe</string>
     <string name="vault_name">Nom du coffre-fort </string>
     <string name="new_vault_name">Nom du nouveau coffre-fort</string>
+    <string name="offline_cache">Cache hors-ligne</string>
+    <string name="offline_cache_description">Mise en cache des coffres chiffrés lors d\'un chargement manuel</string>
+    <string name="enable_offline_cache">Activation du cache hors-ligne</string>
     <string name="clear_offline_cache">Vider le cache hors-ligne</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
     <string name="confirm_account_logout">Êtes-vous certain de vouloir vous déconnecter ?</string>
