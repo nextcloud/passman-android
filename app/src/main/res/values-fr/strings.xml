@@ -57,6 +57,7 @@
     <string name="request_response_timeout">Délai d\'expiration des requêtes (en secondes)</string>
     <string name="expert_settings">Paramètres expert</string>
     <string name="confirm_credential_deletion">Êtes-vous sur de vouloir supprimer cette information d\'identification?</string>
+    <string name="confirm_vault_deletion">Êtes-vous sûr de vouloir supprimer ce coffre-fort ?</string>
     <string name="yes">Oui</string>
     <string name="cancel">Annuler</string>
     <string name="enable_credential_list_icons">Activer les icônes de liste d\'identifiants</string>
