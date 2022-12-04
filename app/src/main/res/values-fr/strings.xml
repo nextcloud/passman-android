@@ -80,6 +80,7 @@
     <string name="enable_offline_cache">Activation du cache hors-ligne</string>
     <string name="clear_offline_cache">Vider le cache hors-ligne</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
+    <string name="manual_login">Connexion manuelle</string>
     <string name="confirm_account_logout">Êtes-vous certain de vouloir vous déconnecter ?</string>
     <string name="digits">Chiffres</string>
     <string name="period">Période</string>
