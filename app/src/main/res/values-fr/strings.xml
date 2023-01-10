@@ -74,6 +74,7 @@
     <string name="password_generator_use_uppercase">Utiliser des lettres majuscules</string>
     <string name="password_length">Longueur du mot de passe</string>
     <string name="vault_name">Nom du coffre-fort </string>
+    <string name="sharing_key_strength">Force de la clé de partage</string>
     <string name="new_vault_name">Nom du nouveau coffre-fort</string>
     <string name="offline_cache">Cache hors-ligne</string>
     <string name="offline_cache_description">Mise en cache des coffres chiffrés lors d\'un chargement manuel</string>
@@ -88,5 +89,6 @@
     <string name="faq">FAQ</string>
     <string name="secret">Caché</string>
     <string name="issuer">Émetteur</string>
+    <string name="error_parsing_qr_code">Erreur de traitement du code QR</string>
     <string name="camera_permission_denied">Autorisation de caméra refusée</string>
 </resources>
