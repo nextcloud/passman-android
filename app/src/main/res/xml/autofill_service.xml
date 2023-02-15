@@ -1,5 +1,5 @@
 <autofill-service xmlns:android="http://schemas.android.com/apk/res/android"
-    android:settingsActivity="es.wolfi.app.passman.PasswordList">
+    android:settingsActivity="es.wolfi.app.passman.PasswordListActivity">
 
     <!-- sample app -->
     <compatibility-package
