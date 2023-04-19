@@ -57,6 +57,7 @@
     <string name="request_response_timeout">Tempo massimo di risposta della richiesta (secondi)</string>
     <string name="expert_settings">Impostazioni per esperti</string>
     <string name="confirm_credential_deletion">Vuoi davvero eliminare questa credenziale?</string>
+    <string name="confirm_vault_deletion">Sei sicuro di voler eliminare questo vault?</string>
     <string name="yes">Sì</string>
     <string name="cancel">Annulla</string>
     <string name="enable_credential_list_icons">Abilita le icone elenco credenziali</string>
@@ -72,6 +73,8 @@
     <string name="password_generator_use_lowercase">Utilizza caratteri minuscole</string>
     <string name="password_generator_use_uppercase">Utilizza caratteri maiuscole</string>
     <string name="password_length">Lunghezza della password</string>
+    <string name="vault_name">Nome della cassaforte</string>
+    <string name="sharing_key_strength">Condivisione della forza chiave</string>
     <string name="new_vault_name">Nome della nuova cassaforte</string>
     <string name="offline_cache">Cache offline</string>
     <string name="offline_cache_description">Memorizza nella cache i depositi crittografati se sono stati caricati manualmente</string>
