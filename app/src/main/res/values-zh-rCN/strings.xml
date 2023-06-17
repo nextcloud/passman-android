@@ -61,7 +61,7 @@
     <string name="cancel">取消</string>
     <string name="enable_credential_list_icons">启用凭据列表图标</string>
     <string name="credential_icon">凭据图标</string>
-    <string name="clear_clipboard_delay">清理剪贴板（数秒后）</string>
+    <string name="clear_clipboard_delay">清理剪贴板（几秒后）</string>
     <string name="generate_password">生成密码</string>
     <string name="generate_password_to_clipboard">生成随机密码并复制到剪贴板</string>
     <string name="enable_password_generator_shortcut_description">启用密码生成器应用快捷方式</string>
