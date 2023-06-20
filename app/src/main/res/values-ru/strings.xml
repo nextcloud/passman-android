@@ -74,6 +74,8 @@
     <string name="password_length">Длина пароля</string>
     <string name="new_vault_name">Новое название хранилища</string>
     <string name="nextcloud_single_sign_on">Технология единого входа Nextcloud</string>
+    <string name="digits">Цифры</string>
+    <string name="period">Период</string>
     <string name="value">Значение</string>
     <string name="secret">Секретный</string>
     <string name="issuer">Выпустил</string>
