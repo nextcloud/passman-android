@@ -75,7 +75,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="password_generator_use_uppercase">Usar caracteres en maiúscula</string>
     <string name="password_length">Lonxitude do contrasinal</string>
     <string name="vault_name">Nome da bóveda</string>
-    <string name="sharing_key_strength">Forza da chave compartida</string>
+    <string name="sharing_key_strength">Forza da chave para compartir</string>
     <string name="new_vault_name">Nome novo para a bóveda</string>
     <string name="offline_cache">Caché sen conexión</string>
     <string name="offline_cache_description">Almacenar na caché as bóvedas cifradas se foron cargadas manualmente</string>
