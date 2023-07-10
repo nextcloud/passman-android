@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">عنوان محدد موقع الموارد المُوحّد للواجهة الخلفية لنكست كلود غير صحيح أو غير قادر على الاتصال</string>
     <string name="wrongNCSettings">الإعدادات غير صحيحة</string>
     <string name="net_error">خطأ في الشبكة</string>
+    <string name="net_error_dialog_description">تعذر الاتصال بالملقم! لا يمكن حفظ \ n من التغييرات بدون وجود اتصال صالح بالملقم.</string>
     <string name="unlock">الغاء القفل</string>
     <string name="wrong_vault_pw">كلمة مرور خزينة خاطئة </string>
     <string name="label">تسمية</string>
@@ -72,6 +73,10 @@
     <string name="password_generator_use_uppercase">استخدام الأحرف الكبيرة</string>
     <string name="password_length">طول كلمة السر</string>
     <string name="new_vault_name">اسم خزينة جديد</string>
+    <string name="offline_cache">ذاكرة التخزين المؤقت غير متصلة</string>
+    <string name="offline_cache_description">يقوم بتخزين الخزائن المشفرة مؤقتًا إذا تم تحميلها يدويًا</string>
+    <string name="enable_offline_cache">تفعيل ذاكرة التخزين المؤقت الموجودة في وضع عدم الاتصال</string>
+    <string name="clear_offline_cache">مسح ذاكرة التخزين المؤقت الموجودة في وضع عدم الاتصال</string>
     <string name="value">القيمة</string>
     <string name="secret">السر</string>
     <string name="issuer">المُصدِر:</string>
