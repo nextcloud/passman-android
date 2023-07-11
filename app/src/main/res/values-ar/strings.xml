@@ -57,6 +57,7 @@
     <string name="request_response_timeout">انتهت مهلة طلب الرد (بالثواني)</string>
     <string name="expert_settings">إعدادات متقدمة</string>
     <string name="confirm_credential_deletion">هل متأكد من أنك تريد حذف بيانات الاعتماد هذه؟</string>
+    <string name="confirm_vault_deletion">هل أنت متأكد أنك تريد حذف هذه الخزينة؟</string>
     <string name="yes">نعم</string>
     <string name="cancel">إلغاء</string>
     <string name="enable_credential_list_icons">تمكين أيقونة قائمة بيانات الاعتماد</string>
@@ -72,6 +73,8 @@
     <string name="password_generator_use_lowercase">استخدم الأحرف الصغيرة</string>
     <string name="password_generator_use_uppercase">استخدام الأحرف الكبيرة</string>
     <string name="password_length">طول كلمة السر</string>
+    <string name="vault_name">اسم الخزينة </string>
+    <string name="sharing_key_strength">قوة مفتاح المشاركة</string>
     <string name="new_vault_name">اسم خزينة جديد</string>
     <string name="offline_cache">ذاكرة التخزين المؤقت غير متصلة</string>
     <string name="offline_cache_description">يقوم بتخزين الخزائن المشفرة مؤقتًا إذا تم تحميلها يدويًا</string>
