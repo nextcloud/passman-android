@@ -80,7 +80,15 @@
     <string name="offline_cache_description">يقوم بتخزين الخزائن المشفرة مؤقتًا إذا تم تحميلها يدويًا</string>
     <string name="enable_offline_cache">تفعيل ذاكرة التخزين المؤقت الموجودة في وضع عدم الاتصال</string>
     <string name="clear_offline_cache">مسح ذاكرة التخزين المؤقت الموجودة في وضع عدم الاتصال</string>
+    <string name="nextcloud_single_sign_on">تسجيل الدخول الأحادي على نكست كلود</string>
+    <string name="manual_login">تسجيل الدخول اليدوي</string>
+    <string name="confirm_account_logout">هل أنت متأكد أنك تريد تسجيل الخروج؟</string>
+    <string name="digits">أرقام</string>
+    <string name="period">فترة</string>
     <string name="value">القيمة</string>
+    <string name="faq">الاسئة الشائعة</string>
     <string name="secret">السر</string>
     <string name="issuer">المُصدِر:</string>
-    </resources>
+    <string name="error_parsing_qr_code">خطأ في تفسير مربع الاستجابة السريعة QR</string>
+    <string name="camera_permission_denied">تمّ رفض إذن السماح للكاميرا</string>
+</resources>
