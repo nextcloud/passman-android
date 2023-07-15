@@ -26,8 +26,7 @@ android {
             v2SigningEnabled true
         }
     }
-    compileSdkVersion 33
-    buildToolsVersion '30.0.3'
+    compileSdk 33
     defaultConfig {
         applicationId "es.wolfi.app.passman"
         minSdkVersion 21
