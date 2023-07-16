@@ -107,10 +107,12 @@ public class File extends Core {
                 }
             }
         };
+
+        String endpoint = "file/" + file_id;
         if (associatedCredential.isASharedCredential()) {
-            requestAPIGET(context, "sharing/credential/" + associatedCredential.getGuid() + "/file/" + guid, decryptionCallback);
-        } else {
-            requestAPIGET(context, "file/" + file_id, decryptionCallback);
+            endpoint = "sharing/credential/" + associatedCredential.getGuid() + "/file/" + guid;
         }
+
+        requestAPIGET(context, endpoint, decryptionCallback);
     }
 }

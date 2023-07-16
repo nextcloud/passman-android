@@ -568,6 +568,11 @@ public class Credential extends Core implements Filterable {
     public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler, ProgressDialog progress) {
         JSONObject params = new JSONObject();
 
+        String endpoint = "file";
+        if (isASharedCredential()) {
+            endpoint = "sharing/credential/" + getGuid() + "/file";
+        }
+
         progress.setMessage(c.getString(R.string.wait_while_encrypting));
         try {
             params.put("filename", encryptString(fileName));
@@ -575,7 +580,7 @@ public class Credential extends Core implements Filterable {
             params.put("mimetype", mimeType);
             params.put("size", fileSize);
             progress.setMessage(c.getString(R.string.wait_while_uploading));
-            requestAPI(c, "file", params, "POST", responseHandler);
+            requestAPI(c, endpoint, params, "POST", responseHandler);
         } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
