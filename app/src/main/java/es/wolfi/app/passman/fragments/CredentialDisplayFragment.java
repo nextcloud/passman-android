@@ -54,7 +54,9 @@ import es.wolfi.app.passman.adapters.CustomFieldViewAdapter;
 import es.wolfi.app.passman.adapters.FileViewAdapter;
 import es.wolfi.app.passman.databinding.FragmentCredentialDisplayBinding;
 import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.CredentialACL;
 import es.wolfi.passman.API.File;
+import es.wolfi.passman.API.SharingACL;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.IconUtils;
 
@@ -215,7 +217,12 @@ public class CredentialDisplayFragment extends Fragment {
                             .commit();
                 }
             });
-            editCredentialButton.setVisibility(View.VISIBLE);
+            CredentialACL acl = credential.getCredentialACL();
+            if (acl == null || (acl.getPermissions() != null && acl.getPermissions().hasPermission(SharingACL.PERMISSION.WRITE))) {
+                editCredentialButton.setVisibility(View.VISIBLE);
+            } else {
+                editCredentialButton.setVisibility(View.INVISIBLE);
+            }
 
 
             RecyclerView filesListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.filesList);

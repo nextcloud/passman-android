@@ -73,17 +73,29 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
             try {
                 JSONObject credentialObject = new JSONObject(result);
                 Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-                if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == v.vault_id) {
-                    Credential currentCredential = Credential.fromJSON(credentialObject, v);
+                if (credentialObject.has("credential_id") && credentialObject.has("vault_id")) {
+
+                    // assume default case that it is a real vault credential
+                    Credential credentialReplacement = Credential.fromJSON(credentialObject, v);
+
+                    if (credentialObject.getInt("vault_id") != v.vault_id && credentialObject.has("guid")) {
+                        // shared credential
+                        credentialReplacement = Credential.fromJSON(credentialObject, v);
+                        Credential currentCredential = v.findCredentialByGUID(credentialObject.getString("guid"));
+                        if (currentCredential != null) {
+                            credentialReplacement.setSharedKey(currentCredential.getSharedKey());
+                            credentialReplacement.setCredentialACL(currentCredential.getCredentialACL());
+                        }
+                    }
 
                     passwordListActivity.runOnUiThread(() -> {
                         Toast.makeText(view.getContext(), R.string.successfully_saved, Toast.LENGTH_LONG).show();
                     });
 
                     if (updateCredential) {
-                        Objects.requireNonNull(passwordListActivity).editCredentialInCurrentLocalVaultList(currentCredential);
+                        Objects.requireNonNull(passwordListActivity).editCredentialInCurrentLocalVaultList(credentialReplacement);
                     } else {
-                        Objects.requireNonNull(passwordListActivity).addCredentialToCurrentLocalVaultList(currentCredential);
+                        Objects.requireNonNull(passwordListActivity).addCredentialToCurrentLocalVaultList(credentialReplacement);
                     }
 
                     alreadySaving.set(false);

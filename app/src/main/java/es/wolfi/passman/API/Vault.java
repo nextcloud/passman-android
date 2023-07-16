@@ -256,7 +256,8 @@ public class Vault extends Core implements Filterable {
                     JSONObject data = new JSONObject(result);
                     Vault v = Vault.fromJSON(data);
                     OfflineStorage.getInstance().putObject(guid, result);
-                    cb.onCompleted(null, v);
+                    //cb.onCompleted(null, v);
+                    v.loadCredentialsSharedWithUs(c, cb);
                 } catch (JSONException ex) {
                     cb.onCompleted(ex, null);
                 }
@@ -308,6 +309,39 @@ public class Vault extends Core implements Filterable {
         }
 
         return v;
+    }
+
+    /**
+     * Loads credentials shared with the vault directly into the current vault data structure.
+     * Should be called only once after updating vault.credentials.
+     */
+    public void loadCredentialsSharedWithUs(Context c, final FutureCallback<Vault> cb) {
+        Vault self = this;
+        Vault.requestAPIGET(c, "sharing/vault/".concat(guid).concat("/get"), new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                try {
+                    JSONArray data = new JSONArray(result);
+                    for (int i = 0; i < data.length(); i++) {
+                        JSONObject sharedCredentialData = data.getJSONObject(i);
+
+                        CredentialACL acl = CredentialACL.fromJSON(sharedCredentialData);
+                        Credential c = Credential.fromJSON(sharedCredentialData.getJSONObject("credential_data"), self);
+                        c.setSharedKey(acl.shared_key);
+                        c.setCredentialACL(acl);
+                        if (c.getDeleteTime() == 0) {
+                            self.credentials.add(c);
+                            self.credential_guid.put(c.getGuid(), self.credentials.size() - 1);
+                        }
+                    }
+
+                    // todo: maybe update vault in OfflineStorage including the shared credentials somehow
+                    cb.onCompleted(null, self);
+                } catch (JSONException ex) {
+                    cb.onCompleted(ex, null);
+                }
+            }
+        });
     }
 
     public void sort(int method) {
