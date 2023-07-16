@@ -25,7 +25,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -57,8 +56,6 @@ import org.json.JSONObject;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialDeleteResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
@@ -69,6 +66,7 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
 import es.wolfi.app.passman.adapters.FileEditAdapter;
+import es.wolfi.app.passman.databinding.FragmentCredentialEditBinding;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
@@ -84,19 +82,14 @@ import es.wolfi.utils.ProgressUtils;
 public class CredentialEditFragment extends Fragment implements View.OnClickListener {
     public static String CREDENTIAL = "credential";
 
-    @BindView(R.id.edit_credential_label_header)
+    private FragmentCredentialEditBinding binding;
+
     TextView label_header;
-    @BindView(R.id.edit_credential_label)
     EditText label;
-    @BindView(R.id.edit_credential_user)
     EditText user;
-    @BindView(R.id.edit_credential_password)
     EditPasswordTextItem password;
-    @BindView(R.id.edit_credential_email)
     EditText email;
-    @BindView(R.id.edit_credential_url)
     EditText url;
-    @BindView(R.id.edit_credential_description)
     EditText description;
 
     AppCompatImageButton otpEditCollapseExtendedButton;
@@ -109,11 +102,6 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     TextView credential_otp;
     ProgressBar otp_progress;
 
-    @BindView(R.id.filesList)
-    RecyclerView filesList;
-    @BindView(R.id.customFieldsList)
-    RecyclerView customFieldsList;
-    @BindView(R.id.customFieldType)
     Spinner customFieldType;
 
     private Credential credential;
@@ -151,7 +139,8 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_credential_edit, container, false);
+        binding = FragmentCredentialEditBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         FloatingActionButton updateCredentialButton = (FloatingActionButton) view.findViewById(R.id.UpdateCredentialButton);
         updateCredentialButton.setOnClickListener(this);
@@ -179,6 +168,15 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         fed = new FileEditAdapter(credential);
         cfed = new CustomFieldEditAdapter(credential);
 
+        label_header = binding.editCredentialLabelHeader;
+        label = binding.editCredentialLabel;
+        user = binding.editCredentialUser;
+        password = binding.editCredentialPassword;
+        email = binding.editCredentialEmail;
+        url = binding.editCredentialUrl;
+        description = binding.editCredentialDescription;
+        customFieldType = binding.customFieldType;
+
         otp_edit_extended = (LinearLayout) view.findViewById(R.id.otp_edit_extended);
         otp_secret = view.findViewById(R.id.edit_credential_otp_secret);
         otp_digits = view.findViewById(R.id.edit_credential_otp_digits);
@@ -199,7 +197,6 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         Vault.checkCloudConnectionAndShowHint(view);
 
@@ -246,6 +243,12 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
                 credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

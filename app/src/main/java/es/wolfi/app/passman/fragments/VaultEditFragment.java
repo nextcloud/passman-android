@@ -42,11 +42,10 @@ import org.json.JSONObject;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.VaultSaveResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.activities.PasswordListActivity;
+import es.wolfi.app.passman.databinding.FragmentVaultEditBinding;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ProgressUtils;
 
@@ -59,9 +58,9 @@ import es.wolfi.utils.ProgressUtils;
 public class VaultEditFragment extends Fragment implements View.OnClickListener {
     public static String VAULT = "vault";
 
-    @BindView(R.id.edit_vault_name_header)
+    private FragmentVaultEditBinding binding;
+
     TextView edit_vault_name_header;
-    @BindView(R.id.edit_vault_name)
     EditText edit_vault_name;
 
     private Vault vault;
@@ -90,11 +89,15 @@ public class VaultEditFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_vault_edit, container, false);
+        binding = FragmentVaultEditBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         FloatingActionButton saveVaultButton = view.findViewById(R.id.SaveVaultButton);
         saveVaultButton.setOnClickListener(this);
         saveVaultButton.setVisibility(View.VISIBLE);
+
+        edit_vault_name_header = binding.editVaultNameHeader;
+        edit_vault_name = binding.editVaultName;
 
         return view;
     }
@@ -102,7 +105,6 @@ public class VaultEditFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         edit_vault_name.setText(vault.getName());
     }
@@ -118,6 +120,12 @@ public class VaultEditFragment extends Fragment implements View.OnClickListener 
                 vault = Vault.getVaultByGuid(getArguments().getString(VAULT));
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

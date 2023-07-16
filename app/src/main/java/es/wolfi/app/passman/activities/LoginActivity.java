@@ -55,13 +55,11 @@ import com.nextcloud.android.sso.ui.UiExceptionManager;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.databinding.ActivityLoginBinding;
 import es.wolfi.passman.API.Core;
 import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.SSOUtils;
@@ -69,15 +67,10 @@ import es.wolfi.utils.SSOUtils;
 public class LoginActivity extends AppCompatActivity {
     public final static String LOG_TAG = "LoginActivity";
 
-    @BindView(R.id.protocol)
     Spinner input_protocol;
-    @BindView(R.id.host)
     EditText input_host;
-    @BindView(R.id.user)
     EditText input_user;
-    @BindView(R.id.pass)
     EditText input_pass;
-    @BindView(R.id.next)
     Button bt_next;
 
     SharedPreferences settings;
@@ -90,8 +83,15 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.d("LoginActivity", "in onCreate");
 
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+
+        input_protocol = binding.contentLegacyLoginInclude.protocol;
+        input_host = binding.contentLegacyLoginInclude.host;
+        input_user = binding.contentLegacyLoginInclude.user;
+        input_pass = binding.contentLegacyLoginInclude.pass;
+        bt_next = binding.contentLegacyLoginInclude.next;
 
         new OfflineStorage(getBaseContext());
 
@@ -99,9 +99,27 @@ public class LoginActivity extends AppCompatActivity {
             isLegacyOnly = true;
             loadLegacyLogin();
         }
+
+        binding.loadLegacyLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadLegacyLogin();
+            }
+        });
+        binding.loadSsoLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadSSOLogin();
+            }
+        });
+        binding.contentLegacyLoginInclude.next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onNextClick();
+            }
+        });
     }
 
-    @OnClick(R.id.load_legacy_login_button)
     public void loadLegacyLogin() {
         hideLoginOptions();
 
@@ -153,7 +171,6 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    @OnClick(R.id.load_sso_login_button)
     public void loadSSOLogin() {
         hideLoginOptions();
 
@@ -185,7 +202,6 @@ public class LoginActivity extends AppCompatActivity {
         login_options.setVisibility(View.INVISIBLE);
     }
 
-    @OnClick(R.id.next)
     public void onNextClick() {
         Log.e("Login", "begin");
         final String protocol = input_protocol.getSelectedItem().toString().toLowerCase();
@@ -244,7 +260,8 @@ public class LoginActivity extends AppCompatActivity {
                     SingleSignOnAccount ssoAccount;
                     try {
                         ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(l_context);
-                    } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+                    } catch (NextcloudFilesAppAccountNotFoundException |
+                             NoCurrentAccountSelectedException e) {
                         UiExceptionManager.showDialogForException(l_context, e);
                         return;
                     }
