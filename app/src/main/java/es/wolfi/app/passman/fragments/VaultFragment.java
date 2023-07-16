@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,16 +88,19 @@ public class VaultFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentVaultListBinding.inflate(inflater, container, false);
 
-        // Set the adapter
         Context context = binding.list.getContext();
-        binding.list.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        if (mColumnCount <= 1) {
+            binding.list.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            binding.list.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+        }
 
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
         ArrayList<Vault> l = new ArrayList<Vault>();
         if (vaults != null) {
             l = new ArrayList<Vault>(vaults.values());
         }
-        binding.list.setAdapter(new VaultViewAdapter(l, mListener, getParentFragmentManager()));
+        binding.list.setAdapter(new VaultViewAdapter(getContext(), l, mListener, getParentFragmentManager()));
 
         binding.addVaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
