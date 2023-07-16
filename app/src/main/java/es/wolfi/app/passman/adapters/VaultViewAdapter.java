@@ -62,11 +62,13 @@ import es.wolfi.utils.ProgressUtils;
 public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.ViewHolder> {
     private static final String TAG = VaultViewAdapter.class.getSimpleName();
 
+    private Context context;
     private final List<Vault> mValues;
     private final OnListFragmentInteractionListener mListener;
     private final FragmentManager fragmentManager;
 
-    public VaultViewAdapter(List<Vault> items, OnListFragmentInteractionListener listener, FragmentManager fragmentManager) {
+    public VaultViewAdapter(Context context, List<Vault> items, OnListFragmentInteractionListener listener, FragmentManager fragmentManager) {
+        this.context = context;
         mValues = items;
         mListener = listener;
         this.fragmentManager = fragmentManager;
@@ -75,7 +77,7 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        FragmentVaultBinding binding = FragmentVaultBinding.inflate(LayoutInflater.from(parent.getContext()));
+        FragmentVaultBinding binding = FragmentVaultBinding.inflate(LayoutInflater.from(context), parent, false);
         return new ViewHolder(binding.getRoot());
     }
 
