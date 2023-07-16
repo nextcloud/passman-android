@@ -72,6 +72,10 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
         mValues = credential.getCustomFieldsList();
     }
 
+    public Credential getCredential() {
+        return credential;
+    }
+
     public String getCustomFieldsString() {
         JSONArray customFields = new JSONArray();
         for (CustomField cf : mValues) {
@@ -105,7 +109,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
         if (customField.getFieldType().equals("file")) {
             holder.mValueEdit.setEnabled(false);
             try {
-                File file = new File(customField.getJvalue());
+                File file = new File(customField.getJvalue(), credential);
                 String filenameToPrint = String.format("%s (%s)", file.getFilename(), FileUtils.humanReadableByteCount((Double.valueOf(file.getSize())).longValue(), true));
                 holder.mValueEdit.setText(filenameToPrint);
             } catch (JSONException e) {
@@ -236,7 +240,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
                     final AsyncHttpResponseHandler responseHandler = new CustomFieldFileDeleteResponseHandler(progress, holder, mValues, self);
 
                     try {
-                        File file = new File(holder.mItem.getJvalue());
+                        File file = new File(holder.mItem.getJvalue(), credential);
                         credential.sendFileDeleteRequest(context, file.getFileId(), responseHandler);
                     } catch (JSONException e) {
                         e.printStackTrace();

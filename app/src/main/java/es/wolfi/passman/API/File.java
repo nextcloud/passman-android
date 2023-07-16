@@ -21,12 +21,15 @@
 
 package es.wolfi.passman.API;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import es.wolfi.app.passman.R;
 
 public class File extends Core {
 
@@ -36,8 +39,10 @@ public class File extends Core {
     public double size;
     public double created;
     public String mimetype;
+    private Credential associatedCredential;
 
-    public File(JSONObject o) throws JSONException {
+    public File(JSONObject o, Credential associatedCredential) throws JSONException {
+        this.associatedCredential = associatedCredential;
         file_id = o.getInt("file_id");
         filename = o.getString("filename");
         guid = o.getString("guid");
@@ -82,7 +87,30 @@ public class File extends Core {
         return fileObject;
     }
 
-    public void download(Context context, FutureCallback<String> cb) {
-        requestAPIGET(context, "file/" + file_id, cb);
+    public void download(Context context, ProgressDialog progress, FutureCallback<String> offerDownloadCallback) {
+        FutureCallback<String> decryptionCallback = new FutureCallback<String>() {
+            @Override
+            public void onCompleted(Exception e, String result) {
+                if (result != null) {
+                    try {
+                        JSONObject o = new JSONObject(result);
+                        if (o.has("file_data")) {
+                            progress.setMessage(context.getString(R.string.wait_while_decrypting));
+                            offerDownloadCallback.onCompleted(e, associatedCredential.decryptString(o.getString("file_data")));
+                        }
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
+                        offerDownloadCallback.onCompleted(ex, null);
+                    }
+                } else {
+                    offerDownloadCallback.onCompleted(e, null);
+                }
+            }
+        };
+        if (associatedCredential.isASharedCredential()) {
+            requestAPIGET(context, "sharing/credential/" + associatedCredential.getGuid() + "/file/" + guid, decryptionCallback);
+        } else {
+            requestAPIGET(context, "file/" + file_id, decryptionCallback);
+        }
     }
 }

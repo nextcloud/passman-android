@@ -1,7 +1,5 @@
 package es.wolfi.passman.API;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,9 +34,7 @@ public class CredentialACL {
         acl.vault_guid = o.getString("vault_guid");
         acl.shared_key = o.getString("shared_key");
         acl.pending = o.getBoolean("pending");
-        Log.e("create SharingACL", String.valueOf(o.getInt("permissions")));
         acl.permissions = new SharingACL(o.getInt("permissions"));
-        Log.e("create SharingACL", String.valueOf(acl.permissions.getPermission()));
         return acl;
     }
 

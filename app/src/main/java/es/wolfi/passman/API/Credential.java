@@ -211,7 +211,7 @@ public class Credential extends Core implements Filterable {
                 JSONArray files = new JSONArray(fileString);
                 for (int i = 0; i < files.length(); i++) {
                     JSONObject o = files.getJSONObject(i);
-                    fileList.add(new File(o));
+                    fileList.add(new File(o, this));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -323,7 +323,7 @@ public class Credential extends Core implements Filterable {
      * Returns a custom encryption key or null if no custom key is required.
      */
     private String getCustomCredentialEncryptionKey() {
-        if (this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null") && this.acl == null) {
+        if (isASharedCredential() && this.acl == null) {
             if (this.sharedKeyDecrypted == null) {
                 this.sharedKeyDecrypted = vault.decryptString(this.sharedKey);
             }
@@ -338,7 +338,7 @@ public class Credential extends Core implements Filterable {
      * Returns a custom decryption key or null if no custom key is required.
      */
     private String getCustomCredentialDecryptionKey() {
-        if (this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null")) {
+        if (isASharedCredential()) {
             if (this.sharedKeyDecrypted == null) {
                 return vault.decryptString(this.sharedKey);
             }
@@ -371,15 +371,8 @@ public class Credential extends Core implements Filterable {
         return vault.decryptString(cryptogram);
     }
 
-    private boolean isEncryptedWithSharedKey() {
-        if (this.sharedKeyDecrypted == null) {
-            if (this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null") && this.acl == null) {
-                this.sharedKeyDecrypted = vault.decryptString(this.sharedKey);
-            } else if (this.acl != null) {
-                this.sharedKeyDecrypted = vault.decryptString(this.acl.shared_key);
-            }
-        }
-        return this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null");
+    public boolean isASharedCredential() {
+        return this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null");
     }
 
     public void resetDecryptedSharedKey() {

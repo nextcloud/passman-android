@@ -32,8 +32,9 @@ import org.json.JSONException;
 import java.util.List;
 
 import es.wolfi.app.passman.CopyTextItem;
-import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
 import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
+import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.File;
 import es.wolfi.utils.FileUtils;
@@ -45,11 +46,13 @@ import es.wolfi.utils.FileUtils;
  */
 public class CustomFieldViewAdapter extends RecyclerView.Adapter<CustomFieldViewAdapter.ViewHolder> {
 
+    private final Credential credential;
     private final List<CustomField> mValues;
     private final CredentialDisplayFragment.OnListFragmentInteractionListener customFieldListListener;
 
-    public CustomFieldViewAdapter(List<CustomField> customFields, CredentialDisplayFragment.OnListFragmentInteractionListener listener) {
-        mValues = customFields;
+    public CustomFieldViewAdapter(Credential credential, CredentialDisplayFragment.OnListFragmentInteractionListener listener) {
+        this.credential = credential;
+        mValues = credential.getCustomFieldsList();
         customFieldListListener = listener;
     }
 
@@ -75,7 +78,7 @@ public class CustomFieldViewAdapter extends RecyclerView.Adapter<CustomFieldView
             holder.mFileValueView.setVisibility(View.VISIBLE);
 
             try {
-                File file = new File(customField.getJvalue());
+                File file = new File(customField.getJvalue(), credential);
                 String filenameToPrint = String.format("%s (%s)", file.getFilename(), FileUtils.humanReadableByteCount((Double.valueOf(file.getSize())).longValue(), true));
                 holder.mFileValueView.setText(filenameToPrint);
 
@@ -86,7 +89,7 @@ public class CustomFieldViewAdapter extends RecyclerView.Adapter<CustomFieldView
                             // Notify the active callbacks interface (the activity, if the
                             // fragment is attached to one) that an item has been selected.
                             try {
-                                File file = new File(holder.mItem.getJvalue());
+                                File file = new File(holder.mItem.getJvalue(), credential);
                                 customFieldListListener.onListFragmentInteraction(file);
                             } catch (JSONException e) {
                                 e.printStackTrace();

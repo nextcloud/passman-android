@@ -59,7 +59,6 @@ import androidx.fragment.app.FragmentManager;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -710,34 +709,26 @@ public class PasswordListActivity extends AppCompatActivity implements
         progress.setMessage(getString(R.string.wait_while_downloading));
         progress.show();
 
-        FutureCallback<String> cb = new FutureCallback<String>() {
+        FutureCallback<String> offerDownloadCallback = new FutureCallback<String>() {
             @Override
-            public void onCompleted(Exception e, String result) {
-                if (result != null) {
-                    try {
-                        JSONObject o = new JSONObject(result);
-                        if (o.has("file_data")) {
-                            runOnUiThread(() -> progress.setMessage(getString(R.string.wait_while_decrypting)));
-                            String[] decryptedSplitString = v.decryptString(o.getString("file_data")).split(",");
-                            if (decryptedSplitString.length == 2) {
-                                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                                intent.putExtra(Intent.EXTRA_TITLE, item.getFilename());
-                                intent.setType(item.getMimetype());
+            public void onCompleted(Exception e, String decryptedFileDataField) {
+                if (decryptedFileDataField != null) {
+                    String[] decryptedSplitString = decryptedFileDataField.split(",");
+                    if (decryptedSplitString.length == 2) {
+                        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent.putExtra(Intent.EXTRA_TITLE, item.getFilename());
+                        intent.setType(item.getMimetype());
 
-                                // intent.putExtra and a later intent.getExtra seem not to work
-                                //intent.putExtra("custom_data", decryptedSplitString[1]);
-                                intentFilecontent = decryptedSplitString[1];
+                        // intent.putExtra and a later intent.getExtra seem not to work
+                        //intent.putExtra("custom_data", decryptedSplitString[1]);
+                        intentFilecontent = decryptedSplitString[1];
 
-                                // Optionally, specify a URI for the directory that should be opened in
-                                // the system file picker when your app creates the document.
-                                //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
+                        // Optionally, specify a URI for the directory that should be opened in
+                        // the system file picker when your app creates the document.
+                        //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
-                                startActivityForResult(intent, REQUEST_CODE_CREATE_DOCUMENT);
-                            }
-                        }
-                    } catch (JSONException ex) {
-                        ex.printStackTrace();
+                        startActivityForResult(intent, REQUEST_CODE_CREATE_DOCUMENT);
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.error_downloading_file), Toast.LENGTH_SHORT).show();
@@ -746,7 +737,8 @@ public class PasswordListActivity extends AppCompatActivity implements
                 ProgressUtils.dismiss(progress);
             }
         };
-        item.download(getApplicationContext(), cb);
+
+        item.download(getApplicationContext(), progress, offerDownloadCallback);
     }
 
     public void selectFileToAdd(int activityRequestFileCode) {

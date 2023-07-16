@@ -231,7 +231,7 @@ public class CredentialDisplayFragment extends Fragment {
 
             RecyclerView customFieldsListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.customFieldsList);
             customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
+            customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential, filelistListener));
 
             if (credential.getCompromised().equals("true")) {
                 TextView passwordLabel = fragmentView.findViewById(R.id.credential_password_label);
