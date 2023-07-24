@@ -247,7 +247,19 @@ public class CredentialDisplayFragment extends Fragment {
             url.setText(credential.getUrl());
             description.setText(credential.getDescription());
             otp.setEnabled(false);
-            IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
+
+            // overwrite real credential icon for every shared credential
+            if (credential.getCredentialACL() != null) {
+                // shared with me
+                credentialIcon.setImageResource(R.drawable.ic_baseline_share_24);
+            } else if (credential.isASharedCredential()) {
+                // shared with other (use as alternative to fa-share-alt-square)
+                credentialIcon.setImageResource(R.drawable.ic_baseline_share_24);
+                credentialIcon.setBackgroundColor(getResources().getColor(R.color.cardview_dark_background));
+                credentialIcon.setColorFilter(getResources().getColor(R.color.white));
+            } else {
+                IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
+            }
 
             if (URLUtil.isValidUrl(credential.getUrl())) {
                 url.setModeURL();

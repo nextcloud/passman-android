@@ -80,7 +80,18 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
         }
 
         if (holder.mItem != null && settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true)) {
-            IconUtils.loadIconToImageView(holder.mItem.getFavicon(), holder.contentImage);
+            // overwrite real credential icon for every shared credential
+            if (holder.mItem.getCredentialACL() != null) {
+                // shared with me
+                holder.contentImage.setImageResource(R.drawable.ic_baseline_share_24);
+            } else if (holder.mItem.isASharedCredential()) {
+                // shared with other (use as alternative to fa-share-alt-square)
+                holder.contentImage.setImageResource(R.drawable.ic_baseline_share_24);
+                holder.contentImage.setBackgroundColor(holder.mView.getResources().getColor(R.color.cardview_dark_background));
+                holder.contentImage.setColorFilter(holder.mView.getResources().getColor(R.color.white));
+            } else {
+                IconUtils.loadIconToImageView(holder.mItem.getFavicon(), holder.contentImage);
+            }
         } else {
             holder.contentLayout.removeView(holder.contentImage);
         }
