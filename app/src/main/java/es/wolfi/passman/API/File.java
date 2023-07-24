@@ -109,7 +109,7 @@ public class File extends Core {
         };
 
         String endpoint = "file/" + file_id;
-        if (associatedCredential.isASharedCredential()) {
+        if (associatedCredential.acl != null) {
             endpoint = "sharing/credential/" + associatedCredential.getGuid() + "/file/" + guid;
         }
 
