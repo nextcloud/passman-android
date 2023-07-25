@@ -5,7 +5,7 @@
     <string name="username">إسم المستخدم</string>
     <string name="password">الكلمة السرية</string>
     <string name="connect">إتصال</string>
-    <string name="wrongNCUrl">عنوان محدد موقع الموارد المُوحّد للواجهة الخلفية لنكست كلود غير صحيح أو غير قادر على الاتصال</string>
+    <string name="wrongNCUrl">عنوان URL للواجهة الخلفية لنكست كلود غير صحيح أو غير قادر على الاتصال</string>
     <string name="wrongNCSettings">الإعدادات غير صحيحة</string>
     <string name="net_error">خطأ في الشبكة</string>
     <string name="net_error_dialog_description">تعذر الاتصال بالملقم! لا يمكن حفظ \ n من التغييرات بدون وجود اتصال صالح بالملقم.</string>
@@ -78,8 +78,8 @@
     <string name="new_vault_name">اسم خزينة جديد</string>
     <string name="offline_cache">ذاكرة التخزين المؤقت غير متصلة</string>
     <string name="offline_cache_description">يقوم بتخزين الخزائن المشفرة مؤقتًا إذا تم تحميلها يدويًا</string>
-    <string name="enable_offline_cache">تفعيل ذاكرة التخزين المؤقت الموجودة في وضع عدم الاتصال</string>
-    <string name="clear_offline_cache">مسح ذاكرة التخزين المؤقت الموجودة في وضع عدم الاتصال</string>
+    <string name="enable_offline_cache">تفعيل ذاكرة التخزين المؤقت الموجودة فى وضع عدم الاتصال</string>
+    <string name="clear_offline_cache">مسح ذاكرة التخزين المؤقت الموجودة فى وضع عدم الاتصال</string>
     <string name="nextcloud_single_sign_on">تسجيل الدخول الأحادي على نكست كلود</string>
     <string name="manual_login">تسجيل الدخول اليدوي</string>
     <string name="confirm_account_logout">هل أنت متأكد أنك تريد تسجيل الخروج؟</string>
