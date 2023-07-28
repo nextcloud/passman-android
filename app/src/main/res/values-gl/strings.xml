@@ -66,7 +66,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="clear_clipboard_delay">Limpar o portapapeis (após segundos)</string>
     <string name="generate_password">Xerar un contrasinal</string>
     <string name="generate_password_to_clipboard">Xerar un contrasinal ao chou e copialo no portapapeis</string>
-    <string name="enable_password_generator_shortcut_description">Activar o atallo da apli xeradora de contrasinais</string>
+    <string name="enable_password_generator_shortcut_description">Activar o atallo da aplicación xeradora de contrasinais</string>
     <string name="password_generator_require_every_char_type">Precisar o uso de todos os tipos de caracteres</string>
     <string name="password_generator_avoid_ambiguous_chars">Evitar caracteres ambiguos</string>
     <string name="password_generator_use_special_chars">Usar caracteres especiais</string>
