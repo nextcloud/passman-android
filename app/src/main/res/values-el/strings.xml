@@ -42,6 +42,8 @@
     <string name="password_generator_use_special_chars">Χρήση ειδικών χαρακτήρων</string>
     <string name="password_length">Μέγεθος συνθηματικού</string>
     <string name="new_vault_name">Νέο όνομα κρύπτης</string>
+    <string name="digits">Ψηφία</string>
+    <string name="period">Περίοδος</string>
     <string name="value">Τιμή</string>
     <string name="secret">Μυστικός</string>
     <string name="issuer">Εκδότης</string>
