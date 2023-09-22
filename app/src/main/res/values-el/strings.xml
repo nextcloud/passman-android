@@ -32,6 +32,7 @@
     <string name="app_settings">Ρυθμίσεις εφαρμογής</string>
     <string name="loading">Γίνεται φόρτωση</string>
     <string name="error_downloading_file">Σφάλμα λήψης του αρχείου</string>
+    <string name="error_writing_file">Σφάλμα κατά την εγγραφή του αρχείου</string>
     <string name="files">Αρχεία</string>
     <string name="expert_settings">Ρυθμίσεις για προχωρημένους</string>
     <string name="yes">Ναι</string>
