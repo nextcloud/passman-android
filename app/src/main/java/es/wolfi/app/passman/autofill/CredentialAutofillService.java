@@ -78,6 +78,16 @@ public final class CredentialAutofillService extends AutofillService {
     private static final String TAG = "CredentialAutofillSvc";
     private static final int MAX_DATASETS = 4;
 
+    public static HashSet<String> blacklistedPackageNames = new HashSet<String>() {
+        {
+            add("android");
+            add("com.android.settings");
+            add("es.wolfi.app.passman");        // github and fdroid releases
+            add("es.wolfi.app.passman.alpha");  // alpha and gplay releases
+            add("es.wolfi.app.passman.debug");  // testing
+        }
+    };
+
     @Override
     public void onFillRequest(FillRequest request, CancellationSignal cancellationSignal, FillCallback callback) {
         Log.d(TAG, "onFillRequest()");
@@ -101,8 +111,8 @@ public final class CredentialAutofillService extends AutofillService {
 
         Log.d(TAG, "autofillable fields for: " + requesterPackageName + ": " + fields);
         // We don't have any fields to work with
-        // Passman should not authenticate itself
-        if (fields.isEmpty() || requesterPackageName.startsWith("es.wolfi.app.passman")) {
+        // Passman should not authenticate itself (see blacklistedPackageNames)
+        if (fields.isEmpty() || blacklistedPackageNames.contains(requesterPackageName)) {
             Log.d(TAG, "No autofillable fields for: " + requesterPackageName);
             callback.onSuccess(null);
             return;
@@ -163,9 +173,7 @@ public final class CredentialAutofillService extends AutofillService {
 
         for (Credential thisCred : matchingCredentials) {
 
-            String credLabel = returnBestString(thisCred.getLabel(),
-                    thisCred.getUrl(),
-                    thisCred.getUsername());
+            String credLabel = returnBestString(thisCred.getLabel(), thisCred.getUrl());
 
             Dataset.Builder dataset = new Dataset.Builder();
 
@@ -175,29 +183,25 @@ public final class CredentialAutofillService extends AutofillService {
             AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
 
             if (bestUsername != null) {
-                String value = returnBestString(thisCred.getUsername(),
-                        thisCred.getEmail(),
-                        thisCred.getLabel());
+                String value = returnBestString(thisCred.getUsername(), thisCred.getEmail());
 
                 buildAndAddPresentation(dataset,
                         packageName,
                         bestUsername,
                         value,
-                        credLabel);
+                        "Username for: " + credLabel);
 
                 tempFields.add(bestUsername.getAutofillid());
             }
 
             if (bestEmail != null) {
-                String value = returnBestString(thisCred.getEmail(),
-                        thisCred.getUsername(),
-                        thisCred.getLabel());
+                String value = returnBestString(thisCred.getEmail(), thisCred.getUsername());
 
                 buildAndAddPresentation(dataset,
                         packageName,
                         bestEmail,
                         value,
-                        credLabel);
+                        "Email for: " + credLabel);
                 tempFields.add(bestEmail.getAutofillid());
             }
 
