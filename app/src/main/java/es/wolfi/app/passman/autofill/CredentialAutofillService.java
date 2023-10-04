@@ -562,19 +562,33 @@ public final class CredentialAutofillService extends AutofillService {
         }
     }
 
+    /**
+     * Returns the autofill vault, if there was one selected in the app settings.
+     * As fallback it returns the active fault if the app is active and any vault open.
+     * Otherwise it returns null.
+     *
+     * @param ton
+     * @return null or Vault
+     */
     private Vault getAutofillVault(SingleTon ton) {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         KeyStoreUtils.initialize(settings);
+
+        // active vault should be unlocked by default
         Vault activeVault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         String autofillVaultGuid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
 
-        if (activeVault != null && autofillVaultGuid != null && !activeVault.guid.equals(autofillVaultGuid) && !autofillVaultGuid.equals("")) {
-            try {
-                Vault requestedVault = Vault.fromJSON(new JSONObject(KeyStoreUtils.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
-                requestedVault.unlock(KeyStoreUtils.getString(autofillVaultGuid, ""));
-                return requestedVault;
-            } catch (JSONException e) {
-                e.printStackTrace();
+        if (activeVault == null || !activeVault.guid.equals(autofillVaultGuid)) {
+            // assume autofill vault is not the active vault
+            if (autofillVaultGuid != null && !autofillVaultGuid.equals("")) {
+                try {
+                    Vault autofillVault = Vault.fromJSON(new JSONObject(KeyStoreUtils.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
+                    // try to unlock with optional saved access password, otherwise return locked vault
+                    autofillVault.unlock(KeyStoreUtils.getString(autofillVaultGuid, ""));
+                    return autofillVault;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
