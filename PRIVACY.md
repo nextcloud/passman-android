@@ -23,6 +23,10 @@ This is a list of permissions required and asked by the App in order to properly
 
   Used to provide a autofill service for known access data.
 
+- `android.permission.CAMERA`
+
+  Used to provide a QR code scanner for OTP editing.
+
 ## Nextcloud privacy policy
 
 You can get more information on Nextcloud general privacy policy which is accessible at [nextcloud.com/privacy](https://nextcloud.com/privacy/).
