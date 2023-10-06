@@ -73,7 +73,6 @@ public final class CredentialAutofillService extends AutofillService {
 
     private static final String LOG_TAG = "CredentialAutofillSvc";
 
-
     public static HashSet<String> blacklistedPackageNames = new HashSet<String>() {
         {
             add("android");
@@ -104,7 +103,10 @@ public final class CredentialAutofillService extends AutofillService {
 
         final String requesterPackageName = latestAssistStructure.getActivityComponent().getPackageName();
 
-        Log.d(LOG_TAG, "autofillable fields for: " + requesterPackageName + ": " + fields);
+        Log.d(LOG_TAG, "autofillable fields for: " + requesterPackageName + ":");
+        for (AutofillField f : fields) {
+            Log.d(LOG_TAG, "field: " + f.getHints().toString());
+        }
         // We don't have any fields to work with
         // Passman should not authenticate itself (see blacklistedPackageNames)
         if (fields.isEmpty() || blacklistedPackageNames.contains(requesterPackageName)) {
@@ -147,9 +149,9 @@ public final class CredentialAutofillService extends AutofillService {
                     PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
             ).getIntentSender();
 
-            AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
-            AutofillField bestEmail = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
-            AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
+            AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
+            AutofillField bestEmail = AutofillHelper.getEmailField(fields);
+            AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
 
             ArrayList<AutofillId> ids = new ArrayList<>();
             if (bestUsername != null) {
@@ -287,9 +289,9 @@ public final class CredentialAutofillService extends AutofillService {
             requesterApplicationLabel += " - " + parsedDomain;
         }
 
-        AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
-        AutofillField bestEmail = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
-        AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
+        AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
+        AutofillField bestEmail = AutofillHelper.getEmailField(fields);
+        AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
 
         String username = AutofillField.toStringValue(bestUsername);
         String email = AutofillField.toStringValue(bestEmail);

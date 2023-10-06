@@ -58,7 +58,7 @@ import es.wolfi.utils.KeyStoreUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class AutofillHelper {
-    private static final String TAG = "AutofillHelper";
+    private static final String LOG_TAG = "AutofillHelper";
     private static final int MAX_DATASETS = 4;
 
     /**
@@ -111,10 +111,9 @@ public class AutofillHelper {
             AutofillFieldCollection fields,
             ArrayList<AssistStructure> structures
     ) {
-        // simplify into a function
-        AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
-        AutofillField bestEmail = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
-        AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
+        AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
+        AutofillField bestEmail = AutofillHelper.getEmailField(fields);
+        AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
 
         WebDomainResult domain = getLikelyDomain(structures);
 
@@ -125,7 +124,7 @@ public class AutofillHelper {
 
         List<Credential> matchingCredentials = findMatchingCredentials(allCred, requesterPackageName, domain);
 
-        Log.d(TAG, "Number of matching credentials for package: " +
+        Log.d(LOG_TAG, "Number of matching credentials for package: " +
                 requesterPackageName +
                 ":" +
                 matchingCredentials.size());
@@ -151,7 +150,7 @@ public class AutofillHelper {
                         bestUsername,
                         value,
                         "Username for: " + credLabel);
-
+                Log.d(LOG_TAG, "add: Username for: " + credLabel);
                 tempFields.add(bestUsername.getAutofillid());
             }
 
@@ -163,6 +162,7 @@ public class AutofillHelper {
                         bestEmail,
                         value,
                         "Email for: " + credLabel);
+                Log.d(LOG_TAG, "add: Email for: " + credLabel);
                 tempFields.add(bestEmail.getAutofillid());
             }
 
@@ -174,6 +174,7 @@ public class AutofillHelper {
                         bestPassword,
                         value,
                         "Password for: " + credLabel);
+                Log.d(LOG_TAG, "add: Password for: " + credLabel);
                 tempFields.add(bestPassword.getAutofillid());
             }
 
@@ -201,7 +202,7 @@ public class AutofillHelper {
 
         public WebDomainResult() {
             allDomains = new HashSet<>();
-            Log.d(TAG, "Web Domain Result constructed");
+            Log.d(LOG_TAG, "Web Domain Result constructed");
         }
 
         public void addDomain(String domain) {
@@ -246,7 +247,7 @@ public class AutofillHelper {
                 getNodeDomain(viewNode, res);
             }
         }
-        Log.d(TAG, "Returning, found :" + String.valueOf(res.allDomains.size()) + " domains.");
+        Log.d(LOG_TAG, "Returning, found :" + String.valueOf(res.allDomains.size()) + " domains.");
         return res;
     }
 
@@ -280,17 +281,17 @@ public class AutofillHelper {
                     }
                 }
             } catch (Exception ex) {
-                Log.d(TAG, "Couldn't decode Cred URL to host part:" + ex.toString());
+                Log.d(LOG_TAG, "Couldn't decode Cred URL to host part:" + ex.toString());
             }
 
             if (credUri != null && domain.firstDomain != null) {
                 if (credUri.equals(domain.firstDomain) || thisCred.getUrl().equals(domain.firstDomain)) {
-                    Log.d(TAG, "Matching cred on domain: " + domain.firstDomain);
+                    Log.d(LOG_TAG, "Matching cred on domain: " + domain.firstDomain);
                     matchingDomainCred.add(thisCred);
                 }
             } else if (thisCred.getUrl() != null && domain.firstDomain != null) {
                 if (thisCred.getUrl().equals(domain.firstDomain)) {
-                    Log.d(TAG, "Matching cred on url: " + domain.firstDomain);
+                    Log.d(LOG_TAG, "Matching cred on url: " + domain.firstDomain);
                     matchingDomainCred.add(thisCred);
                 }
             }
@@ -314,7 +315,7 @@ public class AutofillHelper {
                     }
                 }
             } catch (Exception ex) {
-                Log.d(TAG, "Cannot decode custom fields: " + ex.toString());
+                Log.d(LOG_TAG, "Cannot decode custom fields: " + ex.toString());
             }
 
             if (matchingDomainCred.size() >= MAX_DATASETS) {
@@ -372,12 +373,32 @@ public class AutofillHelper {
             }
             fields.add(thisField);
         } catch (Exception ex) {
-            Log.d(TAG, "Couldn't add node to fields: " + ex.toString());
+            Log.d(LOG_TAG, "Couldn't add node to fields: " + ex.toString());
         }
 
         int childrenSize = node.getChildCount();
         for (int i = 0; i < childrenSize; i++) {
             addAutofillableFields(fields, node.getChildAt(i), asValue);
         }
+    }
+
+    public static AutofillField getUsernameField(AutofillFieldCollection fields) {
+        return fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
+    }
+
+    public static AutofillField getEmailField(AutofillFieldCollection fields) {
+        AutofillField emailField = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
+        if (emailField == null) {
+            emailField = fields.getRequiredId("email");
+        }
+        return emailField;
+    }
+
+    public static AutofillField getPasswordField(AutofillFieldCollection fields) {
+        AutofillField passwordField = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
+        if (passwordField == null) {
+            passwordField = fields.getRequiredId("current-password");
+        }
+        return passwordField;
     }
 }
