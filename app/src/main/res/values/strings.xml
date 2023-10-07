@@ -95,5 +95,5 @@
     <string name="issuer">Issuer</string>
     <string name="error_parsing_qr_code">Error parsing QR code</string>
     <string name="camera_permission_denied">Camera permission denied</string>
-    <string name="no_matching_credentials_found">No matching credentials were found</string>
+    <string name="no_matching_credentials_or_fields_found">No matching credentials or auto-fillable fields were found</string>
 </resources>

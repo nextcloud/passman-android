@@ -141,8 +141,8 @@ public class AutofillInteractionActivity extends AppCompatActivity implements
             setResult(RESULT_OK, replyIntent);
             finish();
         } else {
-            Log.d(LOG_TAG, "No matching credentials were found to fill out");
-            Toast.makeText(getApplicationContext(), getString(R.string.no_matching_credentials_found), Toast.LENGTH_SHORT).show();
+            Log.d(LOG_TAG, "No matching credentials or auto-fillable fields were found");
+            Toast.makeText(getApplicationContext(), getString(R.string.no_matching_credentials_or_fields_found), Toast.LENGTH_SHORT).show();
 
             getSupportFragmentManager()
                     .beginTransaction()

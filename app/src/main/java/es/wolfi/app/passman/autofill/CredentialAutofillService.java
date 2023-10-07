@@ -138,9 +138,8 @@ public final class CredentialAutofillService extends AutofillService {
             authIntent.putExtra("requesterPackageName", requesterPackageName);
             authIntent.putParcelableArrayListExtra("structures", structures);
 
-            setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
-
-            callback.onSuccess(response.build());
+            boolean intentItemState = setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
+            callback.onSuccess(intentItemState ? response.build() : null);
             return;
         }
 
@@ -172,8 +171,8 @@ public final class CredentialAutofillService extends AutofillService {
             Log.d(LOG_TAG, "Building and calling success");
             callback.onSuccess(response.build());
         } else {
-            Log.d(LOG_TAG, "No matching credentials were found to fill out");
-            Toast.makeText(getApplicationContext(), getString(R.string.no_matching_credentials_found), Toast.LENGTH_SHORT).show();
+            Log.d(LOG_TAG, "No matching credentials or auto-fillable fields were found");
+            Toast.makeText(getApplicationContext(), getString(R.string.no_matching_credentials_or_fields_found), Toast.LENGTH_SHORT).show();
 
             // check enable manual search as fallback
             if (true) {
@@ -188,15 +187,15 @@ public final class CredentialAutofillService extends AutofillService {
                 authIntent.putExtra("requesterPackageName", requesterPackageName);
                 authIntent.putParcelableArrayListExtra("structures", structures);
 
-                setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
-                callback.onSuccess(response.build());
+                boolean intentItemState = setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
+                callback.onSuccess(intentItemState ? response.build() : null);
             } else {
                 callback.onSuccess(null);
             }
         }
     }
 
-    public static void setupCustomAutofillIntentItem(
+    public static boolean setupCustomAutofillIntentItem(
             Context context,
             FillResponse.Builder response,
             AutofillFieldCollection fields,
@@ -225,7 +224,13 @@ public final class CredentialAutofillService extends AutofillService {
             ids.add(bestPassword.getAutofillid());
         }
 
+        if (ids.isEmpty()) {
+            Log.d(LOG_TAG, "no autofillable fields found to show a custom autofill intent icon");
+            return false;
+        }
+
         response.setAuthentication(ids.toArray(new AutofillId[0]), intentSender, presentation);
+        return true;
     }
 
     @Override
