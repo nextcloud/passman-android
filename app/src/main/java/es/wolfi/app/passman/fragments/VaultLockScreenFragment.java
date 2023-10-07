@@ -117,6 +117,7 @@ public class VaultLockScreenFragment extends Fragment {
         if (vault != null) {
             Log.e("VaultLockScreenFragment", "Vault guid: ".concat(vault.guid));
             vault_name.setText(vault.name);
+            input_layout_password.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
 
             binding.fragmentVaultUnlock.setOnClickListener(new View.OnClickListener() {
                 @Override

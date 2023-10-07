@@ -110,7 +110,7 @@ public final class CredentialAutofillService extends AutofillService {
         // We don't have any fields to work with
         // Passman should not authenticate itself (see blacklistedPackageNames)
         if (fields.isEmpty() || blacklistedPackageNames.contains(requesterPackageName)) {
-            Log.d(LOG_TAG, "No autofillable fields for: " + requesterPackageName);
+            Log.d(LOG_TAG, "Blacklisted or no autofillable fields for: " + requesterPackageName);
             callback.onSuccess(null);
             return;
         }
