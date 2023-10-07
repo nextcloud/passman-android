@@ -22,6 +22,7 @@
 package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.databinding.FragmentVaultLockScreenBinding;
@@ -56,6 +58,7 @@ public class VaultLockScreenFragment extends Fragment {
     private VaultUnlockInteractionListener mListener;
     private FragmentVaultLockScreenBinding binding;
 
+    TextInputLayout input_layout_password;
     TextView vault_name;
     EditText vault_password;
     FloatingActionButton btn_unlock;
@@ -88,6 +91,7 @@ public class VaultLockScreenFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentVaultLockScreenBinding.inflate(inflater, container, false);
 
+        input_layout_password = binding.inputLayoutPassword;
         vault_name = binding.fragmentVaultName;
         vault_password = binding.fragmentVaultPassword;
         btn_unlock = binding.fragmentVaultUnlock;
@@ -146,6 +150,7 @@ public class VaultLockScreenFragment extends Fragment {
             return;
         }
         Toast.makeText(getContext(), R.string.wrong_vault_pw, Toast.LENGTH_LONG).show();
+        input_layout_password.setHintTextColor(ColorStateList.valueOf(getResources().getColor(R.color.danger)));
     }
 
     /**
