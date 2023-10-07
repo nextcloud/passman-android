@@ -22,9 +22,6 @@
 
 package es.wolfi.app.passman.autofill;
 
-import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
-import static es.wolfi.app.passman.activities.AutofillInteractionActivity.GENERATE_AUTOFILL_VAULT_UNLOCK_INTENT_ACTION;
-
 import android.app.PendingIntent;
 import android.app.assist.AssistStructure;
 import android.content.Context;
@@ -39,11 +36,9 @@ import android.service.autofill.FillContext;
 import android.service.autofill.FillRequest;
 import android.service.autofill.FillResponse;
 import android.service.autofill.SaveCallback;
-import android.service.autofill.SaveInfo;
 import android.service.autofill.SaveRequest;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.view.autofill.AutofillId;
 import android.widget.RemoteViews;
 import android.widget.Toast;
@@ -107,6 +102,7 @@ public final class CredentialAutofillService extends AutofillService {
         for (AutofillField f : fields) {
             Log.d(LOG_TAG, "field: " + f.getHints().toString());
         }
+
         // We don't have any fields to work with
         // Passman should not authenticate itself (see blacklistedPackageNames)
         if (fields.isEmpty() || blacklistedPackageNames.contains(requesterPackageName)) {
@@ -137,34 +133,12 @@ public final class CredentialAutofillService extends AutofillService {
             vaultUnlockPresentation.setTextViewText(R.id.autofilltext, "Unlock autofill vault");
 
             Intent authIntent = new Intent(this, AutofillInteractionActivity.class);
-            authIntent.setAction(GENERATE_AUTOFILL_VAULT_UNLOCK_INTENT_ACTION);
+            authIntent.setAction(AutofillInteractionActivity.CustomAutofillIntentActions.VAULT_UNLOCK.name());
             authIntent.putExtra("packageName", packageName);
             authIntent.putExtra("requesterPackageName", requesterPackageName);
             authIntent.putParcelableArrayListExtra("structures", structures);
 
-            IntentSender intentSender = PendingIntent.getActivity(
-                    this,
-                    AutofillInteractionActivity.REQUEST_CODE_AUTOFILL_VAULT_UNLOCK,
-                    authIntent,
-                    PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
-            ).getIntentSender();
-
-            AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
-            AutofillField bestEmail = AutofillHelper.getEmailField(fields);
-            AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
-
-            ArrayList<AutofillId> ids = new ArrayList<>();
-            if (bestUsername != null) {
-                ids.add(bestUsername.getAutofillid());
-            }
-            if (bestEmail != null) {
-                ids.add(bestEmail.getAutofillid());
-            }
-            if (bestPassword != null) {
-                ids.add(bestPassword.getAutofillid());
-            }
-
-            response.setAuthentication(ids.toArray(new AutofillId[0]), intentSender, vaultUnlockPresentation);
+            setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
 
             callback.onSuccess(response.build());
             return;
@@ -192,28 +166,66 @@ public final class CredentialAutofillService extends AutofillService {
                 structures
         );
 
-        /*
-            Let android know we want to save any credentials manually entered by the user.
-            We will save usernames, passwords and email addresses.
-         */
-
         if (tempFields.size() > 0) {
-            Log.d(LOG_TAG, "Requesting save info");
-
-            AutofillId[] requiredIds = new AutofillId[tempFields.size()];
-            tempFields.toArray(requiredIds);
-            response.setSaveInfo(
-                    new SaveInfo.Builder(SaveInfo.SAVE_DATA_TYPE_PASSWORD,
-                            requiredIds)
-                            .setFlags(FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE)
-                            .build());
+            AutofillHelper.fillResponseWithSaveInfo(response, tempFields);
 
             Log.d(LOG_TAG, "Building and calling success");
             callback.onSuccess(response.build());
         } else {
-            Log.d(LOG_TAG, "Failed to find anything to do, bailing");
-            callback.onSuccess(null);
+            Log.d(LOG_TAG, "No matching credentials were found to fill out");
+            Toast.makeText(getApplicationContext(), getString(R.string.no_matching_credentials_found), Toast.LENGTH_SHORT).show();
+
+            // check enable manual search as fallback
+            if (true) {
+                // show icon item to open activity with vault list fragment
+
+                RemoteViews vaultUnlockPresentation = new RemoteViews(getPackageName(), R.layout.autofill_list_item_with_icon);
+                vaultUnlockPresentation.setTextViewText(R.id.autofilltext, "Manual search");
+
+                Intent authIntent = new Intent(this, AutofillInteractionActivity.class);
+                authIntent.setAction(AutofillInteractionActivity.CustomAutofillIntentActions.MANUAL_SEARCH.name());
+                authIntent.putExtra("packageName", packageName);
+                authIntent.putExtra("requesterPackageName", requesterPackageName);
+                authIntent.putParcelableArrayListExtra("structures", structures);
+
+                setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
+                callback.onSuccess(response.build());
+            } else {
+                callback.onSuccess(null);
+            }
         }
+    }
+
+    public static void setupCustomAutofillIntentItem(
+            Context context,
+            FillResponse.Builder response,
+            AutofillFieldCollection fields,
+            RemoteViews presentation,
+            Intent itemActionIntent
+    ) {
+        IntentSender intentSender = PendingIntent.getActivity(
+                context,
+                AutofillInteractionActivity.REQUEST_CODE_AUTOFILL_PLACEHOLDER,
+                itemActionIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        ).getIntentSender();
+
+        AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
+        AutofillField bestEmail = AutofillHelper.getEmailField(fields);
+        AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
+
+        ArrayList<AutofillId> ids = new ArrayList<>();
+        if (bestUsername != null) {
+            ids.add(bestUsername.getAutofillid());
+        }
+        if (bestEmail != null) {
+            ids.add(bestEmail.getAutofillid());
+        }
+        if (bestPassword != null) {
+            ids.add(bestPassword.getAutofillid());
+        }
+
+        response.setAuthentication(ids.toArray(new AutofillId[0]), intentSender, presentation);
     }
 
     @Override

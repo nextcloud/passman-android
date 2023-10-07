@@ -21,7 +21,6 @@
  */
 package es.wolfi.app.passman.activities;
 
-import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
 import static android.view.autofill.AutofillManager.EXTRA_AUTHENTICATION_RESULT;
 
 import android.app.assist.AssistStructure;
@@ -29,10 +28,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.autofill.FillResponse;
-import android.service.autofill.SaveInfo;
 import android.util.Log;
 import android.view.View;
 import android.view.autofill.AutofillId;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,15 +45,29 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.autofill.AutofillFieldCollection;
 import es.wolfi.app.passman.autofill.AutofillHelper;
 import es.wolfi.app.passman.databinding.ActivityAutofillInteractionBinding;
+import es.wolfi.app.passman.fragments.CredentialItemFragment;
 import es.wolfi.app.passman.fragments.VaultLockScreenFragment;
+import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class AutofillInteractionActivity extends AppCompatActivity implements VaultLockScreenFragment.VaultUnlockInteractionListener {
+public class AutofillInteractionActivity extends AppCompatActivity implements
+        VaultLockScreenFragment.VaultUnlockInteractionListener,
+        CredentialItemFragment.OnListFragmentInteractionListener {
     public final static String LOG_TAG = "AutofillInteractionAct.";
 
-    public static final int REQUEST_CODE_AUTOFILL_VAULT_UNLOCK = 1;
-    public final static String GENERATE_AUTOFILL_VAULT_UNLOCK_INTENT_ACTION = "custom.actions.intent.AUTOFILL_VAULT_UNLOCK";
+    public static final int REQUEST_CODE_AUTOFILL_PLACEHOLDER = 1;
+
+    public enum CustomAutofillIntentActions {
+        VAULT_UNLOCK("VAULT_UNLOCK"),
+        MANUAL_SEARCH("MANUAL_SEARCH");
+
+        private final String name;
+
+        CustomAutofillIntentActions(final String name) {
+            this.name = name;
+        }
+    }
 
     private ArrayList<AssistStructure> structures;
     private String packageName;
@@ -72,9 +85,7 @@ public class AutofillInteractionActivity extends AppCompatActivity implements Va
         new OfflineStorage(getBaseContext());
 
         Intent intent = getIntent();
-        if (intent != null && intent.getAction().equals(GENERATE_AUTOFILL_VAULT_UNLOCK_INTENT_ACTION)) {
-            Log.d(LOG_TAG, "in intent equal condition");
-
+        if (intent != null) {
             structures = intent.getParcelableArrayListExtra("structures");
             packageName = intent.getStringExtra("packageName");
             requesterPackageName = intent.getStringExtra("requesterPackageName");
@@ -82,16 +93,23 @@ public class AutofillInteractionActivity extends AppCompatActivity implements Va
             SingleTon ton = SingleTon.getTon();
             Vault vault = AutofillHelper.getAutofillVault(ton, getBaseContext());
 
-            Log.d(LOG_TAG, "open VaultLockScreenFragment");
-            VaultLockScreenFragment lf = VaultLockScreenFragment.newInstance(vault);
+            if (intent.getAction().equals(CustomAutofillIntentActions.VAULT_UNLOCK.name)) {
+                Log.d(LOG_TAG, "open VaultLockScreenFragment");
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                        .replace(R.id.frameContainer, VaultLockScreenFragment.newInstance(vault), "vault_lockscreen")
+                        .commitNow();
+            } else if (intent.getAction().equals(CustomAutofillIntentActions.MANUAL_SEARCH.name)) {
+                // assume that vault is already unlocked when we are here
 
-            //setContentView(lf.getView());
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                    .replace(R.id.frameContainer, lf, "vault_lockscreen")
-                    .commitNow();
-            //setContentView(lf.getView());
+                Log.d(LOG_TAG, "open CredentialItemFragment");
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                        .replace(R.id.frameContainer, new CredentialItemFragment(vault, true), "vault")
+                        .commitNow();
+            }
         }
     }
 
@@ -114,32 +132,65 @@ public class AutofillInteractionActivity extends AppCompatActivity implements Va
                 structures
         );
 
-        /*
-            Let android know we want to save any credentials manually entered by the user.
-            We will save usernames, passwords and email addresses.
-         */
-
         if (tempFields.size() > 0) {
-            Log.d(LOG_TAG, "Requesting save info");
-
-            AutofillId[] requiredIds = new AutofillId[tempFields.size()];
-            tempFields.toArray(requiredIds);
-            fillResponse.setSaveInfo(
-                    new SaveInfo.Builder(SaveInfo.SAVE_DATA_TYPE_PASSWORD,
-                            requiredIds)
-                            .setFlags(FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE)
-                            .build());
-
-            Log.d(LOG_TAG, "Building and calling success");
+            AutofillHelper.fillResponseWithSaveInfo(fillResponse, tempFields);
 
             // Send the data back to the service
+            Log.d(LOG_TAG, "Building and calling success");
             replyIntent.putExtra(EXTRA_AUTHENTICATION_RESULT, fillResponse.build());
             setResult(RESULT_OK, replyIntent);
+            finish();
         } else {
-            Log.d(LOG_TAG, "Failed to find anything to do, bailing");
+            Log.d(LOG_TAG, "No matching credentials were found to fill out");
+            Toast.makeText(getApplicationContext(), getString(R.string.no_matching_credentials_found), Toast.LENGTH_SHORT).show();
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                    .replace(R.id.frameContainer, new CredentialItemFragment(vault, true), "vault")
+                    .commitNow();
+        }
+    }
+
+    @Override
+    public void onListFragmentInteraction(Credential item) {
+        Log.d(LOG_TAG, "onListFragmentInteraction " + item.getLabel());
+
+        FillResponse.Builder fillResponse = new FillResponse.Builder();
+        Intent replyIntent = new Intent();
+
+        // Find autofillable fields
+        AutofillFieldCollection fields = AutofillHelper.getAutofillableFields(structures.get(structures.size() - 1), false);
+
+        Set<AutofillId> tempFields = AutofillHelper.fillResponseForExplicitCredential(
+                fillResponse,
+                item,
+                packageName,
+                requesterPackageName,
+                fields
+        );
+
+        if (tempFields.size() > 0) {
+            AutofillHelper.fillResponseWithSaveInfo(fillResponse, tempFields);
+        } else {
+            Log.d(LOG_TAG, "Failed to find matching fields");
         }
 
+        // Send the data back to the service
+        Log.d(LOG_TAG, "Building and calling success");
+        replyIntent.putExtra(EXTRA_AUTHENTICATION_RESULT, fillResponse.build());
         setResult(RESULT_OK, replyIntent);
         finish();
+    }
+
+    @Override
+    //unused//
+    public void setLastCredentialListPosition(int pos) {
+    }
+
+    @Override
+    //unused//
+    public int getLastCredentialListPosition() {
+        return 0;
     }
 }

@@ -21,6 +21,8 @@
  */
 package es.wolfi.app.passman.autofill;
 
+import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
+
 import android.app.assist.AssistStructure;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -28,6 +30,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.service.autofill.Dataset;
 import android.service.autofill.FillResponse;
+import android.service.autofill.SaveInfo;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -184,6 +187,96 @@ public class AutofillHelper {
         }
 
         return tempFields;
+    }
+
+    /**
+     * @param response             FillResponse.Builder to which the matching fields will be appended
+     * @param credential           Credential to return matching fields from
+     * @param packageName          Passman package name
+     * @param requesterPackageName package name of the app that was requesting the autofill service
+     * @param fields               fillable fields
+     * @return set of autofill field ids that got content in the response
+     */
+    public static Set<AutofillId> fillResponseForExplicitCredential(
+            FillResponse.Builder response,
+            Credential credential,
+            String packageName,
+            String requesterPackageName,
+            AutofillFieldCollection fields
+    ) {
+        AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
+        AutofillField bestEmail = AutofillHelper.getEmailField(fields);
+        AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
+
+        /*
+         * TODO: validate package signature
+         * (Maybe store apk signature or signing cert thumbprint in custom field)
+         */
+
+        Set<AutofillId> tempFields = new HashSet<>();
+        String credLabel = returnBestString(credential.getLabel(), credential.getUrl());
+        Dataset.Builder dataset = new Dataset.Builder();
+
+        if (bestUsername != null) {
+            String value = returnBestString(credential.getUsername(), credential.getEmail());
+
+            buildAndAddPresentation(dataset,
+                    packageName,
+                    bestUsername,
+                    value,
+                    "Username for: " + credLabel);
+            Log.d(LOG_TAG, "add: Username for: " + credLabel);
+            tempFields.add(bestUsername.getAutofillid());
+        }
+
+        if (bestEmail != null) {
+            String value = returnBestString(credential.getEmail(), credential.getUsername());
+
+            buildAndAddPresentation(dataset,
+                    packageName,
+                    bestEmail,
+                    value,
+                    "Email for: " + credLabel);
+            Log.d(LOG_TAG, "add: Email for: " + credLabel);
+            tempFields.add(bestEmail.getAutofillid());
+        }
+
+        if (bestPassword != null) {
+            String value = credential.getPassword();
+
+            buildAndAddPresentation(dataset,
+                    packageName,
+                    bestPassword,
+                    value,
+                    "Password for: " + credLabel);
+            Log.d(LOG_TAG, "add: Password for: " + credLabel);
+            tempFields.add(bestPassword.getAutofillid());
+        }
+
+        if (bestUsername != null || bestEmail != null || bestPassword != null) {
+            response.addDataset(dataset.build());
+        }
+
+        return tempFields;
+    }
+
+    /**
+     * Let android know we want to save any credentials manually entered by the user.
+     * We will save usernames, passwords and email addresses.
+     *
+     * @param response   FillResponse.Builder to which the save info will be added
+     * @param tempFields set of autofill field ids that got content in the response
+     */
+    public static void fillResponseWithSaveInfo(FillResponse.Builder response, Set<AutofillId> tempFields) {
+        Log.d(LOG_TAG, "Requesting save info");
+
+        AutofillId[] requiredIds = new AutofillId[tempFields.size()];
+        tempFields.toArray(requiredIds);
+        response.setSaveInfo(
+                new SaveInfo.Builder(SaveInfo.SAVE_DATA_TYPE_PASSWORD, requiredIds)
+                        .setFlags(FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE)
+                        .build()
+        );
     }
 
     @NonNull
