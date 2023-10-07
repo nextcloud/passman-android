@@ -196,11 +196,25 @@
                 android:layout_height="wrap_content"
                 android:text="@string/default_autofill_vault" />
 
+            <TextView
+                style="@style/SettingsDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/automatic_autofill_vault_description" />
+
             <Spinner
                 android:id="@+id/default_autofill_vault"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/enable_autofill_manual_search_fallback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/autofill_manual_search_fallback" />
 
             <TextView
                 style="@style/Label"

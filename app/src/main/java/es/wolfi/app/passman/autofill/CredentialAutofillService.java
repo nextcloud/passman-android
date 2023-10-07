@@ -27,9 +27,11 @@ import android.app.assist.AssistStructure;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.CancellationSignal;
+import android.preference.PreferenceManager;
 import android.service.autofill.AutofillService;
 import android.service.autofill.FillCallback;
 import android.service.autofill.FillContext;
@@ -58,10 +60,12 @@ import java.util.Set;
 
 import es.wolfi.app.ResponseHandlers.AutofillCredentialSaveResponseHandler;
 import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.activities.AutofillInteractionActivity;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.KeyStoreUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
 public final class CredentialAutofillService extends AutofillService {
@@ -174,8 +178,9 @@ public final class CredentialAutofillService extends AutofillService {
             Log.d(LOG_TAG, "No matching credentials or auto-fillable fields were found");
             Toast.makeText(getApplicationContext(), getString(R.string.no_matching_credentials_or_fields_found), Toast.LENGTH_SHORT).show();
 
-            // check enable manual search as fallback
-            if (true) {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            KeyStoreUtils.initialize(settings);
+            if (settings.getBoolean(SettingValues.ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK.toString(), true)) {
                 // show icon item to open activity with vault list fragment
 
                 RemoteViews vaultUnlockPresentation = new RemoteViews(getPackageName(), R.layout.autofill_list_item_with_icon);

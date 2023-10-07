@@ -99,6 +99,7 @@ public class SettingsFragment extends Fragment {
 
     TextView default_autofill_vault_title;
     Spinner default_autofill_vault;
+    MaterialCheckBox enable_autofill_manual_search_fallback;
     EditText clear_clipboard_delay_value;
 
     EditText request_connect_timeout_value;
@@ -159,6 +160,7 @@ public class SettingsFragment extends Fragment {
 
         default_autofill_vault_title = view.findViewById(R.id.default_autofill_vault_title);
         default_autofill_vault = view.findViewById(R.id.default_autofill_vault);
+        enable_autofill_manual_search_fallback = view.findViewById(R.id.enable_autofill_manual_search_fallback);
         clear_clipboard_delay_value = view.findViewById(R.id.clear_clipboard_delay_value);
 
         request_connect_timeout_value = view.findViewById(R.id.request_connect_timeout_value);
@@ -243,9 +245,12 @@ public class SettingsFragment extends Fragment {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             default_autofill_vault.setAdapter(adapter);
             default_autofill_vault.setSelection(selection_id);
+
+            enable_autofill_manual_search_fallback.setChecked(settings.getBoolean(SettingValues.ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK.toString(), true));
         } else {
             ((ViewManager) default_autofill_vault.getParent()).removeView(default_autofill_vault);
             ((ViewManager) default_autofill_vault_title.getParent()).removeView(default_autofill_vault_title);
+            ((ViewManager) enable_autofill_manual_search_fallback.getParent()).removeView(enable_autofill_manual_search_fallback);
         }
 
         clear_clipboard_delay_value.setText(String.valueOf(settings.getInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), 0)));
@@ -329,6 +334,7 @@ public class SettingsFragment extends Fragment {
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    settings.edit().putBoolean(SettingValues.ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK.toString(), enable_autofill_manual_search_fallback.isChecked()).commit();
                     if (default_autofill_vault.getSelectedItem() == null || default_autofill_vault.getSelectedItem().toString().equals(getContext().getString(R.string.automatically))) {
                         ton.removeExtra(SettingValues.AUTOFILL_VAULT_GUID.toString());
                         settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").commit();
