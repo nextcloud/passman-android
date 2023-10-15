@@ -76,10 +76,10 @@
     <string name="vault_name">Kasa adı</string>
     <string name="sharing_key_strength">Paylaşılan anahtar güçlüğü</string>
     <string name="new_vault_name">Yeni kasa adı</string>
-    <string name="offline_cache">Çevrimdışı ön bellek</string>
+    <string name="offline_cache">Çevrim dışı ön bellek</string>
     <string name="offline_cache_description">El ile olarak yüklenmişlerse şifrelenmiş kasaları ön belleğe alır</string>
-    <string name="enable_offline_cache">Çevrimdışı ön bellek kullanılsın</string>
-    <string name="clear_offline_cache">Çevrimdışı ön belleği temizle</string>
+    <string name="enable_offline_cache">Çevrim dışı ön bellek kullanılsın</string>
+    <string name="clear_offline_cache">Çevrim dışı ön belleği temizle</string>
     <string name="nextcloud_single_sign_on">Nextcloud tek oturum açma</string>
     <string name="manual_login">El ile oturum açma</string>
     <string name="confirm_account_logout">Oturumu kapatmak istediğinize emin misiniz?</string>

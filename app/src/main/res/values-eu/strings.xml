@@ -45,7 +45,7 @@
     <string name="app_start_password_android_auth_description">Gaitu Android erabiltzailearen autentifikazioa aplikazioa abiaraztean</string>
     <string name="wait_while_encrypting">itxaron zifratzen den bitartean ...</string>
     <string name="wait_while_decrypting">Itxaron deszifratzen den bitartean ...</string>
-    <string name="wait_while_uploading">Itxaron kargatzen den bitartean ...</string>
+    <string name="wait_while_uploading">Itxaron igotzen den bitartean ...</string>
     <string name="wait_while_downloading">Itxaron deskargatzen den bitartean ...</string>
     <string name="autofill_noactivevault">Ez dago ganbera korazatu aktiborik</string>
     <string name="autofill_vaultlocked">Ganbara korazatua desblokeatu behar da</string>
