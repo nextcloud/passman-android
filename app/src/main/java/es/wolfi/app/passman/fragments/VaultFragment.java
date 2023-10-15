@@ -31,7 +31,6 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +39,7 @@ import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.adapters.VaultViewAdapter;
+import es.wolfi.app.passman.databinding.FragmentVaultListBinding;
 import es.wolfi.passman.API.Vault;
 
 /**
@@ -49,6 +49,7 @@ import es.wolfi.passman.API.Vault;
  * interface.
  */
 public class VaultFragment extends Fragment {
+    private FragmentVaultListBinding binding;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -85,15 +86,13 @@ public class VaultFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vault_list, container, false);
+        binding = FragmentVaultListBinding.inflate(inflater, container, false);
 
-        // Set the adapter
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        Context context = recyclerView.getContext();
+        Context context = binding.list.getContext();
         if (mColumnCount <= 1) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            binding.list.setLayoutManager(new LinearLayoutManager(context));
         } else {
-            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            binding.list.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
 
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
@@ -101,9 +100,9 @@ public class VaultFragment extends Fragment {
         if (vaults != null) {
             l = new ArrayList<Vault>(vaults.values());
         }
-        recyclerView.setAdapter(new VaultViewAdapter(l, mListener, getParentFragmentManager()));
+        binding.list.setAdapter(new VaultViewAdapter(getContext(), l, mListener, getParentFragmentManager()));
 
-        view.findViewById(R.id.add_vault_button).setOnClickListener(new View.OnClickListener() {
+        binding.addVaultButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getParentFragmentManager()
@@ -115,7 +114,13 @@ public class VaultFragment extends Fragment {
             }
         });
 
-        return view;
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

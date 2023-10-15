@@ -41,12 +41,11 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.VaultSaveResponseHandler;
 import es.wolfi.app.passman.EditPasswordTextItem;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.activities.PasswordListActivity;
+import es.wolfi.app.passman.databinding.FragmentVaultAddBinding;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ProgressUtils;
 
@@ -57,22 +56,17 @@ import es.wolfi.utils.ProgressUtils;
  * create an instance of this fragment.
  */
 public class VaultAddFragment extends Fragment implements View.OnClickListener {
-    @BindView(R.id.add_vault_name_header)
+    private FragmentVaultAddBinding binding;
+
     TextView add_vault_name_header;
-    @BindView(R.id.add_vault_name)
     EditText add_vault_name;
 
-    @BindView(R.id.add_vault_password_header)
     TextView add_vault_password_header;
-    @BindView(R.id.add_vault_password)
     EditPasswordTextItem add_vault_password;
 
-    @BindView(R.id.add_vault_password_repeat_header)
     TextView add_vault_password_repeat_header;
-    @BindView(R.id.add_vault_password_repeat)
     EditPasswordTextItem add_vault_password_repeat;
 
-    @BindView(R.id.add_vault_sharing_key_strength)
     Spinner add_vault_sharing_key_strength;
 
     private Vault vault;
@@ -95,11 +89,20 @@ public class VaultAddFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_vault_add, container, false);
+        binding = FragmentVaultAddBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         FloatingActionButton saveVaultButton = view.findViewById(R.id.SaveVaultButton);
         saveVaultButton.setOnClickListener(this);
         saveVaultButton.setVisibility(View.VISIBLE);
+
+        add_vault_name_header = binding.addVaultNameHeader;
+        add_vault_name = binding.addVaultName;
+        add_vault_password_header = binding.addVaultPasswordHeader;
+        add_vault_password = binding.addVaultPassword;
+        add_vault_password_repeat_header = binding.addVaultPasswordRepeatHeader;
+        add_vault_password_repeat = binding.addVaultPasswordRepeat;
+        add_vault_sharing_key_strength = binding.addVaultSharingKeyStrength;
 
         return view;
     }
@@ -107,7 +110,6 @@ public class VaultAddFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         add_vault_password.setPasswordGenerationButtonVisibility(false);
         add_vault_password_repeat.setPasswordGenerationButtonVisibility(false);
@@ -122,6 +124,12 @@ public class VaultAddFragment extends Fragment implements View.OnClickListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.vault = new Vault();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

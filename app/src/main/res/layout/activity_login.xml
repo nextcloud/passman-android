@@ -42,7 +42,7 @@
         android:contentDescription="@string/app_name_release"
         android:src="@drawable/logo_horizontal" />
 
-    <include layout="@layout/content_legacy_login" />
+    <include layout="@layout/content_legacy_login" android:id="@+id/content_legacy_login_include" />
 
     <LinearLayout
         android:id="@+id/login_options"

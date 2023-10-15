@@ -61,7 +61,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import butterknife.ButterKnife;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -178,7 +177,6 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         try {
             ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(getContext());
@@ -194,7 +192,7 @@ public class SettingsFragment extends Fragment {
             }
             sso_user_server.setText(String.format("%s@%s", ssoAccount.userId, hostname));
         } catch (java.lang.NoSuchMethodError |
-                NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+                 NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
             manual_server_connection_settings.setVisibility(View.VISIBLE);
             sso_settings.removeAllViews();
         }

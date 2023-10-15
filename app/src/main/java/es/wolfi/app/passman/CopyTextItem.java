@@ -38,20 +38,16 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import es.wolfi.app.passman.activities.PasswordListActivity;
+import es.wolfi.app.passman.databinding.FragmentCopyTextItemBinding;
 
 public class CopyTextItem extends LinearLayout {
 
-    @BindView(R.id.copy_text_text)
+    private FragmentCopyTextItemBinding binding;
+
     TextView text;
-    @BindView(R.id.copy_btn_copy)
     ImageButton copy;
-    @BindView(R.id.copy_btn_toggle_visible)
     ImageButton toggle;
-    @BindView(R.id.open_url_btn_toggle_visible)
     ImageButton open_url_toggle;
 
     public CopyTextItem(Context context) {
@@ -80,11 +76,33 @@ public class CopyTextItem extends LinearLayout {
         setOrientation(HORIZONTAL);
 
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflater.inflate(R.layout.fragment_copy_text_item, this, true);
+        binding = FragmentCopyTextItemBinding.inflate(inflater, this);
 
-        ButterKnife.bind(this, v);
+        text = binding.copyTextText;
+        copy = binding.copyBtnCopy;
+        toggle = binding.copyBtnToggleVisible;
+        open_url_toggle = binding.openUrlBtnToggleVisible;
 
         setModeText();
+
+        binding.copyBtnToggleVisible.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleVisibility();
+            }
+        });
+        binding.copyBtnCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                copyTextToClipboard();
+            }
+        });
+        binding.openUrlBtnToggleVisible.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openExternalURL();
+            }
+        });
     }
 
     @Override
@@ -129,7 +147,6 @@ public class CopyTextItem extends LinearLayout {
         text.setEnabled(enabled);
     }
 
-    @OnClick(R.id.copy_btn_toggle_visible)
     public void toggleVisibility() {
         switch (text.getInputType()) {
             case InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD:
@@ -143,7 +160,6 @@ public class CopyTextItem extends LinearLayout {
         }
     }
 
-    @OnClick(R.id.copy_btn_copy)
     public void copyTextToClipboard() {
         ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("pss_data", text.getText().toString());
@@ -152,7 +168,6 @@ public class CopyTextItem extends LinearLayout {
         Toast.makeText(getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
     }
 
-    @OnClick(R.id.open_url_btn_toggle_visible)
     public void openExternalURL() {
         ((PasswordListActivity) Objects.requireNonNull((Activity) getContext())).openExternalURL(this.text.getText().toString());
     }

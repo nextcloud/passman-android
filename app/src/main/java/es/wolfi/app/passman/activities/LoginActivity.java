@@ -35,6 +35,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -55,13 +56,12 @@ import com.nextcloud.android.sso.ui.UiExceptionManager;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.databinding.ActivityLoginBinding;
+import es.wolfi.app.passman.databinding.ContentLegacyLoginBinding;
 import es.wolfi.passman.API.Core;
 import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.SSOUtils;
@@ -69,16 +69,15 @@ import es.wolfi.utils.SSOUtils;
 public class LoginActivity extends AppCompatActivity {
     public final static String LOG_TAG = "LoginActivity";
 
-    @BindView(R.id.protocol)
     Spinner input_protocol;
-    @BindView(R.id.host)
     EditText input_host;
-    @BindView(R.id.user)
     EditText input_user;
-    @BindView(R.id.pass)
     EditText input_pass;
-    @BindView(R.id.next)
     Button bt_next;
+
+    LinearLayout contentLegacyLogin;
+    ImageView loginOptionsLogo;
+    LinearLayout loginOptions;
 
     SharedPreferences settings;
     SingleTon ton;
@@ -90,8 +89,20 @@ public class LoginActivity extends AppCompatActivity {
 
         Log.d("LoginActivity", "in onCreate");
 
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+        ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+
+        contentLegacyLogin = binding.contentLegacyLoginInclude.contentLegacyLoginLayout;
+
+        input_protocol = binding.contentLegacyLoginInclude.protocol;
+        input_host = binding.contentLegacyLoginInclude.host;
+        input_user = binding.contentLegacyLoginInclude.user;
+        input_pass = binding.contentLegacyLoginInclude.pass;
+        bt_next = binding.contentLegacyLoginInclude.next;
+
+        loginOptionsLogo = binding.loginOptionsLogo;
+        loginOptions = binding.loginOptions;
 
         new OfflineStorage(getBaseContext());
 
@@ -99,20 +110,33 @@ public class LoginActivity extends AppCompatActivity {
             isLegacyOnly = true;
             loadLegacyLogin();
         }
+
+        binding.loadLegacyLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadLegacyLogin();
+            }
+        });
+        binding.loadSsoLoginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadSSOLogin();
+            }
+        });
+        binding.contentLegacyLoginInclude.next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onNextClick();
+            }
+        });
     }
 
-    @OnClick(R.id.load_legacy_login_button)
     public void loadLegacyLogin() {
         hideLoginOptions();
 
-        ImageView login_options_logo = findViewById(R.id.login_options_logo);
-        login_options_logo.setVisibility(View.INVISIBLE);
-
-        LinearLayout content_legacy_login = findViewById(R.id.content_legacy_login);
-        content_legacy_login.setVisibility(View.VISIBLE);
-
-        EditText hostForm = findViewById(R.id.host);
-        hostForm.requestFocus();
+        loginOptionsLogo.setVisibility(View.INVISIBLE);
+        contentLegacyLogin.setVisibility(View.VISIBLE);
+        input_host.requestFocus();
 
         bt_next.setOnFocusChangeListener((View view, boolean buttonEnabled) -> {
             if (buttonEnabled) {
@@ -153,7 +177,6 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    @OnClick(R.id.load_sso_login_button)
     public void loadSSOLogin() {
         hideLoginOptions();
 
@@ -171,21 +194,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showLoginOptions() {
-        LinearLayout content_legacy_login = findViewById(R.id.content_legacy_login);
-        content_legacy_login.setVisibility(View.INVISIBLE);
+        contentLegacyLogin.setVisibility(View.INVISIBLE);
 
-        LinearLayout login_options = findViewById(R.id.login_options);
-        login_options.setVisibility(View.VISIBLE);
-        ImageView login_options_logo = findViewById(R.id.login_options_logo);
-        login_options_logo.setVisibility(View.VISIBLE);
+        loginOptions.setVisibility(View.VISIBLE);
+        loginOptionsLogo.setVisibility(View.VISIBLE);
     }
 
     private void hideLoginOptions() {
-        LinearLayout login_options = findViewById(R.id.login_options);
-        login_options.setVisibility(View.INVISIBLE);
+        loginOptions.setVisibility(View.INVISIBLE);
     }
 
-    @OnClick(R.id.next)
     public void onNextClick() {
         Log.e("Login", "begin");
         final String protocol = input_protocol.getSelectedItem().toString().toLowerCase();
@@ -244,7 +262,8 @@ public class LoginActivity extends AppCompatActivity {
                     SingleSignOnAccount ssoAccount;
                     try {
                         ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(l_context);
-                    } catch (NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+                    } catch (NextcloudFilesAppAccountNotFoundException |
+                             NoCurrentAccountSelectedException e) {
                         UiExceptionManager.showDialogForException(l_context, e);
                         return;
                     }
@@ -288,8 +307,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        LinearLayout login_options = findViewById(R.id.login_options);
-        if (login_options.getVisibility() == View.INVISIBLE && !isLegacyOnly) {
+        if (loginOptions.getVisibility() == View.INVISIBLE && !isLegacyOnly) {
             showLoginOptions();
         } else {
             PasswordListActivity.running = false;

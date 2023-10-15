@@ -69,7 +69,7 @@ public class FilterListAsyncTask<T extends Filterable> extends AsyncTask<ArrayLi
     @Override
     protected void onPostExecute(ArrayList<T> filteredList) {
         if (isVaultFragment) {
-            recyclerView.setAdapter(new VaultViewAdapter((ArrayList<Vault>) filteredList, vaultMListener, fragmentManager));
+            recyclerView.setAdapter(new VaultViewAdapter(recyclerView.getContext(), (ArrayList<Vault>) filteredList, vaultMListener, fragmentManager));
         } else {
             recyclerView.setAdapter(new CredentialViewAdapter((ArrayList<Credential>) filteredList, credentialMListener, PreferenceManager.getDefaultSharedPreferences(recyclerView.getContext())));
         }

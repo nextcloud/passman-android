@@ -46,14 +46,13 @@ import net.bierbaumer.otp_authenticator.TOTPHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.wolfi.app.passman.CopyTextItem;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.adapters.CustomFieldViewAdapter;
 import es.wolfi.app.passman.adapters.FileViewAdapter;
+import es.wolfi.app.passman.databinding.FragmentCredentialDisplayBinding;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
@@ -68,28 +67,17 @@ import es.wolfi.utils.IconUtils;
 public class CredentialDisplayFragment extends Fragment {
     public static String CREDENTIAL = "credential";
 
-    @BindView(R.id.credentialIcon)
+    private FragmentCredentialDisplayBinding binding;
+
     ImageView credentialIcon;
-    @BindView(R.id.credential_label)
     TextView label;
-    @BindView(R.id.credential_user)
     CopyTextItem user;
-    @BindView(R.id.credential_password)
     CopyTextItem password;
-    @BindView(R.id.credential_email)
     CopyTextItem email;
-    @BindView(R.id.credential_url)
     CopyTextItem url;
-    @BindView(R.id.credential_description)
     TextView description;
-    @BindView(R.id.credential_otp)
     CopyTextItem otp;
-    @BindView(R.id.credential_otp_progress)
     ProgressBar otp_progress;
-    @BindView(R.id.filesList)
-    RecyclerView filesList;
-    @BindView(R.id.customFieldsList)
-    RecyclerView customFieldsList;
 
     private Credential credential;
     private Handler handler;
@@ -169,7 +157,19 @@ public class CredentialDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_credential_display, container, false);
+        binding = FragmentCredentialDisplayBinding.inflate(inflater, container, false);
+
+        credentialIcon = binding.credentialIcon;
+        label = binding.credentialLabel;
+        user = binding.credentialUser;
+        password = binding.credentialPassword;
+        email = binding.credentialEmail;
+        url = binding.credentialUrl;
+        description = binding.credentialDescription;
+        otp = binding.credentialOtp;
+        otp_progress = binding.contentOtpProgress.credentialOtpProgress;
+
+        return binding.getRoot();
     }
 
     @Override
@@ -192,7 +192,6 @@ public class CredentialDisplayFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         fragmentView = view;
         updateViewContent();
     }
@@ -270,6 +269,12 @@ public class CredentialDisplayFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

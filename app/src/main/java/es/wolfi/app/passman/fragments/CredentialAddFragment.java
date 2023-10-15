@@ -23,7 +23,6 @@ package es.wolfi.app.passman.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -55,8 +54,6 @@ import org.json.JSONObject;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
 import es.wolfi.app.passman.EditPasswordTextItem;
@@ -66,6 +63,7 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
 import es.wolfi.app.passman.adapters.FileEditAdapter;
+import es.wolfi.app.passman.databinding.FragmentCredentialAddBinding;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
@@ -81,19 +79,14 @@ import es.wolfi.utils.ProgressUtils;
 public class CredentialAddFragment extends Fragment implements View.OnClickListener {
     public static String CREDENTIAL = "credential";
 
-    @BindView(R.id.add_credential_label_header)
+    private FragmentCredentialAddBinding binding;
+
     TextView label_header;
-    @BindView(R.id.add_credential_label)
     EditText label;
-    @BindView(R.id.add_credential_user)
     EditText user;
-    @BindView(R.id.add_credential_password)
     EditPasswordTextItem password;
-    @BindView(R.id.add_credential_email)
     EditText email;
-    @BindView(R.id.add_credential_url)
     EditText url;
-    @BindView(R.id.add_credential_description)
     EditText description;
 
     AppCompatImageButton otpEditCollapseExtendedButton;
@@ -105,12 +98,6 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     EditText otp_issuer;
     TextView credential_otp;
     ProgressBar otp_progress;
-
-    @BindView(R.id.filesList)
-    RecyclerView filesList;
-    @BindView(R.id.customFieldsList)
-    RecyclerView customFieldsList;
-    @BindView(R.id.customFieldType)
     Spinner customFieldType;
 
     private OnCredentialFragmentInteraction mListener;
@@ -143,7 +130,8 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_credential_add, container, false);
+        binding = FragmentCredentialAddBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         FloatingActionButton saveCredentialButton = (FloatingActionButton) view.findViewById(R.id.SaveCredentialButton);
         saveCredentialButton.setOnClickListener(this);
@@ -166,6 +154,15 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
 
         fed = new FileEditAdapter(credential);
         cfed = new CustomFieldEditAdapter(credential);
+
+        label_header = binding.addCredentialLabelHeader;
+        label = binding.addCredentialLabel;
+        user = binding.addCredentialUser;
+        password = binding.addCredentialPassword;
+        email = binding.addCredentialEmail;
+        url = binding.addCredentialUrl;
+        description = binding.addCredentialDescription;
+        customFieldType = binding.customFieldType;
 
         otp_edit_extended = (LinearLayout) view.findViewById(R.id.otp_edit_extended);
         otp_secret = view.findViewById(R.id.edit_credential_otp_secret);
@@ -190,7 +187,6 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
         filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -202,6 +198,12 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
 
         handler = new Handler();
         otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

@@ -43,12 +43,11 @@ import org.json.JSONObject;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.wolfi.app.ResponseHandlers.VaultDeleteResponseHandler;
 import es.wolfi.app.passman.EditPasswordTextItem;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.activities.PasswordListActivity;
+import es.wolfi.app.passman.databinding.FragmentVaultDeleteBinding;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.ProgressUtils;
 
@@ -61,11 +60,10 @@ import es.wolfi.utils.ProgressUtils;
 public class VaultDeleteFragment extends Fragment implements View.OnClickListener {
     public static String VAULT = "vault";
 
-    @BindView(R.id.vault_name)
+    private FragmentVaultDeleteBinding binding;
+
     TextView vault_name;
-    @BindView(R.id.delete_vault_password_header)
     TextView delete_vault_password_header;
-    @BindView(R.id.delete_vault_password)
     EditPasswordTextItem delete_vault_password;
 
     private Vault vault;
@@ -94,11 +92,16 @@ public class VaultDeleteFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_vault_delete, container, false);
+        binding = FragmentVaultDeleteBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         FloatingActionButton deleteVaultButton = view.findViewById(R.id.DeleteVaultButton);
         deleteVaultButton.setOnClickListener(this);
         deleteVaultButton.setVisibility(View.VISIBLE);
+
+        vault_name = binding.vaultName;
+        delete_vault_password_header = binding.deleteVaultPasswordHeader;
+        delete_vault_password = binding.deleteVaultPassword;
 
         return view;
     }
@@ -106,7 +109,6 @@ public class VaultDeleteFragment extends Fragment implements View.OnClickListene
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
 
         vault_name.setText(vault.getName());
         delete_vault_password.setPasswordGenerationButtonVisibility(false);
@@ -124,6 +126,12 @@ public class VaultDeleteFragment extends Fragment implements View.OnClickListene
                 vault = Vault.getVaultByGuid(getArguments().getString(VAULT));
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

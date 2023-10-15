@@ -34,18 +34,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import es.wolfi.app.passman.databinding.FragmentEditPasswordTextItemBinding;
 import es.wolfi.utils.PasswordGenerator;
 
 public class EditPasswordTextItem extends LinearLayout {
 
-    @BindView(R.id.password)
+    private FragmentEditPasswordTextItemBinding binding;
+
     EditText password;
-    @BindView(R.id.toggle_password_visibility_btn)
     ImageButton toggle_password_visibility_btn;
-    @BindView(R.id.generate_password_btn)
     ImageButton generate_password_btn;
 
     public EditPasswordTextItem(Context context) {
@@ -73,12 +70,27 @@ public class EditPasswordTextItem extends LinearLayout {
         setOrientation(HORIZONTAL);
 
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflater.inflate(R.layout.fragment_edit_password_text_item, this, true);
+        binding = FragmentEditPasswordTextItemBinding.inflate(inflater, this);
 
-        ButterKnife.bind(this, v);
+        password = binding.password;
+        toggle_password_visibility_btn = binding.togglePasswordVisibilityBtn;
+        generate_password_btn = binding.generatePasswordBtn;
 
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         setPasswordGenerationButtonVisibility(true);
+
+        binding.togglePasswordVisibilityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleVisibility();
+            }
+        });
+        binding.generatePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generatePassword();
+            }
+        });
     }
 
     @Override
@@ -114,7 +126,6 @@ public class EditPasswordTextItem extends LinearLayout {
         }
     }
 
-    @OnClick(R.id.toggle_password_visibility_btn)
     public void toggleVisibility() {
         switch (password.getInputType()) {
             case InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD:
@@ -128,7 +139,6 @@ public class EditPasswordTextItem extends LinearLayout {
         }
     }
 
-    @OnClick(R.id.generate_password_btn)
     public void generatePassword() {
         this.password.setText(new PasswordGenerator(getContext()).generateRandomPassword());
     }

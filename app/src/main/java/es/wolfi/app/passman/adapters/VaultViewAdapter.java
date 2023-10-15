@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,11 +43,10 @@ import java.text.DateFormat;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.databinding.FragmentVaultBinding;
 import es.wolfi.app.passman.fragments.VaultDeleteFragment;
 import es.wolfi.app.passman.fragments.VaultEditFragment;
 import es.wolfi.app.passman.fragments.VaultFragment.OnListFragmentInteractionListener;
@@ -62,21 +62,23 @@ import es.wolfi.utils.ProgressUtils;
 public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.ViewHolder> {
     private static final String TAG = VaultViewAdapter.class.getSimpleName();
 
+    private Context context;
     private final List<Vault> mValues;
     private final OnListFragmentInteractionListener mListener;
     private final FragmentManager fragmentManager;
 
-    public VaultViewAdapter(List<Vault> items, OnListFragmentInteractionListener listener, FragmentManager fragmentManager) {
+    public VaultViewAdapter(Context context, List<Vault> items, OnListFragmentInteractionListener listener, FragmentManager fragmentManager) {
+        this.context = context;
         mValues = items;
         mListener = listener;
         this.fragmentManager = fragmentManager;
     }
 
+    @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_vault, parent, false);
-        return new ViewHolder(view);
+        FragmentVaultBinding binding = FragmentVaultBinding.inflate(LayoutInflater.from(context), parent, false);
+        return new ViewHolder(binding.getRoot());
     }
 
     @Override
@@ -188,15 +190,10 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.vault_name)
         TextView name;
-        @BindView(R.id.vault_created)
         TextView created;
-        @BindView(R.id.vault_last_access)
         TextView last_access;
-        @BindView(R.id.vault_edit_button)
         ImageView vault_edit_button;
-        @BindView(R.id.vault_delete_button)
         ImageView vault_delete_button;
 
         public final View mView;
@@ -205,7 +202,12 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            ButterKnife.bind(this, view);
+
+            name = view.findViewById(R.id.vault_name);
+            created = view.findViewById(R.id.vault_created);
+            last_access = view.findViewById(R.id.vault_last_access);
+            vault_edit_button = view.findViewById(R.id.vault_edit_button);
+            vault_delete_button = view.findViewById(R.id.vault_delete_button);
         }
 
         @Override
