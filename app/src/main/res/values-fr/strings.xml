@@ -45,7 +45,7 @@
     <string name="app_start_password_android_auth_description">Autoriser authentification utilisateur au démarrage de l\'application. </string>
     <string name="wait_while_encrypting">Patientez pendant le chiffrement…</string>
     <string name="wait_while_decrypting">Patientez pendant le déchiffrage…</string>
-    <string name="wait_while_uploading">Patienter pendant le téléchargement</string>
+    <string name="wait_while_uploading">Patientez pendant le téléversement...</string>
     <string name="wait_while_downloading">Patientez pendant le téléchargement...</string>
     <string name="autofill_noactivevault">Aucun coffre-fort actif </string>
     <string name="autofill_vaultlocked">Le coffre-fort doit être déverrouillé </string>
