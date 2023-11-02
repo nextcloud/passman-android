@@ -320,26 +320,38 @@ public class Vault extends Core implements Filterable {
         Vault.requestAPIGET(c, "sharing/vault/".concat(guid).concat("/get"), new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {
-                try {
-                    JSONArray data = new JSONArray(result);
-                    for (int i = 0; i < data.length(); i++) {
-                        JSONObject sharedCredentialData = data.getJSONObject(i);
+                final String offlineStorageSharedCredentialsKey = "shared_" + guid;
 
-                        CredentialACL acl = CredentialACL.fromJSON(sharedCredentialData);
-                        Credential c = Credential.fromJSON(sharedCredentialData.getJSONObject("credential_data"), self);
-                        c.setSharedKey(acl.shared_key);
-                        c.setCredentialACL(acl);
-                        if (c.getDeleteTime() == 0) {
-                            self.credentials.add(c);
-                            self.credential_guid.put(c.getGuid(), self.credentials.size() - 1);
-                        }
+                if (e != null) {
+                    if (OfflineStorage.getInstance().isEnabled() && OfflineStorage.getInstance().has(offlineStorageSharedCredentialsKey)) {
+                        result = OfflineStorage.getInstance().getString(offlineStorageSharedCredentialsKey, null);
                     }
-
-                    // todo: maybe update vault in OfflineStorage including the shared credentials somehow
-                    cb.onCompleted(null, self);
-                } catch (JSONException ex) {
-                    cb.onCompleted(ex, null);
                 }
+
+                if (result != null) {
+                    try {
+                        JSONArray data = new JSONArray(result);
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject sharedCredentialData = data.getJSONObject(i);
+
+                            CredentialACL acl = CredentialACL.fromJSON(sharedCredentialData);
+                            Credential c = Credential.fromJSON(sharedCredentialData.getJSONObject("credential_data"), self);
+                            c.setSharedKey(acl.shared_key);
+                            c.setCredentialACL(acl);
+                            if (c.getDeleteTime() == 0) {
+                                self.credentials.add(c);
+                                self.credential_guid.put(c.getGuid(), self.credentials.size() - 1);
+                            }
+                        }
+                        OfflineStorage.getInstance().putObject(offlineStorageSharedCredentialsKey, result);
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+
+                // successful callback response, even if shared credentials could not be loaded
+                // so the user will at least see the main vault content / offline cached version of it
+                cb.onCompleted(null, self);
             }
         });
     }
