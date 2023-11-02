@@ -54,7 +54,9 @@ import es.wolfi.app.passman.adapters.CustomFieldViewAdapter;
 import es.wolfi.app.passman.adapters.FileViewAdapter;
 import es.wolfi.app.passman.databinding.FragmentCredentialDisplayBinding;
 import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.CredentialACL;
 import es.wolfi.passman.API.File;
+import es.wolfi.passman.API.SharingACL;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.IconUtils;
 
@@ -215,7 +217,12 @@ public class CredentialDisplayFragment extends Fragment {
                             .commit();
                 }
             });
-            editCredentialButton.setVisibility(View.VISIBLE);
+            CredentialACL acl = credential.getCredentialACL();
+            if (acl == null || (acl.getPermissions() != null && acl.getPermissions().hasPermission(SharingACL.PERMISSION.WRITE))) {
+                editCredentialButton.setVisibility(View.VISIBLE);
+            } else {
+                editCredentialButton.setVisibility(View.INVISIBLE);
+            }
 
 
             RecyclerView filesListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.filesList);
@@ -224,7 +231,7 @@ public class CredentialDisplayFragment extends Fragment {
 
             RecyclerView customFieldsListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.customFieldsList);
             customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
+            customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential, filelistListener));
 
             if (credential.getCompromised().equals("true")) {
                 TextView passwordLabel = fragmentView.findViewById(R.id.credential_password_label);
@@ -240,7 +247,19 @@ public class CredentialDisplayFragment extends Fragment {
             url.setText(credential.getUrl());
             description.setText(credential.getDescription());
             otp.setEnabled(false);
-            IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
+
+            // overwrite real credential icon for every shared credential
+            if (credential.getCredentialACL() != null) {
+                // shared with me
+                credentialIcon.setImageResource(R.drawable.ic_baseline_share_24);
+            } else if (credential.isASharedCredential()) {
+                // shared with other (use as alternative to fa-share-alt-square)
+                credentialIcon.setImageResource(R.drawable.ic_baseline_share_24);
+                credentialIcon.setBackgroundColor(getResources().getColor(R.color.cardview_dark_background));
+                credentialIcon.setColorFilter(getResources().getColor(R.color.white));
+            } else {
+                IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
+            }
 
             if (URLUtil.isValidUrl(credential.getUrl())) {
                 url.setModeURL();
