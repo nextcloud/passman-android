@@ -145,6 +145,12 @@ public class VaultAddFragment extends Fragment implements View.OnClickListener {
             add_vault_name_header.setTextColor(getResources().getColor(R.color.colorAccent));
         }
 
+        if (add_vault_password.getText().toString().equals("")) {
+            add_vault_password_header.setTextColor(getResources().getColor(R.color.danger));
+            add_vault_password_repeat_header.setTextColor(getResources().getColor(R.color.danger));
+            return;
+        }
+
         if (!add_vault_password.getText().toString().equals(add_vault_password_repeat.getText().toString())) {
             add_vault_password_header.setTextColor(getResources().getColor(R.color.danger));
             add_vault_password_repeat_header.setTextColor(getResources().getColor(R.color.danger));
