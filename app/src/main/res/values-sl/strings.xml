@@ -72,6 +72,8 @@
     <string name="password_generator_use_uppercase">Uporabi velike črke</string>
     <string name="password_length">Dolžina gesla</string>
     <string name="new_vault_name">Novo ime zbirnika gesel</string>
+    <string name="digits">Števke</string>
+    <string name="period">Obdobje</string>
     <string name="value">Vrednost</string>
     <string name="secret">Skrivna koda</string>
     <string name="issuer">Izdajatelj</string>
