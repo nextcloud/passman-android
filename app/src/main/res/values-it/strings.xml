@@ -81,7 +81,10 @@
     <string name="enable_offline_cache">Abilita cache offline</string>
     <string name="clear_offline_cache">Svuota la cache offline</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
+    <string name="digits">Cifre</string>
+    <string name="period">Periodo</string>
     <string name="value">Valore</string>
+    <string name="faq">FAQ</string>
     <string name="secret">Segreta</string>
     <string name="issuer">Emittente</string>
     </resources>
