@@ -30,6 +30,7 @@
     <string name="successfully_deleted">Tókst að eyða</string>
     <string name="nextcloud_connection_settings">Tengistillingar Nextcloud</string>
     <string name="app_settings">Stillingar forrits</string>
+    <string name="wait_while_loading">Bíddu á meðan hleðst inn …</string>
     <string name="loading">Hleð inn</string>
     <string name="error_downloading_file">Villa við að sækja skrána</string>
     <string name="error_writing_file">Villa við að skrifa skrána</string>
@@ -38,7 +39,16 @@
     <string name="add_file">Bæta við skrá</string>
     <string name="add_custom_field">Bæta við sérsniðnum reit</string>
     <string name="unlock_passman">Aflæsa Passman</string>
+    <string name="unlock_passman_message_device_auth">Auðkenndu þig til að fá aðgang að Passman</string>
+    <string name="app_start_password">Lykilorð forritsræsingar</string>
+    <string name="app_start_password_android_auth_description">Virkja auðkenningu Android-notanda við ræsingu forrits</string>
+    <string name="wait_while_encrypting">Bíddu á meðan dulritun fer fram …</string>
+    <string name="wait_while_decrypting">Bíddu á meðan afkóðun fer fram …</string>
+    <string name="wait_while_uploading">Bíddu á meðan sent er inn …</string>
+    <string name="wait_while_downloading">Bíddu á meðan sótt er …</string>
     <string name="autofill_noactivevault">Engin virk lykilorðageymsla</string>
+    <string name="autofill_vaultlocked">Lykilorðageymslu þarf að aflæsa</string>
+    <string name="autofill_vaultempty">Engin auðkenni í lykilorðageymslu</string>
     <string name="automatically">sjálfvirkt</string>
     <string name="request_connect_timeout">Tímamörk tengingar á beiðni (sekúndur)</string>
     <string name="request_response_timeout">Tímamörk svars á beiðni (sekúndur)</string>
@@ -47,8 +57,10 @@
     <string name="confirm_vault_deletion">Ertu viss um að þú viljir eyða þessari lykilorðageymslu?</string>
     <string name="yes">Já</string>
     <string name="cancel">Hætta við</string>
+    <string name="credential_icon">Táknmynd auðkennis</string>
     <string name="clear_clipboard_delay">Hreinsa klippispjald (eftir X sekúndur)</string>
     <string name="generate_password">Framleiða lykilorð</string>
+    <string name="generate_password_to_clipboard">Framleiða slembilykilorð og afrita á klippispjald</string>
     <string name="password_generator_require_every_char_type">Krefjast allra stafagerða</string>
     <string name="password_generator_avoid_ambiguous_chars">Forðast vafasama stafi</string>
     <string name="password_generator_use_special_chars">Nota sértákn</string>
@@ -57,6 +69,7 @@
     <string name="password_generator_use_uppercase">Nota hástafi</string>
     <string name="password_length">Lengd lykilorðs</string>
     <string name="vault_name">Heiti á lykilorðageymslu</string>
+    <string name="sharing_key_strength">Styrkur deilingarlykils</string>
     <string name="new_vault_name">Nýtt heiti á lykilorðageymslu</string>
     <string name="nextcloud_single_sign_on">Nextcloud einföld innskráning (single-sign-on)</string>
     <string name="manual_login">Handvirk innskráning</string>
