@@ -32,6 +32,7 @@
     <string name="app_settings">Ρυθμίσεις εφαρμογής</string>
     <string name="loading">Γίνεται φόρτωση</string>
     <string name="error_downloading_file">Σφάλμα λήψης του αρχείου</string>
+    <string name="error_writing_file">Σφάλμα κατά την εγγραφή του αρχείου</string>
     <string name="files">Αρχεία</string>
     <string name="expert_settings">Ρυθμίσεις για προχωρημένους</string>
     <string name="yes">Ναι</string>
@@ -42,6 +43,8 @@
     <string name="password_generator_use_special_chars">Χρήση ειδικών χαρακτήρων</string>
     <string name="password_length">Μέγεθος συνθηματικού</string>
     <string name="new_vault_name">Νέο όνομα κρύπτης</string>
+    <string name="digits">Ψηφία</string>
+    <string name="period">Περίοδος</string>
     <string name="value">Τιμή</string>
     <string name="secret">Μυστικός</string>
     <string name="issuer">Εκδότης</string>
