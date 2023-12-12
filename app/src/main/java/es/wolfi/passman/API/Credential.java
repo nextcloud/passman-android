@@ -65,7 +65,6 @@ public class Credential extends Core implements Filterable {
     protected String otp;
     protected boolean hidden;
     protected String sharedKey;
-    private String sharedKeyDecrypted;
     protected String compromised;
     protected CredentialACL acl;
 
@@ -324,10 +323,7 @@ public class Credential extends Core implements Filterable {
      */
     private String getCustomCredentialEncryptionKey() {
         if (isASharedCredential() && this.acl == null) {
-            if (this.sharedKeyDecrypted == null) {
-                this.sharedKeyDecrypted = vault.decryptString(this.sharedKey);
-            }
-            return sharedKeyDecrypted;
+            return vault.decryptString(this.sharedKey);
         } else if (this.acl != null) {
             return vault.decryptString(this.acl.shared_key);
         }
@@ -339,10 +335,7 @@ public class Credential extends Core implements Filterable {
      */
     private String getCustomCredentialDecryptionKey() {
         if (isASharedCredential()) {
-            if (this.sharedKeyDecrypted == null) {
-                return vault.decryptString(this.sharedKey);
-            }
-            return sharedKeyDecrypted;
+            return vault.decryptString(this.sharedKey);
         }
         return getCustomCredentialEncryptionKey();
     }
@@ -373,10 +366,6 @@ public class Credential extends Core implements Filterable {
 
     public boolean isASharedCredential() {
         return this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null");
-    }
-
-    public void resetDecryptedSharedKey() {
-        this.sharedKeyDecrypted = null;
     }
 
     public JSONObject getAsJSONObject() throws JSONException {
