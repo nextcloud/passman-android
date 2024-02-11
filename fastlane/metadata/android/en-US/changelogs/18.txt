@@ -1,0 +1,6 @@
+- implement showing / editing of shared credentials
+- implement manual credential search as autofill fallback for no matching credentials (see settings)
+- improve autofill behaviour
+- migrate from butterknive to android native view binding
+- various bug fixes
+- update dependencies
