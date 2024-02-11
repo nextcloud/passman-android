@@ -36,6 +36,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
@@ -210,8 +211,16 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-        this.credential = new Credential();
-        this.credential.setVault(v);
+        if (v != null) {
+            this.credential = new Credential();
+            this.credential.setVault(v);
+        } else {
+            Log.e("CredentialAdd", getString(R.string.no_active_vault_add_credential_error));
+            Toast.makeText(getContext(), getString(R.string.no_active_vault_add_credential_error), Toast.LENGTH_LONG).show();
+
+            // since that should never happen with a well running application, restart the app
+            PasswordListActivity.triggerRebirth(requireContext());
+        }
     }
 
     @Override

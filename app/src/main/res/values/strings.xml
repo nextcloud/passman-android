@@ -96,6 +96,7 @@
     <string name="error_parsing_qr_code">Error parsing QR code</string>
     <string name="camera_permission_denied">Camera permission denied</string>
     <string name="no_matching_credentials_or_fields_found">No matching credentials or auto-fillable fields were found</string>
+    <string name="no_active_vault_add_credential_error">No active vault. Cannot add credential!</string>
     <string name="automatic_autofill_vault_description">Select Automatic if you want autofill to only be provided when a Vault is actively open and unlocked in the app</string>
     <string name="autofill_manual_search_fallback">Manual credential search as autofill fallback option</string>
     <string name="set_as_autofill_service">Set as autofill service</string>
