@@ -127,14 +127,19 @@ public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseH
     public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
         alreadySaving.set(false);
         ProgressUtils.dismiss(progress);
-        String response = new String(responseBody);
+        String response = "";
 
+        if (responseBody != null && responseBody.length > 0) {
+            response = new String(responseBody);
+        }
+
+        final String finalResponse = response;
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                if (!response.equals("") && JSONUtils.isJSONObject(response)) {
+                if (!finalResponse.equals("") && JSONUtils.isJSONObject(finalResponse)) {
                     try {
-                        JSONObject o = new JSONObject(response);
+                        JSONObject o = new JSONObject(finalResponse);
                         if (o.has("message") && o.getString("message").equals("Current user is not logged in")) {
                             Toast.makeText(view.getContext(), o.getString("message"), Toast.LENGTH_LONG).show();
                             return;
@@ -149,7 +154,7 @@ public class CredentialSaveForNewVaultResponseHandler extends AsyncHttpResponseH
 
                 if (error != null && error.getMessage() != null && statusCode != 302) {
                     error.printStackTrace();
-                    Log.e("async http response", new String(responseBody));
+                    Log.e("async http response", finalResponse);
                     Toast.makeText(view.getContext(), view.getContext().getString(R.string.error_occurred).concat(error.getMessage()), Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();

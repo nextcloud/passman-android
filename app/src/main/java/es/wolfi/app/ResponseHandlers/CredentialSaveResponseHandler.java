@@ -141,7 +141,7 @@ public class CredentialSaveResponseHandler extends AsyncHttpResponseHandler {
 
             if (error != null && error.getMessage() != null && statusCode != 302) {
                 error.printStackTrace();
-                Log.e("async http response", new String(responseBody));
+                Log.e("async http response", finalResponse);
                 Toast.makeText(view.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(view.getContext(), R.string.error_occurred, Toast.LENGTH_LONG).show();
