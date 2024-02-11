@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -42,10 +46,13 @@
         <activity
             android:name=".activities.ShortcutActivity"
             android:theme="@android:style/Theme.NoDisplay" />
+        <activity
+            android:name=".activities.AutofillInteractionActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <service
             android:name=".autofill.CredentialAutofillService"
-            android:exported="true"
+            android:exported="false"
             android:label="Passman Credential Autofill Service"
             android:permission="android.permission.BIND_AUTOFILL_SERVICE">
             <meta-data

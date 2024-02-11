@@ -75,7 +75,7 @@ public class CredentialAddFileResponseHandler extends AsyncHttpResponseHandler {
                         }
 
                         fileObject.put("filename", fileName);
-                        File file = new File(fileObject);
+                        File file = new File(fileObject, cfed.getCredential());
 
                         if (requestCode == FileUtils.activityRequestFileCode.credentialAddFile.ordinal()) {
                             fed.addFile(file);
