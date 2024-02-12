@@ -91,4 +91,4 @@
     <string name="issuer">صادر کننده</string>
     <string name="error_parsing_qr_code">Error parsing QR code</string>
     <string name="camera_permission_denied">Camera permission denied</string>
-</resources>
+    </resources>

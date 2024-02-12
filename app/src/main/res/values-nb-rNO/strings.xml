@@ -91,4 +91,4 @@
     <string name="issuer">Utsteder</string>
     <string name="error_parsing_qr_code">Feil under analysering av QR-koden</string>
     <string name="camera_permission_denied">Kameratillatelse nektet</string>
-</resources>
+    </resources>

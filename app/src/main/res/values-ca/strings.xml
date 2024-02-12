@@ -59,4 +59,4 @@
     <string name="issuer">Emissor</string>
     <string name="error_parsing_qr_code">S\'ha produït un error en analitzar el codi QR</string>
     <string name="camera_permission_denied">S\'ha denegat el permís de la càmera</string>
-</resources>
+    </resources>

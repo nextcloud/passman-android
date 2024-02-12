@@ -91,4 +91,4 @@
     <string name="issuer">المُصدِر:</string>
     <string name="error_parsing_qr_code">خطأ في تفسير مربع الاستجابة السريعة QR</string>
     <string name="camera_permission_denied">تمّ رفض إذن السماح للكاميرا</string>
-</resources>
+    </resources>

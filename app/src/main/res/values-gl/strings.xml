@@ -92,4 +92,4 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="issuer">Emisor</string>
     <string name="error_parsing_qr_code">Produciuse un erro ao analizar o código QR</string>
     <string name="camera_permission_denied">Permiso da cámara denegado</string>
-</resources>
+    </resources>

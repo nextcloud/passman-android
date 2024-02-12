@@ -91,4 +91,4 @@
     <string name="issuer">Kibocsátó</string>
     <string name="error_parsing_qr_code">Hiba a QR-kód feldolgozása során</string>
     <string name="camera_permission_denied">Kamera engedély megtagadva</string>
-</resources>
+    </resources>

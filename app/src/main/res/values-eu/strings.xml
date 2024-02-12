@@ -91,4 +91,4 @@
     <string name="issuer">Jaulkitzailea</string>
     <string name="error_parsing_qr_code">Errorea QR kodea analizatzean</string>
     <string name="camera_permission_denied">Kamera baimena ukatuta</string>
-</resources>
+    </resources>

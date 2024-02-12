@@ -91,4 +91,4 @@
     <string name="issuer">Vydavateľ</string>
     <string name="error_parsing_qr_code">Chyba pri spracovávaní QR kódu</string>
     <string name="camera_permission_denied">Prístup ku kamere bol odmietnutý</string>
-</resources>
+    </resources>

@@ -91,4 +91,4 @@
     <string name="issuer">Ersteller</string>
     <string name="error_parsing_qr_code">Fehler beim Verarbeiten des QR-Codes</string>
     <string name="camera_permission_denied">Kamerazugriff verweigert</string>
-</resources>
+    </resources>

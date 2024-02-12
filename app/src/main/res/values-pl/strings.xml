@@ -91,4 +91,4 @@
     <string name="issuer">Zgłaszający</string>
     <string name="error_parsing_qr_code">Błąd podczas analizowania kodu QR</string>
     <string name="camera_permission_denied">Odmowa dostępu do kamery</string>
-</resources>
+    </resources>

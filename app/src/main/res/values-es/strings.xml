@@ -91,4 +91,4 @@
     <string name="issuer">Editor</string>
     <string name="error_parsing_qr_code">Error analizando el código QR</string>
     <string name="camera_permission_denied">Permisos de cámara denegados</string>
-</resources>
+    </resources>

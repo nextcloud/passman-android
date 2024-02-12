@@ -91,4 +91,4 @@
     <string name="issuer">Émetteur</string>
     <string name="error_parsing_qr_code">Erreur de traitement du code QR</string>
     <string name="camera_permission_denied">Autorisation de caméra refusée</string>
-</resources>
+    </resources>

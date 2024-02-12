@@ -91,4 +91,4 @@
     <string name="issuer">Издател</string>
     <string name="error_parsing_qr_code">Грешка при анализ на QR кода</string>
     <string name="camera_permission_denied">Отказано е разрешението /право/ за камера</string>
-</resources>
+    </resources>

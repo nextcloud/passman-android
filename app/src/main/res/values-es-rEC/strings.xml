@@ -91,4 +91,4 @@
     <string name="issuer">Quien levanta</string>
     <string name="error_parsing_qr_code">Error al analizar el código QR</string>
     <string name="camera_permission_denied">Permiso de cámara denegado</string>
-</resources>
+    </resources>

@@ -91,4 +91,4 @@
     <string name="issuer">Yayınlayan</string>
     <string name="error_parsing_qr_code">QR kodu işlenirken sorun çıktı</string>
     <string name="camera_permission_denied">Kamera izni reddedildi</string>
-</resources>
+    </resources>
