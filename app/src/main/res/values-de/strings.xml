@@ -91,4 +91,9 @@
     <string name="issuer">Ersteller</string>
     <string name="error_parsing_qr_code">Fehler beim Verarbeiten des QR-Codes</string>
     <string name="camera_permission_denied">Kamerazugriff verweigert</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Keine übereinstimmenden Anmeldeinformationen oder automatisch ausfüllbare Felder gefunden</string>
+    <string name="no_active_vault_add_credential_error">Kein aktiver Tresor. Anmeldeinformation können nicht hinzugefügt werden!</string>
+    <string name="automatic_autofill_vault_description">Wählen Sie Automatisch aus, wenn Sie möchten, dass das automatische Ausfüllen nur bereitgestellt wird, wenn ein Tresor in der App aktiv geöffnet und entsperrt ist</string>
+    <string name="autofill_manual_search_fallback">Manuelle Anmeldeinformationssuche als Autofill-Ausweichoption</string>
+    <string name="set_as_autofill_service">Als Autofill-Dienst festlegen</string>
+</resources>

@@ -91,4 +91,9 @@
     <string name="issuer">المُصدِر:</string>
     <string name="error_parsing_qr_code">خطأ في تفسير مربع الاستجابة السريعة QR</string>
     <string name="camera_permission_denied">تمّ رفض إذن السماح للكاميرا</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">تعذّر العثور على حيثيات الدخول أو الاستكمال التلقائي للحقول</string>
+    <string name="no_active_vault_add_credential_error">لا توجد خزنة عاملة active vault. لا يمكن إضافة حيثيات الدخول!</string>
+    <string name="automatic_autofill_vault_description">حدِّد الخيار \"تلقائي Automatic\" إذا كنت تريد توفير الاستكمال التلقائي فقط عندما تكون هنالك خزنة عاملة و مفتوحة في التطبيق</string>
+    <string name="autofill_manual_search_fallback">البحث اليدوي عن حيثيات الدخول كخيار احتياطي للاستكمال التلقائي</string>
+    <string name="set_as_autofill_service">تعيين كخدمة للاستكمال التلقائي</string>
+</resources>

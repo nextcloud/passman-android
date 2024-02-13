@@ -91,4 +91,9 @@
     <string name="issuer">Издавач</string>
     <string name="error_parsing_qr_code">Грешка при парсирању QR кода</string>
     <string name="camera_permission_denied">Одбијена је дозвола за камеру</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Није пронађен ниједан одговарајући акредитив или аутоматски попуњиво поље</string>
+    <string name="no_active_vault_add_credential_error">Нема активног сефа. Акредитив не може да се дода!</string>
+    <string name="automatic_autofill_vault_description">Изаберите Аутоматски ако желите да се понуди аутоматско попуњавање онда када се у апликацији Сеф активно отвори или откључа</string>
+    <string name="autofill_manual_search_fallback">Ручна претрага акредитива у случају да нема аутоматског попуњавања</string>
+    <string name="set_as_autofill_service">Постави као сервис за аутоматско попуњавање</string>
+</resources>
