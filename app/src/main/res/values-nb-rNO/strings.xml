@@ -91,4 +91,9 @@
     <string name="issuer">Utsteder</string>
     <string name="error_parsing_qr_code">Feil under analysering av QR-koden</string>
     <string name="camera_permission_denied">Kameratillatelse nektet</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Ingen samsvarende påloggingsinformasjon eller automatisk utfyllbare felt ble funnet</string>
+    <string name="no_active_vault_add_credential_error">Ingen aktive hvelv. Kan ikke legge til påloggingsinformasjon!</string>
+    <string name="automatic_autofill_vault_description">Velg Automatisk hvis du vil at automatisk utfylling bare skal gis når et hvelv er aktivt åpent og ulåst i appen</string>
+    <string name="autofill_manual_search_fallback">Manuelt søk på legitimasjon som reservealternativ for autofyll</string>
+    <string name="set_as_autofill_service">Angi som autofyll-tjeneste</string>
+</resources>
