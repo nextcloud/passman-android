@@ -91,4 +91,9 @@
     <string name="issuer">Yayınlayan</string>
     <string name="error_parsing_qr_code">QR kodu işlenirken sorun çıktı</string>
     <string name="camera_permission_denied">Kamera izni reddedildi</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Eşleşen bir kimlik doğrulama bilgisi ya da otomatik doldurulabilir bir alan bulunamadı</string>
+    <string name="no_active_vault_add_credential_error">Etkin bir kasa yok. Kimlik doğrulama bilgisi eklenemedi!</string>
+    <string name="automatic_autofill_vault_description">Otomatik doldurmanın yalnızca bir kasa etkin olarak açıkken ve uygulama içinden kilidi açılmışken yapılmasını istiyorsanız Otomatik olarak seçin.</string>
+    <string name="autofill_manual_search_fallback">Otomatik doldurma kullanılamadığında el ile kimlik bilgisi arama</string>
+    <string name="set_as_autofill_service">Otomatik doldurma hizmeti olarak ayarla</string>
+</resources>
