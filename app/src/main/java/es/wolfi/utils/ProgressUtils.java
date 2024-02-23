@@ -1,3 +1,25 @@
+/**
+ * Passman Android App
+ *
+ * @copyright Copyright (c) 2021, Sander Brand (brantje@gmail.com)
+ * @copyright Copyright (c) 2021, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
+ * @license GNU AGPL version 3 or any later version
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package es.wolfi.utils;
 
 import android.app.ProgressDialog;
@@ -33,5 +55,18 @@ public class ProgressUtils {
         progress.show();
 
         return progress;
+    }
+
+    /**
+     * Checks if a dialog is shown and calls dismiss() on it if possible
+     *
+     * @param progress progress dialog to dismiss
+     */
+    public static void dismiss(ProgressDialog progress) {
+        if (progress != null) {
+            if (progress.isShowing()) {
+                progress.dismiss();
+            }
+        }
     }
 }

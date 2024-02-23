@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">URL del backend Nextcloud incorrecto o incapaz de conectar</string>
     <string name="wrongNCSettings">Configuraciones incorrectas</string>
     <string name="net_error">Error de red</string>
+    <string name="net_error_dialog_description">No se ha podido conectar al servidor.\nLos cambios no se pueden guardar sin una conexión al servidor funcionando.</string>
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">Contraseña errónea de la caja fuerte</string>
     <string name="label">Etiqueta</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">Límite de tiempo de la respuesta (en segundos)</string>
     <string name="expert_settings">Configuración avanzada</string>
     <string name="confirm_credential_deletion">¿Estás seguro de querer borrar esta credencial?</string>
+    <string name="confirm_vault_deletion">¿Seguro que quieres eliminar esta caja fuerte?</string>
     <string name="yes">Sí</string>
     <string name="cancel">Cancelar</string>
     <string name="enable_credential_list_icons">Habilitar los iconos en la lista de credenciales</string>
@@ -71,4 +73,22 @@
     <string name="password_generator_use_lowercase">Usar letras minúsculas</string>
     <string name="password_generator_use_uppercase">Usar letras mayúsculas</string>
     <string name="password_length">Longitud de la contraseña</string>
+    <string name="vault_name">Nombre de la caja fuerte</string>
+    <string name="sharing_key_strength">Fuerza de la clave compartida</string>
+    <string name="new_vault_name">Nombre de la caja fuerte nueva</string>
+    <string name="offline_cache">Caché sin conexión</string>
+    <string name="offline_cache_description">Guarda en caché las bóvedas cifradas si se han cargado manualmente</string>
+    <string name="enable_offline_cache">Activar caché sin conexión</string>
+    <string name="clear_offline_cache">Limpiar caché sin conexión</string>
+    <string name="nextcloud_single_sign_on">Autenticación única de Nextcloud</string>
+    <string name="manual_login">Inicio de sesión manual</string>
+    <string name="confirm_account_logout">¿Está seguro de cerrar la sesión?</string>
+    <string name="digits">Dígitos</string>
+    <string name="period">Período</string>
+    <string name="value">Valor</string>
+    <string name="faq">PUF</string>
+    <string name="secret">Secreto</string>
+    <string name="issuer">Editor</string>
+    <string name="error_parsing_qr_code">Error analizando el código QR</string>
+    <string name="camera_permission_denied">Permisos de cámara denegados</string>
     </resources>

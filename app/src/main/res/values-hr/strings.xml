@@ -71,4 +71,8 @@
     <string name="password_generator_use_lowercase">Koristi mala slova</string>
     <string name="password_generator_use_uppercase">Koristi velika slova</string>
     <string name="password_length">Dužina zaporke</string>
+    <string name="new_vault_name">Novi naziv trezora</string>
+    <string name="value">Vrijednost</string>
+    <string name="secret">Tajno</string>
+    <string name="issuer">Izdavatelj</string>
     </resources>

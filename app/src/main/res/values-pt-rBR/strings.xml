@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">URL da plataforma de serviço Nextcloud incorreta ou impossível conectar</string>
     <string name="wrongNCSettings">Configurações incorretas</string>
     <string name="net_error">Erro de rede</string>
+    <string name="net_error_dialog_description">Não foi possível conectar-se ao servidor!\nAs alterações não podem ser salvas sem uma conexão de servidor de funcionando.</string>
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">Senha do cofre incorreta</string>
     <string name="label">Etiqueta</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">Tempo limite de resposta da solicitação (em segundos) </string>
     <string name="expert_settings">Configurações para especialistas </string>
     <string name="confirm_credential_deletion">Tem certeza de que deseja excluir esta credencial? </string>
+    <string name="confirm_vault_deletion">Tem certeza de que deseja excluir isso cofre?</string>
     <string name="yes">Sim</string>
     <string name="cancel">Cancelar </string>
     <string name="enable_credential_list_icons">Habilitar ícones na lista de credenciais</string>
@@ -71,4 +73,22 @@
     <string name="password_generator_use_lowercase">Use caracteres minúsculos</string>
     <string name="password_generator_use_uppercase">Use letras maiúsculas</string>
     <string name="password_length">Comprimento da senha</string>
+    <string name="vault_name">Nome do cofre</string>
+    <string name="sharing_key_strength">Compartilhando a força da chave</string>
+    <string name="new_vault_name">Novo nome do cofre</string>
+    <string name="offline_cache">Cache offline</string>
+    <string name="offline_cache_description">Armazena em cache os cofres criptografados se eles foram carregados manualmente</string>
+    <string name="enable_offline_cache">Habilitar cache offline</string>
+    <string name="clear_offline_cache">Limpar cache offline</string>
+    <string name="nextcloud_single_sign_on">Nextcloud Single Sign Ligado</string>
+    <string name="manual_login">Login Manual</string>
+    <string name="confirm_account_logout">Tem certeza que deseja sair?</string>
+    <string name="digits">Dígitos</string>
+    <string name="period">Período</string>
+    <string name="value">Valor</string>
+    <string name="faq">FAQ</string>
+    <string name="secret">Secreto</string>
+    <string name="issuer">Emissor</string>
+    <string name="error_parsing_qr_code">Erro ao analisar o código QR</string>
+    <string name="camera_permission_denied">Permissão da câmera negada</string>
     </resources>

@@ -22,12 +22,12 @@
 package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -36,12 +36,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputLayout;
+
 import es.wolfi.app.passman.R;
-import es.wolfi.app.passman.SettingValues;
-import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.databinding.FragmentVaultLockScreenBinding;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.KeyStoreUtils;
 
@@ -56,16 +55,13 @@ import es.wolfi.utils.KeyStoreUtils;
  */
 public class VaultLockScreenFragment extends Fragment {
     private Vault vault;
-
     private VaultUnlockInteractionListener mListener;
+    private FragmentVaultLockScreenBinding binding;
 
-    @BindView(R.id.fragment_vault_name)
+    TextInputLayout input_layout_password;
     TextView vault_name;
-    @BindView(R.id.fragment_vault_password)
     EditText vault_password;
-    @BindView(R.id.fragment_vault_unlock)
-    Button btn_unlock;
-    @BindView(R.id.vault_lock_screen_chk_save_pw)
+    FloatingActionButton btn_unlock;
     CheckBox chk_save;
 
     public VaultLockScreenFragment() {
@@ -93,7 +89,15 @@ public class VaultLockScreenFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_vault_lock_screen, container, false);
+        binding = FragmentVaultLockScreenBinding.inflate(inflater, container, false);
+
+        input_layout_password = binding.inputLayoutPassword;
+        vault_name = binding.fragmentVaultName;
+        vault_password = binding.fragmentVaultPassword;
+        btn_unlock = binding.fragmentVaultUnlock;
+        chk_save = binding.vaultLockScreenChkSavePw;
+
+        return binding.getRoot();
     }
 
     @Override
@@ -110,10 +114,26 @@ public class VaultLockScreenFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-        vault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-        Log.e("VaultLockScreenFragment", "Vault guid: ".concat(vault.guid));
-        vault_name.setText(vault.name);
+        if (vault != null) {
+            Log.e("VaultLockScreenFragment", "Vault guid: ".concat(vault.guid));
+            vault_name.setText(vault.name);
+            input_layout_password.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
+
+            binding.fragmentVaultUnlock.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBtnUnlockClick();
+                }
+            });
+        } else {
+            Toast.makeText(getContext(), R.string.error_occurred, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -122,7 +142,6 @@ public class VaultLockScreenFragment extends Fragment {
         mListener = null;
     }
 
-    @OnClick(R.id.fragment_vault_unlock)
     void onBtnUnlockClick() {
         if (vault.unlock(vault_password.getText().toString())) {
             if (chk_save.isChecked()) {
@@ -132,6 +151,7 @@ public class VaultLockScreenFragment extends Fragment {
             return;
         }
         Toast.makeText(getContext(), R.string.wrong_vault_pw, Toast.LENGTH_LONG).show();
+        input_layout_password.setHintTextColor(ColorStateList.valueOf(getResources().getColor(R.color.danger)));
     }
 
     /**

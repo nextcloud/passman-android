@@ -27,6 +27,7 @@ import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import es.wolfi.app.ResponseHandlers.CustomFieldFileDeleteResponseHandler;
+import es.wolfi.app.passman.EditPasswordTextItem;
 import es.wolfi.app.passman.R;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.CustomField;
@@ -68,6 +70,10 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
     public CustomFieldEditAdapter(Credential cred) {
         credential = cred;
         mValues = credential.getCustomFieldsList();
+    }
+
+    public Credential getCredential() {
+        return credential;
     }
 
     public String getCustomFieldsString() {
@@ -103,14 +109,25 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
         if (customField.getFieldType().equals("file")) {
             holder.mValueEdit.setEnabled(false);
             try {
-                File file = new File(customField.getJvalue());
+                File file = new File(customField.getJvalue(), credential);
                 String filenameToPrint = String.format("%s (%s)", file.getFilename(), FileUtils.humanReadableByteCount((Double.valueOf(file.getSize())).longValue(), true));
                 holder.mValueEdit.setText(filenameToPrint);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else {
-            holder.mValueEdit.setText(customField.getValue());
+            if (holder.mItem.getFieldType().equals("password")) {
+                Log.d("customfield", "got password field");
+                holder.mValueEdit.setVisibility(View.GONE);
+                holder.mValuePasswordEdit.setVisibility(View.VISIBLE);
+                holder.mValuePasswordEdit.setText(customField.getValue());
+                holder.mValueEdit.setEnabled(false);
+            } else {
+                Log.d("customfield", "got default field");
+                holder.mValueEdit.setText(customField.getValue());
+                holder.mValuePasswordEdit.setEnabled(false);
+                holder.mValuePasswordEdit.setVisibility(View.GONE);
+            }
         }
 
         holder.mLabelEdit.addTextChangedListener(new TextWatcher() {
@@ -179,6 +196,39 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             }
         });
 
+        holder.mValuePasswordEdit.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            private Timer timer = new Timer();
+            private final long DELAY = 100; // milliseconds
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                // you will probably need to use runOnUiThread(Runnable action) for some specific actions (e.g. manipulating views)
+                                int itemIndex = mValues.indexOf(holder.mItem);
+                                holder.mItem.setValue(s.toString());
+                                mValues.set(itemIndex, holder.mItem);
+                            }
+                        },
+                        DELAY
+                );
+            }
+        });
+
         CustomFieldEditAdapter self = this;
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,11 +240,11 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
                     final AsyncHttpResponseHandler responseHandler = new CustomFieldFileDeleteResponseHandler(progress, holder, mValues, self);
 
                     try {
-                        File file = new File(holder.mItem.getJvalue());
+                        File file = new File(holder.mItem.getJvalue(), credential);
                         credential.sendFileDeleteRequest(context, file.getFileId(), responseHandler);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        progress.dismiss();
+                        ProgressUtils.dismiss(progress);
                     }
                 } else {
                     mValues.remove(holder.mItem);
@@ -214,6 +264,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
         public final TextView mLabelView;
         public final EditText mLabelEdit;
         public final EditText mValueEdit;
+        public final EditPasswordTextItem mValuePasswordEdit;
         public final AppCompatImageButton deleteButton;
         public final LinearLayout displayCustomFieldLayout;
         public final LinearLayout editCustomFieldLayout;
@@ -226,6 +277,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             mLabelView = (TextView) view.findViewById(R.id.customFieldLabel);
             mLabelEdit = (EditText) view.findViewById(R.id.customFieldEditLabel);
             mValueEdit = (EditText) view.findViewById(R.id.customFieldEditValue);
+            mValuePasswordEdit = (EditPasswordTextItem) view.findViewById(R.id.customFieldEditValuePassword);
             deleteButton = (AppCompatImageButton) view.findViewById(R.id.deleteCustomFieldButton);
             displayCustomFieldLayout = (LinearLayout) view.findViewById(R.id.displayCustomFieldLayout);
             editCustomFieldLayout = (LinearLayout) view.findViewById(R.id.editCustomFieldLayout);
@@ -236,6 +288,7 @@ public class CustomFieldEditAdapter extends RecyclerView.Adapter<CustomFieldEdit
             mValueEdit.setVisibility(View.VISIBLE);
             mLabelView.setVisibility(View.INVISIBLE);
             mLabelEdit.setVisibility(View.VISIBLE);
+            mValuePasswordEdit.setHint(mView.getContext().getString(R.string.password));
 
             WindowManager vm = (WindowManager) mView.getContext().getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
 

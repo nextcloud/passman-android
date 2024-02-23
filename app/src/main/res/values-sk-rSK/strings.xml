@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nesprávna URL Nextcloud backend servera alebo sa nie je možné pripojiť</string>
     <string name="wrongNCSettings">Nesprávne nastavenia</string>
     <string name="net_error">Chyba siete</string>
+    <string name="net_error_dialog_description">Nepodarilo sa pripojiť k serveru!\nZmeny nie je možné uložiť bez funkčného pripojenia k serveru.</string>
     <string name="unlock">Odomknúť</string>
     <string name="wrong_vault_pw">Nesprávne heslo k trezoru</string>
     <string name="label">Štítok</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">Timeout požiadavky o odpoveď (v sekundách)</string>
     <string name="expert_settings">Expertné nastavenia</string>
     <string name="confirm_credential_deletion">Naozaj chcete odstrániť tieto prihlasovacie údaje?</string>
+    <string name="confirm_vault_deletion">Naozaj chcete zmazať tento trezor?</string>
     <string name="yes">Áno</string>
     <string name="cancel">Zrušiť</string>
     <string name="enable_credential_list_icons">Povoliť ikony v zozname účtov</string>
@@ -71,4 +73,22 @@
     <string name="password_generator_use_lowercase">Použiť malé znaky</string>
     <string name="password_generator_use_uppercase">Použiť veľké znaky</string>
     <string name="password_length">Dĺžka hesla</string>
+    <string name="vault_name">Názov trezora</string>
+    <string name="sharing_key_strength">Odolnosť kľúča pre zdieľanie</string>
+    <string name="new_vault_name">Nové meno trozora</string>
+    <string name="offline_cache">Offline vyrovnávacia pamäť</string>
+    <string name="offline_cache_description">Ukladá do vyrovnávacej pamäte šifrované trezory, ak boli načítané manuálne</string>
+    <string name="enable_offline_cache">Zapnúť offline vyrovnávaciu pamäť</string>
+    <string name="clear_offline_cache">Vyčistiť offline vyrovnávaciu pamäť</string>
+    <string name="nextcloud_single_sign_on">Zjednotené prihlasovanie Nextcloud</string>
+    <string name="manual_login">Ručné prihlásenie</string>
+    <string name="confirm_account_logout">Naozaj sa chcete odhlásiť?</string>
+    <string name="digits">Číslic</string>
+    <string name="period">Obdobie</string>
+    <string name="value">Hodnota</string>
+    <string name="faq">FAQ</string>
+    <string name="secret">Tajný kľúč</string>
+    <string name="issuer">Vydavateľ</string>
+    <string name="error_parsing_qr_code">Chyba pri spracovávaní QR kódu</string>
+    <string name="camera_permission_denied">Prístup ku kamere bol odmietnutý</string>
     </resources>

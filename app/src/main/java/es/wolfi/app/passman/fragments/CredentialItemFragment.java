@@ -68,12 +68,19 @@ public class CredentialItemFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private AsyncTask filterTask = null;
     private RecyclerView recyclerView;
+    private Vault customVault = null;
+    private boolean enableLimitedAutofillView = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public CredentialItemFragment() {
+    }
+
+    public CredentialItemFragment(Vault customVault, boolean enableLimitedAutofillView) {
+        this.customVault = customVault;
+        this.enableLimitedAutofillView = enableLimitedAutofillView;
     }
 
     // TODO: Customize parameter initialization
@@ -96,11 +103,18 @@ public class CredentialItemFragment extends Fragment {
     }
 
     public void loadCredentialList(View view) {
-        final Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
+        if (this.customVault == null) {
+            loadCredentialList(view, (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString()));
+        } else {
+            loadCredentialList(view, this.customVault);
+        }
+    }
+
+    public void loadCredentialList(View view, final Vault vault) {
         final EditText searchInput = (EditText) view.findViewById(R.id.search_input);
         final AppCompatImageButton toggleSortButton = (AppCompatImageButton) view.findViewById(R.id.toggle_sort_button);
 
-        if (v != null) {
+        if (vault != null) {
             searchInput.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -109,7 +123,7 @@ public class CredentialItemFragment extends Fragment {
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    applyFilters(v, searchInput);
+                    applyFilters(vault, searchInput);
                 }
 
                 @Override
@@ -123,12 +137,12 @@ public class CredentialItemFragment extends Fragment {
                     sortMethod = (++sortMethod % 3);
                     updateToggleSortButtonImage(toggleSortButton);
 
-                    v.sort(sortMethod);
-                    applyFilters(v, searchInput);
+                    vault.sort(sortMethod);
+                    applyFilters(vault, searchInput);
                 }
             });
-            v.sort(sortMethod);
-            recyclerView.setAdapter(new CredentialViewAdapter(v.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
+            vault.sort(sortMethod);
+            recyclerView.setAdapter(new CredentialViewAdapter(vault.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
             scrollToLastPosition();
             updateToggleSortButtonImage(toggleSortButton);
         } else {
@@ -169,19 +183,21 @@ public class CredentialItemFragment extends Fragment {
         View credentialView = view.findViewById(R.id.list);
         if (credentialView instanceof RecyclerView) {
 
-            FloatingActionButton addCredentialButton = view.findViewById(R.id.addCredentialButton);
-            addCredentialButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getParentFragmentManager()
-                            .beginTransaction()
-                            .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                            .replace(R.id.content_password_list, CredentialAddFragment.newInstance(), "credentialAdd")
-                            .addToBackStack(null)
-                            .commit();
-                }
-            });
-            addCredentialButton.setVisibility(View.VISIBLE);
+            if (!this.enableLimitedAutofillView) {
+                FloatingActionButton addCredentialButton = view.findViewById(R.id.addCredentialButton);
+                addCredentialButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        getParentFragmentManager()
+                                .beginTransaction()
+                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                                .replace(R.id.content_password_list, CredentialAddFragment.newInstance(), "credentialAdd")
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                });
+                addCredentialButton.setVisibility(View.VISIBLE);
+            }
 
             Context context = credentialView.getContext();
             recyclerView = (RecyclerView) credentialView;

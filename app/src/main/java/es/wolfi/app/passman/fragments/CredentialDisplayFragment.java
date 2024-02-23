@@ -21,7 +21,6 @@
 
 package es.wolfi.app.passman.fragments;
 
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,7 +28,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.LinearInterpolator;
 import android.webkit.URLUtil;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -45,20 +43,20 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.bierbaumer.otp_authenticator.TOTPHelper;
 
-import org.apache.commons.codec.binary.Base32;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import es.wolfi.app.passman.CopyTextItem;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.adapters.CustomFieldViewAdapter;
 import es.wolfi.app.passman.adapters.FileViewAdapter;
+import es.wolfi.app.passman.databinding.FragmentCredentialDisplayBinding;
 import es.wolfi.passman.API.Credential;
+import es.wolfi.passman.API.CredentialACL;
 import es.wolfi.passman.API.File;
+import es.wolfi.passman.API.SharingACL;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.IconUtils;
 
@@ -71,32 +69,22 @@ import es.wolfi.utils.IconUtils;
 public class CredentialDisplayFragment extends Fragment {
     public static String CREDENTIAL = "credential";
 
-    @BindView(R.id.credentialIcon)
+    private FragmentCredentialDisplayBinding binding;
+
     ImageView credentialIcon;
-    @BindView(R.id.credential_label)
     TextView label;
-    @BindView(R.id.credential_user)
     CopyTextItem user;
-    @BindView(R.id.credential_password)
     CopyTextItem password;
-    @BindView(R.id.credential_email)
     CopyTextItem email;
-    @BindView(R.id.credential_url)
     CopyTextItem url;
-    @BindView(R.id.credential_description)
     TextView description;
-    @BindView(R.id.credential_otp)
     CopyTextItem otp;
-    @BindView(R.id.credential_otp_progress)
     ProgressBar otp_progress;
-    @BindView(R.id.filesList)
-    RecyclerView filesList;
-    @BindView(R.id.customFieldsList)
-    RecyclerView customFieldsList;
 
     private Credential credential;
     private Handler handler;
     private Runnable otp_refresh = null;
+    private View fragmentView;
 
     private OnCredentialFragmentInteraction mListener;
     private OnListFragmentInteractionListener filelistListener;
@@ -122,43 +110,26 @@ public class CredentialDisplayFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    public void reloadCredentialFromActiveVaultIfPossible() {
         if (getArguments() != null) {
             Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
             if (v != null) {
-                credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+                Credential credential = v.findCredentialByGUID(getArguments().getString(CREDENTIAL));
+                if (credential != null) {   // credential may have been removed from vault in the meantime
+                    this.credential = credential;
+                }
             }
         }
+    }
 
-        if (credential != null) {
-            handler = new Handler();
-            try {
-                JSONObject otpObj = new JSONObject(credential.getOtp());
-                if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
-                    String otpSecret = otpObj.getString("secret");
-                    otp_refresh = new Runnable() {
-                        @Override
-                        public void run() {
-                            int progress = (int) (System.currentTimeMillis() / 1000) % 30;
-                            otp_progress.setProgress(progress * 100);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        handler = new Handler();
 
-                            ObjectAnimator animation = ObjectAnimator.ofInt(otp_progress, "progress", (progress + 1) * 100);
-                            animation.setDuration(1000);
-                            animation.setInterpolator(new LinearInterpolator());
-                            animation.start();
+        reloadCredentialFromActiveVaultIfPossible();
 
-                            otp.setText(TOTPHelper.generate(new Base32().decode(otpSecret)));
-                            handler.postDelayed(this, 1000);
-                        }
-                    };
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        } else {
+        if (credential == null) {
             Toast.makeText(getContext(), getString(R.string.error_occurred), Toast.LENGTH_LONG).show();
             Log.e("CredentialDisplayFrag", "credential or vault is null");
         }
@@ -188,7 +159,19 @@ public class CredentialDisplayFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_credential_display, container, false);
+        binding = FragmentCredentialDisplayBinding.inflate(inflater, container, false);
+
+        credentialIcon = binding.credentialIcon;
+        label = binding.credentialLabel;
+        user = binding.credentialUser;
+        password = binding.credentialPassword;
+        email = binding.credentialEmail;
+        url = binding.credentialUrl;
+        description = binding.credentialDescription;
+        otp = binding.credentialOtp;
+        otp_progress = binding.contentOtpProgress.credentialOtpProgress;
+
+        return binding.getRoot();
     }
 
     @Override
@@ -211,10 +194,18 @@ public class CredentialDisplayFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
+        fragmentView = view;
+        updateViewContent();
+    }
 
+    public void updateViewContent() {
         if (credential != null) {
-            FloatingActionButton editCredentialButton = view.findViewById(R.id.editCredentialButton);
+            if (fragmentView == null) {
+                Log.d("updateViewContent", "fragmentView is null (due to a previous activity unload)");
+                return;
+            }
+
+            FloatingActionButton editCredentialButton = fragmentView.findViewById(R.id.editCredentialButton);
             editCredentialButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -226,19 +217,24 @@ public class CredentialDisplayFragment extends Fragment {
                             .commit();
                 }
             });
-            editCredentialButton.setVisibility(View.VISIBLE);
+            CredentialACL acl = credential.getCredentialACL();
+            if (acl == null || (acl.getPermissions() != null && acl.getPermissions().hasPermission(SharingACL.PERMISSION.WRITE))) {
+                editCredentialButton.setVisibility(View.VISIBLE);
+            } else {
+                editCredentialButton.setVisibility(View.INVISIBLE);
+            }
 
 
-            RecyclerView filesListRecyclerView = (RecyclerView) view.findViewById(R.id.filesList);
+            RecyclerView filesListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.filesList);
             filesListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             filesListRecyclerView.setAdapter(new FileViewAdapter(credential.getFilesList(), filelistListener));
 
-            RecyclerView customFieldsListRecyclerView = (RecyclerView) view.findViewById(R.id.customFieldsList);
+            RecyclerView customFieldsListRecyclerView = (RecyclerView) fragmentView.findViewById(R.id.customFieldsList);
             customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential.getCustomFieldsList(), filelistListener));
+            customFieldsListRecyclerView.setAdapter(new CustomFieldViewAdapter(credential, filelistListener));
 
             if (credential.getCompromised().equals("true")) {
-                TextView passwordLabel = view.findViewById(R.id.credential_password_label);
+                TextView passwordLabel = fragmentView.findViewById(R.id.credential_password_label);
                 passwordLabel.setBackgroundColor(getResources().getColor(R.color.compromised));
             }
 
@@ -251,16 +247,53 @@ public class CredentialDisplayFragment extends Fragment {
             url.setText(credential.getUrl());
             description.setText(credential.getDescription());
             otp.setEnabled(false);
-            IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
+
+            // overwrite real credential icon for every shared credential
+            if (credential.getCredentialACL() != null) {
+                // shared with me
+                credentialIcon.setImageResource(R.drawable.ic_baseline_share_24);
+            } else if (credential.isASharedCredential()) {
+                // shared with other (use as alternative to fa-share-alt-square)
+                credentialIcon.setImageResource(R.drawable.ic_baseline_share_24);
+                credentialIcon.setBackgroundColor(getResources().getColor(R.color.cardview_dark_background));
+                credentialIcon.setColorFilter(getResources().getColor(R.color.white));
+            } else {
+                IconUtils.loadIconToImageView(credential.getFavicon(), credentialIcon);
+            }
 
             if (URLUtil.isValidUrl(credential.getUrl())) {
                 url.setModeURL();
             }
 
-            if (otp_refresh == null) {
-                otp_progress.setProgress(0);
+            otp_progress.setProgress(0);
+
+            try {
+                JSONObject otpObj = new JSONObject(credential.getOtp());
+                if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
+                    String otpSecret = otpObj.getString("secret");
+                    int otpDigits = 6;
+                    if (otpObj.has("digits")) {
+                        otpDigits = otpObj.getInt("digits");
+                    }
+                    int otpPeriod = 30;
+                    if (otpObj.has("period")) {
+                        otpPeriod = otpObj.getInt("period");
+                    }
+
+                    int finalOtpDigits = otpDigits;
+                    int finalOtpPeriod = otpPeriod;
+                    otp_refresh = TOTPHelper.run(handler, otp_progress, otp.getTextView(), finalOtpDigits, finalOtpPeriod, otpSecret);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

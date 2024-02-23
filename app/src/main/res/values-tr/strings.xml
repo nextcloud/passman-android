@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">Nextcloud yönetim bölümü adresi yanlış ya da bağlanılamıyor</string>
     <string name="wrongNCSettings">Ayarlar hatalı</string>
     <string name="net_error">Ağ sorunu</string>
+    <string name="net_error_dialog_description">Sunucu ile bağlantı kurulamadı!\nDeğişiklikler, çalışan bir sunucu bağlantısı olmadan kaydedilemez.</string>
     <string name="unlock">Kilidi aç</string>
     <string name="wrong_vault_pw">Kasa parolası yanlış</string>
     <string name="label">Etiket</string>
@@ -56,14 +57,15 @@
     <string name="request_response_timeout">İstek yanıtı zaman aşımı (saniye)</string>
     <string name="expert_settings">Uzman ayarları</string>
     <string name="confirm_credential_deletion">Bu kimlik doğrulama bilgisini silmek istediğinize emin misiniz?</string>
+    <string name="confirm_vault_deletion">Bu kasayı silmek istediğinize emin misiniz?</string>
     <string name="yes">Evet</string>
     <string name="cancel">İptal</string>
     <string name="enable_credential_list_icons">Kimlik doğrulama listesi simgeleri kullanılsın</string>
     <string name="credential_icon">Kimlik doğrulama bilgileri simgesi</string>
     <string name="clear_clipboard_delay">Pano temizlensin (bu kadar saniye sonra)</string>
-    <string name="generate_password">Parola üret</string>
-    <string name="generate_password_to_clipboard">Rastgele bir parola üreterek panoya kopyalar</string>
-    <string name="enable_password_generator_shortcut_description">Parola üreteci uygulaması kısayolu etkinleştirilsin</string>
+    <string name="generate_password">Parola oluştur</string>
+    <string name="generate_password_to_clipboard">Rastgele bir parola oluşturarak panoya kopyalar</string>
+    <string name="enable_password_generator_shortcut_description">Parola oluşturma uygulaması kısayolu etkinleştirilsin</string>
     <string name="password_generator_require_every_char_type">Her karakter türü istensin</string>
     <string name="password_generator_avoid_ambiguous_chars">Şüpheli karakterler kullanılmasın</string>
     <string name="password_generator_use_special_chars">Özel karakterler kullanılsın</string>
@@ -71,4 +73,27 @@
     <string name="password_generator_use_lowercase">Küçük harf karakterler kullanılsın</string>
     <string name="password_generator_use_uppercase">Büyük harf karakterler kullanılsın</string>
     <string name="password_length">Parola uzunluğu</string>
-    </resources>
+    <string name="vault_name">Kasa adı</string>
+    <string name="sharing_key_strength">Paylaşılan anahtar güçlüğü</string>
+    <string name="new_vault_name">Yeni kasa adı</string>
+    <string name="offline_cache">Çevrim dışı ön bellek</string>
+    <string name="offline_cache_description">El ile olarak yüklenmişlerse şifrelenmiş kasaları ön belleğe alır</string>
+    <string name="enable_offline_cache">Çevrim dışı ön bellek kullanılsın</string>
+    <string name="clear_offline_cache">Çevrim dışı ön belleği temizle</string>
+    <string name="nextcloud_single_sign_on">Nextcloud tek oturum açma</string>
+    <string name="manual_login">El ile oturum açma</string>
+    <string name="confirm_account_logout">Oturumu kapatmak istediğinize emin misiniz?</string>
+    <string name="digits">Rakamlar</string>
+    <string name="period">Aralık</string>
+    <string name="value">Değer</string>
+    <string name="faq">SSS</string>
+    <string name="secret">Parola</string>
+    <string name="issuer">Yayınlayan</string>
+    <string name="error_parsing_qr_code">QR kodu işlenirken sorun çıktı</string>
+    <string name="camera_permission_denied">Kamera izni reddedildi</string>
+    <string name="no_matching_credentials_or_fields_found">Eşleşen bir kimlik doğrulama bilgisi ya da otomatik doldurulabilir bir alan bulunamadı</string>
+    <string name="no_active_vault_add_credential_error">Etkin bir kasa yok. Kimlik doğrulama bilgisi eklenemedi!</string>
+    <string name="automatic_autofill_vault_description">Otomatik doldurmanın yalnızca bir kasa etkin olarak açıkken ve uygulama içinden kilidi açılmışken yapılmasını istiyorsanız Otomatik olarak seçin.</string>
+    <string name="autofill_manual_search_fallback">Otomatik doldurma kullanılamadığında el ile kimlik bilgisi arama</string>
+    <string name="set_as_autofill_service">Otomatik doldurma hizmeti olarak ayarla</string>
+</resources>

@@ -64,10 +64,17 @@
     <string name="generate_password">Ustvari geslo</string>
     <string name="generate_password_to_clipboard">Ustvari naključno geslo in ga kopiraj v odložišče</string>
     <string name="enable_password_generator_shortcut_description">Omogoči bližnjico do programa ustvarjalnika gesel</string>
+    <string name="password_generator_require_every_char_type">Zahtevaj vse vrste znakov</string>
     <string name="password_generator_avoid_ambiguous_chars">Izogni se dvoumnim znakom</string>
     <string name="password_generator_use_special_chars">Uporabi posebne znake</string>
     <string name="password_generator_use_digits">Uporabi številke</string>
     <string name="password_generator_use_lowercase">Uporabi male črke</string>
     <string name="password_generator_use_uppercase">Uporabi velike črke</string>
     <string name="password_length">Dolžina gesla</string>
+    <string name="new_vault_name">Novo ime zbirnika gesel</string>
+    <string name="digits">Števke</string>
+    <string name="period">Obdobje</string>
+    <string name="value">Vrednost</string>
+    <string name="secret">Skrivna koda</string>
+    <string name="issuer">Izdajatelj</string>
     </resources>

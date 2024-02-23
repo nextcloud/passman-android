@@ -3,6 +3,7 @@
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2022, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -26,12 +27,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,8 +65,8 @@ public class Credential extends Core implements Filterable {
     protected String otp;
     protected boolean hidden;
     protected String sharedKey;
-    private String sharedKeyDecrypted;
     protected String compromised;
+    protected CredentialACL acl;
 
     protected Vault vault;
 
@@ -209,7 +210,7 @@ public class Credential extends Core implements Filterable {
                 JSONArray files = new JSONArray(fileString);
                 for (int i = 0; i < files.length(); i++) {
                     JSONObject o = files.getJSONObject(i);
-                    fileList.add(new File(o));
+                    fileList.add(new File(o, this));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -267,7 +268,7 @@ public class Credential extends Core implements Filterable {
     }
 
     public void setOtp(String otp) {
-        this.otp = encryptString(otp);
+        this.otp = encryptRawStringData(otp);
     }
 
     public boolean isHidden() {
@@ -300,6 +301,14 @@ public class Credential extends Core implements Filterable {
         this.compromised = encryptRawStringData(compromised ? "true" : "false");
     }
 
+    public CredentialACL getCredentialACL() {
+        return this.acl;
+    }
+
+    public void setCredentialACL(CredentialACL acl) {
+        this.acl = acl;
+    }
+
     public Vault getVault() {
         return vault;
     }
@@ -309,36 +318,54 @@ public class Credential extends Core implements Filterable {
         vaultId = vault.vault_id;
     }
 
+    /**
+     * Returns a custom encryption key or null if no custom key is required.
+     */
+    private String getCustomCredentialEncryptionKey() {
+        if (isASharedCredential() && this.acl == null) {
+            return vault.decryptString(this.sharedKey);
+        } else if (this.acl != null) {
+            return vault.decryptString(this.acl.shared_key);
+        }
+        return null;
+    }
+
+    /**
+     * Returns a custom decryption key or null if no custom key is required.
+     */
+    private String getCustomCredentialDecryptionKey() {
+        if (isASharedCredential()) {
+            return vault.decryptString(this.sharedKey);
+        }
+        return getCustomCredentialEncryptionKey();
+    }
+
     public String encryptString(String plaintext) {
-        if (this.isEncryptedWithSharedKey()) {
-            return vault.encryptString(plaintext, this.sharedKeyDecrypted);
+        String customKey = getCustomCredentialEncryptionKey();
+        if (customKey != null) {
+            return vault.encryptString(plaintext, customKey);
         }
         return vault.encryptString(plaintext);
     }
 
     public String encryptRawStringData(String plaintext) {
-        if (this.isEncryptedWithSharedKey()) {
-            return vault.encryptRawStringData(plaintext, this.sharedKeyDecrypted);
+        String customKey = getCustomCredentialEncryptionKey();
+        if (customKey != null) {
+            return vault.encryptRawStringData(plaintext, customKey);
         }
         return vault.encryptRawStringData(plaintext);
     }
 
     public String decryptString(String cryptogram) {
-        if (this.isEncryptedWithSharedKey()) {
-            return vault.decryptString(cryptogram, this.sharedKeyDecrypted);
+        String customKey = getCustomCredentialDecryptionKey();
+        if (customKey != null) {
+            return vault.decryptString(cryptogram, customKey);
         }
         return vault.decryptString(cryptogram);
     }
 
-    private boolean isEncryptedWithSharedKey() {
-        if (this.sharedKeyDecrypted == null && this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null")) {
-            this.sharedKeyDecrypted = vault.decryptString(this.sharedKey);
-        }
-        return this.sharedKeyDecrypted != null && this.sharedKeyDecrypted.length() > 1 && !this.sharedKeyDecrypted.equals("null");
-    }
-
-    public void resetDecryptedSharedKey() {
-        this.sharedKeyDecrypted = null;
+    public boolean isASharedCredential() {
+        return this.sharedKey != null && this.sharedKey.length() > 1 && !this.sharedKey.equals("null");
     }
 
     public JSONObject getAsJSONObject() throws JSONException {
@@ -385,10 +412,8 @@ public class Credential extends Core implements Filterable {
         return params;
     }
 
-    public RequestParams getAsRequestParams(boolean forUpdate, boolean useJsonStreamer) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(useJsonStreamer);
-
+    public JSONObject getAsJsonObjectForApiRequest(boolean forUpdate) throws JSONException {
+        JSONObject params = new JSONObject();
         JSONObject icon = null;
 
         if (forUpdate) {
@@ -410,6 +435,10 @@ public class Credential extends Core implements Filterable {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (acl != null) {
+            params.put("acl", acl.getAsJSONObject());
         }
 
         params.put("vault_id", getVaultId());
@@ -475,11 +504,17 @@ public class Credential extends Core implements Filterable {
 
         c.expireTime = j.getLong("expire_time");
         c.deleteTime = j.getLong("delete_time");
-        c.files = j.getString("files");
-        c.customFields = j.getString("custom_fields");
+        if (j.has("files")) {
+            c.files = j.getString("files");
+        }
+        if (j.has("custom_fields")) {
+            c.customFields = j.getString("custom_fields");
+        }
         c.otp = j.getString("otp");
         c.hidden = (j.getInt("hidden") > 0);
-        c.sharedKey = j.getString("shared_key");
+        if (j.has("shared_key")) {
+            c.sharedKey = j.getString("shared_key");
+        }
 
         return c;
     }
@@ -496,32 +531,36 @@ public class Credential extends Core implements Filterable {
 
     public void save(Context c, final AsyncHttpResponseHandler responseHandler) {
         try {
-            requestAPI(c, "credentials", getAsRequestParams(false, true), "POST", responseHandler);
-        } catch (MalformedURLException e) {
+            requestAPI(c, "credentials", getAsJsonObjectForApiRequest(false), "POST", responseHandler);
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void update(Context c, final AsyncHttpResponseHandler responseHandler) {
         try {
-            requestAPI(c, "credentials/" + getGuid(), getAsRequestParams(true, true), "PATCH", responseHandler);
-        } catch (MalformedURLException e) {
+            requestAPI(c, "credentials/" + getGuid(), getAsJsonObjectForApiRequest(true), "PATCH", responseHandler);
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void sendFileDeleteRequest(Context c, int file_id, final AsyncHttpResponseHandler responseHandler) {
-        RequestParams params = new RequestParams();
+        JSONObject params = new JSONObject();
         try {
             requestAPI(c, "file/" + file_id, params, "DELETE", responseHandler);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
 
     public void uploadFile(Context c, String encodedFile, String fileName, String mimeType, int fileSize, final AsyncHttpResponseHandler responseHandler, ProgressDialog progress) {
-        RequestParams params = new RequestParams();
-        params.setUseJsonStreamer(true);
+        JSONObject params = new JSONObject();
+
+        String endpoint = "file";
+        if (isASharedCredential()) {
+            endpoint = "sharing/credential/" + getGuid() + "/file";
+        }
 
         progress.setMessage(c.getString(R.string.wait_while_encrypting));
         try {
@@ -530,8 +569,8 @@ public class Credential extends Core implements Filterable {
             params.put("mimetype", mimeType);
             params.put("size", fileSize);
             progress.setMessage(c.getString(R.string.wait_while_uploading));
-            requestAPI(c, "file", params, "POST", responseHandler);
-        } catch (MalformedURLException e) {
+            requestAPI(c, endpoint, params, "POST", responseHandler);
+        } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }

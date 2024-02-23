@@ -1,45 +1,46 @@
 /**
- *  Passman Android App
+ * Passman Android App
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.adapters.VaultViewAdapter;
+import es.wolfi.app.passman.databinding.FragmentVaultListBinding;
 import es.wolfi.passman.API.Vault;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * A fragment representing a list of Items.
@@ -48,6 +49,7 @@ import java.util.HashMap;
  * interface.
  */
 public class VaultFragment extends Fragment {
+    private FragmentVaultListBinding binding;
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -84,23 +86,41 @@ public class VaultFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vault_list, container, false);
+        binding = FragmentVaultListBinding.inflate(inflater, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-
-            HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
-            ArrayList<Vault> l = new ArrayList<Vault>(vaults.values());
-            recyclerView.setAdapter(new VaultViewAdapter(l, mListener));
+        Context context = binding.list.getContext();
+        if (mColumnCount <= 1) {
+            binding.list.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            binding.list.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
-        return view;
+
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
+        ArrayList<Vault> l = new ArrayList<Vault>();
+        if (vaults != null) {
+            l = new ArrayList<Vault>(vaults.values());
+        }
+        binding.list.setAdapter(new VaultViewAdapter(getContext(), l, mListener, getParentFragmentManager()));
+
+        binding.addVaultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
+                        .replace(R.id.content_password_list, VaultAddFragment.newInstance(), "vault")
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override

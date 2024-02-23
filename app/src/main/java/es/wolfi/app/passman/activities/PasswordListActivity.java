@@ -3,6 +3,7 @@
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -58,7 +59,6 @@ import androidx.fragment.app.FragmentManager;
 import com.koushikdutta.async.future.FutureCallback;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -99,6 +99,8 @@ public class PasswordListActivity extends AppCompatActivity implements
     private static final int REQUEST_CODE_KEYGUARD = 0;
     private static final int REQUEST_CODE_AUTHENTICATE = 1;
     private static final int REQUEST_CODE_CREATE_DOCUMENT = 2;
+    public static final int REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_EDIT = 7;
+    public static final int REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD = 8;
 
     static boolean running = false;
 
@@ -164,7 +166,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                 @Override
                 public void onCompleted(Exception e, Boolean loggedIn) {
                     // To dismiss the dialog
-                    progress.dismiss();
+                    ProgressUtils.dismiss(progress);
 
                     attachClipboardListener();
 
@@ -258,32 +260,35 @@ public class PasswordListActivity extends AppCompatActivity implements
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                     .replace(R.id.content_password_list, new VaultFragment(), "vaults")
                     .addToBackStack(null)
-                    .commit();
+                    .commitAllowingStateLoss();
             Log.d("PL", "committed transaction");
         } else {
-            final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
-            progress.show();
-            Vault.getVaults(this, (e, result) -> {
-                progress.dismiss();
-                if (e != null) {
-                    // Not logged in, restart activity
-                    if (Objects.equals(e.getMessage(), "401")) {
-                        recreate();
+            this.runOnUiThread(() -> {
+                final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
+                progress.show();
+
+                Vault.getVaults(this, (e, result) -> {
+                    ProgressUtils.dismiss(progress);
+                    if (e != null) {
+                        // Not logged in, restart activity
+                        if (Objects.equals(e.getMessage(), "401")) {
+                            recreate();
+                        }
+
+                        Toast.makeText(getApplicationContext(), getString(R.string.net_error), Toast.LENGTH_LONG).show();
+
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                showVaults();
+                            }
+                        }, 30000);
+                        return;
                     }
 
-                    Toast.makeText(getApplicationContext(), getString(R.string.net_error), Toast.LENGTH_LONG).show();
-
-                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showVaults();
-                        }
-                    }, 30000);
-                    return;
-                }
-
-                ton.addExtra(SettingValues.VAULTS.toString(), result);
-                showVaults();
+                    ton.addExtra(SettingValues.VAULTS.toString(), result);
+                    showVaults();
+                });
             });
         }
     }
@@ -302,16 +307,17 @@ public class PasswordListActivity extends AppCompatActivity implements
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
                         .replace(R.id.content_password_list, new CredentialItemFragment(), "vault")
                         .addToBackStack(null)
-                        .commit();
+                        .commitAllowingStateLoss();
             } else {
                 showUnlockVault();
             }
-            progress.dismiss();
+            ProgressUtils.dismiss(progress);
         } else {
+            final AppCompatActivity self = this;
             Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
                 @Override
                 public void onCompleted(Exception e, Vault result) {
-                    progress.dismiss();
+                    ProgressUtils.dismiss(progress);
                     if (e != null) {
                         // Not logged in, restart activity
                         if (e.getMessage() != null && e.getMessage().equals("401")) {
@@ -331,12 +337,16 @@ public class PasswordListActivity extends AppCompatActivity implements
                     }
 
                     // Update the vault record to avoid future loads
-                    ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(result.guid, result);
+                    HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+                    if (vaults != null) {
+                        vaults.put(result.guid, result);
+                    }
 
                     ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), result);
-                    showActiveVault();
-
-                    Vault.updateAutofillVault(result, settings);
+                    self.runOnUiThread(() -> {
+                        showActiveVault();
+                        Vault.updateAutofillVault(result, settings);
+                    });
                 }
             });
         }
@@ -353,9 +363,9 @@ public class PasswordListActivity extends AppCompatActivity implements
         getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                .replace(R.id.content_password_list, new VaultLockScreenFragment(), "vault")
+                .replace(R.id.content_password_list, VaultLockScreenFragment.newInstance(v), "vault")
                 .addToBackStack(null)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     void lockVault() {
@@ -385,6 +395,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         Vault.updateAutofillVault(v, settings);
         try {
             OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+            OfflineStorage.getInstance().commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -410,18 +421,25 @@ public class PasswordListActivity extends AppCompatActivity implements
         Vault.updateAutofillVault(v, settings);
         try {
             OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+            OfflineStorage.getInstance().commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         Fragment vaultFragment = getSupportFragmentManager().findFragmentByTag("vault");
-
         if (vaultFragment != null && vaultFragment.isVisible()) {
-            Log.e("refreshVault", "load credentials into content password list");
+            Log.d("refreshVault", "load credentials into content password list");
             CredentialItemFragment credentialItems = (CredentialItemFragment)
                     getSupportFragmentManager().findFragmentById(R.id.content_password_list);
             assert credentialItems != null;
             credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+        }
+
+        CredentialDisplayFragment credentialDisplayFragment = (CredentialDisplayFragment) getSupportFragmentManager().findFragmentByTag("credential");
+        if (credentialDisplayFragment != null) {
+            Log.d("refreshCredential", "load credential into current credential display fragment");
+            credentialDisplayFragment.reloadCredentialFromActiveVaultIfPossible();
+            credentialDisplayFragment.updateViewContent();
         }
     }
 
@@ -435,6 +453,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         Vault.updateAutofillVault(v, settings);
         try {
             OfflineStorage.getInstance().putObject(v.guid, Vault.asJson(v));
+            OfflineStorage.getInstance().commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -450,6 +469,20 @@ public class PasswordListActivity extends AppCompatActivity implements
         }
     }
 
+    public void addVaultToCurrentLocalVaultList(Vault vault) {
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+        vaults.put(vault.guid, vault);
+        ton.removeExtra(SettingValues.VAULTS.toString());
+        ton.addExtra(SettingValues.VAULTS.toString(), vaults);
+    }
+
+    public void deleteVaultInCurrentLocalVaultList(Vault vault) {
+        HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+        vaults.remove(vault.guid);
+        ton.removeExtra(SettingValues.VAULTS.toString());
+        ton.addExtra(SettingValues.VAULTS.toString(), vaults);
+    }
+
     void refreshVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
@@ -457,7 +490,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         Vault.getVault(this, vault.guid, new FutureCallback<Vault>() {
             @Override
             public void onCompleted(Exception e, Vault result) {
-                progress.dismiss();
+                ProgressUtils.dismiss(progress);
                 if (e != null) {
                     // Not logged in, restart activity
                     if (e.getMessage() != null && e.getMessage().equals("401")) {
@@ -494,7 +527,12 @@ public class PasswordListActivity extends AppCompatActivity implements
                     CredentialItemFragment credentialItems = (CredentialItemFragment)
                             getSupportFragmentManager().findFragmentById(R.id.content_password_list);
                     assert credentialItems != null;
-                    credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            credentialItems.loadCredentialList(findViewById(R.id.content_password_list));
+                        }
+                    });
                 }
             }
         });
@@ -528,7 +566,7 @@ public class PasswordListActivity extends AppCompatActivity implements
             Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
                 public void onCompleted(Exception e, Boolean loggedIn) {
-                    progress.dismiss();
+                    ProgressUtils.dismiss(progress);
 
                     if (loggedIn) {
                         showVaults();
@@ -597,6 +635,11 @@ public class PasswordListActivity extends AppCompatActivity implements
             case R.id.action_settings:
                 settingsButtonPressed();
                 return true;
+            case R.id.action_faq:
+                String url = "https://github.com/nextcloud/passman-android/blob/master/FAQ.md";
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(Intent.createChooser(intent, "Browse with"));
+                return true;
             case R.id.action_refresh:
                 refreshButtonPressed();
                 return true;
@@ -609,7 +652,7 @@ public class PasswordListActivity extends AppCompatActivity implements
     }
 
     public void showLockVaultButton() {
-        this.VaultLockButton.setVisibility(View.VISIBLE);
+        this.runOnUiThread(() -> this.VaultLockButton.setVisibility(View.VISIBLE));
     }
 
     private void showNotImplementedMessage() {
@@ -666,43 +709,36 @@ public class PasswordListActivity extends AppCompatActivity implements
         progress.setMessage(getString(R.string.wait_while_downloading));
         progress.show();
 
-        FutureCallback<String> cb = new FutureCallback<String>() {
+        FutureCallback<String> offerDownloadCallback = new FutureCallback<String>() {
             @Override
-            public void onCompleted(Exception e, String result) {
-                if (result != null) {
-                    try {
-                        JSONObject o = new JSONObject(result);
-                        if (o.has("file_data")) {
-                            progress.setMessage(getString(R.string.wait_while_decrypting));
-                            String[] decryptedSplitString = v.decryptString(o.getString("file_data")).split(",");
-                            if (decryptedSplitString.length == 2) {
-                                Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-                                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                                intent.putExtra(Intent.EXTRA_TITLE, item.getFilename());
-                                intent.setType(item.getMimetype());
+            public void onCompleted(Exception e, String decryptedFileDataField) {
+                if (decryptedFileDataField != null) {
+                    String[] decryptedSplitString = decryptedFileDataField.split(",");
+                    if (decryptedSplitString.length == 2) {
+                        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+                        intent.addCategory(Intent.CATEGORY_OPENABLE);
+                        intent.putExtra(Intent.EXTRA_TITLE, item.getFilename());
+                        intent.setType(item.getMimetype());
 
-                                // intent.putExtra and a later intent.getExtra seem not to work
-                                //intent.putExtra("custom_data", decryptedSplitString[1]);
-                                intentFilecontent = decryptedSplitString[1];
+                        // intent.putExtra and a later intent.getExtra seem not to work
+                        //intent.putExtra("custom_data", decryptedSplitString[1]);
+                        intentFilecontent = decryptedSplitString[1];
 
-                                // Optionally, specify a URI for the directory that should be opened in
-                                // the system file picker when your app creates the document.
-                                //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
+                        // Optionally, specify a URI for the directory that should be opened in
+                        // the system file picker when your app creates the document.
+                        //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
-                                startActivityForResult(intent, REQUEST_CODE_CREATE_DOCUMENT);
-                            }
-                        }
-                    } catch (JSONException ex) {
-                        ex.printStackTrace();
+                        startActivityForResult(intent, REQUEST_CODE_CREATE_DOCUMENT);
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.error_downloading_file), Toast.LENGTH_SHORT).show();
                     Log.e("FileSave", getString(R.string.error_downloading_file));
                 }
-                progress.dismiss();
+                ProgressUtils.dismiss(progress);
             }
         };
-        item.download(getApplicationContext(), cb);
+
+        item.download(getApplicationContext(), progress, offerDownloadCallback);
     }
 
     public void selectFileToAdd(int activityRequestFileCode) {
@@ -715,6 +751,10 @@ public class PasswordListActivity extends AppCompatActivity implements
         //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
 
         startActivityForResult(intent, activityRequestFileCode);
+    }
+
+    public void scanQRCodeForOTP(int requestCode) {
+        startActivityForResult(new Intent(this, ScanQRCodeActivity.class), requestCode);
     }
 
     @Override
@@ -737,6 +777,28 @@ public class PasswordListActivity extends AppCompatActivity implements
             } else {
                 // Proceed
                 showVaults();
+            }
+        }
+
+        if (requestCode == REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_EDIT) { // scan qr code as otp config in credential edit
+            if (resultCode != RESULT_OK) {
+                return;
+            }
+
+            CredentialEditFragment credentialEditFragment = (CredentialEditFragment) getSupportFragmentManager().findFragmentByTag("credentialEdit");
+            if (credentialEditFragment != null) {
+                credentialEditFragment.processScannedQRCodeData(data.getData().toString());
+            }
+        }
+
+        if (requestCode == REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD) { // scan qr code as otp config in credential add
+            if (resultCode != RESULT_OK) {
+                return;
+            }
+
+            CredentialAddFragment credentialAddFragment = (CredentialAddFragment) getSupportFragmentManager().findFragmentByTag("credentialAdd");
+            if (credentialAddFragment != null) {
+                credentialAddFragment.processScannedQRCodeData(data.getData().toString());
             }
         }
 
@@ -870,7 +932,7 @@ public class PasswordListActivity extends AppCompatActivity implements
 
     @Override
     public void onPause() {
-        super.onPause();
         OfflineStorage.getInstance().commit();
+        super.onPause();
     }
 }

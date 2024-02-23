@@ -3,6 +3,7 @@
  *
  * @copyright Copyright (c) 2016, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2016, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2022, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -22,18 +23,25 @@
 package es.wolfi.app.passman.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewManager;
+import android.view.autofill.AutofillManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -43,13 +51,19 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.koushikdutta.async.future.FutureCallback;
+import com.nextcloud.android.sso.AccountImporter;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
+import com.nextcloud.android.sso.model.SingleSignOnAccount;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import butterknife.ButterKnife;
 import es.wolfi.app.passman.OfflineStorage;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
@@ -62,6 +76,11 @@ import es.wolfi.utils.PasswordGenerator;
 
 
 public class SettingsFragment extends Fragment {
+
+    RelativeLayout manual_server_connection_settings;
+    RelativeLayout sso_settings;
+
+    TextView sso_user_server;
 
     EditText settings_nextcloud_url;
     EditText settings_nextcloud_user;
@@ -82,7 +101,10 @@ public class SettingsFragment extends Fragment {
     MaterialCheckBox enable_offline_cache_switch;
 
     TextView default_autofill_vault_title;
+    TextView default_autofill_vault_description;
     Spinner default_autofill_vault;
+    MaterialCheckBox enable_autofill_manual_search_fallback;
+    Button open_autofill_android_settings_button;
     EditText clear_clipboard_delay_value;
 
     EditText request_connect_timeout_value;
@@ -90,6 +112,7 @@ public class SettingsFragment extends Fragment {
     Button clear_offline_cache_button;
 
     SharedPreferences settings;
+    SingleSignOnAccount ssoAccount;
     PasswordGenerator passwordGenerator;
 
     public SettingsFragment() {
@@ -102,9 +125,7 @@ public class SettingsFragment extends Fragment {
      * @return A new instance of fragment SettingsFragment.
      */
     public static SettingsFragment newInstance() {
-        SettingsFragment fragment = new SettingsFragment();
-
-        return fragment;
+        return new SettingsFragment();
     }
 
     @Override
@@ -113,8 +134,16 @@ public class SettingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
+        manual_server_connection_settings = view.findViewById(R.id.manual_server_connection_settings);
+        sso_settings = view.findViewById(R.id.sso_settings);
+
         FloatingActionButton settingsSaveButton = view.findViewById(R.id.settings_save_button);
         settingsSaveButton.setOnClickListener(this.getSaveButtonListener());
+
+        Button sso_user_server_logout_button = view.findViewById(R.id.sso_user_server_logout_button);
+        sso_user_server_logout_button.setOnClickListener(this.getSSOLogoutButtonListener());
+
+        sso_user_server = view.findViewById(R.id.sso_user_server);
 
         settings_nextcloud_url = view.findViewById(R.id.settings_nextcloud_url);
         settings_nextcloud_user = view.findViewById(R.id.settings_nextcloud_user);
@@ -135,7 +164,10 @@ public class SettingsFragment extends Fragment {
         enable_offline_cache_switch = view.findViewById(R.id.enable_offline_cache_switch);
 
         default_autofill_vault_title = view.findViewById(R.id.default_autofill_vault_title);
+        default_autofill_vault_description = view.findViewById(R.id.default_autofill_vault_description);
         default_autofill_vault = view.findViewById(R.id.default_autofill_vault);
+        enable_autofill_manual_search_fallback = view.findViewById(R.id.enable_autofill_manual_search_fallback);
+        open_autofill_android_settings_button = view.findViewById(R.id.open_autofill_android_settings_button);
         clear_clipboard_delay_value = view.findViewById(R.id.clear_clipboard_delay_value);
 
         request_connect_timeout_value = view.findViewById(R.id.request_connect_timeout_value);
@@ -154,7 +186,26 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
+        Context context = getContext();
+
+        try {
+            ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(context);
+            manual_server_connection_settings.removeAllViews();
+            sso_settings.setVisibility(View.VISIBLE);
+
+            String hostname = "";
+            try {
+                URL uri = new URL(ssoAccount.url);
+                hostname = uri.getHost();
+            } catch (MalformedURLException e) {
+                Log.d("SettingsFragment", "Error parsing host from sso account");
+            }
+            sso_user_server.setText(String.format("%s@%s", ssoAccount.userId, hostname));
+        } catch (java.lang.NoSuchMethodError |
+                 NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+            manual_server_connection_settings.setVisibility(View.VISIBLE);
+            sso_settings.removeAllViews();
+        }
 
         settings_nextcloud_url.setText(KeyStoreUtils.getString(SettingValues.HOST.toString(), null));
         settings_nextcloud_user.setText(KeyStoreUtils.getString(SettingValues.USER.toString(), null));
@@ -162,7 +213,7 @@ public class SettingsFragment extends Fragment {
 
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
 
-        passwordGenerator = new PasswordGenerator(getContext());
+        passwordGenerator = new PasswordGenerator(context);
 
         settings_password_generator_shortcut_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), true));
         settings_password_generator_use_uppercase_switch.setChecked(passwordGenerator.isUseUppercase());
@@ -180,14 +231,15 @@ public class SettingsFragment extends Fragment {
         enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
         enable_offline_cache_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true));
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O && vaults != null && context != null) {
             String last_selected_guid = "";
             if (settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null) != null) {
                 last_selected_guid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
             }
-            Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
+
             String[] vault_names = new String[vaults.size() + 1];
-            vault_names[0] = getContext().getString(R.string.automatically);
+            vault_names[0] = context.getString(R.string.automatically);
             int i = 1;
             int selection_id = 0;
             for (Map.Entry<String, Vault> vault_entry : vaults) {
@@ -197,13 +249,32 @@ public class SettingsFragment extends Fragment {
                 vault_names[i] = vault_entry.getValue().name;
                 i++;
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, vault_names);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, vault_names);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             default_autofill_vault.setAdapter(adapter);
             default_autofill_vault.setSelection(selection_id);
+
+            enable_autofill_manual_search_fallback.setChecked(settings.getBoolean(SettingValues.ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK.toString(), true));
+
+            AutofillManager autofillManager = context.getSystemService(AutofillManager.class);
+            if (!autofillManager.hasEnabledAutofillServices()) {
+                open_autofill_android_settings_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SET_AUTOFILL_SERVICE);
+                        intent.setData(Uri.parse("package:" + context.getPackageName()));
+                        startActivity(intent);
+                    }
+                });
+            } else {
+                ((ViewManager) open_autofill_android_settings_button.getParent()).removeView(open_autofill_android_settings_button);
+            }
         } else {
             ((ViewManager) default_autofill_vault.getParent()).removeView(default_autofill_vault);
             ((ViewManager) default_autofill_vault_title.getParent()).removeView(default_autofill_vault_title);
+            ((ViewManager) default_autofill_vault_description.getParent()).removeView(default_autofill_vault_description);
+            ((ViewManager) enable_autofill_manual_search_fallback.getParent()).removeView(enable_autofill_manual_search_fallback);
+            ((ViewManager) open_autofill_android_settings_button.getParent()).removeView(open_autofill_android_settings_button);
         }
 
         clear_clipboard_delay_value.setText(String.valueOf(settings.getInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), 0)));
@@ -215,7 +286,7 @@ public class SettingsFragment extends Fragment {
 
     private Set<Map.Entry<String, Vault>> getVaultsEntrySet() {
         HashMap<String, Vault> vaults = (HashMap<String, Vault>) SingleTon.getTon().getExtra(SettingValues.VAULTS.toString());
-        return vaults.entrySet();
+        return vaults != null ? vaults.entrySet() : null;
     }
 
     @Override
@@ -227,6 +298,33 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    public View.OnClickListener getSSOLogoutButtonListener() {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage(R.string.confirm_account_logout);
+                builder.setCancelable(false);
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AccountImporter.clearAllAuthTokens(getContext());
+                        SingleAccountHelper.setCurrentAccount(getContext(), null);
+
+                        settings.edit().remove(SettingValues.HOST.toString()).commit();
+                        settings.edit().remove(SettingValues.USER.toString()).commit();
+                        settings.edit().remove(SettingValues.PASSWORD.toString()).commit();
+
+                        dialogInterface.dismiss();
+                        PasswordListActivity.triggerRebirth(Objects.requireNonNull(((PasswordListActivity) getActivity())));
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                builder.show();
+            }
+        };
     }
 
     public View.OnClickListener getSaveButtonListener() {
@@ -260,36 +358,39 @@ public class SettingsFragment extends Fragment {
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    if (default_autofill_vault.getSelectedItem().toString().equals(getContext().getString(R.string.automatically))) {
+                    settings.edit().putBoolean(SettingValues.ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK.toString(), enable_autofill_manual_search_fallback.isChecked()).commit();
+                    if (default_autofill_vault.getSelectedItem() == null || default_autofill_vault.getSelectedItem().toString().equals(getContext().getString(R.string.automatically))) {
                         ton.removeExtra(SettingValues.AUTOFILL_VAULT_GUID.toString());
                         settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), "").commit();
                     } else {
                         Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
-                        for (Map.Entry<String, Vault> vault_entry : vaults) {
-                            if (vault_entry.getValue().name.equals(default_autofill_vault.getSelectedItem().toString())) {
-                                ton.addExtra(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid);
-                                settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid).commit();
+                        if (vaults != null) {
+                            for (Map.Entry<String, Vault> vault_entry : vaults) {
+                                if (vault_entry.getValue().name.equals(default_autofill_vault.getSelectedItem().toString())) {
+                                    ton.addExtra(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid);
+                                    settings.edit().putString(SettingValues.AUTOFILL_VAULT_GUID.toString(), vault_entry.getValue().guid).commit();
 
-                                Vault.getVault(getContext(), vault_entry.getValue().guid, new FutureCallback<Vault>() {
-                                    @Override
-                                    public void onCompleted(Exception e, Vault result) {
-                                        if (e != null) {
-                                            return;
+                                    Vault.getVault(getContext(), vault_entry.getValue().guid, new FutureCallback<Vault>() {
+                                        @Override
+                                        public void onCompleted(Exception e, Vault result) {
+                                            if (e != null) {
+                                                return;
+                                            }
+                                            Vault.updateAutofillVault(result, settings);
                                         }
-                                        Vault.updateAutofillVault(result, settings);
-                                    }
-                                });
+                                    });
 
-                                break;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
 
                 SettingsCache.clear();
-                if (!KeyStoreUtils.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
+                if (ssoAccount == null && (!KeyStoreUtils.getString(SettingValues.HOST.toString(), null).equals(settings_nextcloud_url.getText().toString()) ||
                         !KeyStoreUtils.getString(SettingValues.USER.toString(), null).equals(settings_nextcloud_user.getText().toString()) ||
-                        !KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString())) {
+                        !KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null).equals(settings_nextcloud_password.getText().toString()))) {
                     ton.removeString(SettingValues.HOST.toString());
                     ton.removeString(SettingValues.USER.toString());
                     ton.removeString(SettingValues.PASSWORD.toString());

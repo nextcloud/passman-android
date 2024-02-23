@@ -1,32 +1,50 @@
+/**
+ * Passman Android App
+ *
+ * @copyright Copyright (c) 2021, Sander Brand (brantje@gmail.com)
+ * @copyright Copyright (c) 2021, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
+ * @license GNU AGPL version 3 or any later version
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package es.wolfi.app.passman.autofill;
 
-import static android.service.autofill.SaveInfo.FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE;
-
+import android.app.PendingIntent;
 import android.app.assist.AssistStructure;
-import android.app.assist.AssistStructure.ViewNode;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.os.CancellationSignal;
 import android.preference.PreferenceManager;
 import android.service.autofill.AutofillService;
-import android.service.autofill.Dataset;
 import android.service.autofill.FillCallback;
 import android.service.autofill.FillContext;
 import android.service.autofill.FillRequest;
 import android.service.autofill.FillResponse;
 import android.service.autofill.SaveCallback;
-import android.service.autofill.SaveInfo;
 import android.service.autofill.SaveRequest;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.view.autofill.AutofillId;
-import android.view.autofill.AutofillValue;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -35,8 +53,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +62,7 @@ import es.wolfi.app.ResponseHandlers.AutofillCredentialSaveResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.AutofillInteractionActivity;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.KeyStoreUtils;
@@ -53,12 +70,21 @@ import es.wolfi.utils.KeyStoreUtils;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public final class CredentialAutofillService extends AutofillService {
 
-    private static final String TAG = "CredentialAutofillSvc";
-    private static final int MAX_DATASETS = 4;
+    private static final String LOG_TAG = "CredentialAutofillSvc";
+
+    public static HashSet<String> blacklistedPackageNames = new HashSet<String>() {
+        {
+            add("android");
+            add("com.android.settings");
+            add("es.wolfi.app.passman");        // github and fdroid releases
+            add("es.wolfi.app.passman.alpha");  // alpha and gplay releases
+            add("es.wolfi.app.passman.debug");  // testing
+        }
+    };
 
     @Override
     public void onFillRequest(FillRequest request, CancellationSignal cancellationSignal, FillCallback callback) {
-        Log.d(TAG, "onFillRequest()");
+        Log.d(LOG_TAG, "onFillRequest()");
 
         List<FillContext> fillContexts = request.getFillContexts();
         ArrayList<AssistStructure> structures = new ArrayList<>();
@@ -67,166 +93,161 @@ public final class CredentialAutofillService extends AutofillService {
             structures.add(fc.getStructure());
         }
 
-        final AssistStructure latestAssistStructure =
-                fillContexts.get(fillContexts.size() - 1).getStructure();
+        final AssistStructure latestAssistStructure = structures.get(structures.size() - 1);
 
         // Find autofillable fields
-        AutofillFieldCollection fields = getAutofillableFields(latestAssistStructure, false);
+        AutofillFieldCollection fields = AutofillHelper.getAutofillableFields(latestAssistStructure, false);
 
         final String packageName = getApplicationContext().getPackageName();
 
         final String requesterPackageName = latestAssistStructure.getActivityComponent().getPackageName();
 
-        Log.d(TAG, "autofillable fields for: " + requesterPackageName + ": " + fields);
+        Log.d(LOG_TAG, "autofillable fields for: " + requesterPackageName + ":");
+        for (AutofillField f : fields) {
+            Log.d(LOG_TAG, "field: " + f.getHints().toString());
+        }
+
         // We don't have any fields to work with
-        // Passman should not authenticate itself
-        if (fields.isEmpty() || requesterPackageName.startsWith("es.wolfi.app.passman")) {
-            Log.d(TAG, "No autofillable fields for: " + requesterPackageName);
+        // Passman should not authenticate itself (see blacklistedPackageNames)
+        if (fields.isEmpty() || blacklistedPackageNames.contains(requesterPackageName)) {
+            Log.d(LOG_TAG, "Blacklisted or no autofillable fields for: " + requesterPackageName);
             callback.onSuccess(null);
             return;
         }
-
 
         // Create the base response
         FillResponse.Builder response = new FillResponse.Builder();
 
         // Open Vault
         SingleTon ton = SingleTon.getTon();
-        final Vault v = getAutofillVault(ton);
+        final Vault v = AutofillHelper.getAutofillVault(ton, getBaseContext());
 
         if (v == null) {
             Toast.makeText(getApplicationContext(), getString(R.string.autofill_noactivevault), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, getString(R.string.autofill_noactivevault));
+            Log.d(LOG_TAG, getString(R.string.autofill_noactivevault));
             callback.onSuccess(null);
             return;
         }
 
         if (!v.is_unlocked()) {
             Toast.makeText(getApplicationContext(), getString(R.string.autofill_vaultlocked), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, getString(R.string.autofill_vaultlocked));
-            callback.onSuccess(null);
+            Log.d(LOG_TAG, getString(R.string.autofill_vaultlocked));
+
+            RemoteViews vaultUnlockPresentation = new RemoteViews(getPackageName(), R.layout.autofill_list_item_with_icon);
+            vaultUnlockPresentation.setTextViewText(R.id.autofilltext, "Unlock autofill vault");
+
+            Intent authIntent = new Intent(this, AutofillInteractionActivity.class);
+            authIntent.setAction(AutofillInteractionActivity.CustomAutofillIntentActions.VAULT_UNLOCK.name());
+            authIntent.putExtra("packageName", packageName);
+            authIntent.putExtra("requesterPackageName", requesterPackageName);
+            authIntent.putParcelableArrayListExtra("structures", structures);
+
+            boolean intentItemState = setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
+            callback.onSuccess(intentItemState ? response.build() : null);
             return;
         }
 
-        // If we get here, we have an unlocked vault
-        Log.d(TAG, "Vault ready to go");
-
-        CredentialAutofillService.WebDomainResult domain = getLikelyDomain(structures);
+        // If we get here, we have an already unlocked vault
+        Log.d(LOG_TAG, "Vault ready to go");
 
         // Grab Credentials from vault
         ArrayList<Credential> allCred = v.getCredentials();
 
         if (allCred.isEmpty()) {
             Toast.makeText(getApplicationContext(), getString(R.string.autofill_vaultempty), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, getString(R.string.autofill_vaultempty));
+            Log.d(LOG_TAG, getString(R.string.autofill_vaultempty));
             callback.onSuccess(null);
             return;
         }
 
-        // Find the credentials which match the requesting package name
-
-        List<Credential> matchingCredentials = findMatchingCredentials(allCred, requesterPackageName, domain);
-
-        Log.d(TAG, "Number of matching credentials for package: " +
-                requesterPackageName +
-                ":" +
-                matchingCredentials.size());
-
-        /*
-         * TODO: validate package signature
-         * (Maybe store apk signature or signing cert thumbprint in custom field)
-         */
-
-        Set<AutofillId> tempFields = new HashSet<>();
-
-        for (Credential thisCred : matchingCredentials) {
-
-            String credLabel = returnBestString(thisCred.getLabel(),
-                    thisCred.getUrl(),
-                    thisCred.getUsername());
-
-            Dataset.Builder dataset = new Dataset.Builder();
-
-            // simplify into a function
-            AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
-            AutofillField bestEmail = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
-            AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
-
-            if (bestUsername != null) {
-                String value = returnBestString(thisCred.getUsername(),
-                        thisCred.getEmail(),
-                        thisCred.getLabel());
-
-                buildAndAddPresentation(dataset,
-                        packageName,
-                        bestUsername,
-                        value,
-                        credLabel);
-
-                tempFields.add(bestUsername.getAutofillid());
-            }
-
-            if (bestEmail != null) {
-                String value = returnBestString(thisCred.getEmail(),
-                        thisCred.getUsername(),
-                        thisCred.getLabel());
-
-                buildAndAddPresentation(dataset,
-                        packageName,
-                        bestEmail,
-                        value,
-                        credLabel);
-                tempFields.add(bestEmail.getAutofillid());
-            }
-
-            if (bestPassword != null) {
-                String value = thisCred.getPassword();
-
-                buildAndAddPresentation(dataset,
-                        packageName,
-                        bestPassword,
-                        value,
-                        "Password for: " + credLabel);
-                tempFields.add(bestPassword.getAutofillid());
-            }
-
-            if (bestUsername != null || bestEmail != null || bestPassword != null) {
-                response.addDataset(dataset.build());
-            }
-        }
-
-        /* Let android know we want to save any credentials manually entered by the user
-         * We will save usernames, passwords and email addresses
-         */
+        Set<AutofillId> tempFields = AutofillHelper.fillResponseForDecryptedVault(
+                response,
+                v,
+                packageName,
+                requesterPackageName,
+                fields,
+                structures
+        );
 
         if (tempFields.size() > 0) {
-            Log.d(TAG, "Requesting save info");
+            AutofillHelper.fillResponseWithSaveInfo(response, tempFields);
 
-            AutofillId[] requiredIds = new AutofillId[tempFields.size()];
-            tempFields.toArray(requiredIds);
-            response.setSaveInfo(
-                    new SaveInfo.Builder(SaveInfo.SAVE_DATA_TYPE_PASSWORD,
-                            requiredIds)
-                            .setFlags(FLAG_SAVE_ON_ALL_VIEWS_INVISIBLE)
-                            .build());
-
-            Log.d(TAG, "Building and calling success");
+            Log.d(LOG_TAG, "Building and calling success");
             callback.onSuccess(response.build());
-            return;
+        } else {
+            Log.d(LOG_TAG, "No matching credentials or auto-fillable fields were found");
+            Toast.makeText(getApplicationContext(), getString(R.string.no_matching_credentials_or_fields_found), Toast.LENGTH_SHORT).show();
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            KeyStoreUtils.initialize(settings);
+            if (settings.getBoolean(SettingValues.ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK.toString(), true)) {
+                // show icon item to open activity with vault list fragment
+
+                RemoteViews vaultUnlockPresentation = new RemoteViews(getPackageName(), R.layout.autofill_list_item_with_icon);
+                vaultUnlockPresentation.setTextViewText(R.id.autofilltext, "Manual search");
+
+                Intent authIntent = new Intent(this, AutofillInteractionActivity.class);
+                authIntent.setAction(AutofillInteractionActivity.CustomAutofillIntentActions.MANUAL_SEARCH.name());
+                authIntent.putExtra("packageName", packageName);
+                authIntent.putExtra("requesterPackageName", requesterPackageName);
+                authIntent.putParcelableArrayListExtra("structures", structures);
+
+                boolean intentItemState = setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
+                callback.onSuccess(intentItemState ? response.build() : null);
+            } else {
+                callback.onSuccess(null);
+            }
         }
-        Log.d(TAG, "Failed to find anything to do, bailing");
-        callback.onSuccess(null);
+    }
+
+    public static boolean setupCustomAutofillIntentItem(
+            Context context,
+            FillResponse.Builder response,
+            AutofillFieldCollection fields,
+            RemoteViews presentation,
+            Intent itemActionIntent
+    ) {
+        IntentSender intentSender = PendingIntent.getActivity(
+                context,
+                AutofillInteractionActivity.REQUEST_CODE_AUTOFILL_PLACEHOLDER,
+                itemActionIntent,
+                PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        ).getIntentSender();
+
+        AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
+        AutofillField bestEmail = AutofillHelper.getEmailField(fields);
+        AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
+
+        ArrayList<AutofillId> ids = new ArrayList<>();
+        if (bestUsername != null) {
+            ids.add(bestUsername.getAutofillid());
+        }
+        if (bestEmail != null) {
+            ids.add(bestEmail.getAutofillid());
+        }
+        if (bestPassword != null) {
+            ids.add(bestPassword.getAutofillid());
+        }
+
+        if (ids.isEmpty()) {
+            Log.d(LOG_TAG, "no autofillable fields found to show a custom autofill intent icon");
+            return false;
+        }
+
+        response.setAuthentication(ids.toArray(new AutofillId[0]), intentSender, presentation);
+        return true;
     }
 
     @Override
     public void onSaveRequest(SaveRequest request, SaveCallback callback) {
-        Log.d(TAG, "onSaveRequest()");
+        Log.d(LOG_TAG, "onSaveRequest()");
         List<FillContext> fillContexts = request.getFillContexts();
         final AssistStructure latestStructure = fillContexts.get(fillContexts.size() - 1).getStructure();
 
         final String requesterPackageName = latestStructure.getActivityComponent().getPackageName();
         String requesterDomainName = null;
         String requesterApplicationLabel = null;
+        final Context context = getBaseContext();
 
         // Find autofillable fields
         ArrayList<AssistStructure> structures = new ArrayList<>();
@@ -235,7 +256,7 @@ public final class CredentialAutofillService extends AutofillService {
             structures.add(fc.getStructure());
         }
 
-        CredentialAutofillService.WebDomainResult domain = getLikelyDomain(structures);
+        AutofillHelper.WebDomainResult domain = AutofillHelper.getLikelyDomain(structures);
 
         if (domain.firstDomain != null) {
             requesterDomainName = domain.firstDomain;
@@ -243,28 +264,28 @@ public final class CredentialAutofillService extends AutofillService {
             requesterDomainName = "";
         }
 
-        AutofillFieldCollection fields = getAutofillableFields(latestStructure, true);
+        AutofillFieldCollection fields = AutofillHelper.getAutofillableFields(latestStructure, true);
 
         // We don't have any fields to work with
         if (fields.isEmpty()) {
-            Log.d(TAG, "No autofillable fields for: " + requesterPackageName);
+            Log.d(LOG_TAG, "No autofillable fields for: " + requesterPackageName);
             callback.onSuccess();
             return;
         }
 
         SingleTon ton = SingleTon.getTon();
-        final Vault v = getAutofillVault(ton);
+        final Vault v = AutofillHelper.getAutofillVault(ton, context);
 
         if (v == null) {
             Toast.makeText(getApplicationContext(), getString(R.string.autofill_noactivevault), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, getString(R.string.autofill_noactivevault));
+            Log.d(LOG_TAG, getString(R.string.autofill_noactivevault));
             callback.onSuccess();
             return;
         }
 
         if (!v.is_unlocked()) {
             Toast.makeText(getApplicationContext(), getString(R.string.autofill_vaultlocked), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, getString(R.string.autofill_vaultlocked));
+            Log.d(LOG_TAG, getString(R.string.autofill_vaultlocked));
             callback.onSuccess();
             return;
         }
@@ -273,26 +294,26 @@ public final class CredentialAutofillService extends AutofillService {
             ApplicationInfo requesterAppInfo = getPackageManager().getApplicationInfo(requesterPackageName, 0);
             requesterApplicationLabel = getPackageManager().getApplicationLabel(requesterAppInfo).toString();
         } catch (Exception ex) {
-            Log.d(TAG, "Couldn't read application label for: " + requesterPackageName);
+            Log.d(LOG_TAG, "Couldn't read application label for: " + requesterPackageName);
         }
 
         if (TextUtils.isEmpty(requesterApplicationLabel)) {
             requesterApplicationLabel = requesterPackageName;
         }
 
-        Log.d(TAG, "onSaveRequest(): Application: " + requesterApplicationLabel);
+        Log.d(LOG_TAG, "onSaveRequest(): Application: " + requesterApplicationLabel);
 
         if (!requesterDomainName.equals("")) {
-            String parsedDomain = getDomainName(requesterDomainName);
+            String parsedDomain = AutofillHelper.getDomainName(requesterDomainName);
             if (parsedDomain.equals("")) {
                 parsedDomain = requesterDomainName;
             }
             requesterApplicationLabel += " - " + parsedDomain;
         }
 
-        AutofillField bestUsername = fields.getRequiredId(View.AUTOFILL_HINT_USERNAME);
-        AutofillField bestEmail = fields.getRequiredId(View.AUTOFILL_HINT_EMAIL_ADDRESS);
-        AutofillField bestPassword = fields.getRequiredId(View.AUTOFILL_HINT_PASSWORD);
+        AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
+        AutofillField bestEmail = AutofillHelper.getEmailField(fields);
+        AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
 
         String username = AutofillField.toStringValue(bestUsername);
         String email = AutofillField.toStringValue(bestEmail);
@@ -316,10 +337,10 @@ public final class CredentialAutofillService extends AutofillService {
             customFields.put(customField);
             customFieldString = customFields.toString();
         } catch (JSONException e) {
-            Log.e(TAG, "onSaveRequest(), error creating customField");
+            Log.e(LOG_TAG, "onSaveRequest(), error creating customField");
         }
 
-        Log.d(TAG, "onSaveRequest(), building Credential");
+        Log.d(LOG_TAG, "onSaveRequest(), building Credential");
 
         Credential newCred = new Credential();
         newCred.setVault(v);
@@ -335,227 +356,14 @@ public final class CredentialAutofillService extends AutofillService {
         newCred.setUrl(requesterDomainName);
         newCred.setCompromised(false);
 
-        Log.d(TAG, "onSaveRequest(), saving Credential");
+        Log.d(LOG_TAG, "onSaveRequest(), saving Credential");
 
-        final AsyncHttpResponseHandler responseHandler = new AutofillCredentialSaveResponseHandler(getAutofillVault(ton), getBaseContext(), getApplicationContext(), ton, TAG);
+        final AsyncHttpResponseHandler responseHandler = new AutofillCredentialSaveResponseHandler(
+                AutofillHelper.getAutofillVault(ton, context), context, getApplicationContext(), ton, LOG_TAG
+        );
         newCred.save(getApplicationContext(), responseHandler);
 
-        Log.d(TAG, "onSaveRequest() finished");
+        Log.d(LOG_TAG, "onSaveRequest() finished");
         callback.onSuccess();
-    }
-
-    private static class WebDomainResult {
-        String firstDomain = null;
-        HashSet<String> allDomains;
-
-        public WebDomainResult() {
-            allDomains = new HashSet();
-            Log.d(TAG, "Web Domain Result constructed");
-        }
-
-        public void addDomain(String domain) {
-            if (TextUtils.isEmpty(domain)) {
-                return;
-            }
-
-            domain = domain.toLowerCase();
-            allDomains.add(domain);
-
-            if (firstDomain == null) {
-                firstDomain = domain;
-            }
-        }
-    }
-
-    private String getDomainName(String url) {
-        URI uri = null;
-        try {
-            uri = new URI(url);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        String domain = "";
-        if (uri != null) {
-            if (uri.getHost() != null) {
-                domain = uri.getHost();
-            }
-        }
-        return domain.startsWith("www.") ? domain.substring(4) : domain;
-    }
-
-    @NonNull
-    private String returnBestString(@NonNull String... usernameOptions) {
-        for (int i = 0; i < usernameOptions.length; i++) {
-            String thisUsernameOption = usernameOptions[i];
-            if (!TextUtils.isEmpty(thisUsernameOption) && !thisUsernameOption.equals("null")) {
-                return thisUsernameOption;
-            }
-        }
-        return "";
-    }
-
-    private List<Credential> findMatchingCredentials(
-            @NonNull ArrayList<Credential> credentialArrayList,
-            @NonNull String packageName,
-            @NonNull CredentialAutofillService.WebDomainResult domain) {
-        ArrayList<Credential> matchingDomainCred = new ArrayList<>();
-        ArrayList<Credential> matchingPackageCred = new ArrayList<>();
-
-        for (Credential thisCred : credentialArrayList) {
-            String credUri = null;
-            try {
-                String url = thisCred.getUrl();
-                if (url != null) {
-                    URI uri = new URI(url);
-                    url = uri.getHost();
-
-                    if (url != null) {
-                        credUri = url.toLowerCase();
-                    }
-                }
-            } catch (Exception ex) {
-                Log.d(TAG, "Couldn't decode Cred URL to host part:" + ex.toString());
-            }
-
-            if (credUri != null && domain.firstDomain != null) {
-                if (credUri.equals(domain.firstDomain) || thisCred.getUrl().equals(domain.firstDomain)) {
-                    Log.d(TAG, "Matching cred on domain: " + domain.firstDomain);
-                    matchingDomainCred.add(thisCred);
-                }
-            } else if (thisCred.getUrl() != null && domain.firstDomain != null) {
-                if (thisCred.getUrl().equals(domain.firstDomain)) {
-                    Log.d(TAG, "Matching cred on url: " + domain.firstDomain);
-                    matchingDomainCred.add(thisCred);
-                }
-            }
-
-            try {
-                String thisCredCustomFieldsString = thisCred.getCustomFields();
-                if (thisCredCustomFieldsString != null) {
-                    JSONArray thisCredCustomFields = new JSONArray(thisCredCustomFieldsString);
-                    for (int i = 0; i < thisCredCustomFields.length(); i++) {
-                        JSONObject thisCredCustomField = thisCredCustomFields.getJSONObject(i);
-
-                        String customFieldLabel = thisCredCustomField.getString("label");
-
-                        if (customFieldLabel.equalsIgnoreCase("androidCredPackageName")) {
-                            String credPackageName = thisCredCustomField.getString("value");
-                            if (packageName.equalsIgnoreCase(credPackageName)) {
-                                matchingPackageCred.add(thisCred);
-                                break;
-                            }
-                        }
-                    }
-                }
-            } catch (Exception ex) {
-                Log.d(TAG, "Cannot decode custom fields: " + ex.toString());
-            }
-
-            if (matchingDomainCred.size() >= MAX_DATASETS) {
-                return matchingDomainCred;
-            }
-            if (matchingPackageCred.size() >= MAX_DATASETS && matchingDomainCred.size() == 0) {
-                return matchingPackageCred;
-            }
-        }
-        if (matchingDomainCred.size() > 0) {
-            return matchingDomainCred;
-        }
-        return matchingPackageCred;
-    }
-
-    @NonNull
-    static WebDomainResult getLikelyDomain(ArrayList<AssistStructure> assistStructures) {
-        WebDomainResult res = new WebDomainResult();
-
-        for (AssistStructure assistStructure : assistStructures) {
-            int nodes = assistStructure.getWindowNodeCount();
-            for (int i = 0; i < nodes; i++) {
-                AssistStructure.ViewNode viewNode = assistStructure.getWindowNodeAt(i).getRootViewNode();
-                getNodeDomain(viewNode, res);
-            }
-        }
-        Log.d(TAG, "Returning, found :" + String.valueOf(res.allDomains.size()) + " domains.");
-        return res;
-    }
-
-    static void getNodeDomain(AssistStructure.ViewNode viewNode, WebDomainResult res) {
-        String webDomain = viewNode.getWebDomain();
-        if (webDomain != null) {
-            res.addDomain(webDomain);
-        }
-        for (int i = 0; i < viewNode.getChildCount(); i++) {
-            getNodeDomain(viewNode.getChildAt(i), res);
-        }
-    }
-
-    @NonNull
-    static RemoteViews newDatasetPresentation(@NonNull String packageName,
-                                              @NonNull CharSequence text) {
-        RemoteViews presentation = new RemoteViews(packageName, R.layout.autofill_list_item);
-        presentation.setTextViewText(R.id.autofilltext, text);
-        return presentation;
-    }
-
-    public void buildAndAddPresentation(@NonNull Dataset.Builder dataset,
-                                        @NonNull String packageName,
-                                        @NonNull AutofillField field,
-                                        @NonNull String value,
-                                        @NonNull String displayValue) {
-        RemoteViews presentation = newDatasetPresentation(packageName, displayValue);
-        dataset.setValue(field.getAutofillid(), AutofillValue.forText(value), presentation);
-    }
-
-    @NonNull
-    private AutofillFieldCollection getAutofillableFields(@NonNull AssistStructure structure,
-                                                          boolean asValue) {
-        AutofillFieldCollection fields = new AutofillFieldCollection();
-        int nodes = structure.getWindowNodeCount();
-        for (int i = 0; i < nodes; i++) {
-            ViewNode node = structure.getWindowNodeAt(i).getRootViewNode();
-            addAutofillableFields(fields, node, asValue);
-        }
-        return fields;
-    }
-
-    private void addAutofillableFields(@NonNull AutofillFieldCollection fields,
-                                       @NonNull ViewNode node,
-                                       boolean asValue) {
-        AutofillField thisField;
-        try {
-            if (!asValue) {
-                thisField = new AutofillField(node.getAutofillId(), node);
-            } else {
-                thisField = new AutofillField(node.getAutofillValue(), node);
-            }
-            fields.add(thisField);
-        } catch (Exception ex) {
-            Log.d(TAG, "Couldn't add node to fields: " + ex.toString());
-        }
-
-        int childrenSize = node.getChildCount();
-        for (int i = 0; i < childrenSize; i++) {
-            addAutofillableFields(fields, node.getChildAt(i), asValue);
-        }
-    }
-
-    private Vault getAutofillVault(SingleTon ton) {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        KeyStoreUtils.initialize(settings);
-        Vault activeVault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
-        String autofillVaultGuid = settings.getString(SettingValues.AUTOFILL_VAULT_GUID.toString(), null);
-
-        if (activeVault != null && autofillVaultGuid != null && !activeVault.guid.equals(autofillVaultGuid) && !autofillVaultGuid.equals("")) {
-            try {
-                Vault requestedVault = Vault.fromJSON(new JSONObject(KeyStoreUtils.getString(SettingValues.AUTOFILL_VAULT.toString(), "")));
-                requestedVault.unlock(KeyStoreUtils.getString(autofillVaultGuid, ""));
-                return requestedVault;
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return activeVault;
     }
 }

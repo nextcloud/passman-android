@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import es.wolfi.app.ResponseHandlers.VaultSaveResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.fragments.CredentialItemFragment;
@@ -66,6 +67,12 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
         holder.mItem = mValues.get(position);
         holder.mContentView.setText(holder.mItem.getLabel());
 
+        // the automatically created test credential must always be there to ensure vault consistency
+        if (holder.mItem.getLabel().startsWith(VaultSaveResponseHandler.labelPrefixForFirstVaultConsistencyCredential)) {
+            holder.itemView.setVisibility(View.GONE);
+            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
+        }
+
         if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
             holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));
         } else {
@@ -73,7 +80,18 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
         }
 
         if (holder.mItem != null && settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true)) {
-            IconUtils.loadIconToImageView(holder.mItem.getFavicon(), holder.contentImage);
+            // overwrite real credential icon for every shared credential
+            if (holder.mItem.getCredentialACL() != null) {
+                // shared with me
+                holder.contentImage.setImageResource(R.drawable.ic_baseline_share_24);
+            } else if (holder.mItem.isASharedCredential()) {
+                // shared with other (use as alternative to fa-share-alt-square)
+                holder.contentImage.setImageResource(R.drawable.ic_baseline_share_24);
+                holder.contentImage.setBackgroundColor(holder.mView.getResources().getColor(R.color.cardview_dark_background));
+                holder.contentImage.setColorFilter(holder.mView.getResources().getColor(R.color.white));
+            } else {
+                IconUtils.loadIconToImageView(holder.mItem.getFavicon(), holder.contentImage);
+            }
         } else {
             holder.contentLayout.removeView(holder.contentImage);
         }

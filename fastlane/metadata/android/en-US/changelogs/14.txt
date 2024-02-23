@@ -1,0 +1,9 @@
+- add offline cache (can be disabled in settings)
+- add local storage encryption for sensitive data (requires at least Android 6 / API 23)
+    - encrypts the offline cache
+    - stored vault passwords have to be re-entered
+    - cloud connection settings will be migrated automatically
+- add an internal settings cache to speed up some things a bit
+- add vault actions (add, rename, delete)
+    - delete action requires at least Passman v2.4.0 (server side)
+- update dependencies (gradle/appcompat)

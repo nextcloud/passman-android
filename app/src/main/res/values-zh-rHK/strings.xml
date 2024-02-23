@@ -8,6 +8,7 @@
     <string name="wrongNCUrl">不正確的Nextcloud後端URL或無法連接</string>
     <string name="wrongNCSettings">設定不正確</string>
     <string name="net_error">網絡異常</string>
+    <string name="net_error_dialog_description">無法連接到伺服器！\n如果沒有有效的伺服器連接，則無法保存更改。</string>
     <string name="unlock">解鎖</string>
     <string name="wrong_vault_pw">保險庫密碼錯誤</string>
     <string name="label">標籤</string>
@@ -56,6 +57,7 @@
     <string name="request_response_timeout">請求回應超時（秒）</string>
     <string name="expert_settings">專家設定</string>
     <string name="confirm_credential_deletion">您確定要刪除此身份驗證嗎？</string>
+    <string name="confirm_vault_deletion">您確定要刪除此保險庫？</string>
     <string name="yes">是</string>
     <string name="cancel">取消</string>
     <string name="enable_credential_list_icons">啟用身份驗證清單圖示</string>
@@ -71,4 +73,27 @@
     <string name="password_generator_use_lowercase">使用小寫字母</string>
     <string name="password_generator_use_uppercase">使用大寫字母 </string>
     <string name="password_length">密碼長度</string>
-    </resources>
+    <string name="vault_name">保險庫名稱</string>
+    <string name="sharing_key_strength">分享密鑰強度</string>
+    <string name="new_vault_name">新保險庫名稱</string>
+    <string name="offline_cache">離線缓存</string>
+    <string name="offline_cache_description">緩存手動加載的已加密保管庫</string>
+    <string name="enable_offline_cache">啟用離線缓存</string>
+    <string name="clear_offline_cache">清除離線缓存</string>
+    <string name="nextcloud_single_sign_on">Nextcloud 單點登錄</string>
+    <string name="manual_login">手動登入</string>
+    <string name="confirm_account_logout">您確定要登出嗎？</string>
+    <string name="digits">數字</string>
+    <string name="period">時段</string>
+    <string name="value">值</string>
+    <string name="faq">FAQ</string>
+    <string name="secret">密鑰</string>
+    <string name="issuer">發行者</string>
+    <string name="error_parsing_qr_code">解析二維碼時出錯</string>
+    <string name="camera_permission_denied">相機權限被拒絕</string>
+    <string name="no_matching_credentials_or_fields_found">找到沒有匹配的身份驗證或可自動填充的欄位</string>
+    <string name="no_active_vault_add_credential_error">沒有活躍的保險庫。無法添加身份驗證！</string>
+    <string name="automatic_autofill_vault_description">如果您希望僅在應用程式中主動開啟並解鎖保管庫時提供自動填充，請選擇“自動”</string>
+    <string name="autofill_manual_search_fallback">人手身份驗證搜尋作為自動填充應變的選項</string>
+    <string name="set_as_autofill_service">設置為自動填充服務</string>
+</resources>

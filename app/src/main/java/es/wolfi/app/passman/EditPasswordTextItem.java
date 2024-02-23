@@ -4,6 +4,7 @@
  * @copyright Copyright (c) 2017, Andy Scherzinger
  * @copyright Copyright (c) 2017, Sander Brand (brantje@gmail.com)
  * @copyright Copyright (c) 2017, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2021, Timo Triebensky (timo@binsky.org)
  * @license GNU AGPL version 3 or any later version
  * <p>
  * This program is free software: you can redistribute it and/or modify
@@ -25,6 +26,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,18 +34,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import es.wolfi.app.passman.databinding.FragmentEditPasswordTextItemBinding;
 import es.wolfi.utils.PasswordGenerator;
 
 public class EditPasswordTextItem extends LinearLayout {
 
-    @BindView(R.id.password)
+    private FragmentEditPasswordTextItemBinding binding;
+
     EditText password;
-    @BindView(R.id.toggle_password_visibility_btn)
     ImageButton toggle_password_visibility_btn;
-    @BindView(R.id.generate_password_btn)
     ImageButton generate_password_btn;
 
     public EditPasswordTextItem(Context context) {
@@ -71,17 +70,36 @@ public class EditPasswordTextItem extends LinearLayout {
         setOrientation(HORIZONTAL);
 
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View v = inflater.inflate(R.layout.fragment_edit_password_text_item, this, true);
+        binding = FragmentEditPasswordTextItemBinding.inflate(inflater, this);
 
-        ButterKnife.bind(this, v);
+        password = binding.password;
+        toggle_password_visibility_btn = binding.togglePasswordVisibilityBtn;
+        generate_password_btn = binding.generatePasswordBtn;
 
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        generate_password_btn.setVisibility(View.VISIBLE);
+        setPasswordGenerationButtonVisibility(true);
+
+        binding.togglePasswordVisibilityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleVisibility();
+            }
+        });
+        binding.generatePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generatePassword();
+            }
+        });
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+    }
+
+    public void addTextChangedListener(TextWatcher watcher) {
+        this.password.addTextChangedListener(watcher);
     }
 
     public void setText(String password) {
@@ -92,11 +110,22 @@ public class EditPasswordTextItem extends LinearLayout {
         return this.password.getText();
     }
 
+    public void setHint(String hint) {
+        this.password.setHint(hint);
+    }
+
     public void setEnabled(boolean enabled) {
         password.setEnabled(enabled);
     }
 
-    @OnClick(R.id.toggle_password_visibility_btn)
+    public void setPasswordGenerationButtonVisibility(boolean isVisible) {
+        if (isVisible) {
+            generate_password_btn.setVisibility(View.VISIBLE);
+        } else {
+            generate_password_btn.setVisibility(View.GONE);
+        }
+    }
+
     public void toggleVisibility() {
         switch (password.getInputType()) {
             case InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD:
@@ -110,7 +139,6 @@ public class EditPasswordTextItem extends LinearLayout {
         }
     }
 
-    @OnClick(R.id.generate_password_btn)
     public void generatePassword() {
         this.password.setText(new PasswordGenerator(getContext()).generateRandomPassword());
     }
