@@ -1,12 +1,12 @@
 <resources>
-    <string name="action_settings">Impostatziones</string>
+    <string name="action_settings">Cunfiguratzione</string>
     <string name="action_refresh">Agiorna</string>
     <string name="nchost">Indiritzu de su serbidore</string>
     <string name="username">Nùmene utente</string>
     <string name="password">Crae</string>
     <string name="connect">Connete</string>
     <string name="wrongNCUrl">S\'URL de su motore de Nextcloud no est bàlidu o no faghet a si connètere</string>
-    <string name="wrongNCSettings">Impostatziones no curretas</string>
+    <string name="wrongNCSettings">Cunfiguratzione non curreta</string>
     <string name="net_error">Errore de rete</string>
     <string name="unlock">Isbloca</string>
     <string name="wrong_vault_pw">Crae de sa cassaforte isballiada</string>
@@ -28,8 +28,8 @@
     <string name="successfully_updated">Agiornadu in manera curreta</string>
     <string name="delete">Cantzella</string>
     <string name="successfully_deleted">Cantzelladu in manera curreta</string>
-    <string name="nextcloud_connection_settings">Impostatziones de connessione de Nextcloud</string>
-    <string name="app_settings">Impostatziones de s\'aplicatzione</string>
+    <string name="nextcloud_connection_settings">Cunfiguratzione de connessione de Nextcloud</string>
+    <string name="app_settings">Cunfiguratzione de s\'aplicatzione</string>
     <string name="wait_while_loading">Abeta su carrigamentu ...</string>
     <string name="loading">Carrighende</string>
     <string name="error_downloading_file">Errore iscarrighende s\'archìviu</string>
@@ -53,7 +53,7 @@
     <string name="automatically">in automàticu</string>
     <string name="request_connect_timeout">Tempus màssimu de sa rechesta de connessione (in segundos)</string>
     <string name="request_response_timeout">Tempus màssimu de sa rechesta de resposta (in segundos)</string>
-    <string name="expert_settings">Impostatziones avatzadas</string>
+    <string name="expert_settings">Cunfiguratzione avantzada</string>
     <string name="confirm_credential_deletion">A beru boles cantzellare custa credentziale?</string>
     <string name="yes">Eja</string>
     <string name="cancel">Annulla</string>
