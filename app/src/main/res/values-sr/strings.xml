@@ -12,7 +12,7 @@
     <string name="unlock">Откључај</string>
     <string name="wrong_vault_pw">Погрешна лозинка за сеф</string>
     <string name="label">Ознака</string>
-    <string name="email">Адреса е-поште</string>
+    <string name="email">Е-пошта</string>
     <string name="URL">URL адреса</string>
     <string name="description">Опис</string>
     <string name="copied_to_clipboard">Текст копиран у оставу</string>

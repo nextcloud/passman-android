@@ -12,7 +12,7 @@
     <string name="unlock">Unlock</string>
     <string name="wrong_vault_pw">Wrong vault password</string>
     <string name="label">Label</string>
-    <string name="email">E-mail</string>
+    <string name="email">Email</string>
     <string name="URL">URL</string>
     <string name="description">Description</string>
     <string name="copied_to_clipboard">Text copied to clipboard</string>

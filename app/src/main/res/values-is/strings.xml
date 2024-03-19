@@ -12,7 +12,7 @@
     <string name="unlock">Aflæsa</string>
     <string name="wrong_vault_pw">Rangt lykilorð í lykilorðageymslu</string>
     <string name="label">Skýring</string>
-    <string name="email">Tölvupóstfang</string>
+    <string name="email">Tölvupóstur</string>
     <string name="URL">Slóð (URL)</string>
     <string name="description">Lýsing</string>
     <string name="copied_to_clipboard">Texti afritaður á klippispjald</string>

@@ -12,7 +12,7 @@
     <string name="unlock">Разблокировать</string>
     <string name="wrong_vault_pw">Неправильный пароль хранилища</string>
     <string name="label">Метка</string>
-    <string name="email">Эл. почта</string>
+    <string name="email">Электронная почта</string>
     <string name="URL">URL</string>
     <string name="description">Описание</string>
     <string name="copied_to_clipboard">Текст скопирован в буфер обмена</string>

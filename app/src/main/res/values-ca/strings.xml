@@ -11,7 +11,6 @@
     <string name="unlock">Desbloca</string>
     <string name="wrong_vault_pw">La contrasenya del magatzem és incorrecta</string>
     <string name="label">Etiqueta</string>
-    <string name="email">Correu electrònic</string>
     <string name="URL">URL</string>
     <string name="description">Descripció</string>
     <string name="copied_to_clipboard">S\'ha copiat el text al porta-retalls</string>

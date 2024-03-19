@@ -12,7 +12,6 @@
     <string name="unlock">Öffnen</string>
     <string name="wrong_vault_pw">Falsches Tresor-Passwort</string>
     <string name="label">Beschriftung</string>
-    <string name="email">E-Mail</string>
     <string name="URL">URL</string>
     <string name="description">Beschreibung</string>
     <string name="copied_to_clipboard">Text in die Zwischenablage kopiert</string>

@@ -12,7 +12,6 @@
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">Contraseña de la bóveda equivocada</string>
     <string name="label">Etiqueta</string>
-    <string name="email">Correo electrónico</string>
     <string name="URL">URL</string>
     <string name="description">Descripción</string>
     <string name="copied_to_clipboard">El texto ha sido copiado a la papelera</string>
