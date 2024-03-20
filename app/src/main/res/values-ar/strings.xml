@@ -12,6 +12,7 @@
     <string name="unlock">الغاء القفل</string>
     <string name="wrong_vault_pw">كلمة مرور خزينة خاطئة </string>
     <string name="label">تسمية</string>
+    <string name="email">البريد الإلكتروني</string>
     <string name="URL">الرابط</string>
     <string name="description">الوصف</string>
     <string name="copied_to_clipboard">تم نسخ النص إلى الحافظة</string>
