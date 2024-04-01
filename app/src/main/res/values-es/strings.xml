@@ -12,6 +12,7 @@
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">Contraseña errónea de la caja fuerte</string>
     <string name="label">Etiqueta</string>
+    <string name="email">Correo electrónico</string>
     <string name="URL">URL</string>
     <string name="description">Descripción</string>
     <string name="copied_to_clipboard">Texto copiado al portapapeles</string>
@@ -90,4 +91,9 @@
     <string name="issuer">Editor</string>
     <string name="error_parsing_qr_code">Error analizando el código QR</string>
     <string name="camera_permission_denied">Permisos de cámara denegados</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">No se encontraron credenciales coincidentes o campos auto-rellenables</string>
+    <string name="no_active_vault_add_credential_error">No hay bóveda activa. ¡No se puede agregar la credencial!</string>
+    <string name="automatic_autofill_vault_description">Seleccione Automático si quiere que el rellenado automático sólo funcione cuando hay una Bóveda activa abierta y desbloqueada en la app</string>
+    <string name="autofill_manual_search_fallback">Búsqueda manual de credenciales como opción alternativa al rellenado automático</string>
+    <string name="set_as_autofill_service">Establecer como servicio de auto rellenado</string>
+</resources>
