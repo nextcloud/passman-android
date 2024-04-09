@@ -13,6 +13,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">O contrasinal da bóveda está trabucado</string>
     <string name="label">Etiqueta</string>
+    <string name="email">Correo-e</string>
     <string name="URL">URL</string>
     <string name="description">Descrición</string>
     <string name="copied_to_clipboard">O texto foi copiado no portapapeis.</string>

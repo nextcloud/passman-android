@@ -12,6 +12,7 @@
     <string name="unlock"> Déverrouiller</string>
     <string name="wrong_vault_pw">Mot de passe du coffre-fort erroné</string>
     <string name="label">Libellé</string>
+    <string name="email">Adresse électronique</string>
     <string name="URL">URL</string>
     <string name="description">Description</string>
     <string name="copied_to_clipboard">Texte copié dans le presse-papier</string>

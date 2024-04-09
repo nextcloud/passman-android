@@ -11,6 +11,7 @@
     <string name="unlock">Ξεκλείδωμα</string>
     <string name="wrong_vault_pw">Λανθασμένος κωδικός πρόσβασης θυσαυροφυλακίου </string>
     <string name="label">Ετικέτα</string>
+    <string name="email">Email</string>
     <string name="URL">URL</string>
     <string name="description">Περιγραφή</string>
     <string name="copied_to_clipboard">Κείμενο που αντιγράφηκε στο πρόχειρο</string>

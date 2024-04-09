@@ -11,6 +11,7 @@
     <string name="unlock">Otključaj</string>
     <string name="wrong_vault_pw">Pogrešna zaporka trezora</string>
     <string name="label">Oznaka</string>
+    <string name="email">E-pošta</string>
     <string name="URL">URL</string>
     <string name="description">Opis</string>
     <string name="copied_to_clipboard">Tekst kopiran u međuspremnik</string>
