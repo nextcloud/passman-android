@@ -32,7 +32,7 @@
         android:maxWidth="20dp"
         android:maxHeight="20dp"
         android:adjustViewBounds="true"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@mipmap/ic_launcher_foreground" />
     <TextView
         android:id="@+id/autofilltext"
         android:layout_width="wrap_content"
