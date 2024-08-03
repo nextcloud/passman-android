@@ -92,4 +92,9 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="issuer">Emisor</string>
     <string name="error_parsing_qr_code">Produciuse un erro ao analizar o código QR</string>
     <string name="camera_permission_denied">Permiso da cámara denegado</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Non se atoparon credenciais coincidentes nin campos que se enchan automaticamente</string>
+    <string name="no_active_vault_add_credential_error">Non hai ningunha bóveda activa. Non é posíbel engadir a credencial.!</string>
+    <string name="automatic_autofill_vault_description">Seleccione Automático se quere que a enchedura automática só se forneza cando unha bóveda estea aberta e desbloqueada activamente na aplicación</string>
+    <string name="autofill_manual_search_fallback">Busca manual de credenciais como opción de enchedura automática</string>
+    <string name="set_as_autofill_service">Definir como servizo de enchedura automática</string>
+</resources>
