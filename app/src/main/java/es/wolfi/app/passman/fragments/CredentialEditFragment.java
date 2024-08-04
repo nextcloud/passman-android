@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -48,11 +49,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import net.bierbaumer.otp_authenticator.TOTPHelper;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -72,6 +72,8 @@ import es.wolfi.passman.API.CustomField;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
 import es.wolfi.utils.ProgressUtils;
+import es.wolfi.utils.otp.HashingAlgorithm;
+import es.wolfi.utils.otp.TOTPHelper;
 
 
 /**
@@ -101,7 +103,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     EditText otp_issuer;
     TextView credential_otp;
     ProgressBar otp_progress;
-
+    Spinner otp_algorithm_spinner;
     Spinner customFieldType;
 
     private Credential credential;
@@ -113,7 +115,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
     private Handler handler = null;
     private Runnable otp_refresh = null;
     private String otp_qr_uri = "";
-    private String otp_algorithm = "SHA1";
+    private HashingAlgorithm otp_algorithm = HashingAlgorithm.SHA1;
     private String otp_type = "totp";
 
     public CredentialEditFragment() {
@@ -181,6 +183,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         otp_secret = view.findViewById(R.id.edit_credential_otp_secret);
         otp_digits = view.findViewById(R.id.edit_credential_otp_digits);
         otp_period = view.findViewById(R.id.edit_credential_otp_period);
+        otp_algorithm_spinner = view.findViewById(R.id.edit_credential_otp_algorithm);
         otp_label = view.findViewById(R.id.otp_label);
         otp_issuer = view.findViewById(R.id.otp_issuer);
         credential_otp = view.findViewById(R.id.credential_otp);
@@ -208,6 +211,10 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
         customFieldsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         customFieldsListRecyclerView.setAdapter(cfed);
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, HashingAlgorithm.hashingAlgorithmsFriendlyArray);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        otp_algorithm_spinner.setAdapter(adapter);
+
         label.setText(this.credential.getLabel());
         user.setText(this.credential.getUsername());
         password.setText(this.credential.getPassword());
@@ -226,7 +233,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
             }
 
             handler = new Handler();
-            otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret);
+            otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret, otp_algorithm);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -293,7 +300,11 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
                     otp_type = otpObj.getString("type");
                 }
                 if (otpObj.has("algorithm")) {
-                    otp_algorithm = otpObj.getString("algorithm");
+                    otp_algorithm = HashingAlgorithm.SHA1;
+                    if (otpObj.has("algorithm")) {
+                        otp_algorithm = HashingAlgorithm.fromStringOrSha1(otpObj.getString("algorithm"));
+                    }
+                    otp_algorithm_spinner.setSelection(Arrays.asList(HashingAlgorithm.hashingAlgorithmsFriendlyArray).indexOf(otp_algorithm.getFriendlyName()));
                 }
                 if (otpObj.has("qr_uri")) {
                     otp_qr_uri = otpObj.getString("qr_uri");
@@ -461,7 +472,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
                     otp_label,
                     otp_issuer,
                     otp_qr_uri,
-                    otp_algorithm,
+                    otp_algorithm_spinner.getSelectedItem().toString(),
                     otp_type
             );
             this.credential.setOtp(otpObj.toString());
