@@ -206,7 +206,7 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
         otp_algorithm_spinner.setAdapter(adapter);
 
         handler = new Handler();
-        otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret, otp_algorithm);
+        otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret, otp_algorithm_spinner);
     }
 
     @Override

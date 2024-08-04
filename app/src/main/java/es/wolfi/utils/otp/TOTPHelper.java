@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -37,6 +38,8 @@ import org.json.JSONObject;
 
 public class TOTPHelper {
     public static final String LOG_TAG = "TOTPHelper";
+    public static final int DEFAULT_OTP_DIGITS = 6;
+    public static final int DEFAULT_OTP_PERIOD = 30;
 
     public static Runnable run(Handler handler, ProgressBar otp_progress, TextView credential_otp,
                                int finalOtpDigits, int finalOtpPeriod, String otpSecret, HashingAlgorithm hashingAlgorithm) {
@@ -64,18 +67,15 @@ public class TOTPHelper {
     }
 
     public static Runnable runAndUpdate(Handler handler, ProgressBar otp_progress, TextView credential_otp,
-                                        EditText otpDigits, EditText otpPeriod, EditText otpSecret, HashingAlgorithm hashingAlgorithm) {
+                                        EditText otpDigits, EditText otpPeriod, EditText otpSecret, Spinner hashingAlgorithmSpinner) {
         return new Runnable() {
             @Override
             public void run() {
                 String finalOtpSecret = otpSecret.getText().toString();
+                int finalOtpPeriod = !otpPeriod.getText().toString().isEmpty() ? Integer.parseInt(otpPeriod.getText().toString()) : DEFAULT_OTP_PERIOD;
+                int finalOtpDigits = !otpDigits.getText().toString().isEmpty() ? Integer.parseInt(otpDigits.getText().toString()) : DEFAULT_OTP_DIGITS;
 
-                if (!finalOtpSecret.isEmpty()
-                        && !otpPeriod.getText().toString().isEmpty()
-                        && !otpDigits.getText().toString().isEmpty()) {
-                    int finalOtpPeriod = Integer.parseInt(otpPeriod.getText().toString());
-                    int finalOtpDigits = Integer.parseInt(otpDigits.getText().toString());
-
+                if (!finalOtpSecret.isEmpty()) {
                     otp_progress.setMax(finalOtpPeriod * 100);
                     int progress = (int) (System.currentTimeMillis() / 1000) % finalOtpPeriod;
                     otp_progress.setProgress(progress * 100);
@@ -85,7 +85,11 @@ public class TOTPHelper {
                     animation.setInterpolator(new LinearInterpolator());
                     animation.start();
 
-                    CodeGenerator codeGenerator = new CodeGenerator(hashingAlgorithm, finalOtpDigits, finalOtpPeriod);
+                    CodeGenerator codeGenerator = new CodeGenerator(
+                            HashingAlgorithm.fromStringOrSha1(hashingAlgorithmSpinner.getSelectedItem().toString()),
+                            finalOtpDigits,
+                            finalOtpPeriod
+                    );
                     try {
                         credential_otp.setText(codeGenerator.generate(finalOtpSecret));
                     } catch (CodeGenerationException e) {
@@ -124,7 +128,7 @@ public class TOTPHelper {
             }
 
             String period = otp_period.getText().toString();
-            otpObj.put("period", !period.isEmpty() ? Integer.parseInt(period) : 30);
+            otpObj.put("period", !period.isEmpty() ? Integer.parseInt(period) : DEFAULT_OTP_PERIOD);
 
             String digits = otp_digits.getText().toString();
             otpObj.put("digits", !digits.isEmpty() ? Integer.parseInt(digits) : 6);
@@ -168,7 +172,7 @@ public class TOTPHelper {
             otpObj.put("issuer", issuer);
         }
 
-        otpObj.put("period", period != null && !period.isEmpty() ? Integer.parseInt(period) : 30);
+        otpObj.put("period", period != null && !period.isEmpty() ? Integer.parseInt(period) : DEFAULT_OTP_PERIOD);
         otpObj.put("digits", digits != null && !digits.isEmpty() ? Integer.parseInt(digits) : 6);
         otpObj.put("algorithm", algorithm != null && !algorithm.isEmpty() ? algorithm : HashingAlgorithm.SHA1.getFriendlyName());
         otpObj.put("secret", uri.getQueryParameter("secret"));

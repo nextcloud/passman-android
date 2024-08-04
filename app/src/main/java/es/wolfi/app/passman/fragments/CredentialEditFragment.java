@@ -233,7 +233,7 @@ public class CredentialEditFragment extends Fragment implements View.OnClickList
             }
 
             handler = new Handler();
-            otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret, otp_algorithm);
+            otp_refresh = TOTPHelper.runAndUpdate(handler, otp_progress, credential_otp, otp_digits, otp_period, otp_secret, otp_algorithm_spinner);
         } catch (JSONException e) {
             e.printStackTrace();
         }
