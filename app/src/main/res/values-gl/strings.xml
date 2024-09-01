@@ -16,7 +16,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="email">Correo-e</string>
     <string name="URL">URL</string>
     <string name="description">Descrición</string>
-    <string name="copied_to_clipboard">O texto foi copiado no portapapeis.</string>
+    <string name="copied_to_clipboard">O texto foi copiado no portapapeis</string>
     <string name="vault_password">Contrasinal da bóveda</string>
     <string name="vault_password_save">Gardar o contrasinal da bóveda</string>
     <string name="not_implemented_yet">Aínda non está implementado</string>
