@@ -32,7 +32,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="successfully_deleted">Eliminado satisfactoriamente</string>
     <string name="nextcloud_connection_settings">Axustes da conexión de Nextcloud</string>
     <string name="app_settings">Axustes da aplicación</string>
-    <string name="wait_while_loading">Agarde mentres se carga…</string>
+    <string name="wait_while_loading">Agarde mentres carga…</string>
     <string name="loading">Cargando</string>
     <string name="error_downloading_file">Produciuse un erro ao descargar o ficheiro</string>
     <string name="error_writing_file">Produciuse un erro ao gravar o ficheiro</string>

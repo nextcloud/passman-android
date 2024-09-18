@@ -79,4 +79,5 @@
     <string name="value">Значение</string>
     <string name="secret">Секретный</string>
     <string name="issuer">Выпустил</string>
+    <string name="autofill_manual_search_fallback">Ручной поиск учетных данных как резервный вариант автозаполнения</string>
     </resources>
