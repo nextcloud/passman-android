@@ -3,7 +3,7 @@
     <string name="action_refresh">إنعاش</string>
     <string name="nchost">عنوان الخادم</string>
     <string name="username">إسم المستخدم</string>
-    <string name="password">الكلمة السرية</string>
+    <string name="password">كلمة المرور</string>
     <string name="connect">إتصال</string>
     <string name="wrongNCUrl">عنوان URL للواجهة الخلفية لنكست كلود غير صحيح أو غير قادر على الاتصال</string>
     <string name="wrongNCSettings">الإعدادات غير صحيحة</string>
@@ -72,7 +72,7 @@
     <string name="password_generator_use_digits">استخدام الأرقام</string>
     <string name="password_generator_use_lowercase">استخدم الأحرف الصغيرة</string>
     <string name="password_generator_use_uppercase">استخدام الأحرف الكبيرة</string>
-    <string name="password_length">طول كلمة السر</string>
+    <string name="password_length">طول كلمة المرور</string>
     <string name="vault_name">اسم الخزينة </string>
     <string name="sharing_key_strength">قوة مفتاح المشاركة</string>
     <string name="new_vault_name">اسم خزينة جديد</string>

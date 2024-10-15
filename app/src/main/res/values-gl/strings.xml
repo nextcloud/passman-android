@@ -16,7 +16,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="email">Correo-e</string>
     <string name="URL">URL</string>
     <string name="description">Descrición</string>
-    <string name="copied_to_clipboard">O texto foi copiado no portapapeis.</string>
+    <string name="copied_to_clipboard">O texto foi copiado no portapapeis</string>
     <string name="vault_password">Contrasinal da bóveda</string>
     <string name="vault_password_save">Gardar o contrasinal da bóveda</string>
     <string name="not_implemented_yet">Aínda non está implementado</string>
@@ -32,7 +32,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="successfully_deleted">Eliminado satisfactoriamente</string>
     <string name="nextcloud_connection_settings">Axustes da conexión de Nextcloud</string>
     <string name="app_settings">Axustes da aplicación</string>
-    <string name="wait_while_loading">Agarde mentres se carga…</string>
+    <string name="wait_while_loading">Agarde mentres carga…</string>
     <string name="loading">Cargando</string>
     <string name="error_downloading_file">Produciuse un erro ao descargar o ficheiro</string>
     <string name="error_writing_file">Produciuse un erro ao gravar o ficheiro</string>
@@ -94,7 +94,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="camera_permission_denied">Permiso da cámara denegado</string>
     <string name="no_matching_credentials_or_fields_found">Non se atoparon credenciais coincidentes nin campos que se enchan automaticamente</string>
     <string name="no_active_vault_add_credential_error">Non hai ningunha bóveda activa. Non é posíbel engadir a credencial.!</string>
-    <string name="automatic_autofill_vault_description">Seleccione Automático se quere que a enchedura automática só se forneza cando unha bóveda estea aberta e desbloqueada activamente na aplicación</string>
-    <string name="autofill_manual_search_fallback">Busca manual de credenciais como opción de enchedura automática</string>
-    <string name="set_as_autofill_service">Definir como servizo de enchedura automática</string>
+    <string name="automatic_autofill_vault_description">Seleccione Automático se quere que o autocompletado só se forneza cando unha bóveda estea aberta e desbloqueada activamente na aplicación</string>
+    <string name="autofill_manual_search_fallback">Busca manual de credenciais como alternativa ao autocompletado</string>
+    <string name="set_as_autofill_service">Definir como servizo de autocompletado</string>
 </resources>
