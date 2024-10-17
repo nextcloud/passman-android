@@ -114,8 +114,8 @@
                 <LinearLayout
                     android:layout_width="160dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="12dp">
+                    android:layout_marginEnd="12dp"
+                    android:orientation="vertical">
 
                     <TextView
                         style="@style/Label"
@@ -157,6 +157,29 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/algorithm" />
+
+                <Spinner
+                    android:id="@+id/edit_credential_otp_algorithm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:minWidth="@dimen/protocol_spinner"
+                    android:spinnerMode="dropdown" />
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
