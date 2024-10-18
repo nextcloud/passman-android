@@ -2,7 +2,7 @@
     <string name="action_settings">الإعدادات</string>
     <string name="action_refresh">إنعاش</string>
     <string name="nchost">عنوان الخادم</string>
-    <string name="username">إسم المستخدم</string>
+    <string name="username">اسم المستخدم</string>
     <string name="password">كلمة المرور</string>
     <string name="connect">إتصال</string>
     <string name="wrongNCUrl">عنوان URL للواجهة الخلفية لنكست كلود غير صحيح أو غير قادر على الاتصال</string>
