@@ -32,7 +32,7 @@
     <string name="nextcloud_connection_settings">إعدادات اتصال نكست كلود </string>
     <string name="app_settings">إعدادات التطبيق</string>
     <string name="wait_while_loading">انتظر ريثما يتم التحميل ...</string>
-    <string name="loading">جاري التحميل</string>
+    <string name="loading">التحميل جارٍ</string>
     <string name="error_downloading_file">خطأ في تنزيل الملف</string>
     <string name="error_writing_file">خطأ في كتابة الملف</string>
     <string name="files">الملفات</string>
