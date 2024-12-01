@@ -78,9 +78,9 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="sharing_key_strength">Forza da chave para compartir</string>
     <string name="new_vault_name">Nome novo para a bóveda</string>
     <string name="offline_cache">Caché sen conexión</string>
-    <string name="offline_cache_description">Almacenar na caché as bóvedas cifradas se foron cargadas manualmente</string>
-    <string name="enable_offline_cache">Activar a caché sen conexión</string>
-    <string name="clear_offline_cache">Limpar a caché sen conexión</string>
+    <string name="offline_cache_description">Almacenar na memoria tobo as bóvedas cifradas se foron cargadas manualmente</string>
+    <string name="enable_offline_cache">Activar a memoria tobo sen conexión</string>
+    <string name="clear_offline_cache">Limpar a memoria tobo sen conexión</string>
     <string name="nextcloud_single_sign_on">Identificación única (SSO) de Nextcloud</string>
     <string name="manual_login">Acceso manual</string>
     <string name="confirm_account_logout">Confirma que quere saír?</string>
