@@ -1,21 +1,26 @@
 /**
- * Copyright (C) 2015 Bruno Bierbaumer
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
- * the Software, and to permit persons to whom the Software is furnished to do so,
- * subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
- * OR OTHER DEALINGS IN THE SOFTWARE.
+ * Passman Android App
+ *
+ * @copyright Copyright (c) 2021, Sander Brand (brantje@gmail.com)
+ * @copyright Copyright (c) 2021, Marcos Zuriaga Miguel (wolfi@wolfi.es)
+ * @copyright Copyright (c) 2024, Timo Triebensky (timo@binsky.org)
+ * @license GNU AGPL version 3 or any later version
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.bierbaumer.otp_authenticator;
+
+package es.wolfi.utils.otp;
 
 import android.animation.ObjectAnimator;
 import android.net.Uri;
@@ -24,59 +29,20 @@ import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
-import org.apache.commons.codec.binary.Base32;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 
 public class TOTPHelper {
-    public static final String SHA1 = "HmacSHA1";
-
-    public static String generate(byte[] secret, int digits, int period) {
-        return String.format("%06d", generate(secret, System.currentTimeMillis() / 1000, digits, period));
-    }
-
-    public static int generate(byte[] key, long t, int digits, int period) {
-        int r = 0;
-        try {
-            t /= period;
-            byte[] data = new byte[8];
-            long value = t;
-            for (int i = 8; i-- > 0; value >>>= 8) {
-                data[i] = (byte) value;
-            }
-
-            SecretKeySpec signKey = new SecretKeySpec(key, SHA1);
-            Mac mac = Mac.getInstance(SHA1);
-            mac.init(signKey);
-            byte[] hash = mac.doFinal(data);
-
-
-            int offset = hash[20 - 1] & 0xF;
-
-            long truncatedHash = 0;
-            for (int i = 0; i < 4; ++i) {
-                truncatedHash <<= 8;
-                truncatedHash |= (hash[offset + i] & 0xFF);
-            }
-
-            truncatedHash &= 0x7FFFFFFF;
-            truncatedHash %= Math.pow(10, digits);
-
-            r = (int) truncatedHash;
-        } catch (Exception e) {
-        }
-
-        return r;
-    }
+    public static final String LOG_TAG = "TOTPHelper";
+    public static final int DEFAULT_OTP_DIGITS = 6;
+    public static final int DEFAULT_OTP_PERIOD = 30;
 
     public static Runnable run(Handler handler, ProgressBar otp_progress, TextView credential_otp,
-                               int finalOtpDigits, int finalOtpPeriod, String otpSecret) {
+                               int finalOtpDigits, int finalOtpPeriod, String otpSecret, HashingAlgorithm hashingAlgorithm) {
         return new Runnable() {
             @Override
             public void run() {
@@ -88,25 +54,28 @@ public class TOTPHelper {
                 animation.setInterpolator(new LinearInterpolator());
                 animation.start();
 
-                credential_otp.setText(TOTPHelper.generate(new Base32().decode(otpSecret), finalOtpDigits, finalOtpPeriod));
+                CodeGenerator codeGenerator = new CodeGenerator(hashingAlgorithm, finalOtpDigits, finalOtpPeriod);
+                try {
+                    credential_otp.setText(codeGenerator.generate(otpSecret));
+                } catch (CodeGenerationException e) {
+                    Log.e(LOG_TAG, e.toString());
+                    credential_otp.setText("");
+                }
                 handler.postDelayed(this, 1000);
             }
         };
     }
 
     public static Runnable runAndUpdate(Handler handler, ProgressBar otp_progress, TextView credential_otp,
-                                        EditText otpDigits, EditText otpPeriod, EditText otpSecret) {
+                                        EditText otpDigits, EditText otpPeriod, EditText otpSecret, Spinner hashingAlgorithmSpinner) {
         return new Runnable() {
             @Override
             public void run() {
                 String finalOtpSecret = otpSecret.getText().toString();
+                int finalOtpPeriod = !otpPeriod.getText().toString().isEmpty() ? Integer.parseInt(otpPeriod.getText().toString()) : DEFAULT_OTP_PERIOD;
+                int finalOtpDigits = !otpDigits.getText().toString().isEmpty() ? Integer.parseInt(otpDigits.getText().toString()) : DEFAULT_OTP_DIGITS;
 
-                if (!finalOtpSecret.isEmpty()
-                        && !otpPeriod.getText().toString().isEmpty()
-                        && !otpDigits.getText().toString().isEmpty()) {
-                    int finalOtpPeriod = Integer.parseInt(otpPeriod.getText().toString());
-                    int finalOtpDigits = Integer.parseInt(otpDigits.getText().toString());
-
+                if (!finalOtpSecret.isEmpty()) {
                     otp_progress.setMax(finalOtpPeriod * 100);
                     int progress = (int) (System.currentTimeMillis() / 1000) % finalOtpPeriod;
                     otp_progress.setProgress(progress * 100);
@@ -116,7 +85,17 @@ public class TOTPHelper {
                     animation.setInterpolator(new LinearInterpolator());
                     animation.start();
 
-                    credential_otp.setText(TOTPHelper.generate(new Base32().decode(finalOtpSecret), finalOtpDigits, finalOtpPeriod));
+                    CodeGenerator codeGenerator = new CodeGenerator(
+                            HashingAlgorithm.fromStringOrSha1(hashingAlgorithmSpinner.getSelectedItem().toString()),
+                            finalOtpDigits,
+                            finalOtpPeriod
+                    );
+                    try {
+                        credential_otp.setText(codeGenerator.generate(finalOtpSecret));
+                    } catch (CodeGenerationException e) {
+                        Log.e(LOG_TAG, e.toString());
+                        credential_otp.setText("");
+                    }
                 }
 
                 handler.postDelayed(this, 1000);
@@ -149,7 +128,7 @@ public class TOTPHelper {
             }
 
             String period = otp_period.getText().toString();
-            otpObj.put("period", !period.isEmpty() ? Integer.parseInt(period) : 30);
+            otpObj.put("period", !period.isEmpty() ? Integer.parseInt(period) : DEFAULT_OTP_PERIOD);
 
             String digits = otp_digits.getText().toString();
             otpObj.put("digits", !digits.isEmpty() ? Integer.parseInt(digits) : 6);
@@ -159,12 +138,12 @@ public class TOTPHelper {
                 otpObj.put("issuer", issuer);
             }
 
-            otpObj.put("algorithm", algorithm != null && !algorithm.isEmpty() ? algorithm : "SHA1");
+            otpObj.put("algorithm", algorithm != null && !algorithm.isEmpty() ? algorithm : HashingAlgorithm.SHA1.getFriendlyName());
 
             String secret = otp_secret.getText().toString();
             otpObj.put("secret", !secret.isEmpty() ? secret : "");
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
 
         Log.d("TOTPHelper", otpObj.toString());
@@ -193,9 +172,9 @@ public class TOTPHelper {
             otpObj.put("issuer", issuer);
         }
 
-        otpObj.put("period", period != null && !period.isEmpty() ? Integer.parseInt(period) : 30);
+        otpObj.put("period", period != null && !period.isEmpty() ? Integer.parseInt(period) : DEFAULT_OTP_PERIOD);
         otpObj.put("digits", digits != null && !digits.isEmpty() ? Integer.parseInt(digits) : 6);
-        otpObj.put("algorithm", algorithm != null && !algorithm.isEmpty() ? algorithm : "SHA1");
+        otpObj.put("algorithm", algorithm != null && !algorithm.isEmpty() ? algorithm : HashingAlgorithm.SHA1.getFriendlyName());
         otpObj.put("secret", uri.getQueryParameter("secret"));
 
         return otpObj;
