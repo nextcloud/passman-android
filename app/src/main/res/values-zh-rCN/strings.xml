@@ -79,6 +79,7 @@
     <string name="clear_offline_cache">清除离线缓存</string>
     <string name="nextcloud_single_sign_on">Nextcloud单点登陆</string>
     <string name="value">值</string>
+    <string name="faq">FAQ</string>
     <string name="secret">Secret</string>
     <string name="issuer">发行者 </string>
     </resources>
