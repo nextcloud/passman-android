@@ -47,7 +47,7 @@
     <string name="wait_while_decrypting">Şifre çözülürken bekleyin …</string>
     <string name="wait_while_uploading">Yüklenirken bekleyin …</string>
     <string name="wait_while_downloading">İndirilirken bekleyin …</string>
-    <string name="autofill_noactivevault">Etkin bir depo yok</string>
+    <string name="autofill_noactivevault">Etkin bir kasa yok</string>
     <string name="autofill_vaultlocked">Depo kilidinin açılması gerekiyor</string>
     <string name="autofill_vaultempty">Depoda herhangi bir kimlik doğrulama bilgisi yok</string>
     <string name="autofill_createdbyautofillservice">Otomatik doldurma hizmeti tarafından oluşturuldu</string>
@@ -65,7 +65,7 @@
     <string name="clear_clipboard_delay">Pano temizlensin (bu kadar saniye sonra)</string>
     <string name="generate_password">Parola oluştur</string>
     <string name="generate_password_to_clipboard">Rastgele bir parola oluşturarak panoya kopyalar</string>
-    <string name="enable_password_generator_shortcut_description">Parola oluşturma uygulaması kısayolu etkinleştirilsin</string>
+    <string name="enable_password_generator_shortcut_description">Parola oluşturma uygulaması kısayolu kullanıma alınsın</string>
     <string name="password_generator_require_every_char_type">Her karakter türü istensin</string>
     <string name="password_generator_avoid_ambiguous_chars">Şüpheli karakterler kullanılmasın</string>
     <string name="password_generator_use_special_chars">Özel karakterler kullanılsın</string>

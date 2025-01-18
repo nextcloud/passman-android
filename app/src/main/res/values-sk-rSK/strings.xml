@@ -91,4 +91,9 @@
     <string name="issuer">Vydavateľ</string>
     <string name="error_parsing_qr_code">Chyba pri spracovávaní QR kódu</string>
     <string name="camera_permission_denied">Prístup ku kamere bol odmietnutý</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Nenašli sa žiadne zodpovedajúce poverenia ani automaticky vyplniteľné polia</string>
+    <string name="no_active_vault_add_credential_error">Žiadny aktívny trezor. Nie je možné pridať poverenia!</string>
+    <string name="automatic_autofill_vault_description">Ak chcete, aby sa automatické dopĺňanie poskytovalo iba vtedy, keď je trezor aktívne otvorený a odomknutý v aplikácii, vyberte možnosť Automaticky</string>
+    <string name="autofill_manual_search_fallback">Manuálne vyhľadávanie poverení ako záložná možnosť automatického dopĺňania</string>
+    <string name="set_as_autofill_service">Nastaviť ako službu automatického dopĺňania</string>
+</resources>

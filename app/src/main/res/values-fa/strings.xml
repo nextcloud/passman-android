@@ -12,6 +12,7 @@
     <string name="unlock">باز کردن</string>
     <string name="wrong_vault_pw">گذرواژه اشتباه طاق</string>
     <string name="label">برچسب</string>
+    <string name="email">رایانامه</string>
     <string name="URL">URL</string>
     <string name="description">توضیحات</string>
     <string name="copied_to_clipboard">متن در حافظه موقت کپی شده</string>

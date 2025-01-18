@@ -12,6 +12,7 @@
     <string name="unlock"> Déverrouiller</string>
     <string name="wrong_vault_pw">Mot de passe du coffre-fort erroné</string>
     <string name="label">Libellé</string>
+    <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Description</string>
     <string name="copied_to_clipboard">Texte copié dans le presse-papier</string>
@@ -90,4 +91,9 @@
     <string name="issuer">Émetteur</string>
     <string name="error_parsing_qr_code">Erreur de traitement du code QR</string>
     <string name="camera_permission_denied">Autorisation de caméra refusée</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Aucune information d\'identification correspondante ni aucun champ à remplir automatiquement n\'a été trouvé</string>
+    <string name="no_active_vault_add_credential_error">Aucun coffre-fort actif. Impossible d\'ajouter des informations d\'identification!</string>
+    <string name="automatic_autofill_vault_description">Sélectionnez Automatique si vous souhaitez que le remplissage automatique soit fourni uniquement lorsqu\'un coffre-fort est activement ouvert et déverrouillé dans l\'application.</string>
+    <string name="autofill_manual_search_fallback">Recherche manuelle des informations d\'identification comme option de secours de saisie automatique</string>
+    <string name="set_as_autofill_service">Définir comme service de saisie automatique</string>
+</resources>

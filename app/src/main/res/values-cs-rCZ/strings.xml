@@ -12,6 +12,7 @@
     <string name="unlock">Odemknout</string>
     <string name="wrong_vault_pw">Nesprávné heslo k trezoru</string>
     <string name="label">Štítek</string>
+    <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Popis</string>
     <string name="copied_to_clipboard">Text zkopírován do schránky</string>
@@ -90,4 +91,9 @@
     <string name="issuer">Vydavatel</string>
     <string name="error_parsing_qr_code">Chyba při zpracovávání QR kódu</string>
     <string name="camera_permission_denied">Oprávnění ke kameře odepřena</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Nebyly nalezeny žádné odpovídající přihlašovací údaje nebo automaticky vyplnitelné kolonky</string>
+    <string name="no_active_vault_add_credential_error">Žádný aktivní trezor. Přihlašovací údaj není možné přidat!</string>
+    <string name="automatic_autofill_vault_description">Vyberte Automaticky pokud chcete aby automatické vyplňování bylo poskytováno pouze pokud je trezor aktivně otevřený a odemčený aplikací</string>
+    <string name="autofill_manual_search_fallback">Ruční hledání přihlašovacích údajů coby náhradní volba automatického vyplňování</string>
+    <string name="set_as_autofill_service">Nastavit jako službu automatického vyplňování</string>
+</resources>

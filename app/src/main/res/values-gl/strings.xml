@@ -13,9 +13,10 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="unlock">Desbloquear</string>
     <string name="wrong_vault_pw">O contrasinal da bóveda está trabucado</string>
     <string name="label">Etiqueta</string>
+    <string name="email">Correo-e</string>
     <string name="URL">URL</string>
     <string name="description">Descrición</string>
-    <string name="copied_to_clipboard">O texto foi copiado no portapapeis.</string>
+    <string name="copied_to_clipboard">O texto foi copiado no portapapeis</string>
     <string name="vault_password">Contrasinal da bóveda</string>
     <string name="vault_password_save">Gardar o contrasinal da bóveda</string>
     <string name="not_implemented_yet">Aínda non está implementado</string>
@@ -31,7 +32,7 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="successfully_deleted">Eliminado satisfactoriamente</string>
     <string name="nextcloud_connection_settings">Axustes da conexión de Nextcloud</string>
     <string name="app_settings">Axustes da aplicación</string>
-    <string name="wait_while_loading">Agarde mentres se carga…</string>
+    <string name="wait_while_loading">Agarde mentres carga…</string>
     <string name="loading">Cargando</string>
     <string name="error_downloading_file">Produciuse un erro ao descargar o ficheiro</string>
     <string name="error_writing_file">Produciuse un erro ao gravar o ficheiro</string>
@@ -76,10 +77,10 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="vault_name">Nome da bóveda</string>
     <string name="sharing_key_strength">Forza da chave para compartir</string>
     <string name="new_vault_name">Nome novo para a bóveda</string>
-    <string name="offline_cache">Caché sen conexión</string>
-    <string name="offline_cache_description">Almacenar na caché as bóvedas cifradas se foron cargadas manualmente</string>
-    <string name="enable_offline_cache">Activar a caché sen conexión</string>
-    <string name="clear_offline_cache">Limpar a caché sen conexión</string>
+    <string name="offline_cache">Memoria tobo sen conexión</string>
+    <string name="offline_cache_description">Almacenar na memoria tobo as bóvedas cifradas se foron cargadas manualmente</string>
+    <string name="enable_offline_cache">Activar a memoria tobo sen conexión</string>
+    <string name="clear_offline_cache">Limpar a memoria tobo sen conexión</string>
     <string name="nextcloud_single_sign_on">Identificación única (SSO) de Nextcloud</string>
     <string name="manual_login">Acceso manual</string>
     <string name="confirm_account_logout">Confirma que quere saír?</string>
@@ -91,4 +92,9 @@ Non é posíbel gardar os cambios sen unha conexión co servidor que funcione.</
     <string name="issuer">Emisor</string>
     <string name="error_parsing_qr_code">Produciuse un erro ao analizar o código QR</string>
     <string name="camera_permission_denied">Permiso da cámara denegado</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Non se atoparon credenciais coincidentes nin campos que se enchan automaticamente</string>
+    <string name="no_active_vault_add_credential_error">Non hai ningunha bóveda activa. Non é posíbel engadir a credencial.!</string>
+    <string name="automatic_autofill_vault_description">Seleccione Automático se quere que o autocompletado só se forneza cando unha bóveda estea aberta e desbloqueada activamente na aplicación</string>
+    <string name="autofill_manual_search_fallback">Busca manual de credenciais como alternativa ao autocompletado</string>
+    <string name="set_as_autofill_service">Definir como servizo de autocompletado</string>
+</resources>
