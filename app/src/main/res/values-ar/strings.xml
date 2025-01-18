@@ -2,7 +2,7 @@
     <string name="action_settings">الإعدادات</string>
     <string name="action_refresh">إنعاش</string>
     <string name="nchost">عنوان الخادم</string>
-    <string name="username">إسم المستخدم</string>
+    <string name="username">اسم المستخدم</string>
     <string name="password">كلمة المرور</string>
     <string name="connect">إتصال</string>
     <string name="wrongNCUrl">عنوان URL للواجهة الخلفية لنكست كلود غير صحيح أو غير قادر على الاتصال</string>
@@ -22,7 +22,7 @@
     <string name="created">تاريخ الإنشاء :</string>
     <string name="last_accessed">آخر مرة وصول:</string>
     <string name="search">البحث</string>
-    <string name="save">Save</string>
+    <string name="save">حفظ</string>
     <string name="successfully_saved">تمت عملية الحفظ بنجاح</string>
     <string name="error_occurred">حدث خطأ</string>
     <string name="update">تحديث</string>
@@ -32,7 +32,7 @@
     <string name="nextcloud_connection_settings">إعدادات اتصال نكست كلود </string>
     <string name="app_settings">إعدادات التطبيق</string>
     <string name="wait_while_loading">انتظر ريثما يتم التحميل ...</string>
-    <string name="loading">جاري التحميل</string>
+    <string name="loading">التحميل جارٍ</string>
     <string name="error_downloading_file">خطأ في تنزيل الملف</string>
     <string name="error_writing_file">خطأ في كتابة الملف</string>
     <string name="files">الملفات</string>
@@ -63,7 +63,7 @@
     <string name="enable_credential_list_icons">تمكين أيقونة قائمة بيانات الاعتماد</string>
     <string name="credential_icon">أيقونة بيانات الاعتماد</string>
     <string name="clear_clipboard_delay">مسح الحافظة (بعد ثوان)</string>
-    <string name="generate_password">توليد كلمة سرية</string>
+    <string name="generate_password">توليد كلمة مرور</string>
     <string name="generate_password_to_clipboard">قم بإنشاء كلمة مرور عشوائية وانسخها إلى الحافظة</string>
     <string name="enable_password_generator_shortcut_description">تفعيل اختصار الوصول السريع لتطبيق مولد كلمة المرور</string>
     <string name="password_generator_require_every_char_type">تتطلب نوع كل رمز</string>
