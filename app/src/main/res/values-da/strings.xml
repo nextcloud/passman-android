@@ -31,6 +31,7 @@
     <string name="custom_fields">Brugerdefineret felter</string>
     <string name="add_custom_field">Tilføj et brugerdefineret felt</string>
     <string name="autofill_vaultempty">Ingen legitimationsoplysninger  i boks</string>
+    <string name="expert_settings">Eksporter indstillinger</string>
     <string name="confirm_credential_deletion">Er du sikker på at du ønsker at slette disse legitimationsoplysninger?</string>
     <string name="yes">Ja</string>
     <string name="cancel">Annuller</string>
@@ -43,6 +44,7 @@
     <string name="password_length">Adgangskode længde</string>
     <string name="new_vault_name">Nyt boksnavn</string>
     <string name="value">Værdi</string>
+    <string name="faq">FAQ</string>
     <string name="secret">Hemmelighed</string>
     <string name="issuer">Udsteder</string>
     <string name="no_matching_credentials_or_fields_found">Ingen matchende legitimationsoplysninger eller auto-udfyldbare felter blev fundet</string>
