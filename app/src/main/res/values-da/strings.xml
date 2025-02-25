@@ -3,7 +3,7 @@
     <string name="action_refresh">Opdater</string>
     <string name="nchost">Serveradresse</string>
     <string name="username">Brugernavn</string>
-    <string name="password">Password</string>
+    <string name="password">Adgangskode</string>
     <string name="connect">Tilslut</string>
     <string name="wrongNCUrl">URL\'en er forkert eller ikke i stand til at tilslutte</string>
     <string name="wrongNCSettings">Indstillingerne er ikke korrekt</string>
@@ -15,8 +15,8 @@
     <string name="URL">URL</string>
     <string name="description">Beskrivelse</string>
     <string name="copied_to_clipboard">Tekst kopieret til udklipsholder</string>
-    <string name="vault_password">Boks password</string>
-    <string name="vault_password_save">Gem nyt boks password</string>
+    <string name="vault_password">Boksadgangskode</string>
+    <string name="vault_password_save">Gem ny boksadgangskode</string>
     <string name="not_implemented_yet">Ikke implementeret endnu</string>
     <string name="created">Oprettet:</string>
     <string name="last_accessed">Sidst tilgået:</string>
