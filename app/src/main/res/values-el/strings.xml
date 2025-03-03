@@ -46,6 +46,7 @@
     <string name="digits">Ψηφία</string>
     <string name="period">Περίοδος</string>
     <string name="value">Τιμή</string>
+    <string name="faq">Συχνές Ερωτήσεις</string>
     <string name="secret">Μυστικός</string>
     <string name="issuer">Εκδότης</string>
     </resources>
