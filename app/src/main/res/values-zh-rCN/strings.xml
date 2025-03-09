@@ -78,6 +78,8 @@
     <string name="enable_offline_cache">启用离线缓存</string>
     <string name="clear_offline_cache">清除离线缓存</string>
     <string name="nextcloud_single_sign_on">Nextcloud单点登陆</string>
+    <string name="digits">数字</string>
+    <string name="period">时段</string>
     <string name="value">值</string>
     <string name="faq">FAQ</string>
     <string name="secret">Secret</string>
