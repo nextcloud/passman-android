@@ -43,6 +43,8 @@
     <string name="password_generator_use_special_chars">Brug specialtegn</string>
     <string name="password_length">Adgangskode længde</string>
     <string name="new_vault_name">Nyt boksnavn</string>
+    <string name="digits">Digits</string>
+    <string name="period">Periode</string>
     <string name="value">Værdi</string>
     <string name="faq">FAQ</string>
     <string name="secret">Hemmelighed</string>
