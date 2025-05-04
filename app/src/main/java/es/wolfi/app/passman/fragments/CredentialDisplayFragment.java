@@ -41,8 +41,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import net.bierbaumer.otp_authenticator.TOTPHelper;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,6 +57,8 @@ import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.SharingACL;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.IconUtils;
+import es.wolfi.utils.otp.HashingAlgorithm;
+import es.wolfi.utils.otp.TOTPHelper;
 
 
 /**
@@ -271,18 +271,25 @@ public class CredentialDisplayFragment extends Fragment {
                 JSONObject otpObj = new JSONObject(credential.getOtp());
                 if (otpObj.has("secret") && otpObj.getString("secret").length() > 4) {
                     String otpSecret = otpObj.getString("secret");
+
                     int otpDigits = 6;
                     if (otpObj.has("digits")) {
                         otpDigits = otpObj.getInt("digits");
                     }
+
                     int otpPeriod = 30;
                     if (otpObj.has("period")) {
                         otpPeriod = otpObj.getInt("period");
                     }
 
+                    HashingAlgorithm hashingAlgorithm = HashingAlgorithm.SHA1;
+                    if (otpObj.has("algorithm")) {
+                        hashingAlgorithm = HashingAlgorithm.fromStringOrSha1(otpObj.getString("algorithm"));
+                    }
+
                     int finalOtpDigits = otpDigits;
                     int finalOtpPeriod = otpPeriod;
-                    otp_refresh = TOTPHelper.run(handler, otp_progress, otp.getTextView(), finalOtpDigits, finalOtpPeriod, otpSecret);
+                    otp_refresh = TOTPHelper.run(handler, otp_progress, otp.getTextView(), finalOtpDigits, finalOtpPeriod, otpSecret, hashingAlgorithm);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
