@@ -76,10 +76,10 @@
     <string name="vault_name">Nome do cofre</string>
     <string name="sharing_key_strength">Compartilhando a força da chave</string>
     <string name="new_vault_name">Novo nome do cofre</string>
-    <string name="offline_cache">Cache offline</string>
+    <string name="offline_cache">Cache off-line</string>
     <string name="offline_cache_description">Armazena em cache os cofres criptografados se eles foram carregados manualmente</string>
-    <string name="enable_offline_cache">Habilitar cache offline</string>
-    <string name="clear_offline_cache">Limpar cache offline</string>
+    <string name="enable_offline_cache">Ativar cache off-line</string>
+    <string name="clear_offline_cache">Limpar cache off-line</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign Ligado</string>
     <string name="manual_login">Login Manual</string>
     <string name="confirm_account_logout">Tem certeza que deseja sair?</string>
