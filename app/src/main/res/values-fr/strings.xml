@@ -8,8 +8,8 @@
     <string name="wrongNCUrl">URL backend de Nextcloud non valide ou erreur de connexion</string>
     <string name="wrongNCSettings">Paramètres incorrects</string>
     <string name="net_error">Erreur réseau</string>
-    <string name="net_error_dialog_description">Impossible de se connecter au serveur!\nLes modification ne peuvent être sauvegardées sans une connexion fonctionnelle au serveur.</string>
-    <string name="unlock"> Déverrouiller</string>
+    <string name="net_error_dialog_description">Impossible de se connecter au serveur !\nLes modification ne peuvent être sauvegardées sans une connexion fonctionnelle au serveur.</string>
+    <string name="unlock">Déverrouiller</string>
     <string name="wrong_vault_pw">Mot de passe du coffre-fort erroné</string>
     <string name="label">Libellé</string>
     <string name="email">E-mail</string>
@@ -56,7 +56,7 @@
     <string name="request_connect_timeout">Délai d\'expiration de la demande de connexion (en secondes)</string>
     <string name="request_response_timeout">Délai d\'expiration des requêtes (en secondes)</string>
     <string name="expert_settings">Paramètres expert</string>
-    <string name="confirm_credential_deletion">Êtes-vous sur de vouloir supprimer cette information d\'identification?</string>
+    <string name="confirm_credential_deletion">Êtes-vous sur de vouloir supprimer cette information d\'identification ?</string>
     <string name="confirm_vault_deletion">Êtes-vous sûr de vouloir supprimer ce coffre-fort ?</string>
     <string name="yes">Oui</string>
     <string name="cancel">Annuler</string>
@@ -92,7 +92,7 @@
     <string name="error_parsing_qr_code">Erreur de traitement du code QR</string>
     <string name="camera_permission_denied">Autorisation de caméra refusée</string>
     <string name="no_matching_credentials_or_fields_found">Aucune information d\'identification correspondante ni aucun champ à remplir automatiquement n\'a été trouvé</string>
-    <string name="no_active_vault_add_credential_error">Aucun coffre-fort actif. Impossible d\'ajouter des informations d\'identification!</string>
+    <string name="no_active_vault_add_credential_error">Aucun coffre-fort actif. Impossible d\'ajouter des informations d\'identification !</string>
     <string name="automatic_autofill_vault_description">Sélectionnez Automatique si vous souhaitez que le remplissage automatique soit fourni uniquement lorsqu\'un coffre-fort est activement ouvert et déverrouillé dans l\'application.</string>
     <string name="autofill_manual_search_fallback">Recherche manuelle des informations d\'identification comme option de secours de saisie automatique</string>
     <string name="set_as_autofill_service">Définir comme service de saisie automatique</string>
