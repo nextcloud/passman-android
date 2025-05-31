@@ -5,6 +5,9 @@ ext {
 }
 
 android {
+    def appNameRelease = "Passman"
+    def appNameAlpha = "Passman - Alpha"
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -47,14 +50,14 @@ android {
         release {
             minifyEnabled false
             debuggable false
-            resValue "string", "app_name", "@string/app_name_release"
+            resValue "string", "app_name", appNameRelease
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
         googlePlayRelease {
             minifyEnabled false
             debuggable false
-            resValue "string", "app_name", "@string/app_name_release"
+            resValue "string", "app_name", appNameRelease
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             // .alpha is needed to keep it compatible with the custom signing key approach on the play store,
             // since it won't let us create a new store page and publish the app without the alpha on the name.
@@ -66,7 +69,7 @@ android {
             debuggable true
             applicationIdSuffix ".debug"
             versionNameSuffix '-DEBUG'
-            resValue "string", "app_name", "@string/app_name_release"
+            resValue "string", "app_name", appNameRelease
             signingConfig signingConfigs.alpha
         }
         alpha {
@@ -74,7 +77,7 @@ android {
             debuggable true
             applicationIdSuffix ".alpha"
             versionNameSuffix '-NIGHTLY'
-            resValue "string", "app_name", "@string/app_name_alpha"
+            resValue "string", "app_name", appNameAlpha
             signingConfig signingConfigs.alpha
         }
     }
