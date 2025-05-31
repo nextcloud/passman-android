@@ -103,7 +103,7 @@ android {
     lintOptions {
         disable 'MissingTranslation'
     }
-    ndkVersion '21.4.7075529'
+    ndkVersion '28.1.13356709'
     namespace 'es.wolfi.app.passman'
 }
 
