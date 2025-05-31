@@ -21,13 +21,9 @@
 package es.wolfi.utils;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 
-import com.nextcloud.android.sso.model.FilesAppType;
-
-import java.util.Arrays;
-import java.util.List;
+import com.nextcloud.android.sso.FilesAppTypeRegistry;
+import com.nextcloud.android.sso.helper.VersionCheckHelper;
 
 /**
  * Utils for Nextcloud files app based SSO
@@ -41,22 +37,17 @@ public class SSOUtils {
      * @return whether a supported Nextcloud files app is installed or not
      */
     public static boolean isNextcloudFilesAppInstalled(Context context) {
-        List<String> APPS = Arrays.asList(FilesAppType.PROD.packageId, FilesAppType.DEV.packageId);
+        final int MIN_NEXTCLOUD_FILES_APP_VERSION_CODE_PROD = 30180090;
+        final int MIN_NEXTCLOUD_FILES_APP_VERSION_CODE_DEV = 20211118;
 
-        boolean returnValue = false;
-        PackageManager pm = context.getPackageManager();
-        for (String app : APPS) {
-            try {
-                PackageInfo pi = pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
-                // Nextcloud Files app version 30180090 is required by the used SSO library
-                if ((pi.versionCode >= 30180090 && pi.packageName.equals("com.nextcloud.client")) ||
-                        pi.versionCode >= 20211118 && pi.packageName.equals("com.nextcloud.android.beta")) {
-                    returnValue = true;
-                    break;
-                }
-            } catch (PackageManager.NameNotFoundException ignored) {
-            }
-        }
-        return returnValue;
+        return VersionCheckHelper.verifyMinVersion(
+                context,
+                MIN_NEXTCLOUD_FILES_APP_VERSION_CODE_PROD,
+                FilesAppTypeRegistry.getInstance().findByAccountType("nextcloud")
+        ) || VersionCheckHelper.verifyMinVersion(
+                context,
+                MIN_NEXTCLOUD_FILES_APP_VERSION_CODE_DEV,
+                FilesAppTypeRegistry.getInstance().findByAccountType("nextcloud.beta")
+        );
     }
 }

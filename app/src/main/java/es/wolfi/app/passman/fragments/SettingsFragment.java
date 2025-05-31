@@ -183,12 +183,14 @@ public class SettingsFragment extends Fragment {
         super.onAttach(context);
     }
 
+    @SuppressLint("WrongThread")
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Context context = getContext();
 
         try {
+            // should run on WorkerThread, but it's fine to block the UI here until it's loaded
             ssoAccount = SingleAccountHelper.getCurrentSingleSignOnAccount(context);
             manual_server_connection_settings.removeAllViews();
             sso_settings.setVisibility(View.VISIBLE);
@@ -311,7 +313,7 @@ public class SettingsFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         AccountImporter.clearAllAuthTokens(getContext());
-                        SingleAccountHelper.setCurrentAccount(getContext(), null);
+                        SingleAccountHelper.commitCurrentAccount(getContext(), null);
 
                         settings.edit().remove(SettingValues.HOST.toString()).commit();
                         settings.edit().remove(SettingValues.USER.toString()).commit();
