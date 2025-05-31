@@ -2,6 +2,7 @@
 	path = app/src/main/cpplibs/openssl
 	url = https://github.com/openssl/openssl.git
 	branch = openssl-3.5
+	ignore = dirty
 [submodule "app/src/main/cpplibs/SimpleJSON"]
 	path = app/src/main/cpplibs/SimpleJSON
 	url = https://github.com/MJPA/SimpleJSON.git
