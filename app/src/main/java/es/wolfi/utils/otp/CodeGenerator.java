@@ -80,8 +80,14 @@ public class CodeGenerator {
             data[i] = (byte) value;
         }
 
-        Base32 codec = new Base32();
-        byte[] decodedKey = codec.decode(key);
+        byte[] decodedKey;
+        try {
+            Base32 codec = new Base32();
+            decodedKey = codec.decode(key);
+        } catch (NoSuchMethodError e) {
+            decodedKey = Base32Decoder.decodeBase32(key);
+        }
+
         SecretKeySpec signKey = new SecretKeySpec(decodedKey, algorithm.getHmacAlgorithm());
         Mac mac = Mac.getInstance(algorithm.getHmacAlgorithm());
         mac.init(signKey);
