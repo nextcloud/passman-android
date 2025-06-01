@@ -21,9 +21,11 @@
 package es.wolfi.utils;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
-import com.nextcloud.android.sso.FilesAppTypeRegistry;
-import com.nextcloud.android.sso.helper.VersionCheckHelper;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Utils for Nextcloud files app based SSO
@@ -37,17 +39,22 @@ public class SSOUtils {
      * @return whether a supported Nextcloud files app is installed or not
      */
     public static boolean isNextcloudFilesAppInstalled(Context context) {
-        final int MIN_NEXTCLOUD_FILES_APP_VERSION_CODE_PROD = 30180090;
-        final int MIN_NEXTCLOUD_FILES_APP_VERSION_CODE_DEV = 20211118;
+        final String PROD_PACKAGE_ID = "com.nextcloud.client";
+        final String BETA_PACKAGE_ID = "com.nextcloud.android.beta";
+        List<String> APPS = Arrays.asList(PROD_PACKAGE_ID, BETA_PACKAGE_ID);
 
-        return VersionCheckHelper.verifyMinVersion(
-                context,
-                MIN_NEXTCLOUD_FILES_APP_VERSION_CODE_PROD,
-                FilesAppTypeRegistry.getInstance().findByAccountType("nextcloud")
-        ) || VersionCheckHelper.verifyMinVersion(
-                context,
-                MIN_NEXTCLOUD_FILES_APP_VERSION_CODE_DEV,
-                FilesAppTypeRegistry.getInstance().findByAccountType("nextcloud.beta")
-        );
+        PackageManager pm = context.getPackageManager();
+        for (String app : APPS) {
+            try {
+                PackageInfo pi = pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
+                // Nextcloud Files app version 30180090 is required by the used SSO library
+                if ((pi.versionCode >= 30180090 && pi.packageName.equals("com.nextcloud.client")) ||
+                        pi.versionCode >= 20211118 && pi.packageName.equals("com.nextcloud.android.beta")) {
+                    return true;
+                }
+            } catch (PackageManager.NameNotFoundException ignored) {
+            }
+        }
+        return false;
     }
 }
