@@ -75,6 +75,7 @@
     <string name="digits">Števke</string>
     <string name="period">Obdobje</string>
     <string name="value">Vrednost</string>
+    <string name="faq">Pogosta vprašanja</string>
     <string name="secret">Skrivna koda</string>
     <string name="issuer">Izdajatelj</string>
     </resources>
