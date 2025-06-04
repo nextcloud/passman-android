@@ -24,8 +24,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.nextcloud.android.sso.model.FilesAppType;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,9 +39,10 @@ public class SSOUtils {
      * @return whether a supported Nextcloud files app is installed or not
      */
     public static boolean isNextcloudFilesAppInstalled(Context context) {
-        List<String> APPS = Arrays.asList(FilesAppType.PROD.packageId, FilesAppType.DEV.packageId);
+        final String PROD_PACKAGE_ID = "com.nextcloud.client";
+        final String BETA_PACKAGE_ID = "com.nextcloud.android.beta";
+        List<String> APPS = Arrays.asList(PROD_PACKAGE_ID, BETA_PACKAGE_ID);
 
-        boolean returnValue = false;
         PackageManager pm = context.getPackageManager();
         for (String app : APPS) {
             try {
@@ -51,12 +50,11 @@ public class SSOUtils {
                 // Nextcloud Files app version 30180090 is required by the used SSO library
                 if ((pi.versionCode >= 30180090 && pi.packageName.equals("com.nextcloud.client")) ||
                         pi.versionCode >= 20211118 && pi.packageName.equals("com.nextcloud.android.beta")) {
-                    returnValue = true;
-                    break;
+                    return true;
                 }
             } catch (PackageManager.NameNotFoundException ignored) {
             }
         }
-        return returnValue;
+        return false;
     }
 }

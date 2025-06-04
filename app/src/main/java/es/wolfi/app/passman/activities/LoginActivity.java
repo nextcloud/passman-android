@@ -256,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
                     // As this library supports multiple accounts we created some helper methods if you only want to use one.
                     // The following line stores the selected account as the "default" account which can be queried by using
                     // the SingleAccountHelper.getCurrentSingleSignOnAccount(context) method
-                    SingleAccountHelper.setCurrentAccount(l_context, account.name);
+                    SingleAccountHelper.commitCurrentAccount(l_context, account.name);
 
                     // Get the "default" account
                     SingleSignOnAccount ssoAccount;
