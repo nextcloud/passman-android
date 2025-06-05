@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">حدِّد الخيار \"تلقائي Automatic\" إذا كنت تريد توفير الاستكمال التلقائي فقط عندما تكون هنالك خزنة عاملة و مفتوحة في التطبيق</string>
     <string name="autofill_manual_search_fallback">البحث اليدوي عن حيثيات الدخول كخيار احتياطي للاستكمال التلقائي</string>
     <string name="set_as_autofill_service">تعيين كخدمة للاستكمال التلقائي</string>
-</resources>
+    </resources>

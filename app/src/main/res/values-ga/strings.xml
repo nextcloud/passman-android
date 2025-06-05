@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">Roghnaigh Uathoibríoch más mian leat go gcuirfí líonadh uathoibríoch ar fáil ach amháin nuair a bhíonn cruinneachán oscailte agus díghlasáilte go gníomhach san aip</string>
     <string name="autofill_manual_search_fallback">Cuardach dintiúr láimhe mar rogha cúl-aisfhillte uathlíonta</string>
     <string name="set_as_autofill_service">Socraigh mar sheirbhís autofill</string>
-</resources>
+    </resources>

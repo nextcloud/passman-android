@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">Ak chcete, aby sa automatické dopĺňanie poskytovalo iba vtedy, keď je trezor aktívne otvorený a odomknutý v aplikácii, vyberte možnosť Automaticky</string>
     <string name="autofill_manual_search_fallback">Manuálne vyhľadávanie poverení ako záložná možnosť automatického dopĺňania</string>
     <string name="set_as_autofill_service">Nastaviť ako službu automatického dopĺňania</string>
-</resources>
+    </resources>

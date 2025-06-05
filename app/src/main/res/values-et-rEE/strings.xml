@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">Vali „Automaatne“, kui soovid, et automaattäide oleks kasutusel, vaid siis, kui andmehoidla on rakenduses avatud ning lukustamata</string>
     <string name="autofill_manual_search_fallback">Kasutajanime ja salasõna käsitsi otsing automaatäite tagavaravariandina</string>
     <string name="set_as_autofill_service">Määra automaattäite teenuseks</string>
-</resources>
+    </resources>

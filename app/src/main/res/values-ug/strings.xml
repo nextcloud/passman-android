@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">ئەگەر Vault ئاكتىپلىق بىلەن ئەپتە ئېچىلغاندا ئاندىن ئاپتوماتىك تولدۇرۇلماقچى بولسىڭىز ، ئاپتوماتىك تاللاڭ</string>
     <string name="autofill_manual_search_fallback">ئاپتوماتىك قايتۇرۇشنى تاللاش سۈپىتىدە قولدا كىنىشكا ئىزدەش</string>
     <string name="set_as_autofill_service">ئاپتوماتىك تولدۇرۇش مۇلازىمىتى قىلىپ تەڭشەڭ</string>
-</resources>
+    </resources>

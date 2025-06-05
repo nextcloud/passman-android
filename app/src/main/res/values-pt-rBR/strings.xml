@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">Selecione Automático se desejar que o preenchimento automático seja fornecido apenas quando um Vault estiver ativamente aberto e desbloqueado no aplicativo</string>
     <string name="autofill_manual_search_fallback">Pesquisa manual de credenciais como opção de preenchimento automático</string>
     <string name="set_as_autofill_service">Definir como serviço de preenchimento automático</string>
-</resources>
+    </resources>

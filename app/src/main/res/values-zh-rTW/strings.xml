@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">若您希望僅在應用程式中主動開啟並解鎖保管箱時提供自動填入，請選取「自動」</string>
     <string name="autofill_manual_search_fallback">手動搜尋憑證作為自動填入汰退的選項</string>
     <string name="set_as_autofill_service">設定為自動填入服務</string>
-</resources>
+    </resources>

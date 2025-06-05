@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">Velg Automatisk hvis du vil at automatisk utfylling bare skal gis når et hvelv er aktivt åpent og ulåst i appen</string>
     <string name="autofill_manual_search_fallback">Manuelt søk på legitimasjon som reservealternativ for autofyll</string>
     <string name="set_as_autofill_service">Angi som autofyll-tjeneste</string>
-</resources>
+    </resources>

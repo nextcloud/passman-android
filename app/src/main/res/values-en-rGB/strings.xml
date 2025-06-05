@@ -96,4 +96,4 @@
     <string name="automatic_autofill_vault_description">Select Automatic if you want autofill to only be provided when a Vault is actively open and unlocked in the app</string>
     <string name="autofill_manual_search_fallback">Manual credential search as autofill fallback option</string>
     <string name="set_as_autofill_service">Set as autofill service</string>
-</resources>
+    </resources>
