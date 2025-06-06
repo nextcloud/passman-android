@@ -96,4 +96,5 @@
     <string name="automatic_autofill_vault_description">如果您希望僅在應用程式中主動開啟並解鎖保管庫時提供自動填充，請選擇“自動”</string>
     <string name="autofill_manual_search_fallback">人手身份驗證搜尋作為自動填充應變的選項</string>
     <string name="set_as_autofill_service">設置為自動填充服務</string>
-    </resources>
+    <string name="algorithm">演算法</string>
+</resources>

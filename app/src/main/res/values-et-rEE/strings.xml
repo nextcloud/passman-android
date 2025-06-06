@@ -91,9 +91,10 @@
     <string name="issuer">Väljastaja</string>
     <string name="error_parsing_qr_code">Viga QR-koodi töötlemisel</string>
     <string name="camera_permission_denied">Vajalik on luba kaamera kasutamiseks</string>
-    <string name="no_matching_credentials_or_fields_found">Sobilikku kasutajanime ja salasõne või automaattäidetavaid välju ei leidunud</string>
+    <string name="no_matching_credentials_or_fields_found">Sobilikku kasutajanime ja salasõna või automaattäidetavaid välju ei leidunud</string>
     <string name="no_active_vault_add_credential_error">Aktiivset andmehoidlat ei ole. Autentimise andmete lisamine pole võimalik!</string>
     <string name="automatic_autofill_vault_description">Vali „Automaatne“, kui soovid, et automaattäide oleks kasutusel, vaid siis, kui andmehoidla on rakenduses avatud ning lukustamata</string>
     <string name="autofill_manual_search_fallback">Kasutajanime ja salasõna käsitsi otsing automaatäite tagavaravariandina</string>
     <string name="set_as_autofill_service">Määra automaattäite teenuseks</string>
-    </resources>
+    <string name="algorithm">Algoritm</string>
+</resources>
