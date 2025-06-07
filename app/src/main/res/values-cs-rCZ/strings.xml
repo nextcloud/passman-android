@@ -96,4 +96,5 @@
     <string name="automatic_autofill_vault_description">Vyberte Automaticky pokud chcete aby automatické vyplňování bylo poskytováno pouze pokud je trezor aktivně otevřený a odemčený aplikací</string>
     <string name="autofill_manual_search_fallback">Ruční hledání přihlašovacích údajů coby náhradní volba automatického vyplňování</string>
     <string name="set_as_autofill_service">Nastavit jako službu automatického vyplňování</string>
-    </resources>
+    <string name="algorithm">Alogritmus</string>
+</resources>

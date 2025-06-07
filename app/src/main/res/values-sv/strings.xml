@@ -97,4 +97,5 @@
     <string name="automatic_autofill_vault_description">Välj Automatisk om du vill att autofyll endast ska tillhandahållas när ett valv är aktivt öppet och upplåst i appen</string>
     <string name="autofill_manual_search_fallback">Manuell sökning av autentiseringsuppgifter som reservalternativ för autofyll</string>
     <string name="set_as_autofill_service">Ställ in som autofill-tjänst</string>
-    </resources>
+    <string name="algorithm">Algoritm</string>
+</resources>
