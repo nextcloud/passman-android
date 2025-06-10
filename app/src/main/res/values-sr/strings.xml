@@ -96,4 +96,5 @@
     <string name="automatic_autofill_vault_description">Изаберите Аутоматски ако желите да се понуди аутоматско попуњавање онда када се у апликацији Сеф активно отвори или откључа</string>
     <string name="autofill_manual_search_fallback">Ручна претрага акредитива у случају да нема аутоматског попуњавања</string>
     <string name="set_as_autofill_service">Постави као сервис за аутоматско попуњавање</string>
-    </resources>
+    <string name="algorithm">Алгоритам</string>
+</resources>
