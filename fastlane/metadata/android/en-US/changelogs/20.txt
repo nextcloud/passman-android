@@ -1,0 +1,6 @@
+- refactor OTP integration with support for all rfc specified otp algorithms (sha1, sha256, sha512)
+- fix OTP generation for android systems <= 8.1
+- themed app icon
+- update openssl from version 1.1.1 stable to 3.5 lts
+- update to NDK r28b
+- update various dependencies
