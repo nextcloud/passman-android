@@ -74,7 +74,7 @@
     <string name="password_generator_use_uppercase">Usar caracteres maiúsculas</string>
     <string name="password_length">Comprimento da senha</string>
     <string name="vault_name">Nome do cofre</string>
-    <string name="sharing_key_strength">Compartilhando a força da chave</string>
+    <string name="sharing_key_strength">Força da chave de compartilhamento</string>
     <string name="new_vault_name">Novo nome do cofre</string>
     <string name="offline_cache">Cache off-line</string>
     <string name="offline_cache_description">Armazena em cache os cofres criptografados se eles foram carregados manualmente</string>
