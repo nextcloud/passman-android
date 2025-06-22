@@ -96,4 +96,5 @@
     <string name="automatic_autofill_vault_description">Sélectionnez Automatique si vous souhaitez que le remplissage automatique soit fourni uniquement lorsqu\'un coffre-fort est activement ouvert et déverrouillé dans l\'application.</string>
     <string name="autofill_manual_search_fallback">Recherche manuelle des informations d\'identification comme option de secours de saisie automatique</string>
     <string name="set_as_autofill_service">Définir comme service de saisie automatique</string>
-    </resources>
+    <string name="algorithm">Algorithme</string>
+</resources>
