@@ -96,4 +96,5 @@
     <string name="automatic_autofill_vault_description">Otomatik doldurmanın yalnızca bir kasa etkin olarak açıkken ve uygulama içinden kilidi açılmışken yapılmasını istiyorsanız Otomatik olarak seçin.</string>
     <string name="autofill_manual_search_fallback">Otomatik doldurma kullanılamadığında el ile kimlik bilgisi arama</string>
     <string name="set_as_autofill_service">Otomatik doldurma hizmeti olarak ayarla</string>
-    </resources>
+    <string name="algorithm">Algoritma</string>
+</resources>
