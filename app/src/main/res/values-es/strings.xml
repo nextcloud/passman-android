@@ -96,4 +96,5 @@
     <string name="automatic_autofill_vault_description">Seleccione Automático si quiere que el rellenado automático sólo funcione cuando hay una Bóveda activa abierta y desbloqueada en la app</string>
     <string name="autofill_manual_search_fallback">Búsqueda manual de credenciales como opción alternativa al rellenado automático</string>
     <string name="set_as_autofill_service">Establecer como servicio de auto rellenado</string>
-    </resources>
+    <string name="algorithm">Algoritmo</string>
+</resources>
