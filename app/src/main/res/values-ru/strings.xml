@@ -57,6 +57,7 @@
     <string name="request_response_timeout">Время ожидания ответа для запроса (в секундах)</string>
     <string name="expert_settings">Экспорт настроек</string>
     <string name="confirm_credential_deletion">Вы уверены, что хотите удалить эти учетные данные?</string>
+    <string name="confirm_vault_deletion">Вы уверены, что хотите удалить это хранилище?</string>
     <string name="yes">Да</string>
     <string name="cancel">Отменить</string>
     <string name="enable_credential_list_icons">Включить список иконок учетных данных</string>
@@ -74,6 +75,7 @@
     <string name="password_length">Длина пароля</string>
     <string name="new_vault_name">Новое название хранилища</string>
     <string name="nextcloud_single_sign_on">Технология единого входа Nextcloud</string>
+    <string name="confirm_account_logout">Вы уверены, что хотите выйти?</string>
     <string name="digits">Цифры</string>
     <string name="period">Период</string>
     <string name="value">Значение</string>
