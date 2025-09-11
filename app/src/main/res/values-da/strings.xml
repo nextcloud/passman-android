@@ -1,6 +1,6 @@
 <resources>
     <string name="action_settings">Indstillinger</string>
-    <string name="action_refresh">Opdater</string>
+    <string name="action_refresh">Opdatér</string>
     <string name="nchost">Serveradresse</string>
     <string name="username">Brugernavn</string>
     <string name="password">Adgangskode</string>
@@ -24,7 +24,7 @@
     <string name="save">Gem</string>
     <string name="successfully_saved">Gemt</string>
     <string name="error_occurred">Der opstod en fejl</string>
-    <string name="update">Opdater</string>
+    <string name="update">Opdatér</string>
     <string name="delete">Slet</string>
     <string name="loading">Indlæser</string>
     <string name="files">Filer</string>
