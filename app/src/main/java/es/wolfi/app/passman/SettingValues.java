@@ -41,7 +41,9 @@ public enum SettingValues {
     ENABLE_OFFLINE_CACHE("enable_offline_cache"),
     KEY_STORE_MIGRATION_STATE("key_store_migration_state"),
     KEY_STORE_ENCRYPTION_KEY("key_store_encryption_key"),
-    CREDENTIAL_LABEL_SORT("credential_label_sort");
+    CREDENTIAL_LABEL_SORT("credential_label_sort"),
+    CASE_INSENSITIVE_CREDENTIAL_LABEL_SORT("case_insensitive_credential_label_sort"),
+    RESTORE_CUSTOM_CREDENTIAL_SORT_ORDER("restore_custom_credential_sort_order");
 
     private final String name;
 

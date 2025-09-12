@@ -72,6 +72,7 @@ public class CredentialItemFragment extends Fragment {
     private Vault customVault = null;
     private boolean enableLimitedAutofillView = false;
     private SharedPreferences sharedPreferences;
+    private boolean caseInsensitiveSort = false;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -139,12 +140,12 @@ public class CredentialItemFragment extends Fragment {
                     sortMethod = (++sortMethod % 3);
                     updateToggleSortButtonImage(toggleSortButton);
 
-                    vault.sort(sortMethod);
+                    vault.sort(sortMethod, caseInsensitiveSort);
                     applyFilters(vault, searchInput);
                     sharedPreferences.edit().putInt(SettingValues.CREDENTIAL_LABEL_SORT.toString(), sortMethod).apply();
                 }
             });
-            vault.sort(sortMethod);
+            vault.sort(sortMethod, caseInsensitiveSort);
             recyclerView.setAdapter(new CredentialViewAdapter(vault.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
             scrollToLastPosition();
             updateToggleSortButtonImage(toggleSortButton);
@@ -211,7 +212,10 @@ public class CredentialItemFragment extends Fragment {
             }
 
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            sortMethod = sharedPreferences.getInt(SettingValues.CREDENTIAL_LABEL_SORT.toString(), CredentialLabelSort.SortMethod.STANDARD.ordinal());
+            caseInsensitiveSort = sharedPreferences.getBoolean(SettingValues.CASE_INSENSITIVE_CREDENTIAL_LABEL_SORT.toString(), false);
+            if (sharedPreferences.getBoolean(SettingValues.RESTORE_CUSTOM_CREDENTIAL_SORT_ORDER.toString(), true)) {
+                sortMethod = sharedPreferences.getInt(SettingValues.CREDENTIAL_LABEL_SORT.toString(), CredentialLabelSort.SortMethod.STANDARD.ordinal());
+            }
 
             loadCredentialList(view);
         }
