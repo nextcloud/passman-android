@@ -40,7 +40,8 @@ public enum SettingValues {
     OFFLINE_STORAGE("offline_storage"),
     ENABLE_OFFLINE_CACHE("enable_offline_cache"),
     KEY_STORE_MIGRATION_STATE("key_store_migration_state"),
-    KEY_STORE_ENCRYPTION_KEY("key_store_encryption_key");
+    KEY_STORE_ENCRYPTION_KEY("key_store_encryption_key"),
+    CREDENTIAL_LABEL_SORT("credential_label_sort");
 
     private final String name;
 

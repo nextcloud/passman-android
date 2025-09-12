@@ -21,6 +21,7 @@
 package es.wolfi.app.passman.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -70,6 +71,7 @@ public class CredentialItemFragment extends Fragment {
     private RecyclerView recyclerView;
     private Vault customVault = null;
     private boolean enableLimitedAutofillView = false;
+    private SharedPreferences sharedPreferences;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -139,6 +141,7 @@ public class CredentialItemFragment extends Fragment {
 
                     vault.sort(sortMethod);
                     applyFilters(vault, searchInput);
+                    sharedPreferences.edit().putInt(SettingValues.CREDENTIAL_LABEL_SORT.toString(), sortMethod).apply();
                 }
             });
             vault.sort(sortMethod);
@@ -206,6 +209,10 @@ public class CredentialItemFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+            sortMethod = sharedPreferences.getInt(SettingValues.CREDENTIAL_LABEL_SORT.toString(), CredentialLabelSort.SortMethod.STANDARD.ordinal());
+
             loadCredentialList(view);
         }
         return view;
