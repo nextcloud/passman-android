@@ -46,6 +46,7 @@
     <string name="offline_cache">オフラインキャッシュ</string>
     <string name="nextcloud_single_sign_on">Nextcloud シングルサインオン</string>
     <string name="value">値</string>
+    <string name="faq">FAQ</string>
     <string name="secret">シークレットキー</string>
     <string name="issuer">発行者</string>
     </resources>
