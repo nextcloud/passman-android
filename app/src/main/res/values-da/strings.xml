@@ -31,7 +31,7 @@
     <string name="custom_fields">Brugerdefineret felter</string>
     <string name="add_custom_field">Tilføj et brugerdefineret felt</string>
     <string name="autofill_vaultempty">Ingen legitimationsoplysninger  i boks</string>
-    <string name="expert_settings">Eksporter indstillinger</string>
+    <string name="expert_settings">Eksportér indstillinger</string>
     <string name="confirm_credential_deletion">Er du sikker på at du ønsker at slette disse legitimationsoplysninger?</string>
     <string name="yes">Ja</string>
     <string name="cancel">Annuller</string>
