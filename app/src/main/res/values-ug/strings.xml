@@ -73,7 +73,7 @@
     <string name="password_generator_use_lowercase">كىچىك ھەرپلەرنى ئىشلىتىڭ</string>
     <string name="password_generator_use_uppercase">چوڭ ھەرپلەرنى ئىشلىتىڭ</string>
     <string name="password_length">پارولنىڭ ئۇزۇنلۇقى</string>
-    <string name="vault_name">Vault name</string>
+    <string name="vault_name">ئامبار ئىسمى</string>
     <string name="sharing_key_strength">ئاچقۇچلۇق كۈچنى ئورتاقلىشىش</string>
     <string name="new_vault_name">يېڭى ئىسكىلات ئىسمى</string>
     <string name="offline_cache">تورسىز ساقلىغۇچ</string>
@@ -88,7 +88,7 @@
     <string name="value">قىممەت</string>
     <string name="faq">سوئال</string>
     <string name="secret">مەخپىي</string>
-    <string name="issuer">Issuer</string>
+    <string name="issuer">تارقاتقۇچى</string>
     <string name="error_parsing_qr_code">QR كودىنى تەھلىل قىلىشتا خاتالىق</string>
     <string name="camera_permission_denied">كامېرا ئىجازەتنامىسى رەت قىلىندى</string>
     <string name="no_matching_credentials_or_fields_found">ماس كېلىدىغان كىنىشكا ياكى ئاپتوماتىك تولدۇرغىلى بولىدىغان ساھە تېپىلمىدى</string>
@@ -96,4 +96,5 @@
     <string name="automatic_autofill_vault_description">ئەگەر Vault ئاكتىپلىق بىلەن ئەپتە ئېچىلغاندا ئاندىن ئاپتوماتىك تولدۇرۇلماقچى بولسىڭىز ، ئاپتوماتىك تاللاڭ</string>
     <string name="autofill_manual_search_fallback">ئاپتوماتىك قايتۇرۇشنى تاللاش سۈپىتىدە قولدا كىنىشكا ئىزدەش</string>
     <string name="set_as_autofill_service">ئاپتوماتىك تولدۇرۇش مۇلازىمىتى قىلىپ تەڭشەڭ</string>
-    </resources>
+    <string name="algorithm">ئالگورىزىم</string>
+</resources>
