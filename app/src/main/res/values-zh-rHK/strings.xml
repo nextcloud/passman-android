@@ -36,7 +36,7 @@
     <string name="error_downloading_file">下載檔案時出錯</string>
     <string name="error_writing_file">寫入檔案時出錯</string>
     <string name="files">檔案</string>
-    <string name="custom_fields">自定義字段</string>
+    <string name="custom_fields">自訂字段</string>
     <string name="add_file">添加檔案</string>
     <string name="add_custom_field">添加自訂字段</string>
     <string name="unlock_passman">解鎖 Passman</string>
