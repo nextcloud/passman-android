@@ -40,7 +40,7 @@
     <string name="add_file">Додати файл</string>
     <string name="add_custom_field">Додати користувацьке поле</string>
     <string name="unlock_passman">Розблокувати Passman</string>
-    <string name="unlock_passman_message_device_auth">Будь ласка, авторизуйтесь, щоб отримати доступ до Passman</string>
+    <string name="unlock_passman_message_device_auth">Будь ласка, увійдіть, щоб отримати доступ до Passman</string>
     <string name="app_start_password">Пароль для запуску програми</string>
     <string name="app_start_password_android_auth_description">Увімкнути автентифікацію користувачів Android під час запуску програми</string>
     <string name="wait_while_encrypting">Зачекайте під час шифрування ...</string>
