@@ -30,7 +30,7 @@
     <string name="delete">Вилучити</string>
     <string name="successfully_deleted">Успішно видалено</string>
     <string name="nextcloud_connection_settings">Налаштування підключення до хмари Nextcloud</string>
-    <string name="app_settings">Налаштування програми</string>
+    <string name="app_settings">Налаштування</string>
     <string name="wait_while_loading">Зачекайте, поки завантажиться ...</string>
     <string name="loading">Завантаження</string>
     <string name="error_downloading_file">Помилка під час звантаження файлу</string>
@@ -64,7 +64,7 @@
     <string name="credential_icon">Піктограма облікових даних</string>
     <string name="clear_clipboard_delay">Очистіть буфер обміну (за кілька секунд)</string>
     <string name="generate_password">Створити пароль</string>
-    <string name="generate_password_to_clipboard">Згенеруйте випадковий пароль і скопіюйте в буфер обміну</string>
+    <string name="generate_password_to_clipboard">Створити випадковий пароль та скопіюйти до буфера обміну</string>
     <string name="enable_password_generator_shortcut_description">Увімкнути ярлик генератора паролів</string>
     <string name="password_generator_require_every_char_type">Вимагати кожен тип символів</string>
     <string name="password_generator_avoid_ambiguous_chars">Уникайте двозначних символів</string>
