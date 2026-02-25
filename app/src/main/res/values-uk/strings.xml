@@ -93,7 +93,7 @@
     <string name="camera_permission_denied">Відмовлено в дозволі на камеру</string>
     <string name="no_matching_credentials_or_fields_found">Не знайдено відповідних облікових даних або полів, що заповнюються автоматично</string>
     <string name="no_active_vault_add_credential_error">Немає активного сховища. Неможливо додати облікові дані!</string>
-    <string name="automatic_autofill_vault_description">Виберіть «Автоматично», якщо ви хочете, щоб автозаповнення працювало тільки тоді, коли сховище активно відкрите і розблоковане в додатку.</string>
+    <string name="automatic_autofill_vault_description">Виберіть \"Автоматично\", якщо ви хочете, щоб автозаповнення працювало тільки тоді, коли сховище активно відкрите і розблоковане в додатку.</string>
     <string name="autofill_manual_search_fallback">Ручний пошук облікових даних як запасний варіант автозаповнення</string>
     <string name="set_as_autofill_service">Встановити як службу автозаповнення</string>
     <string name="algorithm">Алгоритм</string>
