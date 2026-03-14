@@ -57,7 +57,7 @@
     <string name="request_response_timeout">Zeitüberschreitung bei der Beantwortung von Anfragen (in Sekunden)</string>
     <string name="expert_settings">Experteneinstellungen</string>
     <string name="confirm_credential_deletion">Möchten Sie diese Zugangsdaten wirklisch löschen?</string>
-    <string name="confirm_vault_deletion">Möchten Sie diesen Tresor wirklich löschen?</string>
+    <string name="confirm_vault_deletion">Möchten Sie diesen Tresor löschen?</string>
     <string name="yes">Ja</string>
     <string name="cancel">Abbrechen</string>
     <string name="enable_credential_list_icons">Symbole für Anmeldeinformationen aktivieren</string>
@@ -82,7 +82,7 @@
     <string name="clear_offline_cache">Offline-Cache leeren</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
     <string name="manual_login">Manuelles Anmelden</string>
-    <string name="confirm_account_logout">Möchten Sie sich wirklich abmelden?</string>
+    <string name="confirm_account_logout">Möchten Sie sich abmelden?</string>
     <string name="digits">Zeichen</string>
     <string name="period">Zeitraum</string>
     <string name="value">Wert</string>
