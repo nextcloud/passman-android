@@ -31,7 +31,7 @@
     <string name="successfully_deleted">Gelöscht</string>
     <string name="nextcloud_connection_settings">Verbindungseinstellungen von Nextcloud</string>
     <string name="app_settings">App-Einstellungen</string>
-    <string name="wait_while_loading">Warte während des Ladens …</string>
+    <string name="wait_while_loading">Warte während des Ladens …</string>
     <string name="loading">Lade</string>
     <string name="error_downloading_file">Fehler beim Laden der Datei</string>
     <string name="error_writing_file">Fehler beim Schreiben der Datei</string>
@@ -40,13 +40,13 @@
     <string name="add_file">Datei hinzufügen</string>
     <string name="add_custom_field">Benutzerdefiniertes Feld hinzufügen</string>
     <string name="unlock_passman">Passman entsperren</string>
-    <string name="unlock_passman_message_device_auth">Bitte authentifizieren Sie sich, um auf Passman zuzugreifen.</string>
+    <string name="unlock_passman_message_device_auth">Bitte authentifizieren Sie sich, um auf Passman zuzugreifen</string>
     <string name="app_start_password">Passwort für App-Start</string>
     <string name="app_start_password_android_auth_description">Android-Benutzerauthentifizierung beim App-Start aktivieren</string>
-    <string name="wait_while_encrypting">Warte während der Verschlüsselung …</string>
-    <string name="wait_while_decrypting">Warte während der Entschlüsselung …</string>
-    <string name="wait_while_uploading">Warte während des Hochladens …</string>
-    <string name="wait_while_downloading">Warte während des Herunterladens …</string>
+    <string name="wait_while_encrypting">Warte während der Verschlüsselung …</string>
+    <string name="wait_while_decrypting">Warte während der Entschlüsselung …</string>
+    <string name="wait_while_uploading">Warte während des Hochladens …</string>
+    <string name="wait_while_downloading">Warte während des Herunterladens …</string>
     <string name="autofill_noactivevault">Kein Tresor aktiv</string>
     <string name="autofill_vaultlocked">Tresor muss entsperrt werden</string>
     <string name="autofill_vaultempty">Keine Anmeldeinformationen im Tresor</string>
@@ -56,7 +56,7 @@
     <string name="request_connect_timeout">Zeitüberschreitung bei Verbindungsanfragen (in Sekunden)</string>
     <string name="request_response_timeout">Zeitüberschreitung bei der Beantwortung von Anfragen (in Sekunden)</string>
     <string name="expert_settings">Experteneinstellungen</string>
-    <string name="confirm_credential_deletion">Möchten Sie diese Zugangsdaten wirklisch löschen?</string>
+    <string name="confirm_credential_deletion">Möchten Sie diese Zugangsdaten löschen?</string>
     <string name="confirm_vault_deletion">Möchten Sie diesen Tresor löschen?</string>
     <string name="yes">Ja</string>
     <string name="cancel">Abbrechen</string>
