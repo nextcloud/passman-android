@@ -1,1 +1,1 @@
-greife auf Deiner in der Nextcloud Passman App gespeicherten Credentials zu
+Ermöglicht die Verwaltung der Anmeldeinformationen aus der Nextcloud Passman App
