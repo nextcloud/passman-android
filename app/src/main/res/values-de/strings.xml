@@ -56,8 +56,8 @@
     <string name="request_connect_timeout">Zeitüberschreitung bei Verbindungsanfragen (in Sekunden)</string>
     <string name="request_response_timeout">Zeitüberschreitung bei der Beantwortung von Anfragen (in Sekunden)</string>
     <string name="expert_settings">Experteneinstellungen</string>
-    <string name="confirm_credential_deletion">Möchten Sie diese Zugangsdaten löschen?</string>
-    <string name="confirm_vault_deletion">Möchten Sie diesen Tresor löschen?</string>
+    <string name="confirm_credential_deletion">Sollen diese Zugangsdaten gelöscht werden?</string>
+    <string name="confirm_vault_deletion">Soll dieser Tresor gelöscht werden?</string>
     <string name="yes">Ja</string>
     <string name="cancel">Abbrechen</string>
     <string name="enable_credential_list_icons">Symbole für Anmeldeinformationen aktivieren</string>
