@@ -45,18 +45,24 @@ public class CredentialLabelSort implements Comparator<Credential> {
     }
 
     private final int method;
+    private final boolean caseInsensitiveSort;
 
-    public CredentialLabelSort(int method) {
+    public CredentialLabelSort(int method, boolean caseInsensitiveSort) {
         this.method = method;
+        this.caseInsensitiveSort = caseInsensitiveSort;
     }
 
     @Override
     public int compare(Credential left, Credential right) {
         if (method == SortMethod.ALPHABETICALLY_ASCENDING.ordinal()) {
-            return left.getLabel().compareTo(right.getLabel());
+            return this.caseInsensitiveSort
+                    ? left.getLabel().toLowerCase().compareTo(right.getLabel().toLowerCase())
+                    : left.getLabel().compareTo(right.getLabel());
         }
         if (method == SortMethod.ALPHABETICALLY_DESCENDING.ordinal()) {
-            return right.getLabel().compareTo(left.getLabel());
+            return this.caseInsensitiveSort
+                    ? right.getLabel().toLowerCase().compareTo(left.getLabel().toLowerCase())
+                    : right.getLabel().compareTo(left.getLabel());
         }
         return left.getId() - right.getId();
     }

@@ -101,4 +101,7 @@
     <string name="autofill_manual_search_fallback">Manual credential search as autofill fallback option</string>
     <string name="set_as_autofill_service">Set as autofill service</string>
     <string name="algorithm">Algorithm</string>
+    <string name="enable_case_insensitive_credential_label_sort">Enable case-insensitive credential sort</string>
+    <string name="credential_list_sort_settings">Credential list sort settings</string>
+    <string name="restore_custom_credential_sort_order">Restore custom credential sort order</string>
 </resources>
