@@ -13,7 +13,7 @@
     <string name="wrong_vault_pw">Hibás széf jelszó</string>
     <string name="label">Címke</string>
     <string name="email">E-mail</string>
-    <string name="URL">URL</string>
+    <string name="URL">Webcím</string>
     <string name="description">Leírás</string>
     <string name="copied_to_clipboard">Szöveg a vágólapra másolva</string>
     <string name="vault_password">Széf jelszó</string>
@@ -91,4 +91,10 @@
     <string name="issuer">Kibocsátó</string>
     <string name="error_parsing_qr_code">Hiba a QR-kód feldolgozása során</string>
     <string name="camera_permission_denied">Kamera engedély megtagadva</string>
-    </resources>
+    <string name="no_matching_credentials_or_fields_found">Nem található megfelelő hitelesítő adat, vagy az automatikusan kitölthető mezők nem találhatóak</string>
+    <string name="no_active_vault_add_credential_error">Nincs aktív széf. Nem lehet hitelesítő adatot hozzáadni.</string>
+    <string name="automatic_autofill_vault_description">Válassza az Automatikus lehetőséget, ha csak akkor szeretne automatikus kitöltést, ha egy széf aktívan meg van nyitva és fel van oldva az alkalmazásban</string>
+    <string name="autofill_manual_search_fallback">Kézi hitelesítőadat-keresés az automatikus kitöltés tartaléklehetőségeket</string>
+    <string name="set_as_autofill_service">Automatikus kitöltési szolgáltatás beállítása</string>
+    <string name="algorithm">Algoritmus</string>
+</resources>
