@@ -35,6 +35,7 @@
     <string name="add_file">Pridėti failą</string>
     <string name="wait_while_encrypting">Palaukite, kol šifruojama…</string>
     <string name="wait_while_decrypting">Palaukite, kol iššifruojama…</string>
+    <string name="expert_settings">Ekspertų nustatymai</string>
     <string name="yes">Taip</string>
     <string name="cancel">Atsisakyti</string>
     <string name="generate_password">Generuoti slaptažodį</string>
