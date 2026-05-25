@@ -24,7 +24,7 @@
     <string name="search">搜索</string>
     <string name="save">保存</string>
     <string name="successfully_saved">保存成功</string>
-    <string name="error_occurred">发生了一个错误</string>
+    <string name="error_occurred">发生错误</string>
     <string name="update">更新</string>
     <string name="successfully_updated">更新成功</string>
     <string name="delete">删除</string>

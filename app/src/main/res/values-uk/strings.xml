@@ -15,7 +15,7 @@
     <string name="email">Ел.пошта</string>
     <string name="URL">URL</string>
     <string name="description">Опис</string>
-    <string name="copied_to_clipboard">Текст скопійовано до буферу обміну</string>
+    <string name="copied_to_clipboard">Текст скопійовано до буфера обміну</string>
     <string name="vault_password">Пароль для сховища</string>
     <string name="vault_password_save">Зберегти пароль сховища</string>
     <string name="not_implemented_yet">Ще не реалізовано</string>
@@ -30,7 +30,7 @@
     <string name="delete">Вилучити</string>
     <string name="successfully_deleted">Успішно видалено</string>
     <string name="nextcloud_connection_settings">Налаштування підключення до хмари Nextcloud</string>
-    <string name="app_settings">Налаштування програми</string>
+    <string name="app_settings">Налаштування</string>
     <string name="wait_while_loading">Зачекайте, поки завантажиться ...</string>
     <string name="loading">Завантаження</string>
     <string name="error_downloading_file">Помилка під час звантаження файлу</string>
@@ -40,7 +40,7 @@
     <string name="add_file">Додати файл</string>
     <string name="add_custom_field">Додати користувацьке поле</string>
     <string name="unlock_passman">Розблокувати Passman</string>
-    <string name="unlock_passman_message_device_auth">Будь ласка, авторизуйтесь, щоб отримати доступ до Passman</string>
+    <string name="unlock_passman_message_device_auth">Будь ласка, увійдіть, щоб отримати доступ до Passman</string>
     <string name="app_start_password">Пароль для запуску програми</string>
     <string name="app_start_password_android_auth_description">Увімкнути автентифікацію користувачів Android під час запуску програми</string>
     <string name="wait_while_encrypting">Зачекайте під час шифрування ...</string>
@@ -64,7 +64,7 @@
     <string name="credential_icon">Піктограма облікових даних</string>
     <string name="clear_clipboard_delay">Очистіть буфер обміну (за кілька секунд)</string>
     <string name="generate_password">Створити пароль</string>
-    <string name="generate_password_to_clipboard">Згенеруйте випадковий пароль і скопіюйте в буфер обміну</string>
+    <string name="generate_password_to_clipboard">Створити випадковий пароль та скопіюйти до буфера обміну</string>
     <string name="enable_password_generator_shortcut_description">Увімкнути ярлик генератора паролів</string>
     <string name="password_generator_require_every_char_type">Вимагати кожен тип символів</string>
     <string name="password_generator_avoid_ambiguous_chars">Уникайте двозначних символів</string>
@@ -93,7 +93,7 @@
     <string name="camera_permission_denied">Відмовлено в дозволі на камеру</string>
     <string name="no_matching_credentials_or_fields_found">Не знайдено відповідних облікових даних або полів, що заповнюються автоматично</string>
     <string name="no_active_vault_add_credential_error">Немає активного сховища. Неможливо додати облікові дані!</string>
-    <string name="automatic_autofill_vault_description">Виберіть «Автоматично», якщо ви хочете, щоб автозаповнення працювало тільки тоді, коли сховище активно відкрите і розблоковане в додатку.</string>
+    <string name="automatic_autofill_vault_description">Виберіть \"Автоматично\", якщо ви хочете, щоб автозаповнення працювало тільки тоді, коли сховище активно відкрите і розблоковане в додатку.</string>
     <string name="autofill_manual_search_fallback">Ручний пошук облікових даних як запасний варіант автозаповнення</string>
     <string name="set_as_autofill_service">Встановити як службу автозаповнення</string>
     <string name="algorithm">Алгоритм</string>

@@ -91,4 +91,6 @@
     <string name="issuer">Útgefandi</string>
     <string name="error_parsing_qr_code">Villa við þáttun QR-kóða</string>
     <string name="camera_permission_denied">Heimild fyrir myndavél hafnað</string>
-    </resources>
+    <string name="set_as_autofill_service">Setja sem sjálfvirka útfyllingarþjónustu</string>
+    <string name="algorithm">Reiknirit</string>
+</resources>
