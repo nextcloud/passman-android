@@ -80,6 +80,7 @@
     <string name="enable_offline_cache">Inschakelen off-line cache</string>
     <string name="clear_offline_cache">Leesgmaken off-line cache</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
+    <string name="confirm_account_logout">Weet je zeker dat je wil uitloggen?</string>
     <string name="digits">Cijfers</string>
     <string name="period">Periode</string>
     <string name="value">Waarden</string>

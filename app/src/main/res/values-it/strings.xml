@@ -44,7 +44,7 @@
     <string name="app_start_password">Password di avvio dell\'app</string>
     <string name="app_start_password_android_auth_description">Attivare l\'autenticazione utente di Android all\'avvio dell\'app</string>
     <string name="wait_while_encrypting">Attendi la crittografia ...</string>
-    <string name="wait_while_decrypting">Attendi la decifrazione ...</string>
+    <string name="wait_while_decrypting">Attendi la decifratura...</string>
     <string name="wait_while_uploading">Attendi l\'invio ...</string>
     <string name="wait_while_downloading">Attendi lo scaricamento ...</string>
     <string name="autofill_noactivevault">Nessuna cassaforte attiva</string>
@@ -57,7 +57,7 @@
     <string name="request_response_timeout">Tempo massimo di risposta della richiesta (secondi)</string>
     <string name="expert_settings">Impostazioni per esperti</string>
     <string name="confirm_credential_deletion">Vuoi davvero eliminare questa credenziale?</string>
-    <string name="confirm_vault_deletion">Sei sicuro di voler eliminare questo vault?</string>
+    <string name="confirm_vault_deletion">Sei sicuro di voler eliminare questa cassaforte?</string>
     <string name="yes">Sì</string>
     <string name="cancel">Annulla</string>
     <string name="enable_credential_list_icons">Abilita le icone elenco credenziali</string>

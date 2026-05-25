@@ -9,7 +9,7 @@
     <string name="wrongNCSettings">Configurações incorretas</string>
     <string name="net_error">Erro de rede</string>
     <string name="net_error_dialog_description">Não foi possível conectar ao servidor!\nAs alterações não podem ser salvas sem uma conexão de servidor em funcionamento.</string>
-    <string name="unlock">Desbloquear</string>
+    <string name="unlock">Destrancar</string>
     <string name="wrong_vault_pw">Senha do cofre incorreta</string>
     <string name="label">Etiqueta</string>
     <string name="email">E-mail</string>
@@ -39,7 +39,7 @@
     <string name="custom_fields">Campos personalizados</string>
     <string name="add_file">Adicionar arquivo</string>
     <string name="add_custom_field">Adicionar campo personalizado</string>
-    <string name="unlock_passman">Desbloquear Passman</string>
+    <string name="unlock_passman">Destrancar Passman</string>
     <string name="unlock_passman_message_device_auth">Por favor, autentique-se para acessar o Passman</string>
     <string name="app_start_password">Senha de início do aplicativo</string>
     <string name="app_start_password_android_auth_description">Ativar autenticação do usuário Android ao iniciar o aplicativo</string>
@@ -48,7 +48,7 @@
     <string name="wait_while_uploading">Aguarde enquanto faz o upload ...</string>
     <string name="wait_while_downloading">Aguarde enquanto faz o download ...</string>
     <string name="autofill_noactivevault">Nenhum cofre ativo</string>
-    <string name="autofill_vaultlocked">O cofre precisa ser desbloqueado</string>
+    <string name="autofill_vaultlocked">O cofre precisa ser destrancado</string>
     <string name="autofill_vaultempty">Sem credenciais no cofre</string>
     <string name="autofill_createdbyautofillservice">Criado por serviço de preenchimento automático</string>
     <string name="default_autofill_vault">Cofre de preenchimento automático padrão</string>
@@ -93,7 +93,7 @@
     <string name="camera_permission_denied">Permissão da câmera negada</string>
     <string name="no_matching_credentials_or_fields_found">Nenhuma credencial correspondente ou nenhum campo de preenchimento automático foi encontrado</string>
     <string name="no_active_vault_add_credential_error">Nenhum cofre ativo. Não é possível adicionar credencial!</string>
-    <string name="automatic_autofill_vault_description">Selecione Automático se desejar que o preenchimento automático seja fornecido apenas quando um Cofre estiver ativamente aberto e desbloqueado no aplicativo</string>
+    <string name="automatic_autofill_vault_description">Selecione Automático se desejar que o preenchimento automático seja fornecido apenas quando um Cofre estiver ativamente aberto e destrancado no aplicativo</string>
     <string name="autofill_manual_search_fallback">Pesquisa manual de credenciais como opção de preenchimento automático</string>
     <string name="set_as_autofill_service">Definir como serviço de preenchimento automático</string>
     <string name="algorithm">Algoritmo</string>
