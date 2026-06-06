@@ -103,11 +103,11 @@ android {
         }
     }
 
-    lintOptions {
-        disable 'MissingTranslation'
-    }
     ndkVersion '28.1.13356709'
     namespace 'es.wolfi.app.passman'
+    lint {
+        disable 'MissingTranslation'
+    }
 }
 
 dependencies {
