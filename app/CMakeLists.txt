@@ -4,6 +4,10 @@
 
 cmake_minimum_required(VERSION 3.4.1)
 
+# Avoid generating build IDs to improve the reproducibility of builds.
+# https://izzyondroid.org/docs/reproducibleBuilds/DebugFailedRBs/#build-ids
+add_link_options(-Wl,--build-id=none)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds it for you.
