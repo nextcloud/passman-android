@@ -175,6 +175,14 @@ public class PasswordListActivity extends BaseActivity implements
 
                     if (loggedIn) {
                         showVaults();
+                        if (
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                                && settings.getInt(SettingValues.VAULT_AUTO_LOCK_DELAY.toString(), 0) > 0
+                        ) {
+                            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+                            }
+                        }
                     } else {
                         // If not logged in, show login form!
                         Intent intent = new Intent(PasswordListActivity.this, LoginActivity.class);
@@ -573,6 +581,14 @@ public class PasswordListActivity extends BaseActivity implements
 
                     if (loggedIn) {
                         showVaults();
+                        if (
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+                                && settings.getInt(SettingValues.VAULT_AUTO_LOCK_DELAY.toString(), 0) > 0
+                        ) {
+                            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
+                            }
+                        }
                     } else {
                         // If not logged in, show login form!
                         Intent intent = new Intent(PasswordListActivity.this, LoginActivity.class);
