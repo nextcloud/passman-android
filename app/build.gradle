@@ -30,11 +30,11 @@ android {
             v2SigningEnabled true
         }
     }
-    compileSdk 35
+    compileSdk 37
     defaultConfig {
         applicationId "es.wolfi.app.passman"
-        minSdkVersion 21
-        targetSdkVersion 35
+        minSdkVersion 23
+        targetSdkVersion 37
         versionCode 20
         versionName "1.6.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
