@@ -352,9 +352,9 @@ public class Vault extends Core implements Filterable {
         });
     }
 
-    public void sort(int method) {
+    public void sort(int method, boolean caseInsensitiveSort) {
         credential_guid.clear();
-        Collections.sort(credentials, new CredentialLabelSort(method));
+        Collections.sort(credentials, new CredentialLabelSort(method, caseInsensitiveSort));
         for (int i = 0; i < credentials.size(); i++) {
             credential_guid.put(credentials.get(i).getGuid(), i);
         }

@@ -241,6 +241,28 @@
                 android:inputType="number"
                 tools:ignore="LabelFor" />
 
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/credential_list_sort_settings" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_case_insensitive_credential_label_sort_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/enable_case_insensitive_credential_label_sort" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_restore_custom_credential_sort_order_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/restore_custom_credential_sort_order" />
+
             <!--Expert settings-->
 
             <TextView

@@ -106,6 +106,8 @@ public class SettingsFragment extends Fragment {
     MaterialCheckBox enable_autofill_manual_search_fallback;
     Button open_autofill_android_settings_button;
     EditText clear_clipboard_delay_value;
+    MaterialCheckBox settings_case_insensitive_credential_label_sort_switch;
+    MaterialCheckBox settings_restore_custom_credential_sort_order_switch;
 
     EditText request_connect_timeout_value;
     EditText request_response_timeout_value;
@@ -169,6 +171,9 @@ public class SettingsFragment extends Fragment {
         enable_autofill_manual_search_fallback = view.findViewById(R.id.enable_autofill_manual_search_fallback);
         open_autofill_android_settings_button = view.findViewById(R.id.open_autofill_android_settings_button);
         clear_clipboard_delay_value = view.findViewById(R.id.clear_clipboard_delay_value);
+
+        settings_case_insensitive_credential_label_sort_switch = view.findViewById(R.id.settings_case_insensitive_credential_label_sort_switch);
+        settings_restore_custom_credential_sort_order_switch = view.findViewById(R.id.settings_restore_custom_credential_sort_order_switch);
 
         request_connect_timeout_value = view.findViewById(R.id.request_connect_timeout_value);
         request_response_timeout_value = view.findViewById(R.id.request_response_timeout_value);
@@ -281,6 +286,9 @@ public class SettingsFragment extends Fragment {
 
         clear_clipboard_delay_value.setText(String.valueOf(settings.getInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), 0)));
 
+        settings_case_insensitive_credential_label_sort_switch.setChecked(settings.getBoolean(SettingValues.CASE_INSENSITIVE_CREDENTIAL_LABEL_SORT.toString(), false));
+        settings_restore_custom_credential_sort_order_switch.setChecked(settings.getBoolean(SettingValues.RESTORE_CUSTOM_CREDENTIAL_SORT_ORDER.toString(), true));
+
         request_connect_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15)));
         request_response_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120)));
         clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
@@ -355,6 +363,9 @@ public class SettingsFragment extends Fragment {
 
                 settings.edit().putInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), Integer.parseInt(clear_clipboard_delay_value.getText().toString())).commit();
                 Objects.requireNonNull(((PasswordListActivity) getActivity())).attachClipboardListener();
+
+                settings.edit().putBoolean(SettingValues.CASE_INSENSITIVE_CREDENTIAL_LABEL_SORT.toString(), settings_case_insensitive_credential_label_sort_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.RESTORE_CUSTOM_CREDENTIAL_SORT_ORDER.toString(), settings_restore_custom_credential_sort_order_switch.isChecked()).commit();
 
                 settings.edit().putInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), Integer.parseInt(request_connect_timeout_value.getText().toString())).commit();
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
