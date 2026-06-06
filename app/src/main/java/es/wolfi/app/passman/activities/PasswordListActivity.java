@@ -68,10 +68,12 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import es.wolfi.app.passman.OfflineStorage;
+import es.wolfi.app.passman.PassmanApp;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.VaultLockManager;
 import es.wolfi.app.passman.fragments.CredentialAddFragment;
 import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
 import es.wolfi.app.passman.fragments.CredentialEditFragment;
@@ -87,7 +89,7 @@ import es.wolfi.utils.FileUtils;
 import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.ProgressUtils;
 
-public class PasswordListActivity extends AppCompatActivity implements
+public class PasswordListActivity extends BaseActivity implements
         VaultFragment.OnListFragmentInteractionListener,
         CredentialItemFragment.OnListFragmentInteractionListener,
         VaultLockScreenFragment.VaultUnlockInteractionListener,
@@ -145,6 +147,7 @@ public class PasswordListActivity extends AppCompatActivity implements
         KeyStoreUtils.initialize(settings);
         new OfflineStorage(getBaseContext());
         initialAuthentication(false);
+        VaultLockManager.getInstance((PassmanApp) getApplication()).updateConfig(settings.getInt(SettingValues.VAULT_AUTO_LOCK_DELAY.toString(), 0));
     }
 
     private void initialAuthentication(boolean skipKeyguard) {
@@ -368,7 +371,7 @@ public class PasswordListActivity extends AppCompatActivity implements
                 .commitAllowingStateLoss();
     }
 
-    void lockVault() {
+    public void lockVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         vault.lock();
         ton.removeExtra(vault.guid);

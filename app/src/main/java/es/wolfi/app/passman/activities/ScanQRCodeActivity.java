@@ -15,7 +15,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
@@ -37,7 +36,7 @@ import java.util.concurrent.Executors;
 import es.wolfi.app.passman.R;
 import es.wolfi.utils.QrCodeAnalyzer;
 
-public class ScanQRCodeActivity extends AppCompatActivity {
+public class ScanQRCodeActivity extends BaseActivity {
 
     public final static String LOG_TAG = ScanQRCodeActivity.class.getSimpleName();
 

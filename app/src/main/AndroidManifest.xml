@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -16,6 +17,7 @@
     </queries>
 
     <application
+        android:name=".PassmanApp"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -47,13 +49,15 @@
             android:theme="@android:style/Theme.NoDisplay" />
         <activity
             android:name=".activities.AutofillInteractionActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:targetApi="26" />
 
         <service
             android:name=".autofill.CredentialAutofillService"
             android:exported="false"
             android:label="Passman Credential Autofill Service"
-            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE"
+            tools:targetApi="26">
             <meta-data
                 android:name="android.autofill"
                 android:resource="@xml/autofill_service" />

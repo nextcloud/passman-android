@@ -245,6 +245,21 @@
                 style="@style/Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/vault_auto_lock_delay" />
+
+            <EditText
+                android:id="@+id/vault_auto_lock_delay_value"
+                style="@style/FormText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789"
+                android:inputType="number"
+                tools:ignore="LabelFor" />
+
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/credential_list_sort_settings" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
