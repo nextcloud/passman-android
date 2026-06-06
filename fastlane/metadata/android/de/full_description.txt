@@ -1,0 +1,20 @@
+Android-App für den Nextcloud-Passwortmanager <i>Passman.</i>
+
+Diese App ist nur mit Passman V2.x oder höher kompatibel.
+
+<b>Features</b>
+
+- App einrichten (manuell mit den Nextcloud Serverdaten oder per SSO)
+- Option zur Android-Benutzerauthentifizierung beim Start der App
+- Passwort-Tresor (Vault) anzeigen, hinzufügen, umbenennen und löschen
+- Anmeldeinformationen anzeigen, hinzufügen, bearbeiten und löschen
+- Dateien hinzufügen, herunterladen und löschen
+- OTP Generierung
+- Minimale Android Autofill Implementierung
+- Passwortgenerator
+- optionales lokales, verschlüsseltes zwischenspeichern von Tresoren und Zugangsdaten für den Zugriff ohne Internet
+
+<b>Anforderungen</b> (zusätzlich benötigte Software)
+
+* <a href='https://nextcloud.com/'>Nextcloud</a>
+* <a href='https://apps.nextcloud.com/apps/passman'>Nextcloud Passman App</a>
