@@ -52,14 +52,16 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             debuggable false
             resValue "string", "app_name", appNameRelease
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
         googlePlayRelease {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             debuggable false
             resValue "string", "app_name", appNameRelease
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
