@@ -93,4 +93,4 @@
     <string name="camera_permission_denied">Heimild fyrir myndavél hafnað</string>
     <string name="set_as_autofill_service">Setja sem sjálfvirka útfyllingarþjónustu</string>
     <string name="algorithm">Reiknirit</string>
-</resources>
+    </resources>

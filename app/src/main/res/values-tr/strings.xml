@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Otomatik doldurma kullanılamadığında el ile kimlik bilgisi arama</string>
     <string name="set_as_autofill_service">Otomatik doldurma hizmeti olarak ayarla</string>
     <string name="algorithm">Algoritma</string>
-</resources>
+    </resources>

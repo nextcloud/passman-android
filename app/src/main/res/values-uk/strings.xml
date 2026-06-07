@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Ручний пошук облікових даних як запасний варіант автозаповнення</string>
     <string name="set_as_autofill_service">Встановити як службу автозаповнення</string>
     <string name="algorithm">Алгоритм</string>
-</resources>
+    </resources>

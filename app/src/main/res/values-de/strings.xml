@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Manuelle Suche nach Anmeldeinformationen als Autofill-Ausweichoption</string>
     <string name="set_as_autofill_service">Als Autofill-Dienst festlegen</string>
     <string name="algorithm">Algorithmus</string>
-</resources>
+    </resources>

@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Kasutajanime ja salasõna käsitsi otsing automaatäite tagavaravariandina</string>
     <string name="set_as_autofill_service">Määra automaattäite teenuseks</string>
     <string name="algorithm">Algoritm</string>
-</resources>
+    </resources>

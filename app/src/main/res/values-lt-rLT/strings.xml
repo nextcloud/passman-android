@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Rankinė prisijungimo duomenų paieška kaip atsarginė automatinio užpildymo galimybė</string>
     <string name="set_as_autofill_service">Nustatyti kaip automatinio užpildymo paslaugą</string>
     <string name="algorithm">Algoritmas</string>
-</resources>
+    </resources>

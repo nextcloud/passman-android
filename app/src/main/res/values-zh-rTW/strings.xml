@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">手動搜尋憑證作為自動填入汰退的選項</string>
     <string name="set_as_autofill_service">設定為自動填入服務</string>
     <string name="algorithm">演算法</string>
-</resources>
+    </resources>

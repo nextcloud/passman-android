@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Pesquisa manual de credenciais como opção de preenchimento automático</string>
     <string name="set_as_autofill_service">Definir como serviço de preenchimento automático</string>
     <string name="algorithm">Algoritmo</string>
-</resources>
+    </resources>
