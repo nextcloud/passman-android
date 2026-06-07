@@ -24,7 +24,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        VaultLockManager.getInstance((PassmanApp) getApplication()).resetTimer();
+        VaultLockManager.getInstance((PassmanApp) getApplication()).checkLockOnResume();
     }
 
     public void showCountdownOverlay(int secondsLeft) {

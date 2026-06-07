@@ -381,6 +381,7 @@ public class PasswordListActivity extends BaseActivity implements
 
     public void lockVault() {
         final Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
+        if (vault == null) return;
         vault.lock();
         ton.removeExtra(vault.guid);
         ton.addExtra(vault.guid, vault);

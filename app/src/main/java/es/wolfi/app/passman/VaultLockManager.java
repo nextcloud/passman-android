@@ -3,7 +3,6 @@ package es.wolfi.app.passman;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,6 +25,7 @@ public class VaultLockManager {
     private Runnable lockRunnable;
     private Runnable countdownRunnable;
     private int timeoutMinutes = 0;
+    private long lastInteractionTime = 0;
     private final PassmanApp passmanApp;
 
     private VaultLockManager(PassmanApp passmanApp) {
@@ -58,6 +58,8 @@ public class VaultLockManager {
     }
 
     public void resetTimer() {
+        lastInteractionTime = System.currentTimeMillis();
+        
         handler.removeCallbacks(lockRunnable);
         handler.removeCallbacks(countdownRunnable);
         
@@ -77,6 +79,34 @@ public class VaultLockManager {
         } else {
             countdownRunnable = () -> startCountdown(3);
             handler.postDelayed(countdownRunnable, countdownStartMillis);
+        }
+    }
+
+    public void checkLockOnResume() {
+        if (timeoutMinutes <= 0) return;
+
+        long currentTime = System.currentTimeMillis();
+        long elapsedMillis = currentTime - lastInteractionTime;
+        long timeoutMillis = (long) timeoutMinutes * 60 * 1000;
+
+        if (elapsedMillis >= timeoutMillis) {
+            Log.d(TAG, "Lock timeout exceeded during background/pause, locking now");
+            lockActiveVault();
+        } else {
+            // Recalculate remaining time and reschedule
+            resetTimer();
+            // Adjust the timer to account for elapsed time
+            handler.removeCallbacks(lockRunnable);
+            handler.removeCallbacks(countdownRunnable);
+            
+            long remainingMillis = timeoutMillis - elapsedMillis;
+            if (remainingMillis <= 3000) {
+                lockRunnable = this::lockActiveVault;
+                handler.postDelayed(lockRunnable, remainingMillis);
+            } else {
+                countdownRunnable = () -> startCountdown(3);
+                handler.postDelayed(countdownRunnable, remainingMillis - 3000);
+            }
         }
     }
 
@@ -106,13 +136,13 @@ public class VaultLockManager {
         }
     }
 
-    private void lockActiveVault() {
+    public void lockActiveVault() {
         hideOverlayOnCurrentActivity();
         
         SingleTon ton = SingleTon.getTon();
         Vault vault = (Vault) ton.getExtra(SettingValues.ACTIVE_VAULT.toString());
         if (vault != null && vault.is_unlocked()) {
-            Log.d(TAG, "Inactivity timeout reached, locking vault");
+            Log.d(TAG, "Locking active vault");
             vault.lock();
             ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), vault);
             ton.addExtra(vault.guid, vault);
