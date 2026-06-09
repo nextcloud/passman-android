@@ -1,18 +1,30 @@
 package es.wolfi.app.passman.activities;
 
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import es.wolfi.app.passman.PassmanApp;
 import es.wolfi.app.passman.R;
+import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.VaultLockManager;
 
 public abstract class BaseActivity extends AppCompatActivity {
     private View countdownOverlay;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        applyScreenshotProtection();
+    }
 
     @Override
     public void onUserInteraction() {
@@ -24,7 +36,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        applyScreenshotProtection();
         VaultLockManager.getInstance((PassmanApp) getApplication()).checkLockOnResume();
+    }
+
+    public void applyScreenshotProtection() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean enabled = settings.getBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), true);
+        if (enabled) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        }
     }
 
     public void showCountdownOverlay(int secondsLeft) {

@@ -68,7 +68,7 @@
                 style="@style/Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_start_password" />
+                android:text="@string/app_security" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/settings_app_start_password_switch"
@@ -77,6 +77,14 @@
                 android:layout_marginTop="10dp"
                 android:checked="false"
                 android:text="@string/app_start_password_android_auth_description" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_enable_screenshot_protection_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/enable_screenshot_protection" />
 
             <TextView
                 style="@style/Label"

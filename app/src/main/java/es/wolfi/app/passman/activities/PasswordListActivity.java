@@ -396,6 +396,7 @@ public class PasswordListActivity extends BaseActivity implements
         }
 
         onBackPressed();
+        applyScreenshotProtection();
     }
 
     public void addCredentialToCurrentLocalVaultList(Credential credential) {
@@ -569,6 +570,7 @@ public class PasswordListActivity extends BaseActivity implements
         Toast.makeText(this, R.string.successfully_saved, Toast.LENGTH_SHORT).show();
 
         updateShortcuts();
+        applyScreenshotProtection();
 
         if (doRebirth) {
             triggerRebirth(this);

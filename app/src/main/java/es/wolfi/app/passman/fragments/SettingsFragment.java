@@ -89,6 +89,7 @@ public class SettingsFragment extends Fragment {
     EditText settings_nextcloud_password;
 
     MaterialCheckBox settings_app_start_password_switch;
+    MaterialCheckBox settings_enable_screenshot_protection_switch;
 
     MaterialCheckBox settings_password_generator_shortcut_switch;
     MaterialCheckBox settings_password_generator_use_uppercase_switch;
@@ -155,6 +156,7 @@ public class SettingsFragment extends Fragment {
         settings_nextcloud_password = view.findViewById(R.id.settings_nextcloud_password);
 
         settings_app_start_password_switch = view.findViewById(R.id.settings_app_start_password_switch);
+        settings_enable_screenshot_protection_switch = view.findViewById(R.id.settings_enable_screenshot_protection_switch);
 
         settings_password_generator_shortcut_switch = view.findViewById(R.id.settings_password_generator_shortcut_switch);
         settings_password_generator_use_uppercase_switch = view.findViewById(R.id.settings_password_generator_use_uppercase_switch);
@@ -223,6 +225,7 @@ public class SettingsFragment extends Fragment {
         settings_nextcloud_password.setText(KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null));
 
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
+        settings_enable_screenshot_protection_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), true));
 
         passwordGenerator = new PasswordGenerator(context);
 
@@ -350,6 +353,7 @@ public class SettingsFragment extends Fragment {
                 SingleTon ton = SingleTon.getTon();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), settings_enable_screenshot_protection_switch.isChecked()).commit();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), settings_password_generator_shortcut_switch.isChecked()).commit();
 
