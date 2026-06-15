@@ -173,6 +173,20 @@
                 style="@style/Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@string/color_password_digits" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/settings_color_password_digits_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:checked="false"
+                android:text="@string/color_password_digits_description" />
+
+            <TextView
+                style="@style/Label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="@string/offline_cache" />
 
             <TextView

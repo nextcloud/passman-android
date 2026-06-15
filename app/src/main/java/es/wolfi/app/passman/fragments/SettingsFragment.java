@@ -98,6 +98,7 @@ public class SettingsFragment extends Fragment {
     EditText settings_password_generator_length_value;
 
     MaterialCheckBox enable_credential_list_icons_switch;
+    MaterialCheckBox settings_color_password_digits_switch;
     MaterialCheckBox enable_offline_cache_switch;
 
     TextView default_autofill_vault_title;
@@ -163,6 +164,7 @@ public class SettingsFragment extends Fragment {
         settings_password_generator_length_value = view.findViewById(R.id.settings_password_generator_length_value);
 
         enable_credential_list_icons_switch = view.findViewById(R.id.enable_credential_list_icons_switch);
+        settings_color_password_digits_switch = view.findViewById(R.id.settings_color_password_digits_switch);
         enable_offline_cache_switch = view.findViewById(R.id.enable_offline_cache_switch);
 
         default_autofill_vault_title = view.findViewById(R.id.default_autofill_vault_title);
@@ -236,6 +238,7 @@ public class SettingsFragment extends Fragment {
         }
 
         enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
+        settings_color_password_digits_switch.setChecked(settings.getBoolean(SettingValues.COLOR_PASSWORD_DIGITS.toString(), true));
         enable_offline_cache_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true));
 
         Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
@@ -359,6 +362,7 @@ public class SettingsFragment extends Fragment {
                 passwordGenerator.applyChanges();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), enable_credential_list_icons_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.COLOR_PASSWORD_DIGITS.toString(), settings_color_password_digits_switch.isChecked()).commit();
                 settings.edit().putBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), enable_offline_cache_switch.isChecked()).commit();
 
                 settings.edit().putInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), Integer.parseInt(clear_clipboard_delay_value.getText().toString())).commit();
