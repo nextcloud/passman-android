@@ -26,8 +26,13 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
+import android.preference.PreferenceManager;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +54,9 @@ public class CopyTextItem extends LinearLayout {
     ImageButton copy;
     ImageButton toggle;
     ImageButton open_url_toggle;
+
+    private String rawText = "";
+    private boolean passwordMode = false;
 
     public CopyTextItem(Context context) {
         super(context);
@@ -113,7 +121,8 @@ public class CopyTextItem extends LinearLayout {
     }
 
     public void setText(String text) {
-        this.text.setText(text);
+        this.rawText = text != null ? text : "";
+        refreshDisplayedText();
     }
 
     public TextView getTextView() {
@@ -121,18 +130,22 @@ public class CopyTextItem extends LinearLayout {
     }
 
     public void setModePassword() {
+        passwordMode = true;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         toggle.setVisibility(View.VISIBLE);
         open_url_toggle.setVisibility(View.GONE);
+        refreshDisplayedText();
     }
 
     public void setModeText() {
+        passwordMode = false;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
         toggle.setVisibility(View.GONE);
         open_url_toggle.setVisibility(View.GONE);
     }
 
     public void setModeEmail() {
+        passwordMode = false;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         toggle.setVisibility(View.GONE);
         open_url_toggle.setVisibility(View.GONE);
@@ -158,6 +171,31 @@ public class CopyTextItem extends LinearLayout {
                 toggle.setImageDrawable(getResources().getDrawable(R.drawable.ic_eye_grey));
                 break;
         }
+        refreshDisplayedText();
+    }
+
+    private void refreshDisplayedText() {
+        if (passwordMode && isPasswordRevealed() && isColorDigitsEnabled()) {
+            SpannableString spannable = new SpannableString(rawText);
+            int color = getResources().getColor(R.color.password_digit);
+            for (int i = 0; i < rawText.length(); i++) {
+                if (Character.isDigit(rawText.charAt(i))) {
+                    spannable.setSpan(new ForegroundColorSpan(color), i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+            text.setText(spannable);
+        } else {
+            text.setText(rawText);
+        }
+    }
+
+    private boolean isPasswordRevealed() {
+        return text.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+    }
+
+    private boolean isColorDigitsEnabled() {
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        return settings.getBoolean(SettingValues.COLOR_PASSWORD_DIGITS.toString(), true);
     }
 
     public void copyTextToClipboard() {

@@ -66,6 +66,8 @@
     <string name="cancel">Cancel</string>
     <string name="enable_credential_list_icons">Enable credential list icons</string>
     <string name="credential_icon">Credential icon</string>
+    <string name="color_password_digits">Highlight password digits</string>
+    <string name="color_password_digits_description">Show digits in a revealed password in a different color to tell apart characters like 0 and O</string>
     <string name="clear_clipboard_delay">Clear clipboard (after seconds)</string>
     <string name="generate_password">Generate password</string>
     <string name="generate_password_to_clipboard">Generate a random password and copy to clipboard</string>
