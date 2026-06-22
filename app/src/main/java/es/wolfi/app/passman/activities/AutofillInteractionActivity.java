@@ -34,7 +34,6 @@ import android.view.autofill.AutofillId;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -51,7 +50,7 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.Vault;
 
 @RequiresApi(api = Build.VERSION_CODES.O)
-public class AutofillInteractionActivity extends AppCompatActivity implements
+public class AutofillInteractionActivity extends BaseActivity implements
         VaultLockScreenFragment.VaultUnlockInteractionListener,
         CredentialItemFragment.OnListFragmentInteractionListener {
     public final static String LOG_TAG = "AutofillInteractionAct.";

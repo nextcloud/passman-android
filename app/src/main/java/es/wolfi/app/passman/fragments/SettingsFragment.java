@@ -65,10 +65,12 @@ import java.util.Objects;
 import java.util.Set;
 
 import es.wolfi.app.passman.OfflineStorage;
+import es.wolfi.app.passman.PassmanApp;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.VaultLockManager;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.KeyStoreUtils;
@@ -87,6 +89,7 @@ public class SettingsFragment extends Fragment {
     EditText settings_nextcloud_password;
 
     MaterialCheckBox settings_app_start_password_switch;
+    MaterialCheckBox settings_enable_screenshot_protection_switch;
 
     MaterialCheckBox settings_password_generator_shortcut_switch;
     MaterialCheckBox settings_password_generator_use_uppercase_switch;
@@ -111,6 +114,7 @@ public class SettingsFragment extends Fragment {
 
     EditText request_connect_timeout_value;
     EditText request_response_timeout_value;
+    EditText vault_auto_lock_delay_value;
     Button clear_offline_cache_button;
 
     SharedPreferences settings;
@@ -152,6 +156,7 @@ public class SettingsFragment extends Fragment {
         settings_nextcloud_password = view.findViewById(R.id.settings_nextcloud_password);
 
         settings_app_start_password_switch = view.findViewById(R.id.settings_app_start_password_switch);
+        settings_enable_screenshot_protection_switch = view.findViewById(R.id.settings_enable_screenshot_protection_switch);
 
         settings_password_generator_shortcut_switch = view.findViewById(R.id.settings_password_generator_shortcut_switch);
         settings_password_generator_use_uppercase_switch = view.findViewById(R.id.settings_password_generator_use_uppercase_switch);
@@ -177,6 +182,7 @@ public class SettingsFragment extends Fragment {
 
         request_connect_timeout_value = view.findViewById(R.id.request_connect_timeout_value);
         request_response_timeout_value = view.findViewById(R.id.request_response_timeout_value);
+        vault_auto_lock_delay_value = view.findViewById(R.id.vault_auto_lock_delay_value);
         clear_offline_cache_button = view.findViewById(R.id.clear_offline_cache_button);
         clear_offline_cache_button.setOnClickListener(this.getClearOfflineCacheButtonListener());
 
@@ -219,6 +225,7 @@ public class SettingsFragment extends Fragment {
         settings_nextcloud_password.setText(KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null));
 
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
+        settings_enable_screenshot_protection_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), true));
 
         passwordGenerator = new PasswordGenerator(context);
 
@@ -291,6 +298,7 @@ public class SettingsFragment extends Fragment {
 
         request_connect_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15)));
         request_response_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120)));
+        vault_auto_lock_delay_value.setText(String.valueOf(settings.getInt(SettingValues.VAULT_AUTO_LOCK_DELAY.toString(), 0)));
         clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
     }
 
@@ -345,6 +353,7 @@ public class SettingsFragment extends Fragment {
                 SingleTon ton = SingleTon.getTon();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), settings_enable_screenshot_protection_switch.isChecked()).commit();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), settings_password_generator_shortcut_switch.isChecked()).commit();
 
@@ -369,6 +378,10 @@ public class SettingsFragment extends Fragment {
 
                 settings.edit().putInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), Integer.parseInt(request_connect_timeout_value.getText().toString())).commit();
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
+
+                int autoLockDelay = Integer.parseInt(vault_auto_lock_delay_value.getText().toString());
+                settings.edit().putInt(SettingValues.VAULT_AUTO_LOCK_DELAY.toString(), autoLockDelay).commit();
+                VaultLockManager.getInstance((PassmanApp) getActivity().getApplication()).updateConfig(autoLockDelay);
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     settings.edit().putBoolean(SettingValues.ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK.toString(), enable_autofill_manual_search_fallback.isChecked()).commit();
