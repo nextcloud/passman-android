@@ -97,7 +97,7 @@
     <string name="autofill_manual_search_fallback">Pesquisa manual de credenciais como opção de preenchimento automático</string>
     <string name="set_as_autofill_service">Definir como serviço de preenchimento automático</string>
     <string name="algorithm">Algoritmo</string>
-    <string name="enable_case_insensitive_credential_label_sort">Ativar classificação de credenciais sem distinção entre maiúsculas e minúsculas</string>
-    <string name="credential_list_sort_settings">Configurações de classificação da lista de credenciais</string>
-    <string name="restore_custom_credential_sort_order">Restaurar ordem de classificação de credenciais personalizadas</string>
+    <string name="enable_case_insensitive_credential_label_sort">Ativar ordenação de credenciais sem distinção entre maiúsculas e minúsculas</string>
+    <string name="credential_list_sort_settings">Configurações de ordenação da lista de credenciais</string>
+    <string name="restore_custom_credential_sort_order">Restaurar a ordenação de credenciais personalizada</string>
 </resources>
