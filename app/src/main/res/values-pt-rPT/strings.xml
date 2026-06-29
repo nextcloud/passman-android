@@ -53,6 +53,7 @@
     <string name="new_vault_name">Novo nome do cofre</string>
     <string name="offline_cache_description">Armazena em cache os cofres criptografados se eles foram carregados manualmente</string>
     <string name="enable_offline_cache">Ativar cache off-line</string>
+    <string name="confirm_account_logout">Tem certeza de que deseja sair?</string>
     <string name="digits">Dígitos</string>
     <string name="value">Valor</string>
     <string name="faq">Perguntas Frequentes (FAQ)</string>
