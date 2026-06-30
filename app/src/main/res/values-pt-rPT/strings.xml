@@ -30,6 +30,7 @@
     <string name="wait_while_loading">Aguarde enquanto carrega …</string>
     <string name="loading">A carregar</string>
     <string name="error_downloading_file">Erro ao transferir o ficheiro</string>
+    <string name="error_writing_file">Erro ao gravar o arquivo</string>
     <string name="files">Ficheiros</string>
     <string name="add_custom_field">Adicionar campo personalizado</string>
     <string name="unlock_passman_message_device_auth">Por favor, autentique-se para acessar o Passman</string>
@@ -37,13 +38,16 @@
     <string name="wait_while_downloading">Aguarde enquanto transfere... </string>
     <string name="autofill_noactivevault">Nenhum cofre ativo</string>
     <string name="autofill_vaultempty">Sem credenciais no cofre</string>
+    <string name="autofill_createdbyautofillservice">Criado por serviço de preenchimento automático</string>
     <string name="request_connect_timeout">Tempo limite de conexão de solicitação (em segundos)</string>
     <string name="request_response_timeout">Tempo limite de resposta de solicitação (em segundos)</string>
+    <string name="confirm_vault_deletion">Tem certeza de que deseja excluir este cofre?</string>
     <string name="yes">Sim</string>
     <string name="cancel">Cancelar</string>
     <string name="credential_icon">Ícone da credencial</string>
     <string name="clear_clipboard_delay">Limpar área de transferência (após segundos)</string>
     <string name="generate_password">Gerar palavra-passe</string>
+    <string name="enable_password_generator_shortcut_description">Ativar atalho do aplicativo gerador de senha</string>
     <string name="password_generator_require_every_char_type">Exigir cada tipo de caractere</string>
     <string name="password_generator_avoid_ambiguous_chars">Evitar caracteres ambíguos</string>
     <string name="password_generator_use_special_chars">Usar caracteres especiais</string>
@@ -53,6 +57,7 @@
     <string name="new_vault_name">Novo nome do cofre</string>
     <string name="offline_cache_description">Armazena em cache os cofres criptografados se eles foram carregados manualmente</string>
     <string name="enable_offline_cache">Ativar cache off-line</string>
+    <string name="manual_login">Login Manual</string>
     <string name="confirm_account_logout">Tem certeza de que deseja sair?</string>
     <string name="digits">Dígitos</string>
     <string name="value">Valor</string>
