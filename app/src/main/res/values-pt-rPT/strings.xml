@@ -32,6 +32,7 @@
     <string name="error_downloading_file">Erro ao transferir o ficheiro</string>
     <string name="error_writing_file">Erro ao gravar o arquivo</string>
     <string name="files">Ficheiros</string>
+    <string name="add_file">Adicionar arquivo</string>
     <string name="add_custom_field">Adicionar campo personalizado</string>
     <string name="unlock_passman_message_device_auth">Por favor, autentique-se para acessar o Passman</string>
     <string name="wait_while_encrypting">Aguarde enquanto criptografa ...</string>
@@ -41,6 +42,7 @@
     <string name="autofill_createdbyautofillservice">Criado por serviço de preenchimento automático</string>
     <string name="request_connect_timeout">Tempo limite de conexão de solicitação (em segundos)</string>
     <string name="request_response_timeout">Tempo limite de resposta de solicitação (em segundos)</string>
+    <string name="expert_settings">Configurações para especialistas</string>
     <string name="confirm_vault_deletion">Tem certeza de que deseja excluir este cofre?</string>
     <string name="yes">Sim</string>
     <string name="cancel">Cancelar</string>
