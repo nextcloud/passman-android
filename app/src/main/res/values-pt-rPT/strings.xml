@@ -23,6 +23,7 @@
     <string name="last_accessed">Último acesso</string>
     <string name="search">Procurar</string>
     <string name="save">Guardar</string>
+    <string name="successfully_saved">Salvo com sucesso</string>
     <string name="error_occurred">Ocorreu um erro</string>
     <string name="update">Atualizar</string>
     <string name="successfully_updated">Atualizado com sucesso</string>
@@ -41,6 +42,7 @@
     <string name="unlock_passman_message_device_auth">Por favor, autentique-se para acessar o Passman</string>
     <string name="app_start_password_android_auth_description">Ativar autenticação do usuário Android ao iniciar o aplicativo</string>
     <string name="wait_while_encrypting">Aguarde enquanto criptografa ...</string>
+    <string name="wait_while_decrypting">Aguarde enquanto descriptografa ...</string>
     <string name="wait_while_uploading">Aguarde enquanto faz o upload ...</string>
     <string name="wait_while_downloading">Aguarde enquanto transfere... </string>
     <string name="autofill_noactivevault">Nenhum cofre ativo</string>
@@ -48,6 +50,7 @@
     <string name="autofill_vaultempty">Sem credenciais no cofre</string>
     <string name="autofill_createdbyautofillservice">Criado por serviço de preenchimento automático</string>
     <string name="default_autofill_vault">Cofre de preenchimento automático padrão</string>
+    <string name="automatically">automaticamente</string>
     <string name="request_connect_timeout">Tempo limite de conexão de solicitação (em segundos)</string>
     <string name="request_response_timeout">Tempo limite de resposta de solicitação (em segundos)</string>
     <string name="expert_settings">Configurações para especialistas</string>
@@ -72,10 +75,12 @@
     <string name="offline_cache">Cache off-line</string>
     <string name="offline_cache_description">Armazena em cache os cofres criptografados se eles foram carregados manualmente</string>
     <string name="enable_offline_cache">Ativar cache off-line</string>
+    <string name="clear_offline_cache">Limpar cache off-line</string>
     <string name="nextcloud_single_sign_on">Nextcloud Single Sign On</string>
     <string name="manual_login">Login Manual</string>
     <string name="confirm_account_logout">Tem certeza de que deseja sair?</string>
     <string name="digits">Dígitos</string>
+    <string name="period">Período</string>
     <string name="value">Valor</string>
     <string name="faq">Perguntas Frequentes (FAQ)</string>
     <string name="secret">Secreto</string>
