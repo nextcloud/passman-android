@@ -5,12 +5,12 @@
     <string name="username">Логін</string>
     <string name="password">Пароль</string>
     <string name="connect">Підключення</string>
-    <string name="wrongNCUrl">Невірна адреса Nextcloud сервера або не вдається з\'єднатися</string>
+    <string name="wrongNCUrl">Некоректна адреса сервера Nextcloud або не вдається з\'єднатися</string>
     <string name="wrongNCSettings">Параметри неправильні</string>
     <string name="net_error">Помилка мережі</string>
     <string name="net_error_dialog_description">Не вдалося підключитися до сервера!\nЗміни не можуть бути збережені без робочого підключення до сервера.</string>
     <string name="unlock">Розблокувати</string>
-    <string name="wrong_vault_pw">Невірний пароль сховища</string>
+    <string name="wrong_vault_pw">Неправильний пароль до сховища</string>
     <string name="label">Мітка</string>
     <string name="email">Ел.пошта</string>
     <string name="URL">URL</string>
