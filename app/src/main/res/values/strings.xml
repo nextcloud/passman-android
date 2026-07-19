@@ -67,6 +67,9 @@
     <string name="cancel">Cancel</string>
     <string name="enable_credential_list_icons">Enable credential list icons</string>
     <string name="credential_icon">Credential icon</string>
+    <string name="color_password_digits">Highlight password digits</string>
+    <string name="color_password_digits_description">Show digits in a revealed password in a different color to tell apart characters like 0 and O</string>
+    <string name="choose_password_digit_color">Choose digit highlight color</string>
     <string name="clear_clipboard_delay">Clear clipboard (after seconds)</string>
     <string name="vault_auto_lock_delay">Vault auto-lock (after minutes)</string>
     <string name="enable_screenshot_protection">Hide app content in recents, screenshots and on non-secure displays</string>

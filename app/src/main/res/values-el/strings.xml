@@ -34,6 +34,7 @@
     <string name="error_downloading_file">Σφάλμα λήψης του αρχείου</string>
     <string name="error_writing_file">Σφάλμα κατά την εγγραφή του αρχείου</string>
     <string name="files">Αρχεία</string>
+    <string name="add_file">Προσθήκη αρχείου</string>
     <string name="expert_settings">Ρυθμίσεις για προχωρημένους</string>
     <string name="yes">Ναι</string>
     <string name="cancel">Ακύρωση</string>
@@ -49,4 +50,5 @@
     <string name="faq">Συχνές Ερωτήσεις</string>
     <string name="secret">Μυστικός</string>
     <string name="issuer">Εκδότης</string>
+    <string name="algorithm">Αλγόριθμος</string>
     </resources>

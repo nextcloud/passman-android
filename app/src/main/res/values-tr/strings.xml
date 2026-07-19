@@ -97,4 +97,7 @@
     <string name="autofill_manual_search_fallback">Otomatik doldurma kullanılamadığında el ile kimlik bilgisi arama</string>
     <string name="set_as_autofill_service">Otomatik doldurma hizmeti olarak ayarla</string>
     <string name="algorithm">Algoritma</string>
+    <string name="enable_case_insensitive_credential_label_sort">Kimlik doğrulama bilgileri büyük/küçük harfe duyarlı olmadan sıralansın</string>
+    <string name="credential_list_sort_settings">Kimlik doğrulama bilgileri listesi sıralama ayarları</string>
+    <string name="restore_custom_credential_sort_order">Özel kimlik doğrulama bilgileri sıralamasını geri yükle</string>
 </resources>

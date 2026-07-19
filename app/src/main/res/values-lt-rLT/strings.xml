@@ -97,4 +97,7 @@
     <string name="autofill_manual_search_fallback">Rankinė prisijungimo duomenų paieška kaip atsarginė automatinio užpildymo galimybė</string>
     <string name="set_as_autofill_service">Nustatyti kaip automatinio užpildymo paslaugą</string>
     <string name="algorithm">Algoritmas</string>
+    <string name="enable_case_insensitive_credential_label_sort">Įgalinti didžiųjų ir mažųjų raidžių neskiriantį prisijungimo duomenų rūšiavimą</string>
+    <string name="credential_list_sort_settings">Prisijungimo duomenų sąrašo rūšiavimo nustatymai</string>
+    <string name="restore_custom_credential_sort_order">Atkurti pasirinktinę prisijungimo duomenų rūšiavimo tvarką</string>
 </resources>

@@ -7,9 +7,9 @@
     <string name="connect">Ühenda</string>
     <string name="wrongNCUrl">Kas Nextcloudi taustateenuse võrguaadress on vale või ühenduse loomine pole võimalik</string>
     <string name="wrongNCSettings">Seadistused pole korrektsed</string>
-    <string name="net_error">Võrguühenduse viga:</string>
+    <string name="net_error">Võrguühenduse viga</string>
     <string name="net_error_dialog_description">Ei õnnestu luua ühendust serveriga!\nMuudatusi ei saa salvestada ilma toimiva võrguühenduseta.</string>
-    <string name="unlock">Eemalda lukustus</string>
+    <string name="unlock">Ava lukustus</string>
     <string name="wrong_vault_pw">Vale salasõna andmehoidla jaoks</string>
     <string name="label">Silt</string>
     <string name="email">E-post</string>
@@ -23,7 +23,7 @@
     <string name="last_accessed">Viimati kasutatud:</string>
     <string name="search">Otsi</string>
     <string name="save">Salvesta</string>
-    <string name="successfully_saved">Edukalt salvestatud</string>
+    <string name="successfully_saved">Salvestamine õnnestus</string>
     <string name="error_occurred">Tekkis viga</string>
     <string name="update">Uuenda</string>
     <string name="successfully_updated">Uuendamine õnnestus</string>
@@ -32,14 +32,14 @@
     <string name="nextcloud_connection_settings">Nextcloudi ühenduse seadistused</string>
     <string name="app_settings">Rakenduse seadistused</string>
     <string name="wait_while_loading">Oota kuni laadin andmeid…</string>
-    <string name="loading">Laadimine</string>
+    <string name="loading">Laadin</string>
     <string name="error_downloading_file">Viga faili allalaadimisel</string>
     <string name="error_writing_file">Viga faili kirjutamisel</string>
     <string name="files">Failid</string>
     <string name="custom_fields">Kohandatud väljad</string>
     <string name="add_file">Lisa fail</string>
     <string name="add_custom_field">Lisa kohandatud väli</string>
-    <string name="unlock_passman">Eemalda Passmani lukustus</string>
+    <string name="unlock_passman">Ava Passmani lukustus</string>
     <string name="unlock_passman_message_device_auth">Ligipääsuks Passmanile palun tuvasta end </string>
     <string name="app_start_password">Rakenduse käivitamise salasõna</string>
     <string name="app_start_password_android_auth_description">Rakenduse käivitamisel kasuta Androidipõhist autentimist</string>
@@ -51,7 +51,7 @@
     <string name="autofill_vaultlocked">Pead andmehoidla lukustuse eemaldama</string>
     <string name="autofill_vaultempty">Andmehoidlas pole autentimise andmeid</string>
     <string name="autofill_createdbyautofillservice">Loodud automaattäite teenuse poolt</string>
-    <string name="default_autofill_vault">Vaikimisi automaattäide andmehoidlast</string>
+    <string name="default_autofill_vault">Automaattäite vaikimisi andmehoidla</string>
     <string name="automatically">automaatselt</string>
     <string name="request_connect_timeout">Päringu ühenduse aegumine (sekundites)</string>
     <string name="request_response_timeout">Päringu vastuse aegumine (sekundites)</string>
@@ -97,4 +97,7 @@
     <string name="autofill_manual_search_fallback">Kasutajanime ja salasõna käsitsi otsing automaatäite tagavaravariandina</string>
     <string name="set_as_autofill_service">Määra automaattäite teenuseks</string>
     <string name="algorithm">Algoritm</string>
+    <string name="enable_case_insensitive_credential_label_sort">Lülita sisse salasõnakirjete tõstutundetu järjestamine</string>
+    <string name="credential_list_sort_settings">Salasõnakirjete loendi järjestuse seadistused</string>
+    <string name="restore_custom_credential_sort_order">Taasta salasõnakirjete kohandatud järjestus</string>
 </resources>
