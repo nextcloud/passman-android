@@ -9,7 +9,7 @@ android {
     def appNameAlpha = "Passman - Alpha"
 
     compileOptions {
-        coreLibraryDesugaringEnabled true
+        coreLibraryDesugaringEnabled = true
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
@@ -20,14 +20,14 @@ android {
             storePassword ALPHA_STORE_PASSWORD
             keyAlias ALPHA_KEY_ALIAS
             keyPassword ALPHA_KEY_PASSWORD
-            v2SigningEnabled true
+            v2SigningEnabled = true
         }
         release {
             storeFile file(RELEASE_STORE)
             storePassword RELEASE_STORE_PASSWORD
             keyAlias RELEASE_KEY_ALIAS
             keyPassword RELEASE_KEY_PASSWORD
-            v2SigningEnabled true
+            v2SigningEnabled = true
         }
     }
     compileSdk 35
@@ -56,7 +56,7 @@ android {
             debuggable false
             resValue "string", "app_name", appNameRelease
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
         googlePlayRelease {
             minifyEnabled false
@@ -67,14 +67,14 @@ android {
             // since it won't let us create a new store page and publish the app without the alpha on the name.
             applicationIdSuffix ".alpha"
             versionNameSuffix '-gplay'
-            signingConfig signingConfigs.release
+            signingConfig = signingConfigs.release
         }
         debug {
             debuggable true
             applicationIdSuffix ".debug"
             versionNameSuffix '-DEBUG'
             resValue "string", "app_name", appNameRelease
-            signingConfig signingConfigs.alpha
+            signingConfig = signingConfigs.alpha
         }
         alpha {
             minifyEnabled true
@@ -82,7 +82,7 @@ android {
             applicationIdSuffix ".alpha"
             versionNameSuffix '-NIGHTLY'
             resValue "string", "app_name", appNameAlpha
-            signingConfig signingConfigs.alpha
+            signingConfig = signingConfigs.alpha
         }
     }
 
@@ -94,15 +94,15 @@ android {
 
     splits {
         abi {
-            enable true
+            enable = true
             reset()
             include 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
-            universalApk true
+            universalApk = true
         }
     }
 
-    ndkVersion '28.1.13356709'
-    namespace 'es.wolfi.app.passman'
+    ndkVersion = '28.1.13356709'
+    namespace = 'es.wolfi.app.passman'
     lint {
         disable 'MissingTranslation'
     }
