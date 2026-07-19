@@ -29,6 +29,7 @@
     <string name="loading">Indlæser</string>
     <string name="files">Filer</string>
     <string name="custom_fields">Brugerdefineret felter</string>
+    <string name="add_file">Tilføj fil</string>
     <string name="add_custom_field">Tilføj et brugerdefineret felt</string>
     <string name="autofill_vaultempty">Ingen legitimationsoplysninger  i boks</string>
     <string name="expert_settings">Eksportér indstillinger</string>
@@ -43,6 +44,7 @@
     <string name="password_generator_use_special_chars">Brug specialtegn</string>
     <string name="password_length">Adgangskode længde</string>
     <string name="new_vault_name">Nyt boksnavn</string>
+    <string name="confirm_account_logout">Er du sikker på, du vil logge ud?</string>
     <string name="digits">Cifre</string>
     <string name="period">Periode</string>
     <string name="value">Værdi</string>

@@ -73,8 +73,15 @@
     <string name="password_generator_use_lowercase">Используйте символы нижнего регистра</string>
     <string name="password_generator_use_uppercase">Используйте символы верхнего регистра</string>
     <string name="password_length">Длина пароля</string>
+    <string name="vault_name">Имя хранилища</string>
+    <string name="sharing_key_strength">Сила разделяемого ключа</string>
     <string name="new_vault_name">Новое название хранилища</string>
+    <string name="offline_cache">Офлайновый кэш</string>
+    <string name="offline_cache_description">Кэширует зашифрованные хранилища, если они были загружены вручную.</string>
+    <string name="enable_offline_cache"> Включить офлайновый кэш</string>
+    <string name="clear_offline_cache"> Очистить офлайновый кэш</string>
     <string name="nextcloud_single_sign_on">Технология единого входа Nextcloud</string>
+    <string name="manual_login">Ручной вход</string>
     <string name="confirm_account_logout">Вы уверены, что хотите выйти?</string>
     <string name="digits">Цифры</string>
     <string name="period">Период</string>
@@ -82,5 +89,15 @@
     <string name="faq">ЧАВО</string>
     <string name="secret">Секретный</string>
     <string name="issuer">Выпустил</string>
+    <string name="error_parsing_qr_code">Ошибка разбора QR-кода</string>
+    <string name="camera_permission_denied">Разрешение на камеру отклонено</string>
+    <string name="no_matching_credentials_or_fields_found">Не найдено соответствующих учётных данных или полей для автозаполнения</string>
+    <string name="no_active_vault_add_credential_error">Нет активного хранилища. Невозможно добавить учётные данные!</string>
+    <string name="automatic_autofill_vault_description">Выберите «Автоматически», если вы хотите, чтобы автозаполнение осуществлялось только тогда, когда хранилище активно открыто и разблокировано в приложении</string>
     <string name="autofill_manual_search_fallback">Ручной поиск учетных данных как резервный вариант автозаполнения</string>
-    </resources>
+    <string name="set_as_autofill_service">Установить как службу автозаполнения</string>
+    <string name="algorithm"> Алгоритм</string>
+    <string name="enable_case_insensitive_credential_label_sort">Включить сортировку учётных данных без учёта регистра</string>
+    <string name="credential_list_sort_settings">Настройки сортировки списка учётных данных</string>
+    <string name="restore_custom_credential_sort_order">Восстановить порядок сортировки пользовательских учётных данных</string>
+</resources>
