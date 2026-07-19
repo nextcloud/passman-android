@@ -44,7 +44,8 @@ public enum SettingValues {
     CREDENTIAL_LABEL_SORT("credential_label_sort"),
     CASE_INSENSITIVE_CREDENTIAL_LABEL_SORT("case_insensitive_credential_label_sort"),
     RESTORE_CUSTOM_CREDENTIAL_SORT_ORDER("restore_custom_credential_sort_order"),
-    COLOR_PASSWORD_DIGITS("color_password_digits");
+    ENABLE_COLOR_PASSWORD_DIGITS("color_password_digits"),
+    PASSWORD_DIGIT_COLOR("password_digit_color");
 
     private final String name;
 

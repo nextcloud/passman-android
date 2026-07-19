@@ -183,6 +183,33 @@
                 android:checked="false"
                 android:text="@string/color_password_digits_description" />
 
+            <LinearLayout
+                android:id="@+id/settings_color_password_digits_chooser_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    style="@style/SettingsDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/choose_password_digit_color" />
+
+                <View
+                    android:id="@+id/settings_color_password_digits_preview"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_gravity="end"
+                    android:background="@color/password_digit"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
+
             <TextView
                 style="@style/Label"
                 android:layout_width="match_parent"

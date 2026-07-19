@@ -41,6 +41,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import java.util.Objects;
 
 import es.wolfi.app.passman.activities.PasswordListActivity;
@@ -57,6 +59,8 @@ public class CopyTextItem extends LinearLayout {
 
     private String rawText = "";
     private boolean passwordMode = false;
+    private boolean coloredDigitsEnabled = true;
+    private int highlightColor;
 
     public CopyTextItem(Context context) {
         super(context);
@@ -90,6 +94,11 @@ public class CopyTextItem extends LinearLayout {
         copy = binding.copyBtnCopy;
         toggle = binding.copyBtnToggleVisible;
         open_url_toggle = binding.openUrlBtnToggleVisible;
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        int defaultColor = ContextCompat.getColor(getContext(), R.color.password_digit);
+        highlightColor = settings.getInt(SettingValues.PASSWORD_DIGIT_COLOR.toString(), defaultColor);
+        coloredDigitsEnabled = settings.getBoolean(SettingValues.ENABLE_COLOR_PASSWORD_DIGITS.toString(), true);
 
         setModeText();
 
@@ -175,12 +184,11 @@ public class CopyTextItem extends LinearLayout {
     }
 
     private void refreshDisplayedText() {
-        if (passwordMode && isPasswordRevealed() && isColorDigitsEnabled()) {
+        if (passwordMode && isPasswordRevealed() && coloredDigitsEnabled) {
             SpannableString spannable = new SpannableString(rawText);
-            int color = getResources().getColor(R.color.password_digit);
             for (int i = 0; i < rawText.length(); i++) {
                 if (Character.isDigit(rawText.charAt(i))) {
-                    spannable.setSpan(new ForegroundColorSpan(color), i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    spannable.setSpan(new ForegroundColorSpan(highlightColor), i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
             text.setText(spannable);
@@ -191,11 +199,6 @@ public class CopyTextItem extends LinearLayout {
 
     private boolean isPasswordRevealed() {
         return text.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-    }
-
-    private boolean isColorDigitsEnabled() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
-        return settings.getBoolean(SettingValues.COLOR_PASSWORD_DIGITS.toString(), true);
     }
 
     public void copyTextToClipboard() {
