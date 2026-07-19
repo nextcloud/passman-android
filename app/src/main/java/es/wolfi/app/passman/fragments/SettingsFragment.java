@@ -28,11 +28,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +44,13 @@ import android.view.autofill.AutofillManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
@@ -98,6 +103,31 @@ public class SettingsFragment extends Fragment {
     EditText settings_password_generator_length_value;
 
     MaterialCheckBox enable_credential_list_icons_switch;
+    MaterialCheckBox settings_color_password_digits_switch;
+    View settings_color_password_digits_preview;
+    int selectedColor;
+    private final int[] PREDEFINED_COLORS = {
+            Color.parseColor("#F44336"), // Red 500
+            Color.parseColor("#E91E63"), // Pink 500
+            Color.parseColor("#9C27B0"), // Purple 500
+            Color.parseColor("#673AB7"), // Deep Purple 500
+            Color.parseColor("#3F51B5"), // Indigo 500
+            Color.parseColor("#2196F3"), // Blue 500
+            Color.parseColor("#03A9F4"), // Light Blue 500
+            Color.parseColor("#00BCD4"), // Cyan 500
+            Color.parseColor("#009688"), // Teal 500
+            Color.parseColor("#4CAF50"), // Green 500
+            Color.parseColor("#8BC34A"), // Light Green 500
+            Color.parseColor("#CDDC39"), // Lime 500
+            Color.parseColor("#FFEB3B"), // Yellow 500
+            Color.parseColor("#FFC107"), // Amber 500
+            Color.parseColor("#FF9800"), // Orange 500
+            Color.parseColor("#FF5722"), // Deep Orange 500
+            Color.parseColor("#795548"), // Brown 500
+            Color.parseColor("#9E9E9E"), // Grey 500
+            Color.parseColor("#607D8B"), // Blue Grey 500
+            Color.parseColor("#000000"), // Black
+    };
     MaterialCheckBox enable_offline_cache_switch;
 
     TextView default_autofill_vault_title;
@@ -163,6 +193,14 @@ public class SettingsFragment extends Fragment {
         settings_password_generator_length_value = view.findViewById(R.id.settings_password_generator_length_value);
 
         enable_credential_list_icons_switch = view.findViewById(R.id.enable_credential_list_icons_switch);
+        settings_color_password_digits_switch = view.findViewById(R.id.settings_color_password_digits_switch);
+        settings_color_password_digits_preview = view.findViewById(R.id.settings_color_password_digits_preview);
+        settings_color_password_digits_preview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showColorPicker();
+            }
+        });
         enable_offline_cache_switch = view.findViewById(R.id.enable_offline_cache_switch);
 
         default_autofill_vault_title = view.findViewById(R.id.default_autofill_vault_title);
@@ -236,6 +274,9 @@ public class SettingsFragment extends Fragment {
         }
 
         enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
+        settings_color_password_digits_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_COLOR_PASSWORD_DIGITS.toString(), true));
+        selectedColor = settings.getInt(SettingValues.PASSWORD_DIGIT_COLOR.toString(), ContextCompat.getColor(context, R.color.password_digit));
+        updateColorPreview(selectedColor);
         enable_offline_cache_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true));
 
         Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
@@ -359,6 +400,8 @@ public class SettingsFragment extends Fragment {
                 passwordGenerator.applyChanges();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), enable_credential_list_icons_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_COLOR_PASSWORD_DIGITS.toString(), settings_color_password_digits_switch.isChecked()).commit();
+                settings.edit().putInt(SettingValues.PASSWORD_DIGIT_COLOR.toString(), selectedColor).commit();
                 settings.edit().putBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), enable_offline_cache_switch.isChecked()).commit();
 
                 settings.edit().putInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), Integer.parseInt(clear_clipboard_delay_value.getText().toString())).commit();
@@ -433,5 +476,81 @@ public class SettingsFragment extends Fragment {
                 clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
             }
         };
+    }
+
+    private void showColorPicker() {
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.choose_password_digit_color);
+
+        GridView gridView = new GridView(context);
+        gridView.setNumColumns(5);
+        int padding = (int) (16 * context.getResources().getDisplayMetrics().density);
+        gridView.setPadding(padding, padding, padding, padding);
+        gridView.setVerticalSpacing(padding);
+        gridView.setHorizontalSpacing(padding);
+        gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+        gridView.setGravity(Gravity.CENTER);
+
+        gridView.setAdapter(new ArrayAdapter<Integer>(context, 0, boxIntegerArray(PREDEFINED_COLORS)) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = convertView;
+                if (view == null) {
+                    view = new View(context) {
+                        @Override
+                        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                            // Ensure the view is square to prevent ovals
+                            super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+                        }
+                    };
+                    view.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                }
+                int color = getItem(position);
+                GradientDrawable shape = new GradientDrawable();
+                shape.setShape(GradientDrawable.OVAL);
+                shape.setColor(color);
+                
+                // Add a subtle border to ensure visibility on all backgrounds
+                shape.setStroke((int) (1 * context.getResources().getDisplayMetrics().density), Color.parseColor("#CCCCCC"));
+
+                // Highlight the currently selected color with a thicker border
+                if (color == selectedColor) {
+                    shape.setStroke((int) (3 * context.getResources().getDisplayMetrics().density), Color.BLACK);
+                }
+
+                view.setBackground(shape);
+                return view;
+            }
+        });
+
+        final AlertDialog dialog = builder.setView(gridView).create();
+
+        gridView.setOnItemClickListener((parent, view, position, id) -> {
+            selectedColor = PREDEFINED_COLORS[position];
+            updateColorPreview(selectedColor);
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private Integer[] boxIntegerArray(int[] array) {
+        Integer[] result = new Integer[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i];
+        }
+        return result;
+    }
+
+    private void updateColorPreview(int color) {
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.OVAL);
+        shape.setColor(color);
+        shape.setStroke((int) (1 * getResources().getDisplayMetrics().density), Color.parseColor("#CCCCCC"));
+        settings_color_password_digits_preview.setBackground(shape);
     }
 }

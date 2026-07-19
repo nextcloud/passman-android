@@ -20,4 +20,5 @@
     <color name="danger">#FF0000</color>
     <color name="compromised">#36FF0000</color>
     <color name="disabled">#7E4C819F</color>
+    <color name="password_digit">#1565C0</color>
 </resources>
