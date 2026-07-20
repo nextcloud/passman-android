@@ -97,4 +97,7 @@
     <string name="autofill_manual_search_fallback">人手身份驗證搜尋作為自動填充應變的選項</string>
     <string name="set_as_autofill_service">設置為自動填充服務</string>
     <string name="algorithm">演算法</string>
-    </resources>
+    <string name="enable_case_insensitive_credential_label_sort">啟用不區分大小寫的憑證排序</string>
+    <string name="credential_list_sort_settings">憑證清單排序設定</string>
+    <string name="restore_custom_credential_sort_order">還原自訂憑證排序順序</string>
+</resources>
