@@ -14,7 +14,6 @@
         android:layout_gravity="center"
         android:textColor="@android:color/white"
         android:textSize="24sp"
-        android:textStyle="bold"
-        android:text="@string/vault_locking_in" />
+        android:textStyle="bold" />
 
 </FrameLayout>

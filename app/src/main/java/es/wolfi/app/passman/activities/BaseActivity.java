@@ -64,7 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
             countdownOverlay.setVisibility(View.VISIBLE);
             TextView textView = countdownOverlay.findViewById(R.id.lock_countdown_text);
-            textView.setText(getString(R.string.vault_locking_in, secondsLeft));
+            textView.setText(getResources().getQuantityString(R.plurals.vault_locking_in, secondsLeft, secondsLeft));
         });
     }
 
