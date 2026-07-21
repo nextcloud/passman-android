@@ -41,6 +41,7 @@
     <string name="add_custom_field">Add custom field</string>
     <string name="unlock_passman">Unlock Passman</string>
     <string name="unlock_passman_message_device_auth">Please authenticate to access Passman</string>
+    <string name="app_security">App security</string>
     <string name="app_start_password">App start password</string>
     <string name="app_start_password_android_auth_description">Enable Android user authentication on app start</string>
     <string name="wait_while_encrypting">Wait while encrypting …</string>
@@ -62,7 +63,15 @@
     <string name="cancel">Cancel</string>
     <string name="enable_credential_list_icons">Enable credential list icons</string>
     <string name="credential_icon">Credential icon</string>
+    <string name="color_password_digits">Highlight password digits</string>
+    <string name="color_password_digits_description">Show digits in a revealed password in a different color to tell apart characters like 0 and O</string>
+    <string name="choose_password_digit_color">Choose digit highlight color</string>
     <string name="clear_clipboard_delay">Clear clipboard (after seconds)</string>
+    <string name="vault_auto_lock_delay">Vault auto-lock (after minutes)</string>
+    <string name="enable_screenshot_protection">Hide app content in recents, screenshots and on non-secure displays</string>
+    <string name="vault_locked_notification_title">Vault Locked</string>
+    <string name="vault_locked_notification_text">The active vault has been automatically locked due to inactivity.</string>
+    <string name="security_channel_name">Vault Security</string>
     <string name="generate_password">Generate password</string>
     <string name="generate_password_to_clipboard">Generate a random password and copy to clipboard</string>
     <string name="enable_password_generator_shortcut_description">Enable password generator app shortcut</string>

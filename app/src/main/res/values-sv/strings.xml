@@ -42,6 +42,7 @@
     <string name="add_custom_field">Lägg till anpassat fält</string>
     <string name="unlock_passman">Lås upp Passman</string>
     <string name="unlock_passman_message_device_auth">Autentisera för att komma åt Passman</string>
+    <string name="app_security">Appsäkerhet</string>
     <string name="app_start_password">Startlösenord för appen</string>
     <string name="app_start_password_android_auth_description">Kräv Android-autentisering när appen startas</string>
     <string name="wait_while_encrypting">Vänta medan kryptering pågår …</string>
@@ -63,7 +64,15 @@
     <string name="cancel">Avbryt</string>
     <string name="enable_credential_list_icons">Visa ikoner i listan över inloggningsuppgifter</string>
     <string name="credential_icon">Ikon för inloggningsuppgifter</string>
+    <string name="color_password_digits">Färglägg siffror i lösenord</string>
+    <string name="color_password_digits_description">Visa siffror i lösenord med en annan färg för bättre läsbarhet</string>
+    <string name="choose_password_digit_color">Välj färg för lösenordssiffror</string>
     <string name="clear_clipboard_delay">Rensa urklipp efter (sekunder)</string>
+    <string name="vault_auto_lock_delay">Fördröjning innan valvet låses automatiskt</string>
+    <string name="enable_screenshot_protection">Aktivera skydd mot skärmbilder</string>
+    <string name="vault_locked_notification_title">Valvet har låsts</string>
+    <string name="vault_locked_notification_text">Valvet låstes automatiskt</string>
+    <string name="security_channel_name">Säkerhet</string>
     <string name="generate_password">Generera lösenord</string>
     <string name="generate_password_to_clipboard">Skapa ett slumpmässigt lösenord och kopiera det till urklipp</string>
     <string name="enable_password_generator_shortcut_description">Aktivera kortkommandot för lösenordsgeneratorn</string>
@@ -98,4 +107,7 @@
     <string name="autofill_manual_search_fallback">Använd manuell sökning efter inloggningsuppgifter som reservalternativ för autofyll</string>
     <string name="set_as_autofill_service">Ange som autofylltjänst</string>
     <string name="algorithm">Algoritm</string>
-    </resources>
+    <string name="enable_case_insensitive_credential_label_sort">Sortera etiketter utan hänsyn till skiftläge</string>
+    <string name="credential_list_sort_settings">Sortering av listan över inloggningsuppgifter</string>
+    <string name="restore_custom_credential_sort_order">Återställ anpassad sorteringsordning</string>
+</resources>

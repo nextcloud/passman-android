@@ -41,6 +41,7 @@
     <string name="add_custom_field">Lisa kohandatud väli</string>
     <string name="unlock_passman">Ava Passmani lukustus</string>
     <string name="unlock_passman_message_device_auth">Ligipääsuks Passmanile palun tuvasta end </string>
+    <string name="app_security">Rakenduse turvalisus</string>
     <string name="app_start_password">Rakenduse käivitamise salasõna</string>
     <string name="app_start_password_android_auth_description">Rakenduse käivitamisel kasuta Androidipõhist autentimist</string>
     <string name="wait_while_encrypting">Oota kuni krüptin andmeid…</string>
@@ -62,7 +63,15 @@
     <string name="cancel">Loobu</string>
     <string name="enable_credential_list_icons">Kasute teenuste loendis ikoone</string>
     <string name="credential_icon">Teenuse ikoon</string>
+    <string name="color_password_digits">Tõsta salasõna numbrid esile</string>
+    <string name="color_password_digits_description">Näita kuvatava salasõna puhul numbreid muu värviga, see aitab paremini eristada tähemärke nagu 0 ja O või 1 ja l.</string>
+    <string name="choose_password_digit_color">Vali numbrite esiletõstmise värv</string>
     <string name="clear_clipboard_delay">Tühjenda lõikelaud (peale antud sekundeid)</string>
+    <string name="vault_auto_lock_delay">Andmehoidla automaatne lukustus (antud minutite möödumisel)</string>
+    <string name="enable_screenshot_protection">Peida rakendus hiljutiste rakenduste loendist, keela ekraanitõmmiste tegemine ja kuvamine ebaturvalistel ekraanidel.</string>
+    <string name="vault_locked_notification_title">Andmehoidla on lukus</string>
+    <string name="vault_locked_notification_text">Kuna sa pole teda kasutanud, siis aktiivne andmehoidla on lukustatud automaatselt.</string>
+    <string name="security_channel_name">Andmehoidla turvalisus</string>
     <string name="generate_password">Loo salasõna</string>
     <string name="generate_password_to_clipboard">Loo juhuslik salasõna ja kopeeri ta lõikelauale</string>
     <string name="enable_password_generator_shortcut_description">Võta kasutusele salasõnade looja rakenduse otseviide</string>

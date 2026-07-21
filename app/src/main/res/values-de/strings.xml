@@ -41,6 +41,7 @@
     <string name="add_custom_field">Benutzerdefiniertes Feld hinzufügen</string>
     <string name="unlock_passman">Passman entsperren</string>
     <string name="unlock_passman_message_device_auth">Bitte authentifizieren Sie sich, um auf Passman zuzugreifen</string>
+    <string name="app_security">App-Sicherheit</string>
     <string name="app_start_password">Passwort für App-Start</string>
     <string name="app_start_password_android_auth_description">Android-Benutzerauthentifizierung beim App-Start aktivieren</string>
     <string name="wait_while_encrypting">Warte während der Verschlüsselung …</string>
@@ -62,7 +63,15 @@
     <string name="cancel">Abbrechen</string>
     <string name="enable_credential_list_icons">Symbole für Anmeldeinformationen aktivieren</string>
     <string name="credential_icon">Symbol für Anmeldeinformationen</string>
+    <string name="color_password_digits">Ziffern in Passwörtern hervorheben</string>
+    <string name="color_password_digits_description">Ziffern in einem angezeigten Passwort in einer anderen Farbe anzeigen, um Zeichen wie 0 und O voneinander zu unterscheiden</string>
+    <string name="choose_password_digit_color">Farbe zum Hervorheben von Ziffern auswählen</string>
     <string name="clear_clipboard_delay">Zwischenablage leeren (nach ein paar Sekunden)</string>
+    <string name="vault_auto_lock_delay">Automatische Tresorsperre (nach Minuten)</string>
+    <string name="enable_screenshot_protection">App-Inhalte in aktuellen Ansichten, Screenshots und auf nicht sicheren Displays ausblenden</string>
+    <string name="vault_locked_notification_title">Tresor gesperrt</string>
+    <string name="vault_locked_notification_text">Der aktive Tresor wurde aufgrund von Inaktivität automatisch gesperrt.</string>
+    <string name="security_channel_name">Tresorsicherheit</string>
     <string name="generate_password">Passwort erzeugen</string>
     <string name="generate_password_to_clipboard">Zufälliges Passwort generieren und in die Zwischenablage kopieren</string>
     <string name="enable_password_generator_shortcut_description">Verknüpfung zur Passwortgenerator-App aktivieren</string>

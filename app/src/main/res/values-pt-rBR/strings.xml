@@ -41,6 +41,7 @@
     <string name="add_custom_field">Adicionar campo personalizado</string>
     <string name="unlock_passman">Destrancar Passman</string>
     <string name="unlock_passman_message_device_auth">Por favor, autentique-se para acessar o Passman</string>
+    <string name="app_security">Segurança do aplicativo</string>
     <string name="app_start_password">Senha de início do aplicativo</string>
     <string name="app_start_password_android_auth_description">Ativar autenticação do usuário Android ao iniciar o aplicativo</string>
     <string name="wait_while_encrypting">Aguarde enquanto criptografa ...</string>
@@ -62,7 +63,15 @@
     <string name="cancel">Cancelar</string>
     <string name="enable_credential_list_icons">Ativar ícones na lista de credenciais</string>
     <string name="credential_icon">Ícone da credencial</string>
+    <string name="color_password_digits">Destacar dígitos na senha</string>
+    <string name="color_password_digits_description">Exibir os dígitos de uma senha revelada em uma cor diferente para distinguir caracteres como 0 e O</string>
+    <string name="choose_password_digit_color">Escolha uma cor para destacar dígitos</string>
     <string name="clear_clipboard_delay">Limpar área de transferência (após segundos)</string>
+    <string name="vault_auto_lock_delay">Trancamento automático do cofre (após minutos)</string>
+    <string name="enable_screenshot_protection">Ocultar conteúdo do aplicativo em recentes, capturas de tela e telas não seguras</string>
+    <string name="vault_locked_notification_title">Cofre trancado</string>
+    <string name="vault_locked_notification_text">O cofre ativo foi trancado devido à inatividade.</string>
+    <string name="security_channel_name">Segurança do cofre</string>
     <string name="generate_password">Gerar senha</string>
     <string name="generate_password_to_clipboard">Gerar uma senha aleatória e copiar para a área de transferência</string>
     <string name="enable_password_generator_shortcut_description">Ativar atalho do aplicativo gerador de senha</string>
