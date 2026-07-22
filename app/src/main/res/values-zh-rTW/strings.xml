@@ -41,6 +41,7 @@
     <string name="add_custom_field">新增自訂欄位</string>
     <string name="unlock_passman">解鎖 Passman</string>
     <string name="unlock_passman_message_device_auth">請驗證以存取 Passman</string>
+    <string name="app_security">應用程式安全性</string>
     <string name="app_start_password">應用程式啟動密碼</string>
     <string name="app_start_password_android_auth_description">在應用程式啟動時啟用 Android 使用者身份驗證</string>
     <string name="wait_while_encrypting">正在加密，請稍候……</string>
@@ -62,7 +63,18 @@
     <string name="cancel">取消</string>
     <string name="enable_credential_list_icons">啟用憑證清單圖示</string>
     <string name="credential_icon">憑證圖示</string>
+    <string name="color_password_digits">突顯密碼數字</string>
+    <string name="color_password_digits_description">將顯示的密碼中的數字以不同顏色呈現，以便區分 0 與 O 等字元</string>
+    <string name="choose_password_digit_color">選擇數字突顯顏色</string>
     <string name="clear_clipboard_delay">清除剪貼簿（幾秒後）</string>
+    <string name="vault_auto_lock_delay">保險庫自動上鎖（分鐘後）</string>
+    <string name="enable_screenshot_protection">在「最近使用」清單、螢幕截圖以及不安全的顯示器上隱藏應用程式內容</string>
+    <plurals name="vault_locking_in">
+        <item quantity="other">保險庫將於 %1$d 秒後鎖定</item>
+    </plurals>
+    <string name="vault_locked_notification_title">保險庫已鎖定</string>
+    <string name="vault_locked_notification_text">由於長時間未進行操作，目前活躍的保險庫已自動鎖定。</string>
+    <string name="security_channel_name">保險庫安全性</string>
     <string name="generate_password">產生密碼</string>
     <string name="generate_password_to_clipboard">產生隨機密碼並複製到剪貼簿</string>
     <string name="enable_password_generator_shortcut_description">啟用密碼產生器應用程式捷徑</string>

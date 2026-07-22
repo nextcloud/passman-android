@@ -70,6 +70,10 @@
     <string name="clear_clipboard_delay">Rensa urklipp efter (sekunder)</string>
     <string name="vault_auto_lock_delay">Fördröjning innan valvet låses automatiskt</string>
     <string name="enable_screenshot_protection">Aktivera skydd mot skärmbilder</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Valvet låses om %d sekund</item>
+        <item quantity="other">Valvet låses om %d sekunder</item>
+    </plurals>
     <string name="vault_locked_notification_title">Valvet har låsts</string>
     <string name="vault_locked_notification_text">Valvet låstes automatiskt</string>
     <string name="security_channel_name">Säkerhet</string>

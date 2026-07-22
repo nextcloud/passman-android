@@ -69,6 +69,10 @@
     <string name="clear_clipboard_delay">Zwischenablage leeren (nach ein paar Sekunden)</string>
     <string name="vault_auto_lock_delay">Automatische Tresorsperre (nach Minuten)</string>
     <string name="enable_screenshot_protection">App-Inhalte in aktuellen Ansichten, Screenshots und auf nicht sicheren Displays ausblenden</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Tresor wird in %1$d Sekunde gesperrt</item>
+        <item quantity="other">Tresor wird in %1$d Sekunden gesperrt</item>
+    </plurals>
     <string name="vault_locked_notification_title">Tresor gesperrt</string>
     <string name="vault_locked_notification_text">Der aktive Tresor wurde aufgrund von Inaktivität automatisch gesperrt.</string>
     <string name="security_channel_name">Tresorsicherheit</string>

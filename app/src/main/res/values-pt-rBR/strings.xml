@@ -69,6 +69,11 @@
     <string name="clear_clipboard_delay">Limpar área de transferência (após segundos)</string>
     <string name="vault_auto_lock_delay">Trancamento automático do cofre (após minutos)</string>
     <string name="enable_screenshot_protection">Ocultar conteúdo do aplicativo em recentes, capturas de tela e telas não seguras</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">O cofre será trancado em %1$d segundo</item>
+        <item quantity="many">O cofre será trancado em %1$d de segundos</item>
+        <item quantity="other">O cofre será trancado em %1$d segundos</item>
+    </plurals>
     <string name="vault_locked_notification_title">Cofre trancado</string>
     <string name="vault_locked_notification_text">O cofre ativo foi trancado devido à inatividade.</string>
     <string name="security_channel_name">Segurança do cofre</string>

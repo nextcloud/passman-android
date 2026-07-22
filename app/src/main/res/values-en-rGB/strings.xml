@@ -69,6 +69,10 @@
     <string name="clear_clipboard_delay">Clear clipboard (after seconds)</string>
     <string name="vault_auto_lock_delay">Vault auto-lock (after minutes)</string>
     <string name="enable_screenshot_protection">Hide app content in recents, screenshots and on non-secure displays</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Vault will be locked in %1$d second</item>
+        <item quantity="other">Vault will be locked in %1$d seconds</item>
+    </plurals>
     <string name="vault_locked_notification_title">Vault Locked</string>
     <string name="vault_locked_notification_text">The active vault has been automatically locked due to inactivity.</string>
     <string name="security_channel_name">Vault Security</string>
