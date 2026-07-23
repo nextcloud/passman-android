@@ -69,6 +69,9 @@
     <string name="clear_clipboard_delay">清除剪貼板（秒後）</string>
     <string name="vault_auto_lock_delay">保險庫自動鎖定（分鐘後）</string>
     <string name="enable_screenshot_protection">在最近使用、螢幕截圖及非安全顯示器上隱藏應用程式內容</string>
+    <plurals name="vault_locking_in">
+        <item quantity="other">保險庫將於 %1$d 秒後上鎖</item>
+    </plurals>
     <string name="vault_locked_notification_title">保險庫已鎖定</string>
     <string name="vault_locked_notification_text">目前保險庫因閒置而已自動鎖定。</string>
     <string name="security_channel_name">保險庫安全性</string>

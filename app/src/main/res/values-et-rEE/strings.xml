@@ -69,6 +69,10 @@
     <string name="clear_clipboard_delay">Tühjenda lõikelaud (peale antud sekundeid)</string>
     <string name="vault_auto_lock_delay">Andmehoidla automaatne lukustus (antud minutite möödumisel)</string>
     <string name="enable_screenshot_protection">Peida rakendus hiljutiste rakenduste loendist, keela ekraanitõmmiste tegemine ja kuvamine ebaturvalistel ekraanidel.</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Andmehoidla lukustatakse %1$d sekundi möödumisel</item>
+        <item quantity="other">Andmehoidla lukustatakse %1$d sekundi möödumisel</item>
+    </plurals>
     <string name="vault_locked_notification_title">Andmehoidla on lukus</string>
     <string name="vault_locked_notification_text">Kuna sa pole teda kasutanud, siis aktiivne andmehoidla on lukustatud automaatselt.</string>
     <string name="security_channel_name">Andmehoidla turvalisus</string>
