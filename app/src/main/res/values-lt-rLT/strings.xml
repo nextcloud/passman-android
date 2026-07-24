@@ -41,6 +41,7 @@
     <string name="add_custom_field">Pridėti tinkintus laukus</string>
     <string name="unlock_passman">Atrakinti „Passman“</string>
     <string name="unlock_passman_message_device_auth">Prisijunkite, kad pasiektumėte „Passman“</string>
+    <string name="app_security">Programėlės saugumas</string>
     <string name="app_start_password">Programėlės paleidimo slaptažodis</string>
     <string name="app_start_password_android_auth_description">Įjungti „Android“ vartotojo autentifikavimą paleidus programėlę</string>
     <string name="wait_while_encrypting">Palaukite, kol šifruojama…</string>
@@ -62,7 +63,21 @@
     <string name="cancel">Atsisakyti</string>
     <string name="enable_credential_list_icons">Įgalinti kredencialų sąrašo piktogramas</string>
     <string name="credential_icon">Prisijungimo duomenų piktograma</string>
+    <string name="color_password_digits">Paryškinti slaptažodžio skaitmenis</string>
+    <string name="color_password_digits_description">Rodant atskleistą slaptažodį, skaitmenis vaizduoti kita spalva, kad būtų galima atskirti tokius simbolius kaip 0 ir O.</string>
+    <string name="choose_password_digit_color">Pasirinkite skaitmenų paryškinimo spalvą</string>
     <string name="clear_clipboard_delay">Išvalyti iškarpinę (po kelių sekundžių)</string>
+    <string name="vault_auto_lock_delay">Automatinis slėptuvės užrakinimas (po kelių minučių)</string>
+    <string name="enable_screenshot_protection">Slėpti programėlės turinį naujausių programėlių sąraše, ekrano kopijose ir nesaugiuose ekranuose</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Slėptuvė bus užrakinta po %1$d sek.</item>
+        <item quantity="few">Slėptuvė bus užrakinta po %1$d sek.</item>
+        <item quantity="many">Slėptuvė bus užrakinta po %1$d sek.</item>
+        <item quantity="other">Slėptuvė bus užrakinta po %1$d sek.</item>
+    </plurals>
+    <string name="vault_locked_notification_title">Slėptuvė užrakinta</string>
+    <string name="vault_locked_notification_text">Aktyvioji slėptuvė buvo automatiškai užrakinta dėl neaktyvumo.</string>
+    <string name="security_channel_name">Slėptuvės saugumas</string>
     <string name="generate_password">Generuoti slaptažodį</string>
     <string name="generate_password_to_clipboard">Sugeneruokite atsitiktinį slaptažodį ir nukopijuokite jį į iškarpinę</string>
     <string name="enable_password_generator_shortcut_description">Įgalinti slaptažodžių generatoriaus programėlės spartųjį klavišą</string>
