@@ -91,10 +91,10 @@
     <string name="vault_name">Slėptuvės pavadinimas</string>
     <string name="sharing_key_strength">Bendrinimo rakto saugumas</string>
     <string name="new_vault_name">Naujas slėptuvės pavadinimas</string>
-    <string name="offline_cache">Atsijungusios būsenos podėlis</string>
-    <string name="offline_cache_description">Talpina užšifruotus slėptuvės failus, jei jie buvo įkelti rankiniu būdu</string>
-    <string name="enable_offline_cache">Įjungti atsijungusios būsenos podėlį</string>
-    <string name="clear_offline_cache">Išvalyti atsijungusios būsenos podėlį</string>
+    <string name="offline_cache">Atsijungties tarpinė atmintis</string>
+    <string name="offline_cache_description">Talpina į tarpinę atmintį užšifruotus slėptuvės failus, jei jie buvo įkelti rankiniu būdu</string>
+    <string name="enable_offline_cache">Įjungti atsijungties tarpinę atmintį</string>
+    <string name="clear_offline_cache">Išvalyti atsijungties tarpinę atmintį</string>
     <string name="nextcloud_single_sign_on">Nextcloud vienkartinis prisijungimas</string>
     <string name="manual_login">Rankinis prisijungimas</string>
     <string name="confirm_account_logout">Ar tikrai norite atsijungti?</string>

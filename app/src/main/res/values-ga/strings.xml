@@ -41,6 +41,7 @@
     <string name="add_custom_field">Cuir réimse saincheaptha leis</string>
     <string name="unlock_passman">Díghlasáil Passman</string>
     <string name="unlock_passman_message_device_auth">Fíordheimhnigh rochtain a fháil ar Passman</string>
+    <string name="app_security">Slándáil aipeanna</string>
     <string name="app_start_password">Pasfhocal tosaithe aip</string>
     <string name="app_start_password_android_auth_description">Cumasaigh fíordheimhniú úsáideora Android ar thosú aip</string>
     <string name="wait_while_encrypting">Fan agus tú ag criptiú…</string>
@@ -62,7 +63,22 @@
     <string name="cancel">Cealaigh</string>
     <string name="enable_credential_list_icons">Cumasaigh deilbhíní liostaí creidiúnaithe</string>
     <string name="credential_icon">Deilbhín dintiúir</string>
+    <string name="color_password_digits">Aibhsigh digití an phasfhocail</string>
+    <string name="color_password_digits_description">Taispeáin digití i bpasfhocal nochtaithe i ndath difriúil chun idirdhealú a dhéanamh idir carachtair cosúil le 0 agus O</string>
+    <string name="choose_password_digit_color">Roghnaigh dath aibhsithe digití</string>
     <string name="clear_clipboard_delay">Glan an ghearrthaisce (tar éis soicind)</string>
+    <string name="vault_auto_lock_delay">Glasáil uathoibríoch cruinneacháin (tar éis cúpla nóiméad)</string>
+    <string name="enable_screenshot_protection">Folaigh ábhar aipeanna i scannáin le déanaí, i nglacthaí scáileáin agus ar thaispeántais neamhshlána</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Glasálfar an cruinneachán i %1$d soicind</item>
+        <item quantity="two">Glasálfar an cruinneachán i %1$d soicind</item>
+        <item quantity="few">Glasálfar an cruinneachán i %1$d soicind</item>
+        <item quantity="many">Glasálfar an cruinneachán i %1$d soicind</item>
+        <item quantity="other">Glasálfar an cruinneachán i %1$d soicind</item>
+    </plurals>
+    <string name="vault_locked_notification_title">Cruinneachán faoi Ghlas</string>
+    <string name="vault_locked_notification_text">Tá an cruinneachán gníomhach glasáilte go huathoibríoch mar gheall ar neamhghníomhaíocht.</string>
+    <string name="security_channel_name">Slándáil Cruinneachán</string>
     <string name="generate_password">Gin pasfhocal</string>
     <string name="generate_password_to_clipboard">Gin pasfhocal randamach agus cóipeáil chuig an ngearrthaisce</string>
     <string name="enable_password_generator_shortcut_description">Cumasaigh aicearra feidhmchlár gineadóra pasfhocail</string>
