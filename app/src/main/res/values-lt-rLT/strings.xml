@@ -5,7 +5,7 @@
     <string name="username">Naudotojo vardas</string>
     <string name="password">Slaptažodis</string>
     <string name="connect">Prisijungti</string>
-    <string name="wrongNCUrl">Neteisingas Nextcloud vidinio serverio URL arba nepavyksta prisijungti</string>
+    <string name="wrongNCUrl">Neteisingas „Nextcloud“ vidinio serverio URL arba nepavyksta prisijungti</string>
     <string name="wrongNCSettings">Nustatymai neteisingi</string>
     <string name="net_error">Tinklo klaida</string>
     <string name="net_error_dialog_description">Nepavyko prisijungti prie serverio!\nPakeitimų negalima išsaugoti be veikiančio serverio ryšio.</string>
@@ -29,7 +29,7 @@
     <string name="successfully_updated">Sėkmingai atnaujinta</string>
     <string name="delete">Ištrinti</string>
     <string name="successfully_deleted">Sėkmingai ištrinta</string>
-    <string name="nextcloud_connection_settings">Nextcloud prisijungimo nustatymai</string>
+    <string name="nextcloud_connection_settings">„Nextcloud“ prisijungimo nustatymai</string>
     <string name="app_settings">Programėlės nustatymai</string>
     <string name="wait_while_loading">Palaukite, kol įkeliama…</string>
     <string name="loading">Įkeliama</string>
@@ -95,7 +95,7 @@
     <string name="offline_cache_description">Talpina į tarpinę atmintį užšifruotus slėptuvės failus, jei jie buvo įkelti rankiniu būdu</string>
     <string name="enable_offline_cache">Įjungti atsijungties tarpinę atmintį</string>
     <string name="clear_offline_cache">Išvalyti atsijungties tarpinę atmintį</string>
-    <string name="nextcloud_single_sign_on">Nextcloud vienkartinis prisijungimas</string>
+    <string name="nextcloud_single_sign_on">„Nextcloud“ vienkartinis prisijungimas</string>
     <string name="manual_login">Rankinis prisijungimas</string>
     <string name="confirm_account_logout">Ar tikrai norite atsijungti?</string>
     <string name="digits">Skaičiai</string>
