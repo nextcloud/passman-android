@@ -21,7 +21,7 @@
     <string name="not_implemented_yet">Henüz çalışmıyor</string>
     <string name="created">Oluşturulma:</string>
     <string name="last_accessed">Son erişilme:</string>
-    <string name="search">Arama</string>
+    <string name="search">Ara</string>
     <string name="save">Kaydet</string>
     <string name="successfully_saved">Kaydedildi</string>
     <string name="error_occurred">Bir sorun çıktı</string>
