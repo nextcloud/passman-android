@@ -41,6 +41,7 @@
     <string name="add_custom_field">Özel alan ekle</string>
     <string name="unlock_passman">Passman kilidini aç</string>
     <string name="unlock_passman_message_device_auth">Lütfen Passman için gerekli izinleri verin</string>
+    <string name="app_security">Uygulama güvenliği</string>
     <string name="app_start_password">Uygulama başlatma parolası</string>
     <string name="app_start_password_android_auth_description">Uygulama başlatılırken Android kullanıcısının kimliği doğrulansın</string>
     <string name="wait_while_encrypting">Şifrelenirken bekleyin …</string>
@@ -62,7 +63,19 @@
     <string name="cancel">İptal</string>
     <string name="enable_credential_list_icons">Kimlik doğrulama listesi simgeleri kullanılsın</string>
     <string name="credential_icon">Kimlik doğrulama bilgileri simgesi</string>
+    <string name="color_password_digits">Parola rakamları vurgulansın</string>
+    <string name="color_password_digits_description">0 ve O gibi karakterleri ayırt etmek için görüntülenen bir paroladaki rakamlar farklı renkte görüntülenir</string>
+    <string name="choose_password_digit_color">Rakam vurgulama rengini seçin</string>
     <string name="clear_clipboard_delay">Pano temizlensin (bu kadar saniye sonra)</string>
+    <string name="vault_auto_lock_delay">Otomatik kasa kilidi (dakika)</string>
+    <string name="enable_screenshot_protection">Uygulama içeriği son kullanılanlarda, ekran görüntülerinde ve güvenli olmayan ekranlarda gizlensin</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Kasa %1$d saniye sonra kilitlenecek</item>
+        <item quantity="other">Kasa %1$d saniye sonra kilitlenecek</item>
+    </plurals>
+    <string name="vault_locked_notification_title">Kasa kilitlendi</string>
+    <string name="vault_locked_notification_text">Etkin kasa, herhangi bir işlem yapılmadığından otomatik olarak kilitlendi.</string>
+    <string name="security_channel_name">Kasa güvenliği</string>
     <string name="generate_password">Parola oluştur</string>
     <string name="generate_password_to_clipboard">Rastgele bir parola oluşturarak panoya kopyalar</string>
     <string name="enable_password_generator_shortcut_description">Parola oluşturma uygulaması kısayolunu kullanıma al</string>
