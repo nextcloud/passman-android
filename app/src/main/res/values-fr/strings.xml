@@ -62,7 +62,15 @@
     <string name="cancel">Annuler</string>
     <string name="enable_credential_list_icons">Activer les icônes de liste d\'identifiants</string>
     <string name="credential_icon">Icône d\'identifiants</string>
+    <string name="color_password_digits">Mettre en surbrillance les chiffres dans les mots de passe</string>
+    <string name="color_password_digits_description">Afficher les chiffres des mots de passe révélés avec une couleur différente pour mieux distinguer les caractères comme les 0 et les O</string>
+    <string name="choose_password_digit_color">Choisir la couleur de surbrillance des chiffres</string>
     <string name="clear_clipboard_delay">Vider le presse-papiers (après quelques secondes)</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Le coffre-fort sera verrouillé dans %1$d seconde</item>
+        <item quantity="many">Le coffre-fort sera verrouillé dans %1$d secondes</item>
+        <item quantity="other">Le coffre-fort sera verrouillé dans %1$d secondes</item>
+    </plurals>
     <string name="generate_password">Générer un mot de passe</string>
     <string name="generate_password_to_clipboard">Générer un mot de passe aléatoire et le copier dans le presse-papiers</string>
     <string name="enable_password_generator_shortcut_description">Activer le raccourcis de l\'application générateur de mot de passe.</string>
