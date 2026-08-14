@@ -71,6 +71,8 @@
         <item quantity="many">Le coffre-fort sera verrouillé dans %1$d secondes</item>
         <item quantity="other">Le coffre-fort sera verrouillé dans %1$d secondes</item>
     </plurals>
+    <string name="vault_locked_notification_title">Coffre-fort verrouillé</string>
+    <string name="vault_locked_notification_text">Le coffre-fort actif a été automatiquement verrouillé en raison de son inactivité.</string>
     <string name="generate_password">Générer un mot de passe</string>
     <string name="generate_password_to_clipboard">Générer un mot de passe aléatoire et le copier dans le presse-papiers</string>
     <string name="enable_password_generator_shortcut_description">Activer le raccourcis de l\'application générateur de mot de passe.</string>
