@@ -1,0 +1,8 @@
+- add de locale to fastlane
+- add app/vault security features
+- add password digit highlighting and settings toggle
+- improve credential sort system
+- fix autofill interaction fragment alignment
+- remove build id from the embedded libpassman-lib
+- update compileSdkVersion to 35
+- update dependencies
