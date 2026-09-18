@@ -1,0 +1,42 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Prepare build dependencies"
+  lane :prepare do
+    gradle(tasks: ["clean"])
+  end
+
+  desc "Create and sign a new build"
+  lane :build do
+    gradle(tasks: ["clean", "assembleRelease", "bundleRelease"])
+  end
+
+  desc "Submit a new Beta Build to the Google Play store"
+  lane :beta do
+    upload_to_play_store(
+      track: 'internal',
+      aab: 'app/build/outputs/bundle/release/app-release.aab',
+      release_status: 'draft'
+    )
+  end
+end

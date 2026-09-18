@@ -49,6 +49,9 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        // AGP 9 disables resValues by default; required for per-build-type app_name.
+        // see https://developer.android.com/build/releases/agp-9-0-0-release-notes#android-gradle-plugin-behavior-changes
+        resValues = true
     }
     buildTypes {
         release {

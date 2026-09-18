@@ -653,23 +653,24 @@ public class PasswordListActivity extends BaseActivity implements
             return false;
         }
 
-        switch (id) {
-            case R.id.action_settings:
-                settingsButtonPressed();
-                return true;
-            case R.id.action_faq:
-                String url = "https://github.com/nextcloud/passman-android/blob/master/FAQ.md";
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(Intent.createChooser(intent, "Browse with"));
-                return true;
-            case R.id.action_refresh:
-                refreshButtonPressed();
-                return true;
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        // AGP 9 compiles against a non-final R class, so R.id values are not constant and cannot be used in switch cases
+        // see https://developer.android.com/build/releases/agp-9-0-0-release-notes#android-gradle-plugin-behavior-changes
+        if (id == R.id.action_settings) {
+            settingsButtonPressed();
+            return true;
+        } else if (id == R.id.action_faq) {
+            String url = "https://github.com/nextcloud/passman-android/blob/master/FAQ.md";
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(Intent.createChooser(intent, "Browse with"));
+            return true;
+        } else if (id == R.id.action_refresh) {
+            refreshButtonPressed();
+            return true;
+        } else if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 
