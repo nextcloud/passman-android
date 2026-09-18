@@ -41,6 +41,7 @@
     <string name="add_custom_field">Pridať vlastné pole</string>
     <string name="unlock_passman">Odomknúť Passman</string>
     <string name="unlock_passman_message_device_auth">Pre prístup do programu Passman sa autentifikujte</string>
+    <string name="app_security">Zabezpečenie aplikácie</string>
     <string name="app_start_password">Štartovacie heslo aplikácie</string>
     <string name="app_start_password_android_auth_description">Chcete povoliť autentifikáciu užívateľa systému Android pri spustení aplikácie?</string>
     <string name="wait_while_encrypting">Čakajte šifrujem ...</string>
@@ -62,7 +63,21 @@
     <string name="cancel">Zrušiť</string>
     <string name="enable_credential_list_icons">Povoliť ikony v zozname účtov</string>
     <string name="credential_icon">Ikona účtu</string>
+    <string name="color_password_digits">Zvýrazňovať číslice v heslách</string>
+    <string name="color_password_digits_description">Zobrazovať číslice v odhalenom hesle inou farbou, aby sa dali rozlíšiť znaky ako 0 a O</string>
+    <string name="choose_password_digit_color">Vyberte farbu zvýraznenia číslic</string>
     <string name="clear_clipboard_delay">Vymazať schránku (po sekundách)</string>
+    <string name="vault_auto_lock_delay">Automatické uzamknutie trezoru (počet minút)</string>
+    <string name="enable_screenshot_protection">Skryť obsah aplikácie v zozname nedávnych aplikácií, na snímkach obrazovky a na nezabezpečených displejoch</string>
+    <plurals name="vault_locking_in">
+        <item quantity="one">Trezor sa uzamkne o %1$d sekundu</item>
+        <item quantity="few">Trezor sa uzamkne o %1$d sekundy</item>
+        <item quantity="many">Trezor sa uzamkne o %1$d sekúnd</item>
+        <item quantity="other">Trezor sa uzamkne o %1$d sekúnd</item>
+    </plurals>
+    <string name="vault_locked_notification_title">Trezor uzamknutý</string>
+    <string name="vault_locked_notification_text">Aktívny trezor bol z dôvodu nečinnosti automaticky uzamknutý.</string>
+    <string name="security_channel_name">Zabezpečenie trezoru</string>
     <string name="generate_password">Generovať heslo</string>
     <string name="generate_password_to_clipboard">Vygenerovať náhodné heslo a skopírovať ho do schránky</string>
     <string name="enable_password_generator_shortcut_description">Povoliť odkaz na aplikáciu generátora hesiel</string>
@@ -97,4 +112,7 @@
     <string name="autofill_manual_search_fallback">Manuálne vyhľadávanie poverení ako záložná možnosť automatického dopĺňania</string>
     <string name="set_as_autofill_service">Nastaviť ako službu automatického dopĺňania</string>
     <string name="algorithm">Algoritmus</string>
-    </resources>
+    <string name="enable_case_insensitive_credential_label_sort">Povoliť triedenie prihlasovacích údajov bez rozlíšenia veľkých a malých písmen</string>
+    <string name="credential_list_sort_settings">Nastavenia triedenia zoznamu prihlasovacích údajov</string>
+    <string name="restore_custom_credential_sort_order">Obnoviť vlastné poradie triedenia prihlasovacích údajov</string>
+</resources>
