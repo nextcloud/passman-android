@@ -28,7 +28,7 @@ platform :android do
 
   desc "Create and sign a new build"
   lane :build do
-    gradle(tasks: ["clean", "assembleRelease", "bundleRelease"])
+    gradle(tasks: ["clean", "assembleRelease", "assembleGooglePlayRelease", "bundleRelease", "bundleGooglePlayRelease"])
   end
 
   desc "Submit a new Beta Build to the Google Play store"
