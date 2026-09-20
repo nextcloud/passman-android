@@ -168,6 +168,14 @@ androidComponents {
     }
 }
 
+// Pin the JDK that compiles sources. This is independent of compileOptions (bytecode is still Java 17).
+// See https://developer.android.com/build/jdks#toolchain
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.test.ext:junit:1.2.1'
