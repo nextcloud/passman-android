@@ -4,6 +4,35 @@ ext {
     supportLibraryVersion = '28.0.0'
 }
 
+// Optional signing for easier CI integration and reproducible builds.
+// This will only enable a signing config when the keystore file and credentials exist.
+// See https://izzyondroid.org/docs/reproducibleBuilds/RBDevHints/#signing-config
+def signingReady(String storeProperty, String storePasswordProperty, String aliasProperty, String keyPasswordProperty) {
+    def storePath = project.findProperty(storeProperty)
+    if (storePath == null || storePath.toString().trim().isEmpty()) {
+        return false
+    }
+    if (!file(storePath).exists()) {
+        return false
+    }
+
+    // check that all the required parts exists
+    return [storePasswordProperty, aliasProperty, keyPasswordProperty].every { prop ->
+        def value = project.findProperty(prop)
+        value != null && !value.toString().isEmpty()
+    }
+}
+
+def hasAlphaSigning = signingReady('ALPHA_STORE', 'ALPHA_STORE_PASSWORD', 'ALPHA_KEY_ALIAS', 'ALPHA_KEY_PASSWORD')
+def hasReleaseSigning = signingReady('RELEASE_STORE', 'RELEASE_STORE_PASSWORD', 'RELEASE_KEY_ALIAS', 'RELEASE_KEY_PASSWORD')
+
+if (!hasAlphaSigning) {
+    println "Alpha keystore or signing properties not found. No alpha signing configuration will be applied."
+}
+if (!hasReleaseSigning) {
+    println "Release keystore or signing properties not found. No release signing configuration will be applied."
+}
+
 android {
     def appNameRelease = "Passman"
     def appNameAlpha = "Passman - Alpha"
@@ -15,19 +44,22 @@ android {
     }
     signingConfigs {
         alpha {
-            keyAlias 'debug'
-            storeFile file(ALPHA_STORE)
-            storePassword ALPHA_STORE_PASSWORD
-            keyAlias ALPHA_KEY_ALIAS
-            keyPassword ALPHA_KEY_PASSWORD
-            v2SigningEnabled = true
+            if (hasAlphaSigning) {
+                storeFile file(ALPHA_STORE)
+                storePassword ALPHA_STORE_PASSWORD
+                keyAlias ALPHA_KEY_ALIAS
+                keyPassword ALPHA_KEY_PASSWORD
+                v2SigningEnabled = true
+            }
         }
         release {
-            storeFile file(RELEASE_STORE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-            v2SigningEnabled = true
+            if (hasReleaseSigning) {
+                storeFile file(RELEASE_STORE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+                v2SigningEnabled = true
+            }
         }
     }
     compileSdk 35
@@ -59,7 +91,9 @@ android {
             debuggable false
             resValue "string", "app_name", appNameRelease
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig = signingConfigs.release
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.release
+            }
         }
         googlePlayRelease {
             minifyEnabled false
@@ -70,14 +104,18 @@ android {
             // since it won't let us create a new store page and publish the app without the alpha on the name.
             applicationIdSuffix ".alpha"
             versionNameSuffix '-gplay'
-            signingConfig = signingConfigs.release
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.release
+            }
         }
         debug {
             debuggable true
             applicationIdSuffix ".debug"
             versionNameSuffix '-DEBUG'
             resValue "string", "app_name", appNameRelease
-            signingConfig = signingConfigs.alpha
+            if (hasAlphaSigning) {
+                signingConfig = signingConfigs.alpha
+            }
         }
         alpha {
             minifyEnabled true
@@ -85,7 +123,9 @@ android {
             applicationIdSuffix ".alpha"
             versionNameSuffix '-NIGHTLY'
             resValue "string", "app_name", appNameAlpha
-            signingConfig = signingConfigs.alpha
+            if (hasAlphaSigning) {
+                signingConfig = signingConfigs.alpha
+            }
         }
     }
 
@@ -108,6 +148,31 @@ android {
     namespace = 'es.wolfi.app.passman'
     lint {
         disable 'MissingTranslation'
+    }
+
+    // Omit SDK dependency metadata from APKs and bundles by default.
+    // See https://developer.android.com/build/dependencies#dependency-info-play
+    // Note: googlePlayRelease re-enables it below via androidComponents (Play Console uses it for security checks).
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+}
+
+// Unfortunately, dependenciesInfo cannot be set inside buildTypes.
+// So let's use the variant API instead, to re-enable it for googlePlayRelease.
+androidComponents {
+    beforeVariants(selector().withBuildType("googlePlayRelease")) { variant ->
+        variant.dependenciesInfo.includeInApk = true
+        variant.dependenciesInfo.includeInBundle = true
+    }
+}
+
+// Pin the JDK that compiles sources. This is independent of compileOptions (bytecode is still Java 17).
+// See https://developer.android.com/build/jdks#toolchain
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
