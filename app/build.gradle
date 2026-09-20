@@ -149,6 +149,23 @@ android {
     lint {
         disable 'MissingTranslation'
     }
+
+    // Omit SDK dependency metadata from APKs and bundles by default.
+    // See https://developer.android.com/build/dependencies#dependency-info-play
+    // Note: googlePlayRelease re-enables it below via androidComponents (Play Console uses it for security checks).
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+}
+
+// Unfortunately, dependenciesInfo cannot be set inside buildTypes.
+// So let's use the variant API instead, to re-enable it for googlePlayRelease.
+androidComponents {
+    beforeVariants(selector().withBuildType("googlePlayRelease")) { variant ->
+        variant.dependenciesInfo.includeInApk = true
+        variant.dependenciesInfo.includeInBundle = true
+    }
 }
 
 dependencies {
