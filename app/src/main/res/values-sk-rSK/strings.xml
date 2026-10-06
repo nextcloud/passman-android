@@ -43,7 +43,7 @@
     <string name="unlock_passman_message_device_auth">Pre prístup do programu Passman sa autentifikujte</string>
     <string name="app_security">Zabezpečenie aplikácie</string>
     <string name="app_start_password">Štartovacie heslo aplikácie</string>
-    <string name="app_start_password_android_auth_description">Chcete povoliť autentifikáciu užívateľa systému Android pri spustení aplikácie?</string>
+    <string name="app_start_password_android_auth_description">Povoliť overovanie používateľa Androidu pri spustení aplikácie</string>
     <string name="wait_while_encrypting">Čakajte šifrujem ...</string>
     <string name="wait_while_decrypting">Čakajte dešifrujem ...</string>
     <string name="wait_while_uploading">Čakajte nahrávam ...</string>
