@@ -33,7 +33,7 @@
     <string name="app_settings">Настройки приложения</string>
     <string name="wait_while_loading">Подождите, идет загрузка ...</string>
     <string name="loading">Загрузка</string>
-    <string name="error_downloading_file">Ошибка при загрузке файла</string>
+    <string name="error_downloading_file">Ошибка при скачивании файла</string>
     <string name="error_writing_file">Ошибка записи файла</string>
     <string name="files">Файлы</string>
     <string name="custom_fields">Пользовательские поля</string>
