@@ -10,7 +10,7 @@
     <string name="net_error">Netværksfejl</string>
     <string name="net_error_dialog_description">Der kunne ikke oprettes forbindelse til serveren!\nÆndringer kan ikke gemmes uden en fungerende forbindelse til serveren.</string>
     <string name="unlock">Lås op</string>
-    <string name="wrong_vault_pw">Forkert boks kodeord</string>
+    <string name="wrong_vault_pw">Forkert boksadgangskode</string>
     <string name="label">Mærkat</string>
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
