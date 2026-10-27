@@ -78,6 +78,10 @@ android {
     }
     packaging {
         resources.excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+        jniLibs {
+            // enables storing compressed .so files in the apk files for getting them smaller
+            useLegacyPackaging = true
+        }
     }
     buildFeatures {
         viewBinding = true
