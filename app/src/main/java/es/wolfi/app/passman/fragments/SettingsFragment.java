@@ -107,7 +107,7 @@ public class SettingsFragment extends Fragment {
     EditText settings_password_generator_length_value;
 
     MaterialCheckBox enable_credential_list_icons_switch;
-    MaterialCheckBox settings_color_password_digits_switch;
+    MaterialCheckBox settings_color_password_characters_switch;
     View[] colorRows;
     View[] colorPreviews;
     int[] highlightColors;
@@ -205,7 +205,7 @@ public class SettingsFragment extends Fragment {
         settings_password_generator_length_value = view.findViewById(R.id.settings_password_generator_length_value);
 
         enable_credential_list_icons_switch = view.findViewById(R.id.enable_credential_list_icons_switch);
-        settings_color_password_digits_switch = view.findViewById(R.id.settings_color_password_digits_switch);
+        settings_color_password_characters_switch = view.findViewById(R.id.settings_color_password_characters_switch);
 
         colorRows = new View[]{
                 view.findViewById(R.id.settings_color_password_digits_chooser_container),
@@ -224,7 +224,7 @@ public class SettingsFragment extends Fragment {
             final int colorIndex = i;
             colorPreviews[i].setOnClickListener(v -> showColorPicker(colorIndex));
         }
-        settings_color_password_digits_switch.setOnCheckedChangeListener((buttonView, isChecked) -> updateColorRowsAlpha());
+        settings_color_password_characters_switch.setOnCheckedChangeListener((buttonView, isChecked) -> updateColorRowsAlpha());
         enable_offline_cache_switch = view.findViewById(R.id.enable_offline_cache_switch);
 
         default_autofill_vault_title = view.findViewById(R.id.default_autofill_vault_title);
@@ -300,10 +300,12 @@ public class SettingsFragment extends Fragment {
         }
 
         enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
-        settings_color_password_digits_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), true));
+        settings_color_password_characters_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), true));
         for (int i = 0; i < highlightColors.length; i++) {
-            highlightColors[i] = settings.getInt(CopyTextItem.HIGHLIGHT_COLOR_KEYS[i].toString(),
-                    ContextCompat.getColor(context, CopyTextItem.HIGHLIGHT_COLOR_DEFAULT_RES[i]));
+            highlightColors[i] = settings.getInt(
+                    CopyTextItem.HIGHLIGHT_COLOR_KEYS[i].toString(),
+                    ContextCompat.getColor(context, CopyTextItem.HIGHLIGHT_COLOR_DEFAULT_RES[i])
+            );
             updateColorPreview(i);
         }
         updateColorRowsAlpha();
@@ -432,7 +434,7 @@ public class SettingsFragment extends Fragment {
                 passwordGenerator.applyChanges();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), enable_credential_list_icons_switch.isChecked()).commit();
-                settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), settings_color_password_digits_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), settings_color_password_characters_switch.isChecked()).commit();
                 for (int i = 0; i < highlightColors.length; i++) {
                     settings.edit().putInt(CopyTextItem.HIGHLIGHT_COLOR_KEYS[i].toString(), highlightColors[i]).commit();
                 }
@@ -594,7 +596,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void updateColorRowsAlpha() {
-        float alpha = settings_color_password_digits_switch.isChecked() ? 1f : 0.4f;
+        float alpha = settings_color_password_characters_switch.isChecked() ? 1f : 0.4f;
         for (View row : colorRows) {
             row.setAlpha(alpha);
         }

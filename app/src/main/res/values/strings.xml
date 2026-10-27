@@ -67,8 +67,8 @@
     <string name="cancel">Cancel</string>
     <string name="enable_credential_list_icons">Enable credential list icons</string>
     <string name="credential_icon">Credential icon</string>
-    <string name="color_password_digits">Highlight password characters</string>
-    <string name="color_password_digits_description">Color characters in revealed passwords</string>
+    <string name="color_password_characters">Highlight password characters</string>
+    <string name="color_password_characters_description">Color characters in revealed passwords</string>
     <string name="choose_password_digit_color">Choose highlight color</string>
     <string name="highlight_color_digits">Digits</string>
     <string name="highlight_color_symbols">Symbols</string>
