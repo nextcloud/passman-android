@@ -44,8 +44,11 @@ public enum SettingValues {
     CREDENTIAL_LABEL_SORT("credential_label_sort"),
     CASE_INSENSITIVE_CREDENTIAL_LABEL_SORT("case_insensitive_credential_label_sort"),
     RESTORE_CUSTOM_CREDENTIAL_SORT_ORDER("restore_custom_credential_sort_order"),
-    ENABLE_COLOR_PASSWORD_DIGITS("color_password_digits"),
-    PASSWORD_DIGIT_COLOR("password_digit_color"),
+    ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING("enable_password_character_highlighting"),
+    HIGHLIGHT_COLOR_DIGITS("highlight_color_digits"),
+    HIGHLIGHT_COLOR_SYMBOLS("highlight_color_symbols"),
+    HIGHLIGHT_COLOR_UPPERCASE("highlight_color_uppercase"),
+    HIGHLIGHT_COLOR_LOWERCASE("highlight_color_lowercase"),
     VAULT_AUTO_LOCK_DELAY("vault_auto_lock_delay"),
     ENABLE_SCREENSHOT_PROTECTION("enable_screenshot_protection");
 
