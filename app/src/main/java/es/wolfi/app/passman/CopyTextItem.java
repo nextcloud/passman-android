@@ -26,8 +26,14 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +41,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import java.util.Objects;
 
@@ -49,6 +57,32 @@ public class CopyTextItem extends LinearLayout {
     ImageButton copy;
     ImageButton toggle;
     ImageButton open_url_toggle;
+
+    private String rawText = "";
+    private boolean passwordMode = false;
+    private boolean highlightEnabled = true;
+
+    private static final int CLASS_NONE = -1;
+    private static final int CLASS_DIGITS = 0;
+    private static final int CLASS_SYMBOLS = 1;
+    private static final int CLASS_UPPERCASE = 2;
+    private static final int CLASS_LOWERCASE = 3;
+
+    public static final SettingValues[] HIGHLIGHT_COLOR_KEYS = {
+            SettingValues.HIGHLIGHT_COLOR_DIGITS,
+            SettingValues.HIGHLIGHT_COLOR_SYMBOLS,
+            SettingValues.HIGHLIGHT_COLOR_UPPERCASE,
+            SettingValues.HIGHLIGHT_COLOR_LOWERCASE,
+    };
+
+    public static final int[] HIGHLIGHT_COLOR_DEFAULT_RES = {
+            R.color.password_digit,
+            R.color.password_symbol,
+            R.color.password_default,
+            R.color.password_default,
+    };
+
+    private final int[] highlightColors = new int[HIGHLIGHT_COLOR_KEYS.length];
 
     public CopyTextItem(Context context) {
         super(context);
@@ -83,6 +117,15 @@ public class CopyTextItem extends LinearLayout {
         toggle = binding.copyBtnToggleVisible;
         open_url_toggle = binding.openUrlBtnToggleVisible;
 
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        highlightEnabled = settings.getBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), true);
+        for (int i = 0; i < HIGHLIGHT_COLOR_KEYS.length; i++) {
+            highlightColors[i] = settings.getInt(
+                    HIGHLIGHT_COLOR_KEYS[i].toString(),
+                    ContextCompat.getColor(getContext(), HIGHLIGHT_COLOR_DEFAULT_RES[i])
+            );
+        }
+
         setModeText();
 
         binding.copyBtnToggleVisible.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +156,8 @@ public class CopyTextItem extends LinearLayout {
     }
 
     public void setText(String text) {
-        this.text.setText(text);
+        this.rawText = text != null ? text : "";
+        refreshDisplayedText();
     }
 
     public TextView getTextView() {
@@ -121,18 +165,22 @@ public class CopyTextItem extends LinearLayout {
     }
 
     public void setModePassword() {
+        passwordMode = true;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         toggle.setVisibility(View.VISIBLE);
         open_url_toggle.setVisibility(View.GONE);
+        refreshDisplayedText();
     }
 
     public void setModeText() {
+        passwordMode = false;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
         toggle.setVisibility(View.GONE);
         open_url_toggle.setVisibility(View.GONE);
     }
 
     public void setModeEmail() {
+        passwordMode = false;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         toggle.setVisibility(View.GONE);
         open_url_toggle.setVisibility(View.GONE);
@@ -158,6 +206,53 @@ public class CopyTextItem extends LinearLayout {
                 toggle.setImageDrawable(getResources().getDrawable(R.drawable.ic_eye_grey));
                 break;
         }
+        refreshDisplayedText();
+    }
+
+    private void refreshDisplayedText() {
+        if (passwordMode && isPasswordRevealed() && highlightEnabled) {
+            SpannableString spannable = new SpannableString(rawText);
+            for (int i = 0; i < rawText.length(); i++) {
+                int characterClass = getCharacterClass(rawText.charAt(i));
+                if (characterClass == CLASS_NONE) {
+                    continue;
+                }
+                int color = highlightColors[characterClass];
+                if (color != Color.TRANSPARENT) {
+                    spannable.setSpan(new ForegroundColorSpan(color), i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                }
+            }
+            text.setText(spannable);
+        } else {
+            text.setText(rawText);
+        }
+    }
+
+    private static int getCharacterClass(char character) {
+        if (Character.isDigit(character)) {
+            return CLASS_DIGITS;
+        }
+        if (Character.isUpperCase(character)) {
+            return CLASS_UPPERCASE;
+        }
+        if (Character.isLowerCase(character)) {
+            return CLASS_LOWERCASE;
+        }
+        // Caseless letters (CJK etc.), whitespace, surrogate halves (emoji) and combining marks stay uncolored
+        if (Character.isLetter(character) || Character.isWhitespace(character) || Character.isSpaceChar(character)
+                || Character.isISOControl(character) || Character.isSurrogate(character)) {
+            return CLASS_NONE;
+        }
+        int type = Character.getType(character);
+        if (type == Character.NON_SPACING_MARK || type == Character.COMBINING_SPACING_MARK
+                || type == Character.ENCLOSING_MARK || type == Character.FORMAT) {
+            return CLASS_NONE;
+        }
+        return CLASS_SYMBOLS;
+    }
+
+    private boolean isPasswordRevealed() {
+        return text.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
     }
 
     public void copyTextToClipboard() {

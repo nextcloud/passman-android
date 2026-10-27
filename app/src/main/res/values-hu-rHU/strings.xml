@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Kézi hitelesítőadat-keresés az automatikus kitöltés tartaléklehetőségeket</string>
     <string name="set_as_autofill_service">Automatikus kitöltési szolgáltatás beállítása</string>
     <string name="algorithm">Algoritmus</string>
-</resources>
+    </resources>

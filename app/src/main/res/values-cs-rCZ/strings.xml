@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Ruční hledání přihlašovacích údajů coby náhradní volba automatického vyplňování</string>
     <string name="set_as_autofill_service">Nastavit jako službu automatického vyplňování</string>
     <string name="algorithm">Alogritmus</string>
-</resources>
+    </resources>

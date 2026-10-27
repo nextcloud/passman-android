@@ -98,4 +98,4 @@ Non foi posíbel gardar os cambios sen unha conexión co servidor que funcione.<
     <string name="autofill_manual_search_fallback">Busca manual de credenciais como alternativa ao autocompletado</string>
     <string name="set_as_autofill_service">Definir como servizo de autocompletado</string>
     <string name="algorithm">Algoritmo</string>
-</resources>
+    </resources>

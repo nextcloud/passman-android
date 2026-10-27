@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Ручна претрага акредитива у случају да нема аутоматског попуњавања</string>
     <string name="set_as_autofill_service">Постави као сервис за аутоматско попуњавање</string>
     <string name="algorithm">Алгоритам</string>
-</resources>
+    </resources>

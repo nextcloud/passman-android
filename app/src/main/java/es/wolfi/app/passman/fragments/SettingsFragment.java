@@ -28,11 +28,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,11 +44,13 @@ import android.view.autofill.AutofillManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
@@ -64,11 +69,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import es.wolfi.app.passman.CopyTextItem;
 import es.wolfi.app.passman.OfflineStorage;
+import es.wolfi.app.passman.PassmanApp;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.VaultLockManager;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.KeyStoreUtils;
@@ -87,6 +95,7 @@ public class SettingsFragment extends Fragment {
     EditText settings_nextcloud_password;
 
     MaterialCheckBox settings_app_start_password_switch;
+    MaterialCheckBox settings_enable_screenshot_protection_switch;
 
     MaterialCheckBox settings_password_generator_shortcut_switch;
     MaterialCheckBox settings_password_generator_use_uppercase_switch;
@@ -98,6 +107,37 @@ public class SettingsFragment extends Fragment {
     EditText settings_password_generator_length_value;
 
     MaterialCheckBox enable_credential_list_icons_switch;
+    MaterialCheckBox settings_color_password_characters_switch;
+    View[] colorRows;
+    View[] colorPreviews;
+    int[] highlightColors;
+    private final int[] PREDEFINED_COLORS = {
+            Color.parseColor("#F44336"), // Red 500
+            Color.parseColor("#D32F2F"), // Red 700, default symbol color
+            Color.parseColor("#E91E63"), // Pink 500
+            Color.parseColor("#9C27B0"), // Purple 500
+            Color.parseColor("#673AB7"), // Deep Purple 500
+            Color.parseColor("#3F51B5"), // Indigo 500
+            Color.parseColor("#2196F3"), // Blue 500
+            Color.parseColor("#1E88E5"), // Blue 600, default digit color
+            Color.parseColor("#03A9F4"), // Light Blue 500
+            Color.parseColor("#00BCD4"), // Cyan 500
+            Color.parseColor("#009688"), // Teal 500
+            Color.parseColor("#4CAF50"), // Green 500
+            Color.parseColor("#8BC34A"), // Light Green 500
+            Color.parseColor("#CDDC39"), // Lime 500
+            Color.parseColor("#FFEB3B"), // Yellow 500
+            Color.parseColor("#FFC107"), // Amber 500
+            Color.parseColor("#FF9800"), // Orange 500
+            Color.parseColor("#FF5722"), // Deep Orange 500
+            Color.parseColor("#795548"), // Brown 500
+            Color.parseColor("#607D8B"), // Blue Grey 500
+            Color.TRANSPARENT, // default text color, i.e. no highlight
+            Color.parseColor("#616161"), // Grey 700
+            Color.parseColor("#757575"), // Grey 600
+            Color.parseColor("#9E9E9E"), // Grey 500
+            Color.parseColor("#BDBDBD"), // Grey 400
+    };
     MaterialCheckBox enable_offline_cache_switch;
 
     TextView default_autofill_vault_title;
@@ -111,6 +151,7 @@ public class SettingsFragment extends Fragment {
 
     EditText request_connect_timeout_value;
     EditText request_response_timeout_value;
+    EditText vault_auto_lock_delay_value;
     Button clear_offline_cache_button;
 
     SharedPreferences settings;
@@ -152,6 +193,7 @@ public class SettingsFragment extends Fragment {
         settings_nextcloud_password = view.findViewById(R.id.settings_nextcloud_password);
 
         settings_app_start_password_switch = view.findViewById(R.id.settings_app_start_password_switch);
+        settings_enable_screenshot_protection_switch = view.findViewById(R.id.settings_enable_screenshot_protection_switch);
 
         settings_password_generator_shortcut_switch = view.findViewById(R.id.settings_password_generator_shortcut_switch);
         settings_password_generator_use_uppercase_switch = view.findViewById(R.id.settings_password_generator_use_uppercase_switch);
@@ -163,6 +205,26 @@ public class SettingsFragment extends Fragment {
         settings_password_generator_length_value = view.findViewById(R.id.settings_password_generator_length_value);
 
         enable_credential_list_icons_switch = view.findViewById(R.id.enable_credential_list_icons_switch);
+        settings_color_password_characters_switch = view.findViewById(R.id.settings_color_password_characters_switch);
+
+        colorRows = new View[]{
+                view.findViewById(R.id.settings_color_password_digits_chooser_container),
+                view.findViewById(R.id.settings_color_password_symbols_chooser_container),
+                view.findViewById(R.id.settings_color_password_uppercase_chooser_container),
+                view.findViewById(R.id.settings_color_password_lowercase_chooser_container),
+        };
+        colorPreviews = new View[]{
+                view.findViewById(R.id.settings_color_password_digits_preview),
+                view.findViewById(R.id.settings_color_password_symbols_preview),
+                view.findViewById(R.id.settings_color_password_uppercase_preview),
+                view.findViewById(R.id.settings_color_password_lowercase_preview),
+        };
+        highlightColors = new int[colorPreviews.length];
+        for (int i = 0; i < colorPreviews.length; i++) {
+            final int colorIndex = i;
+            colorPreviews[i].setOnClickListener(v -> showColorPicker(colorIndex));
+        }
+        settings_color_password_characters_switch.setOnCheckedChangeListener((buttonView, isChecked) -> updateColorRowsAlpha());
         enable_offline_cache_switch = view.findViewById(R.id.enable_offline_cache_switch);
 
         default_autofill_vault_title = view.findViewById(R.id.default_autofill_vault_title);
@@ -177,6 +239,7 @@ public class SettingsFragment extends Fragment {
 
         request_connect_timeout_value = view.findViewById(R.id.request_connect_timeout_value);
         request_response_timeout_value = view.findViewById(R.id.request_response_timeout_value);
+        vault_auto_lock_delay_value = view.findViewById(R.id.vault_auto_lock_delay_value);
         clear_offline_cache_button = view.findViewById(R.id.clear_offline_cache_button);
         clear_offline_cache_button.setOnClickListener(this.getClearOfflineCacheButtonListener());
 
@@ -219,6 +282,7 @@ public class SettingsFragment extends Fragment {
         settings_nextcloud_password.setText(KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null));
 
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
+        settings_enable_screenshot_protection_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), true));
 
         passwordGenerator = new PasswordGenerator(context);
 
@@ -236,6 +300,17 @@ public class SettingsFragment extends Fragment {
         }
 
         enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
+        settings_color_password_characters_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), true));
+        if (context != null) {
+            for (int i = 0; i < highlightColors.length; i++) {
+                highlightColors[i] = settings.getInt(
+                        CopyTextItem.HIGHLIGHT_COLOR_KEYS[i].toString(),
+                        ContextCompat.getColor(context, CopyTextItem.HIGHLIGHT_COLOR_DEFAULT_RES[i])
+                );
+                updateColorPreview(i);
+            }
+        }
+        updateColorRowsAlpha();
         enable_offline_cache_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true));
 
         Set<Map.Entry<String, Vault>> vaults = getVaultsEntrySet();
@@ -291,6 +366,7 @@ public class SettingsFragment extends Fragment {
 
         request_connect_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), 15)));
         request_response_timeout_value.setText(String.valueOf(settings.getInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), 120)));
+        vault_auto_lock_delay_value.setText(String.valueOf(settings.getInt(SettingValues.VAULT_AUTO_LOCK_DELAY.toString(), 0)));
         clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
     }
 
@@ -345,6 +421,7 @@ public class SettingsFragment extends Fragment {
                 SingleTon ton = SingleTon.getTon();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), settings_enable_screenshot_protection_switch.isChecked()).commit();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), settings_password_generator_shortcut_switch.isChecked()).commit();
 
@@ -359,6 +436,10 @@ public class SettingsFragment extends Fragment {
                 passwordGenerator.applyChanges();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), enable_credential_list_icons_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), settings_color_password_characters_switch.isChecked()).commit();
+                for (int i = 0; i < highlightColors.length; i++) {
+                    settings.edit().putInt(CopyTextItem.HIGHLIGHT_COLOR_KEYS[i].toString(), highlightColors[i]).commit();
+                }
                 settings.edit().putBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), enable_offline_cache_switch.isChecked()).commit();
 
                 settings.edit().putInt(SettingValues.CLEAR_CLIPBOARD_DELAY.toString(), Integer.parseInt(clear_clipboard_delay_value.getText().toString())).commit();
@@ -369,6 +450,10 @@ public class SettingsFragment extends Fragment {
 
                 settings.edit().putInt(SettingValues.REQUEST_CONNECT_TIMEOUT.toString(), Integer.parseInt(request_connect_timeout_value.getText().toString())).commit();
                 settings.edit().putInt(SettingValues.REQUEST_RESPONSE_TIMEOUT.toString(), Integer.parseInt(request_response_timeout_value.getText().toString())).commit();
+
+                int autoLockDelay = Integer.parseInt(vault_auto_lock_delay_value.getText().toString());
+                settings.edit().putInt(SettingValues.VAULT_AUTO_LOCK_DELAY.toString(), autoLockDelay).commit();
+                VaultLockManager.getInstance((PassmanApp) getActivity().getApplication()).updateConfig(autoLockDelay);
 
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     settings.edit().putBoolean(SettingValues.ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK.toString(), enable_autofill_manual_search_fallback.isChecked()).commit();
@@ -433,5 +518,89 @@ public class SettingsFragment extends Fragment {
                 clear_offline_cache_button.setText(String.format("%s (%s)", getString(R.string.clear_offline_cache), OfflineStorage.getInstance().getSize()));
             }
         };
+    }
+
+    private void showColorPicker(int targetIndex) {
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.choose_password_digit_color);
+
+        GridView gridView = new GridView(context);
+        gridView.setNumColumns(5);
+        int padding = (int) (16 * context.getResources().getDisplayMetrics().density);
+        gridView.setPadding(padding, padding, padding, padding);
+        gridView.setVerticalSpacing(padding);
+        gridView.setHorizontalSpacing(padding);
+        gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+        gridView.setGravity(Gravity.CENTER);
+
+        gridView.setAdapter(new ArrayAdapter<Integer>(context, 0, boxIntegerArray(PREDEFINED_COLORS)) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = convertView;
+                if (view == null) {
+                    view = new View(context) {
+                        @Override
+                        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                            // Ensure the view is square to prevent ovals
+                            super.onMeasure(widthMeasureSpec, widthMeasureSpec);
+                        }
+                    };
+                    view.setLayoutParams(new GridView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                }
+                int color = getItem(position);
+                GradientDrawable shape = new GradientDrawable();
+                shape.setShape(GradientDrawable.OVAL);
+                shape.setColor(color == Color.TRANSPARENT ? ContextCompat.getColor(context, R.color.password_default) : color);
+                
+                // Add a subtle border to ensure visibility on all backgrounds
+                shape.setStroke((int) (1 * context.getResources().getDisplayMetrics().density), Color.parseColor("#CCCCCC"));
+
+                // Highlight the currently selected color with a thicker border
+                if (color == highlightColors[targetIndex]) {
+                    shape.setStroke((int) (3 * context.getResources().getDisplayMetrics().density), Color.BLACK);
+                }
+
+                view.setBackground(shape);
+                return view;
+            }
+        });
+
+        final AlertDialog dialog = builder.setView(gridView).create();
+
+        gridView.setOnItemClickListener((parent, view, position, id) -> {
+            highlightColors[targetIndex] = PREDEFINED_COLORS[position];
+            updateColorPreview(targetIndex);
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private Integer[] boxIntegerArray(int[] array) {
+        Integer[] result = new Integer[array.length];
+        for (int i = 0; i < array.length; i++) {
+            result[i] = array[i];
+        }
+        return result;
+    }
+
+    private void updateColorPreview(int colorIndex) {
+        int color = highlightColors[colorIndex];
+        GradientDrawable shape = new GradientDrawable();
+        shape.setShape(GradientDrawable.OVAL);
+        shape.setColor(color == Color.TRANSPARENT ? ContextCompat.getColor(requireContext(), R.color.password_default) : color);
+        shape.setStroke((int) (1 * getResources().getDisplayMetrics().density), Color.parseColor("#CCCCCC"));
+        colorPreviews[colorIndex].setBackground(shape);
+    }
+
+    private void updateColorRowsAlpha() {
+        float alpha = settings_color_password_characters_switch.isChecked() ? 1f : 0.4f;
+        for (View row : colorRows) {
+            row.setAlpha(alpha);
+        }
     }
 }

@@ -26,12 +26,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import es.wolfi.app.passman.R;
 import es.wolfi.utils.PasswordGenerator;
 
-public class ShortcutActivity extends AppCompatActivity {
+public class ShortcutActivity extends BaseActivity {
     public final static String LOG_TAG = "ShortcutActivity";
     public final static String GENERATE_PASSWORD_ID = "es.wolfi.app.passman.generate_password";
     public final static String GENERATE_PASSWORD_INTENT_ACTION = "custom.actions.intent.GENERATE_PASSWORD";

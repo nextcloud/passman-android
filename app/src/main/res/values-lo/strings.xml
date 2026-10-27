@@ -97,4 +97,4 @@
     <string name="autofill_manual_search_fallback">Manual credential search as autofill fallback option</string>
     <string name="set_as_autofill_service">Set as autofill service</string>
     <string name="algorithm">Algorithm</string>
-</resources>
+    </resources>

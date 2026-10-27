@@ -35,11 +35,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -61,12 +59,11 @@ import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.databinding.ActivityLoginBinding;
-import es.wolfi.app.passman.databinding.ContentLegacyLoginBinding;
 import es.wolfi.passman.API.Core;
 import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.SSOUtils;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
     public final static String LOG_TAG = "LoginActivity";
 
     Spinner input_protocol;
