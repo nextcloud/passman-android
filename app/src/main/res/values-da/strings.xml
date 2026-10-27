@@ -63,8 +63,6 @@
     <string name="cancel">Annuller</string>
     <string name="enable_credential_list_icons">Vis ikoner i listen over adgangskoder</string>
     <string name="credential_icon">Ikon for adgangskode</string>
-    <string name="color_password_digits">Fremhæv cifre i adgangskoder</string>
-    <string name="color_password_digits_description">Vis cifre i en synlig adgangskode med en anden farve, så tegn som 0 og O kan skelnes fra hinanden</string>
     <string name="choose_password_digit_color">Vælg farve til fremhævning af cifre</string>
     <string name="clear_clipboard_delay">Ryd udklipsholder (efter sekunder)</string>
     <string name="vault_auto_lock_delay">Lås boksen automatisk (efter minutter)</string>

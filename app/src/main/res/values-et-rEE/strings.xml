@@ -63,8 +63,6 @@
     <string name="cancel">Loobu</string>
     <string name="enable_credential_list_icons">Kasute teenuste loendis ikoone</string>
     <string name="credential_icon">Teenuse ikoon</string>
-    <string name="color_password_digits">Tõsta salasõna numbrid esile</string>
-    <string name="color_password_digits_description">Näita kuvatava salasõna puhul numbreid muu värviga, see aitab paremini eristada tähemärke nagu 0 ja O või 1 ja l.</string>
     <string name="choose_password_digit_color">Vali numbrite esiletõstmise värv</string>
     <string name="clear_clipboard_delay">Tühjenda lõikelaud (peale antud sekundeid)</string>
     <string name="vault_auto_lock_delay">Andmehoidla automaatne lukustus (antud minutite möödumisel)</string>

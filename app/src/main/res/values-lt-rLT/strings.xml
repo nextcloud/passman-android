@@ -63,8 +63,6 @@
     <string name="cancel">Atsisakyti</string>
     <string name="enable_credential_list_icons">Įgalinti kredencialų sąrašo piktogramas</string>
     <string name="credential_icon">Prisijungimo duomenų piktograma</string>
-    <string name="color_password_digits">Paryškinti slaptažodžio skaitmenis</string>
-    <string name="color_password_digits_description">Rodant atskleistą slaptažodį, skaitmenis vaizduoti kita spalva, kad būtų galima atskirti tokius simbolius kaip 0 ir O.</string>
     <string name="choose_password_digit_color">Pasirinkite skaitmenų paryškinimo spalvą</string>
     <string name="clear_clipboard_delay">Išvalyti iškarpinę (po kelių sekundžių)</string>
     <string name="vault_auto_lock_delay">Automatinis slėptuvės užrakinimas (po kelių minučių)</string>

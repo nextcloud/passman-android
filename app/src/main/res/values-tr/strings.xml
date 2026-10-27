@@ -63,8 +63,6 @@
     <string name="cancel">İptal</string>
     <string name="enable_credential_list_icons">Kimlik doğrulama listesi simgeleri kullanılsın</string>
     <string name="credential_icon">Kimlik doğrulama bilgileri simgesi</string>
-    <string name="color_password_digits">Parola rakamları vurgulansın</string>
-    <string name="color_password_digits_description">0 ve O gibi karakterleri ayırt etmek için görüntülenen bir paroladaki rakamlar farklı renkte görüntülenir</string>
     <string name="choose_password_digit_color">Rakam vurgulama rengini seçin</string>
     <string name="clear_clipboard_delay">Pano temizlensin (bu kadar saniye sonra)</string>
     <string name="vault_auto_lock_delay">Otomatik kasa kilidi (dakika)</string>

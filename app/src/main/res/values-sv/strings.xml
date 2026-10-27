@@ -64,8 +64,6 @@
     <string name="cancel">Avbryt</string>
     <string name="enable_credential_list_icons">Visa ikoner i listan över inloggningsuppgifter</string>
     <string name="credential_icon">Ikon för inloggningsuppgifter</string>
-    <string name="color_password_digits">Färglägg siffror i lösenord</string>
-    <string name="color_password_digits_description">Visa siffror i lösenord med en annan färg för bättre läsbarhet</string>
     <string name="choose_password_digit_color">Välj färg för lösenordssiffror</string>
     <string name="clear_clipboard_delay">Rensa urklipp efter (sekunder)</string>
     <string name="vault_auto_lock_delay">Fördröjning innan valvet låses automatiskt</string>

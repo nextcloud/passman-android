@@ -63,8 +63,6 @@
     <string name="cancel">Cealaigh</string>
     <string name="enable_credential_list_icons">Cumasaigh deilbhíní liostaí creidiúnaithe</string>
     <string name="credential_icon">Deilbhín dintiúir</string>
-    <string name="color_password_digits">Aibhsigh digití an phasfhocail</string>
-    <string name="color_password_digits_description">Taispeáin digití i bpasfhocal nochtaithe i ndath difriúil chun idirdhealú a dhéanamh idir carachtair cosúil le 0 agus O</string>
     <string name="choose_password_digit_color">Roghnaigh dath aibhsithe digití</string>
     <string name="clear_clipboard_delay">Glan an ghearrthaisce (tar éis soicind)</string>
     <string name="vault_auto_lock_delay">Glasáil uathoibríoch cruinneacháin (tar éis cúpla nóiméad)</string>

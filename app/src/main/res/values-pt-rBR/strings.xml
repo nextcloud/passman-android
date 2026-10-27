@@ -63,8 +63,6 @@
     <string name="cancel">Cancelar</string>
     <string name="enable_credential_list_icons">Ativar ícones na lista de credenciais</string>
     <string name="credential_icon">Ícone da credencial</string>
-    <string name="color_password_digits">Destacar dígitos na senha</string>
-    <string name="color_password_digits_description">Exibir os dígitos de uma senha revelada em uma cor diferente para distinguir caracteres como 0 e O</string>
     <string name="choose_password_digit_color">Escolha uma cor para destacar dígitos</string>
     <string name="clear_clipboard_delay">Limpar área de transferência (após segundos)</string>
     <string name="vault_auto_lock_delay">Trancamento automático do cofre (após minutos)</string>

@@ -63,8 +63,6 @@
     <string name="cancel">Abbrechen</string>
     <string name="enable_credential_list_icons">Symbole für Anmeldeinformationen aktivieren</string>
     <string name="credential_icon">Symbol für Anmeldeinformationen</string>
-    <string name="color_password_digits">Ziffern in Passwörtern hervorheben</string>
-    <string name="color_password_digits_description">Ziffern in einem angezeigten Passwort in einer anderen Farbe anzeigen, um Zeichen wie 0 und O voneinander zu unterscheiden</string>
     <string name="choose_password_digit_color">Farbe zum Hervorheben von Ziffern auswählen</string>
     <string name="clear_clipboard_delay">Zwischenablage leeren (nach ein paar Sekunden)</string>
     <string name="vault_auto_lock_delay">Automatische Tresorsperre (nach Minuten)</string>

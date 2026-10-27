@@ -63,8 +63,6 @@
     <string name="cancel">Zrušiť</string>
     <string name="enable_credential_list_icons">Povoliť ikony v zozname účtov</string>
     <string name="credential_icon">Ikona účtu</string>
-    <string name="color_password_digits">Zvýrazňovať číslice v heslách</string>
-    <string name="color_password_digits_description">Zobrazovať číslice v odhalenom hesle inou farbou, aby sa dali rozlíšiť znaky ako 0 a O</string>
     <string name="choose_password_digit_color">Vyberte farbu zvýraznenia číslic</string>
     <string name="clear_clipboard_delay">Vymazať schránku (po sekundách)</string>
     <string name="vault_auto_lock_delay">Automatické uzamknutie trezoru (počet minút)</string>
