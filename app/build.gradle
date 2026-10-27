@@ -78,6 +78,8 @@ android {
     }
     packaging {
         resources.excludes.add("META-INF/versions/9/OSGI-INF/MANIFEST.MF")
+        // unused BouncyCastle post-quantum Picnic lookup tables (~1.2M, incompressible)
+        resources.excludes.add("org/bouncycastle/pqc/legacy/picnic/**")
         jniLibs {
             // enables storing compressed .so files in the apk files for getting them smaller
             useLegacyPackaging = true
