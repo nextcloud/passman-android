@@ -120,8 +120,10 @@ public class CopyTextItem extends LinearLayout {
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
         highlightEnabled = settings.getBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), true);
         for (int i = 0; i < HIGHLIGHT_COLOR_KEYS.length; i++) {
-            highlightColors[i] = settings.getInt(HIGHLIGHT_COLOR_KEYS[i].toString(),
-                    ContextCompat.getColor(getContext(), HIGHLIGHT_COLOR_DEFAULT_RES[i]));
+            highlightColors[i] = settings.getInt(
+                    HIGHLIGHT_COLOR_KEYS[i].toString(),
+                    ContextCompat.getColor(getContext(), HIGHLIGHT_COLOR_DEFAULT_RES[i])
+            );
         }
 
         setModeText();

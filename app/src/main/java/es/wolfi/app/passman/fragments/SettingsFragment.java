@@ -301,12 +301,14 @@ public class SettingsFragment extends Fragment {
 
         enable_credential_list_icons_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_CREDENTIAL_LIST_ICONS.toString(), true));
         settings_color_password_characters_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_PASSWORD_CHARACTER_HIGHLIGHTING.toString(), true));
-        for (int i = 0; i < highlightColors.length; i++) {
-            highlightColors[i] = settings.getInt(
-                    CopyTextItem.HIGHLIGHT_COLOR_KEYS[i].toString(),
-                    ContextCompat.getColor(context, CopyTextItem.HIGHLIGHT_COLOR_DEFAULT_RES[i])
-            );
-            updateColorPreview(i);
+        if (context != null) {
+            for (int i = 0; i < highlightColors.length; i++) {
+                highlightColors[i] = settings.getInt(
+                        CopyTextItem.HIGHLIGHT_COLOR_KEYS[i].toString(),
+                        ContextCompat.getColor(context, CopyTextItem.HIGHLIGHT_COLOR_DEFAULT_RES[i])
+                );
+                updateColorPreview(i);
+            }
         }
         updateColorRowsAlpha();
         enable_offline_cache_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_OFFLINE_CACHE.toString(), true));
