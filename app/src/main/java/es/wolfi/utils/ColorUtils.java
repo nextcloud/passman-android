@@ -35,15 +35,27 @@ public class ColorUtils {
      * @return the calculated color
      */
     public static int calculateColor(String name) {
+        return calculateColor(name, false);
+    }
+
+    /**
+     * calculates a color for a given name.
+     *
+     * @param name           the name String
+     * @param darkBackground lighten the color to be readable on a dark background (dark mode)
+     * @return the calculated color
+     */
+    public static int calculateColor(String name, boolean darkBackground) {
         int hash = name.hashCode();
         int r = (hash & 0xFF0000) >> 16;
         int g = (hash & 0x00FF00) >> 8;
         int b = hash & 0x0000FF;
 
         //pastelize color
-        r = (r + 127) / 2;
-        g = (g + 127) / 2;
-        b = (b + 127) / 2;
+        int mix = darkBackground ? 255 : 127;
+        r = (r + mix) / 2;
+        g = (g + mix) / 2;
+        b = (b + mix) / 2;
 
         return Color.rgb(r, g, b);
     }

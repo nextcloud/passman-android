@@ -1,7 +1,7 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- Base application theme, follows the dark mode of the system -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -25,7 +25,7 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.DayNight" />
 
     <style name="Button" parent="Base.Widget.AppCompat.Button">
         <item name="colorButtonNormal">@color/secondary_button_background_color</item>
@@ -50,6 +50,18 @@
     <style name="ImageButton" parent="Widget.AppCompat.ImageButton">
         <item name="android:background">@color/transparent</item>
         <item name="android:padding">8dp</item>
+        <!-- the grey bitmap icons would be too dark in dark mode -->
+        <item name="tint">@color/icon_tint</item>
+    </style>
+
+    <!-- MaterialCheckBox in the AppCompat theme, the default colors don't adapt to dark mode -->
+    <style name="CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <!-- separate box and check drawables, in the AppCompat drawable the check is a transparent cutout
+             showing the background and buttonIconTint has no effect -->
+        <item name="buttonCompat">@drawable/mtrl_checkbox_button</item>
+        <item name="buttonIcon">@drawable/mtrl_checkbox_button_icon</item>
+        <item name="buttonTint">@color/checkbox_button_tint</item>
+        <item name="buttonIconTint">@color/white</item>
     </style>
 
     <style name="Label">
@@ -65,7 +77,7 @@
     </style>
 
     <style name="FormText">
-        <item name="android:textColor">#333333</item>
+        <item name="android:textColor">@color/form_text_color</item>
         <item name="android:textSize">16sp</item>
         <item name="android:paddingBottom">@dimen/standard_half_padding</item>
         <item name="android:minHeight">40dp</item>
