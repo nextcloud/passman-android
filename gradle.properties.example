@@ -26,4 +26,3 @@ RELEASE_KEY_PASSWORD=release store key
 android.useAndroidX=true
 android.enableJetifier=true
 android.nonTransitiveRClass=false
-android.nonFinalResIds=false

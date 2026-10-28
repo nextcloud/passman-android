@@ -8,6 +8,10 @@ cmake_minimum_required(VERSION 3.4.1)
 # https://izzyondroid.org/docs/reproducibleBuilds/DebugFailedRBs/#build-ids
 add_link_options(-Wl,--build-id=none)
 
+# Don't export symbols of the statically linked libs (mainly OpenSSL), so unused code can be dropped (~1.7 MB per ABI).
+# Harmless: Java only calls the Java_* JNI functions from passman-lib.cpp, which stay exported.
+add_link_options(-Wl,--exclude-libs,ALL -Wl,--gc-sections)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds it for you.
