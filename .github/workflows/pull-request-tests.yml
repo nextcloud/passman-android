@@ -84,7 +84,9 @@ jobs:
   instrumented:
     name: API ${{ matrix.api-level }} / ${{ matrix.abi }} apk / ${{ matrix.suite }}
     needs: build
-    runs-on: ubuntu-latest
+    # the ubuntu-latest runners of the organization (GARM) provide no KVM for the emulator,
+    # like nextcloud/android, use runners with hardware virtualization for the emulator jobs
+    runs-on: ubuntu-26.04
     timeout-minutes: 45
     # armeabi-v7a only runs through the ARM translation of the emulator, not required until it proved to be stable
     continue-on-error: ${{ matrix.experimental }}
@@ -115,9 +117,13 @@ jobs:
 
       - name: Enable KVM
         run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+          # hardware acceleration for the emulator, without it the emulator is far too slow
+          if [ ! -e /dev/kvm ]; then
+            echo "::error::This runner provides no KVM (/dev/kvm)"
+            exit 1
+          fi
+          sudo chmod 666 /dev/kvm
+          ls -l /dev/kvm
 
       - name: Instrumented tests
         uses: reactivecircus/android-emulator-runner@v2
