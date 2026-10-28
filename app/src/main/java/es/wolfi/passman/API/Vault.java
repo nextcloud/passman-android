@@ -552,7 +552,7 @@ public class Vault extends Core implements Filterable {
         }
 
         try {
-            collectionToDelete.put("file_ids", fileIds);
+            collectionToDelete.put("file_ids", fileIds.toString());
             requestAPI(context, "files/delete", collectionToDelete, "POST", responseHandler);
         } catch (MalformedURLException | JSONException | UnsupportedEncodingException e) {
             e.printStackTrace();
