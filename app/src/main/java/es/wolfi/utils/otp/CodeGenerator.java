@@ -57,11 +57,17 @@ public class CodeGenerator {
     }
 
     public String generate(String key) throws CodeGenerationException {
+        return generate(key, System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * Generate the code for the given point in time (seconds since the epoch).
+     */
+    public String generate(String key, long epochSeconds) throws CodeGenerationException {
         try {
-            // Get the current number of seconds since the epoch and
-            // calculate the number of time periods passed.
+            // Calculate the number of time periods passed.
             // see https://datatracker.ietf.org/doc/html/rfc6238#section-4.2
-            long counter = Math.floorDiv(System.currentTimeMillis() / 1000, period);
+            long counter = Math.floorDiv(epochSeconds, period);
 
             byte[] hash = generateHash(key, counter);
             return getDigitsFromHash(hash);

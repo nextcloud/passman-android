@@ -1,0 +1,152 @@
+# Unit tests, release-like (R8 minified) build and instrumented tests for every pull request against master.
+# The instrumented tests run against a real Passman server in docker (see ci/start-passman-server.sh).
+name: Pull request tests
+
+on:
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: pull-request-tests-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # restores ci/test-vault, needs the passman:restore command (not part of a Passman release yet)
+  PASSMAN_SERVER_IMAGE: docker.io/binsky/passman-dev:cmd-backups
+
+jobs:
+  build:
+    name: Build and unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Prepare build configuration
+        run: |
+          # gradle.properties is not versioned, the example has no usable signing config (ciRelease uses the debug key)
+          cp gradle.properties.example gradle.properties
+          cp openssl.conf.example openssl.conf
+          NDK_VERSION=$(sed -n "s/.*ndkVersion = '\(.*\)'.*/\1/p" app/build.gradle)
+          echo "NDK_VERSION=$NDK_VERSION" >> "$GITHUB_ENV"
+          echo "OPENSSL_REVISION=$(git -C app/src/main/cpplibs/openssl rev-parse HEAD)" >> "$GITHUB_ENV"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$NDK_VERSION" "cmake;3.22.1" > /dev/null
+
+      - name: Cache OpenSSL build
+        id: openssl-cache
+        uses: actions/cache@v6
+        with:
+          path: app/src/main/cpplibs/openssl/build
+          key: openssl-${{ env.OPENSSL_REVISION }}-ndk-${{ env.NDK_VERSION }}-${{ hashFiles('build-openssl.sh', 'openssl.conf.example') }}
+
+      - name: Build OpenSSL
+        if: steps.openssl-cache.outputs.cache-hit != 'true'
+        run: |
+          sed -i "s/^export THREADS=.*/export THREADS=$(nproc)/" openssl.conf
+          ./build-openssl.sh > build-openssl.log 2>&1 || (tail -n 100 build-openssl.log; exit 1)
+
+      - name: Unit tests
+        run: ./gradlew --stacktrace -Ppassman.testBuildType=ciRelease :app:testCiReleaseUnitTest
+
+      - name: Build release-like apks
+        run: ./gradlew --stacktrace -Ppassman.testBuildType=ciRelease :app:assembleCiRelease :app:assembleCiReleaseAndroidTest
+
+      - name: Upload unit test reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit-test-reports
+          path: app/build/reports/tests/
+          retention-days: 7
+
+      - name: Upload apks
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-apks
+          path: |
+            app/build/outputs/apk/ciRelease/*.apk
+            app/build/outputs/apk/androidTest/ciRelease/*.apk
+          if-no-files-found: error
+          retention-days: 7
+
+  instrumented:
+    name: API ${{ matrix.api-level }} / ${{ matrix.abi }} apk / ${{ matrix.suite }}
+    needs: build
+    # the ubuntu-latest runners of the organization (GARM) provide no KVM for the emulator,
+    # like nextcloud/android, use runners with hardware virtualization for the emulator jobs
+    runs-on: ubuntu-26.04
+    timeout-minutes: 45
+    # armeabi-v7a only runs through the ARM translation of the emulator, not required until it proved to be stable
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # minSdk
+          - { api-level: 23, abi: x86_64, suite: all, experimental: false }
+          # oldest Android version with security updates, x86_64 images run ARM apps through binary translation
+          - { api-level: 34, abi: arm64-v8a, suite: all, experimental: false }
+          # targetSdk
+          - { api-level: '37.0', abi: x86_64, suite: all, experimental: false }
+          # 32-bit ABIs: newer x86_64 images are 64-bit only (no x86, no armeabi-v7a translation)
+          - { api-level: 30, abi: x86, suite: offline, experimental: false }
+          - { api-level: 30, abi: armeabi-v7a, suite: offline, experimental: true }
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: ci-apks
+          path: apks
+
+      - name: Start Passman server
+        if: matrix.suite == 'all'
+        run: ci/start-passman-server.sh "$PASSMAN_SERVER_IMAGE"
+
+      - name: Enable KVM
+        run: |
+          # hardware acceleration for the emulator, without it the emulator is far too slow
+          if [ ! -e /dev/kvm ]; then
+            echo "::error::This runner provides no KVM (/dev/kvm)"
+            exit 1
+          fi
+          sudo chmod 666 /dev/kvm
+          ls -l /dev/kvm
+
+      - name: Instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          TEST_PACKAGES: ${{ matrix.suite == 'all' && 'es.wolfi.app.passman.offline,es.wolfi.app.passman.e2e' || 'es.wolfi.app.passman.offline' }}
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot -camera-back none
+          script: ci/run-instrumented-tests.sh apks/ciRelease/app-${{ matrix.abi }}-ciRelease.apk apks/androidTest/ciRelease/app-ciRelease-androidTest.apk "$TEST_PACKAGES" -e serverUrl http://10.0.2.2:8080
+
+      - name: Collect server log
+        if: failure() && matrix.suite == 'all'
+        run: |
+          mkdir -p ci-output
+          docker exec passman-ci cat /var/www/html/data/nextcloud.log > ci-output/nextcloud.log 2>&1 || true
+
+      - name: Upload test output
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: instrumented-api${{ matrix.api-level }}-${{ matrix.abi }}
+          path: ci-output/
+          retention-days: 7
