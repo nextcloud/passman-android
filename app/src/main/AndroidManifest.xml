@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Android 17+: connections to a Nextcloud server in the local network -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
 
     <queries>
         <package android:name="com.nextcloud.client" />

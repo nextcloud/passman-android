@@ -46,6 +46,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
@@ -57,6 +58,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.koushikdutta.async.future.FutureCallback;
+import com.nextcloud.android.sso.exceptions.NextcloudFilesAppAccountNotFoundException;
+import com.nextcloud.android.sso.exceptions.NoCurrentAccountSelectedException;
+import com.nextcloud.android.sso.helper.SingleAccountHelper;
 
 import org.json.JSONException;
 
@@ -87,6 +91,7 @@ import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.FileUtils;
 import es.wolfi.utils.KeyStoreUtils;
+import es.wolfi.utils.LocalNetworkPermission;
 import es.wolfi.utils.ProgressUtils;
 
 public class PasswordListActivity extends BaseActivity implements
@@ -112,6 +117,7 @@ public class PasswordListActivity extends BaseActivity implements
     HashMap<String, Integer> visibleButtonsBeforeEnterSettings = new HashMap<String, Integer>();
     private ClipboardManager.OnPrimaryClipChangedListener onPrimaryClipChangedListener;
     private int lastCredentialListPosition = 0;
+    private final LocalNetworkPermission localNetworkPermission = new LocalNetworkPermission(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,7 +171,7 @@ public class PasswordListActivity extends BaseActivity implements
             final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
             progress.show();
 
-            Core.checkLogin(this, false, new FutureCallback<Boolean>() {
+            localNetworkPermission.request(getManualLoginServerHost(), () -> Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
                 public void onCompleted(Exception e, Boolean loggedIn) {
                     // To dismiss the dialog
@@ -189,7 +195,7 @@ public class PasswordListActivity extends BaseActivity implements
                         startActivityForResult(intent, REQUEST_CODE_AUTHENTICATE);
                     }
                 }
-            });
+            }));
 
             running = true;
         }
@@ -577,7 +583,7 @@ public class PasswordListActivity extends BaseActivity implements
         } else {
             final ProgressDialog progress = ProgressUtils.showLoadingSequence(this);
             progress.show();
-            Core.checkLogin(this, false, new FutureCallback<Boolean>() {
+            localNetworkPermission.request(getManualLoginServerHost(), () -> Core.checkLogin(this, false, new FutureCallback<Boolean>() {
                 @Override
                 public void onCompleted(Exception e, Boolean loggedIn) {
                     ProgressUtils.dismiss(progress);
@@ -598,7 +604,7 @@ public class PasswordListActivity extends BaseActivity implements
                         startActivityForResult(intent, REQUEST_CODE_AUTHENTICATE);
                     }
                 }
-            });
+            }));
         }
     }
 
@@ -778,6 +784,24 @@ public class PasswordListActivity extends BaseActivity implements
 
     public void scanQRCodeForOTP(int requestCode) {
         startActivityForResult(new Intent(this, ScanQRCodeActivity.class), requestCode);
+    }
+
+    /**
+     * The server of the manual login, null when logged in with Nextcloud SSO (the Nextcloud files app connects then).
+     */
+    private String getManualLoginServerHost() {
+        try {
+            SingleAccountHelper.getCurrentSingleSignOnAccount(this);
+            return null;
+        } catch (NoSuchMethodError | NextcloudFilesAppAccountNotFoundException | NoCurrentAccountSelectedException e) {
+            return KeyStoreUtils.getString(SettingValues.HOST.toString(), null);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        localNetworkPermission.onRequestPermissionsResult(requestCode, grantResults);
     }
 
     @Override
