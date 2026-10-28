@@ -63,6 +63,7 @@ Non foi posíbel gardar os cambios sen unha conexión co servidor que funcione.<
     <string name="cancel">Cancelar</string>
     <string name="enable_credential_list_icons">Activar as iconas da lista de credenciais</string>
     <string name="credential_icon">Icona de credencial</string>
+    <string name="highlight_color_digits">Díxitos</string>
     <string name="clear_clipboard_delay">Limpar o portapapeis (após segundos)</string>
     <string name="generate_password">Xerar un contrasinal</string>
     <string name="generate_password_to_clipboard">Xerar un contrasinal ao chou e copialo no portapapeis</string>

@@ -60,6 +60,7 @@
     <string name="cancel">Prekliči</string>
     <string name="enable_credential_list_icons">Omogoči ikone seznama poveril</string>
     <string name="credential_icon">Ikona poverila</string>
+    <string name="highlight_color_digits">Števke</string>
     <string name="clear_clipboard_delay">Počisti odložišče (po sekundah)</string>
     <string name="generate_password">Ustvari geslo</string>
     <string name="generate_password_to_clipboard">Ustvari naključno geslo in ga kopiraj v odložišče</string>

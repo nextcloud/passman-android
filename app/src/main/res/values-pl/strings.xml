@@ -62,6 +62,7 @@
     <string name="cancel">Anuluj</string>
     <string name="enable_credential_list_icons">Włącz ikony listy poświadczeń</string>
     <string name="credential_icon">Ikona poświadczeń</string>
+    <string name="highlight_color_digits">Cyfry</string>
     <string name="clear_clipboard_delay">Wyczyść schowek (po sekundach)</string>
     <string name="generate_password">Wygeneruj hasło</string>
     <string name="generate_password_to_clipboard">Wygeneruj losowe hasło i skopiuj do schowka</string>

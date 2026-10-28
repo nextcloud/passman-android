@@ -62,6 +62,7 @@
     <string name="cancel">Hætta við</string>
     <string name="enable_credential_list_icons">Virkja táknmyndir í auðkennalista</string>
     <string name="credential_icon">Táknmynd auðkennis</string>
+    <string name="highlight_color_digits">Tölustafir</string>
     <string name="clear_clipboard_delay">Hreinsa klippispjald (eftir X sekúndur)</string>
     <string name="generate_password">Framleiða lykilorð</string>
     <string name="generate_password_to_clipboard">Framleiða slembilykilorð og afrita á klippispjald</string>

@@ -62,6 +62,7 @@
     <string name="cancel">لغو</string>
     <string name="enable_credential_list_icons">فعال‌سازی نمادهای لیست اعتبارنامه</string>
     <string name="credential_icon">نماد اعتبارنامه</string>
+    <string name="highlight_color_digits">ارقام</string>
     <string name="clear_clipboard_delay">پاک کردن کلیپ‌بورد (پس از چند ثانیه)</string>
     <string name="generate_password">ایجاد گذرواژه</string>
     <string name="generate_password_to_clipboard">تولید یک گذرواژه تصادفی و کپی در کلیپ‌بورد</string>

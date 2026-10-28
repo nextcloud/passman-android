@@ -62,6 +62,7 @@
     <string name="cancel">بىكار قىلىش</string>
     <string name="enable_credential_list_icons">كىملىك تىزىملىكى سىنبەلگىسىنى قوزغىتىڭ</string>
     <string name="credential_icon">كىملىك سىنبەلگىسى</string>
+    <string name="highlight_color_digits">رەقەملەر</string>
     <string name="clear_clipboard_delay">چاپلاش تاختىسىنى تازىلاش (سېكۇنتتىن كېيىن)</string>
     <string name="generate_password">پارول ھاسىل قىلىڭ</string>
     <string name="generate_password_to_clipboard">ئىختىيارى پارول ھاسىل قىلىپ چاپلاش تاختىسىغا كۆچۈرۈڭ</string>

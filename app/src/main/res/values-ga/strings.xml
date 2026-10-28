@@ -63,7 +63,7 @@
     <string name="cancel">Cealaigh</string>
     <string name="enable_credential_list_icons">Cumasaigh deilbhíní liostaí creidiúnaithe</string>
     <string name="credential_icon">Deilbhín dintiúir</string>
-    <string name="choose_password_digit_color">Roghnaigh dath aibhsithe digití</string>
+    <string name="highlight_color_digits">Digití</string>
     <string name="clear_clipboard_delay">Glan an ghearrthaisce (tar éis soicind)</string>
     <string name="vault_auto_lock_delay">Glasáil uathoibríoch cruinneacháin (tar éis cúpla nóiméad)</string>
     <string name="enable_screenshot_protection">Folaigh ábhar aipeanna i scannáin le déanaí, i nglacthaí scáileáin agus ar thaispeántais neamhshlána</string>

@@ -62,6 +62,7 @@
     <string name="cancel">Ghairi</string>
     <string name="enable_credential_list_icons">Washa aikoni za orodha ya vitambulisho</string>
     <string name="credential_icon">Aikoni ya kitambulisho</string>
+    <string name="highlight_color_digits">Nambari</string>
     <string name="clear_clipboard_delay">Futa ubao wa kunakili (baada ya sekunde)</string>
     <string name="generate_password">Tengeneza nenosiri</string>
     <string name="generate_password_to_clipboard">Tengeneza nenosiri nasibu na unakili kwenye ubao wa kunakili</string>

@@ -62,6 +62,7 @@
     <string name="cancel">Annuleren</string>
     <string name="enable_credential_list_icons">Pictogrammen voor de referentielijst inschakelen</string>
     <string name="credential_icon">Inloggegevenspictogram</string>
+    <string name="highlight_color_digits">Cijfers</string>
     <string name="clear_clipboard_delay">Verwijder klembord (na seconden)</string>
     <string name="generate_password">Genereer wachtwoord</string>
     <string name="generate_password_to_clipboard">Genereer willekeurig wachtwoord en kopieer naar klembord</string>
