@@ -63,7 +63,7 @@
     <string name="cancel">取消</string>
     <string name="enable_credential_list_icons">啟用身份驗證清單圖示</string>
     <string name="credential_icon">身份驗證圖示</string>
-    <string name="choose_password_digit_color">選擇數字突出顯示顏色</string>
+    <string name="highlight_color_digits">數字</string>
     <string name="clear_clipboard_delay">清除剪貼板（秒後）</string>
     <string name="vault_auto_lock_delay">保險庫自動鎖定（分鐘後）</string>
     <string name="enable_screenshot_protection">在最近使用、螢幕截圖及非安全顯示器上隱藏應用程式內容</string>

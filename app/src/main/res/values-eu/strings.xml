@@ -62,6 +62,7 @@
     <string name="cancel">Ezeztatu</string>
     <string name="enable_credential_list_icons">Gaitu kredentzialen zerrenda-ikonoak</string>
     <string name="credential_icon">Kredentzial ikonoa</string>
+    <string name="highlight_color_digits">Digituak</string>
     <string name="clear_clipboard_delay">Garbitu arbela (segundo batzuen ondoren)</string>
     <string name="generate_password">Sortu pasahitza</string>
     <string name="generate_password_to_clipboard">Sortu ausazko pasahitza eta arbelera kopiatu</string>

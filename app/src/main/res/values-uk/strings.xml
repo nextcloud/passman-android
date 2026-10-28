@@ -62,6 +62,7 @@
     <string name="cancel">Скасувати</string>
     <string name="enable_credential_list_icons">Увімкнути піктограми списку облікових даних</string>
     <string name="credential_icon">Піктограма облікових даних</string>
+    <string name="highlight_color_digits">Цифри</string>
     <string name="clear_clipboard_delay">Очистіть буфер обміну (за кілька секунд)</string>
     <string name="generate_password">Створити пароль</string>
     <string name="generate_password_to_clipboard">Створити випадковий пароль та скопіюйти до буфера обміну</string>

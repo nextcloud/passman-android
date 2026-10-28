@@ -63,7 +63,7 @@
     <string name="cancel">Loobu</string>
     <string name="enable_credential_list_icons">Kasute teenuste loendis ikoone</string>
     <string name="credential_icon">Teenuse ikoon</string>
-    <string name="choose_password_digit_color">Vali numbrite esiletõstmise värv</string>
+    <string name="highlight_color_digits">Numbrid</string>
     <string name="clear_clipboard_delay">Tühjenda lõikelaud (peale antud sekundeid)</string>
     <string name="vault_auto_lock_delay">Andmehoidla automaatne lukustus (antud minutite möödumisel)</string>
     <string name="enable_screenshot_protection">Peida rakendus hiljutiste rakenduste loendist, keela ekraanitõmmiste tegemine ja kuvamine ebaturvalistel ekraanidel.</string>

@@ -61,6 +61,7 @@
     <string name="cancel">Cancelar</string>
     <string name="enable_credential_list_icons">Habilitar iconos de lista de credenciales</string>
     <string name="credential_icon">Icono de credencial</string>
+    <string name="highlight_color_digits">Dígitos</string>
     <string name="clear_clipboard_delay">Borrar portapapeles (después de segundos)</string>
     <string name="generate_password">Generar contraseña</string>
     <string name="generate_password_to_clipboard">Generar una contraseña aleatoria y copiarla al portapapeles</string>

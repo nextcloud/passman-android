@@ -62,6 +62,7 @@
     <string name="cancel">Поништи</string>
     <string name="enable_credential_list_icons">Укључи иконе листе акредитива</string>
     <string name="credential_icon">Икона акредитива</string>
+    <string name="highlight_color_digits">Цифре</string>
     <string name="clear_clipboard_delay">Очисти клипборд (након секунди)</string>
     <string name="generate_password">Генериши лозинку</string>
     <string name="generate_password_to_clipboard">Генериши насумичну лозинку и копирај је у клипборд</string>

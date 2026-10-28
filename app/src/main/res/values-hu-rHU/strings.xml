@@ -62,6 +62,7 @@
     <string name="cancel">Mégse</string>
     <string name="enable_credential_list_icons">Hitelesítőadat-lista ikonjainak engedélyezése</string>
     <string name="credential_icon">Hitelesítő adat ikonja</string>
+    <string name="highlight_color_digits">Számjegyek</string>
     <string name="clear_clipboard_delay">Vágólap törlése (másodpercek múlva)</string>
     <string name="generate_password">Jelszó létrehozása</string>
     <string name="generate_password_to_clipboard">Véletlenszerű jelszó létrehozása és vágólapra másolása</string>
