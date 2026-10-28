@@ -32,7 +32,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import es.wolfi.app.ResponseHandlers.VaultSaveResponseHandler;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.fragments.CredentialItemFragment;
@@ -66,12 +65,6 @@ public class CredentialViewAdapter extends RecyclerView.Adapter<CredentialViewAd
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mContentView.setText(holder.mItem.getLabel());
-
-        // the automatically created test credential must always be there to ensure vault consistency
-        if (holder.mItem.getLabel().startsWith(VaultSaveResponseHandler.labelPrefixForFirstVaultConsistencyCredential)) {
-            holder.itemView.setVisibility(View.GONE);
-            holder.itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-        }
 
         if (holder.mItem != null && holder.mItem.getCompromised() != null && holder.mItem.getCompromised().equals("true")) {
             holder.contentLayout.setBackgroundColor(holder.mView.getResources().getColor(R.color.compromised));

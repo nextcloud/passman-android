@@ -197,6 +197,22 @@ public class Vault extends Core implements Filterable {
         return credentials;
     }
 
+    /**
+     * The credentials to show to the user, like getCredentials() but without hidden ones.
+     * The hidden vault test key must stay in getCredentials(), it is needed to check the vault password.
+     */
+    public ArrayList<Credential> getVisibleCredentials() {
+        ArrayList<Credential> visibleCredentials = new ArrayList<>();
+        if (credentials != null) {
+            for (Credential credential : credentials) {
+                if (!credential.isHidden()) {
+                    visibleCredentials.add(credential);
+                }
+            }
+        }
+        return visibleCredentials;
+    }
+
     public static void getVaults(Context c, final FutureCallback<HashMap<String, Vault>> cb) {
         Vault.requestAPIGET(c, "vaults", new FutureCallback<String>() {
             @Override
