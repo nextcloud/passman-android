@@ -63,9 +63,7 @@
     <string name="cancel">取消</string>
     <string name="enable_credential_list_icons">啟用憑證清單圖示</string>
     <string name="credential_icon">憑證圖示</string>
-    <string name="color_password_digits">突顯密碼數字</string>
-    <string name="color_password_digits_description">將顯示的密碼中的數字以不同顏色呈現，以便區分 0 與 O 等字元</string>
-    <string name="choose_password_digit_color">選擇數字突顯顏色</string>
+    <string name="highlight_color_digits">數字</string>
     <string name="clear_clipboard_delay">清除剪貼簿（幾秒後）</string>
     <string name="vault_auto_lock_delay">保險庫自動上鎖（分鐘後）</string>
     <string name="enable_screenshot_protection">在「最近使用」清單、螢幕截圖以及不安全的顯示器上隱藏應用程式內容</string>

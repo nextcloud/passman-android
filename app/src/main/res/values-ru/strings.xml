@@ -63,9 +63,7 @@
     <string name="cancel">Отмена</string>
     <string name="enable_credential_list_icons">Показывать значки в списке записей</string>
     <string name="credential_icon">Значок записи</string>
-    <string name="color_password_digits">Выделять цифры в пароле</string>
-    <string name="color_password_digits_description">Показывать цифры в открытом пароле другим цветом, чтобы отличать похожие символы, например 0 и O</string>
-    <string name="choose_password_digit_color">Выберите цвет выделения цифр</string>
+    <string name="highlight_color_digits">Цифры</string>
     <string name="clear_clipboard_delay">Очистка буфера обмена (через сколько секунд)</string>
     <string name="vault_auto_lock_delay">Автоблокировка хранилища (через сколько минут)</string>
     <string name="enable_screenshot_protection">Скрывать содержимое приложения в списке недавних, на снимках экрана и на незащищённых экранах</string>

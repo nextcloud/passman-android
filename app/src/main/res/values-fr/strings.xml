@@ -63,9 +63,7 @@
     <string name="cancel">Annuler</string>
     <string name="enable_credential_list_icons">Activer les icônes de liste d\'identifiants</string>
     <string name="credential_icon">Icône d\'identifiants</string>
-    <string name="color_password_digits">Mettre en surbrillance les chiffres dans les mots de passe</string>
-    <string name="color_password_digits_description">Afficher les chiffres des mots de passe révélés avec une couleur différente pour mieux distinguer les caractères comme les 0 et les O</string>
-    <string name="choose_password_digit_color">Choisir la couleur de surbrillance des chiffres</string>
+    <string name="highlight_color_digits">Chiffres</string>
     <string name="clear_clipboard_delay">Vider le presse-papiers (après quelques secondes)</string>
     <string name="vault_auto_lock_delay">Verrouillage automatique du coffre-fort (après ces minutes)</string>
     <string name="enable_screenshot_protection">Masquer le contenu de l\'application dans les éléments récents, captures d\'écran et affichages non sécurisés</string>

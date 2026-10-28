@@ -60,6 +60,7 @@
     <string name="cancel">Odustani</string>
     <string name="enable_credential_list_icons">Omogući ikone popisa vjerodajnica</string>
     <string name="credential_icon">Ikona vjerodajnice</string>
+    <string name="highlight_color_digits">Brojke</string>
     <string name="clear_clipboard_delay">Izbriši sadržaj međuspremnika (nakon sekundi)</string>
     <string name="generate_password">Generiraj zaporku</string>
     <string name="generate_password_to_clipboard">Generiraj nasumičnu zaporku i kopiraj je u međuspremnik</string>
