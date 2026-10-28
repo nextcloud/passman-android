@@ -561,7 +561,9 @@ public class SettingsFragment extends Fragment {
 
                 // Highlight the currently selected color with a thicker border
                 if (color == highlightColors[targetIndex]) {
-                    shape.setStroke((int) (3 * context.getResources().getDisplayMetrics().density), Color.BLACK);
+                    // the default cell is filled with the text color, its border needs another color to be visible
+                    int borderColor = ContextCompat.getColor(context, color == Color.TRANSPARENT ? R.color.colorAccent : R.color.form_text_color);
+                    shape.setStroke((int) (3 * context.getResources().getDisplayMetrics().density), borderColor);
                 }
 
                 view.setBackground(shape);

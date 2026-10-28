@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- lighter variant for text, labels and switches on the dark background -->
+    <color name="colorAccent">#4DA8DE</color>
+
+    <color name="secondary_button_background_color">#4A4B4B</color>
+    <color name="secondary_button_text_color">@color/white</color>
+
+    <color name="password_default">#E0E0E0</color>
+
+    <color name="form_text_color">#E0E0E0</color>
+    <color name="icon_tint">#B0B0B0</color>
+    <color name="checkbox_color">@color/colorPrimary</color>
+    <color name="autofill_item_background">#303030</color>
+    <color name="autofill_item_text_color">@color/white</color>
+</resources>

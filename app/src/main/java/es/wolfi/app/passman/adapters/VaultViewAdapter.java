@@ -24,6 +24,7 @@ package es.wolfi.app.passman.adapters;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,7 +92,9 @@ public class VaultViewAdapter extends RecyclerView.Adapter<VaultViewAdapter.View
         holder.last_access.setText(f.format(holder.mItem.getLastAccessTime()));
 
         try {
-            holder.name.setTextColor(ColorUtils.calculateColor(mValues.get(position).name));
+            boolean darkMode = (holder.mView.getResources().getConfiguration().uiMode
+                    & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+            holder.name.setTextColor(ColorUtils.calculateColor(mValues.get(position).name, darkMode));
         } catch (Exception e) {
             Log.w(TAG, "Error calculating vault item color.");
         }

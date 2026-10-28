@@ -71,6 +71,7 @@
                 android:text="@string/app_security" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_app_start_password_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,6 +80,7 @@
                 android:text="@string/app_start_password_android_auth_description" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_enable_screenshot_protection_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -93,6 +95,7 @@
                 android:text="@string/generate_password" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_password_generator_shortcut_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,6 +104,7 @@
                 android:text="@string/enable_password_generator_shortcut_description" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_password_generator_use_uppercase_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -109,6 +113,7 @@
                 android:text="@string/password_generator_use_uppercase" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_password_generator_use_lowercase_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,6 +122,7 @@
                 android:text="@string/password_generator_use_lowercase" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_password_generator_use_digits_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -125,6 +131,7 @@
                 android:text="@string/password_generator_use_digits" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_password_generator_use_special_chars_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,6 +140,7 @@
                 android:text="@string/password_generator_use_special_chars" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_password_generator_avoid_ambiguous_chars_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -141,6 +149,7 @@
                 android:text="@string/password_generator_avoid_ambiguous_chars" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_password_generator_require_every_char_type_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -170,6 +179,7 @@
                 android:text="@string/credential_icon" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/enable_credential_list_icons_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -184,6 +194,7 @@
                 android:text="@string/color_password_characters" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_color_password_characters_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -312,6 +323,7 @@
                 android:text="@string/offline_cache_description" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/enable_offline_cache_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -340,6 +352,7 @@
                 android:layout_marginTop="10dp" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/enable_autofill_manual_search_fallback"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -393,6 +406,7 @@
                 android:text="@string/credential_list_sort_settings" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_case_insensitive_credential_label_sort_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -401,6 +415,7 @@
                 android:text="@string/enable_case_insensitive_credential_label_sort" />
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_restore_custom_credential_sort_order_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
