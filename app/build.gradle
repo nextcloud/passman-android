@@ -137,6 +137,27 @@ android {
                 signingConfig = signingConfigs.alpha
             }
         }
+        // Release-like build for the instrumented tests in CI (same R8 and resource shrinking as release).
+        // Signed with the debug key and allows cleartext HTTP to the test server (see src/ciRelease).
+        ciRelease {
+            initWith release
+            applicationIdSuffix ".ci"
+            versionNameSuffix '-CI'
+            signingConfig = signingConfigs.debug
+            proguardFile 'proguard-ci-rules.pro'
+            testProguardFiles 'proguard-test-rules.pro'
+            matchingFallbacks = ['release']
+        }
+    }
+
+    // Instrumented tests run against debug by default, CI passes -Ppassman.testBuildType=ciRelease
+    testBuildType = project.findProperty('passman.testBuildType') ?: 'debug'
+
+    sourceSets {
+        androidTest {
+            // exchangeable test data (see ci/test-vault/README.md)
+            assets.srcDirs += "$rootDir/ci/test-vault"
+        }
     }
 
     externalNativeBuild {
@@ -178,6 +199,14 @@ androidComponents {
     }
 }
 
+// The androidTest apk runs in the app's process and brings its own copy of the desugared Java library (j$.*),
+// which shadows the app's copy. AGP shrinks and obfuscates both copies independently, so the app would run
+// into the test's incompatible copy. Keeping the complete library in both makes the copies identical.
+// Only applies to the CI build type, uses an internal AGP task property (see proguard-ci-rules.pro for the rest).
+tasks.matching { it.name in ['l8DexDesugarLibCiRelease', 'l8DexDesugarLibCiReleaseAndroidTest'] }.configureEach {
+    keepRulesConfigurations.add('-keep class j$.** { *; }')
+}
+
 // Pin the JDK that compiles sources. This is independent of compileOptions (bytecode is still Java 17).
 // See https://developer.android.com/build/jdks#toolchain
 java {
@@ -189,9 +218,16 @@ java {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
+    androidTestImplementation 'androidx.test:runner:1.7.0'
+    androidTestImplementation 'androidx.test:rules:1.7.0'
     androidTestImplementation('androidx.test.espresso:espresso-core:3.7.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.7.0'
+    androidTestImplementation('org.skyscreamer:jsonassert:1.5.3') {
+        // a copy of the org.json classes Android already provides
+        exclude group: 'com.vaadin.external.google', module: 'android-json'
+    }
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
@@ -215,4 +251,6 @@ dependencies {
     implementation('androidx.camera:camera-lifecycle:1.6.2')
     implementation('androidx.camera:camera-view:1.6.2')
     testImplementation 'junit:junit:4.13.2'
+    // the org.json classes of android.jar are only stubs in local unit tests
+    testImplementation 'org.json:json:20260814'
 }

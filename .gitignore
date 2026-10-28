@@ -67,3 +67,6 @@ openssl.conf
 .idea/*
 
 gradle.properties
+
+# output of ci/run-instrumented-tests.sh
+ci-output/
