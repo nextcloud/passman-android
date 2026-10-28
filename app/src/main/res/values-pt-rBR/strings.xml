@@ -63,7 +63,7 @@
     <string name="cancel">Cancelar</string>
     <string name="enable_credential_list_icons">Ativar ícones na lista de credenciais</string>
     <string name="credential_icon">Ícone da credencial</string>
-    <string name="choose_password_digit_color">Escolha uma cor para destacar dígitos</string>
+    <string name="highlight_color_digits">Dígitos</string>
     <string name="clear_clipboard_delay">Limpar área de transferência (após segundos)</string>
     <string name="vault_auto_lock_delay">Trancamento automático do cofre (após minutos)</string>
     <string name="enable_screenshot_protection">Ocultar conteúdo do aplicativo em recentes, capturas de tela e telas não seguras</string>

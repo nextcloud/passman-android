@@ -60,6 +60,7 @@
     <string name="cancel">Cancelar</string>
     <string name="enable_credential_list_icons">Ativar ícones na lista de credenciais</string>
     <string name="credential_icon">Ícone da credencial</string>
+    <string name="highlight_color_digits">Dígitos</string>
     <string name="clear_clipboard_delay">Limpar área de transferência (após segundos)</string>
     <string name="generate_password">Gerar palavra-passe</string>
     <string name="enable_password_generator_shortcut_description">Ativar atalho do aplicativo gerador de senha</string>
