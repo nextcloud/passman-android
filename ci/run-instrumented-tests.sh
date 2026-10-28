@@ -53,6 +53,12 @@ adb uninstall "$APP_ID" >/dev/null 2>&1 || true
 adb install -r "$APP_APK"
 adb install -r -t "$TEST_APK"
 
+# Android 17+ asks for the permission to reach the test server in the local network (10.0.2.2) on login,
+# the tests can't answer the system dialog
+if [ "$(adb shell getprop ro.build.version.sdk | tr -d '\r')" -ge 37 ]; then
+    adb shell pm grant "$APP_ID" android.permission.ACCESS_LOCAL_NETWORK
+fi
+
 echo "Native library ABI of $APP_ID: $(adb shell dumpsys package "$APP_ID" | grep -m1 -o 'primaryCpuAbi=[^ ]*')"
 
 adb logcat -c || true

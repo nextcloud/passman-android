@@ -25,7 +25,6 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -49,10 +48,13 @@ import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewAssertion;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -197,7 +199,7 @@ public class PassmanE2ETest {
         onView(vaultInList(testVault.vaultName())).perform(click());
         Wait.untilDisplayed(withId(R.id.fragment_vault_password));
 
-        onView(withId(R.id.fragment_vault_password)).perform(replaceText(testVault.vaultPassword() + "x"), closeSoftKeyboard());
+        onView(withId(R.id.fragment_vault_password)).perform(replaceText(testVault.vaultPassword() + "x"), hideKeyboard());
         onView(withId(R.id.fragment_vault_unlock)).perform(click());
 
         android.os.SystemClock.sleep(1000);
@@ -205,7 +207,7 @@ public class PassmanE2ETest {
     }
 
     private void step04_unlockShowsAllCredentials() throws Exception {
-        onView(withId(R.id.fragment_vault_password)).perform(replaceText(testVault.vaultPassword()), closeSoftKeyboard());
+        onView(withId(R.id.fragment_vault_password)).perform(replaceText(testVault.vaultPassword()), hideKeyboard());
         onView(withId(R.id.fragment_vault_unlock)).perform(click());
 
         Wait.untilDisplayed(withId(R.id.addCredentialButton));
@@ -282,7 +284,7 @@ public class PassmanE2ETest {
         onView(withId(R.id.add_credential_user)).perform(replaceText("ci-user"));
         onView(passwordInput(R.id.add_credential_password)).perform(replaceText("Ci-Pässword-1"));
         onView(withId(R.id.add_credential_email)).perform(replaceText("ci@example.com"));
-        onView(withId(R.id.add_credential_url)).perform(replaceText("https://ci.example.com/"), closeSoftKeyboard());
+        onView(withId(R.id.add_credential_url)).perform(replaceText("https://ci.example.com/"), hideKeyboard());
         onView(withId(R.id.SaveCredentialButton)).perform(click());
 
         Wait.untilDisplayed(withId(R.id.addCredentialButton));
@@ -302,7 +304,7 @@ public class PassmanE2ETest {
         Wait.untilDisplayed(withId(R.id.edit_credential_user));
 
         onView(withId(R.id.edit_credential_user)).perform(replaceText("ci-user-edited"));
-        onView(passwordInput(R.id.edit_credential_password)).perform(replaceText("Ci-Pässword-2"), closeSoftKeyboard());
+        onView(passwordInput(R.id.edit_credential_password)).perform(replaceText("Ci-Pässword-2"), hideKeyboard());
         onView(withId(R.id.UpdateCredentialButton)).perform(click());
 
         Wait.untilDisplayed(textOf(R.id.credential_user));
@@ -328,7 +330,7 @@ public class PassmanE2ETest {
                 "credential moved to the trash on the server",
                 Wait.NETWORK
         );
-        onView(withId(R.id.search_input)).perform(clearText(), closeSoftKeyboard());
+        onView(withId(R.id.search_input)).perform(clearText(), hideKeyboard());
         Wait.until(withId(R.id.list), credentialListShows(visibleCredentialLabels()), Wait.NETWORK);
     }
 
@@ -349,7 +351,7 @@ public class PassmanE2ETest {
 
         onView(withId(R.id.add_vault_name)).perform(replaceText(NEW_VAULT_NAME));
         onView(passwordInput(R.id.add_vault_password)).perform(replaceText(NEW_VAULT_PASSWORD));
-        onView(passwordInput(R.id.add_vault_password_repeat)).perform(replaceText(NEW_VAULT_PASSWORD), closeSoftKeyboard());
+        onView(passwordInput(R.id.add_vault_password_repeat)).perform(replaceText(NEW_VAULT_PASSWORD), hideKeyboard());
         onView(withId(R.id.SaveVaultButton)).perform(click());
 
         // creates the sharing keys and the vault test key credential
@@ -376,7 +378,7 @@ public class PassmanE2ETest {
         ).perform(click());
         Wait.untilDisplayed(withId(R.id.DeleteVaultButton));
 
-        onView(passwordInput(R.id.delete_vault_password)).perform(replaceText(NEW_VAULT_PASSWORD), closeSoftKeyboard());
+        onView(passwordInput(R.id.delete_vault_password)).perform(replaceText(NEW_VAULT_PASSWORD), hideKeyboard());
         onView(withId(R.id.DeleteVaultButton)).perform(click());
         Wait.untilDisplayed(withId(android.R.id.button1));
         onView(withId(android.R.id.button1)).perform(click());
@@ -393,11 +395,11 @@ public class PassmanE2ETest {
         onData(allOf(is(instanceOf(String.class)), is(server.url.getScheme().toUpperCase()))).perform(click());
         onView(withId(R.id.host)).perform(replaceText(server.hostAndPort()));
         onView(withId(R.id.user)).perform(replaceText(testVault.nextcloudUser()));
-        onView(withId(R.id.pass)).perform(replaceText(password), closeSoftKeyboard());
+        onView(withId(R.id.pass)).perform(replaceText(password), hideKeyboard());
     }
 
     private static void openCredential(String label) {
-        onView(withId(R.id.search_input)).perform(replaceText(label), closeSoftKeyboard());
+        onView(withId(R.id.search_input)).perform(replaceText(label), hideKeyboard());
         Wait.untilDisplayed(allOf(withId(R.id.content), withText(label)));
         onView(allOf(withId(R.id.content), withText(label))).perform(click());
         Wait.untilDisplayed(allOf(withId(R.id.credential_label), withText(label)));
@@ -422,6 +424,32 @@ public class PassmanE2ETest {
 
     private static Matcher<View> cardOfVault(String name) {
         return allOf(withId(R.id.card_view), hasDescendant(vaultInList(name)));
+    }
+
+    /**
+     * Hides the soft keyboard without waiting for a confirmation of the input method like Espresso's
+     * closeSoftKeyboard() does, which times out on Android 17 if the keyboard isn't shown.
+     */
+    private static ViewAction hideKeyboard() {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isDisplayed();
+            }
+
+            @Override
+            public String getDescription() {
+                return "hide keyboard";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                InputMethodManager inputMethodManager = (InputMethodManager) view.getContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                uiController.loopMainThreadForAtLeast(300);
+            }
+        };
     }
 
     /**
