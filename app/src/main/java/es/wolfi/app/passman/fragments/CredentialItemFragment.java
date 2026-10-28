@@ -146,7 +146,7 @@ public class CredentialItemFragment extends Fragment {
                 }
             });
             vault.sort(sortMethod, caseInsensitiveSort);
-            recyclerView.setAdapter(new CredentialViewAdapter(vault.getCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
+            recyclerView.setAdapter(new CredentialViewAdapter(vault.getVisibleCredentials(), mListener, PreferenceManager.getDefaultSharedPreferences(getContext())));
             scrollToLastPosition();
             updateToggleSortButtonImage(toggleSortButton);
         } else {
@@ -161,7 +161,7 @@ public class CredentialItemFragment extends Fragment {
             filterTask.cancel(true);
         }
         filterTask = new FilterListAsyncTask(searchText, recyclerView, mListener);
-        ArrayList<Credential> input[] = new ArrayList[]{vault.getCredentials()};
+        ArrayList<Credential> input[] = new ArrayList[]{vault.getVisibleCredentials()};
         filterTask.execute((Object[]) input);
     }
 
