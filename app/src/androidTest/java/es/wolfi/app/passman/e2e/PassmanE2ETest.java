@@ -49,6 +49,7 @@ import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
@@ -64,6 +65,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -208,8 +210,7 @@ public class PassmanE2ETest {
 
         Wait.untilDisplayed(withId(R.id.addCredentialButton));
         // like the web client: without the hidden vault test key
-        int expected = testVault.visibleFrontendCredentials().size();
-        Wait.until(withId(R.id.list), recyclerViewItemCount(expected), Wait.NETWORK);
+        Wait.until(withId(R.id.list), credentialListShows(visibleCredentialLabels()), Wait.NETWORK);
     }
 
     private void step05_showCredential() throws Exception {
@@ -243,7 +244,7 @@ public class PassmanE2ETest {
             // accept the neighbouring periods, the code may change during the check
             long now = System.currentTimeMillis() / 1000;
             int period = otp.optInt("period", 30);
-            String shown = ((android.widget.TextView) view).getText().toString();
+            String shown = ((TextView) view).getText().toString();
             try {
                 List<String> valid = Arrays.asList(
                         generator.generate(otp.getString("secret"), now - period),
@@ -327,9 +328,8 @@ public class PassmanE2ETest {
                 "credential moved to the trash on the server",
                 Wait.NETWORK
         );
-        int expected = testVault.visibleFrontendCredentials().size();
         onView(withId(R.id.search_input)).perform(clearText(), closeSoftKeyboard());
-        Wait.until(withId(R.id.list), recyclerViewItemCount(expected), Wait.NETWORK);
+        Wait.until(withId(R.id.list), credentialListShows(visibleCredentialLabels()), Wait.NETWORK);
     }
 
     private void step11_lockVault() {
@@ -438,14 +438,47 @@ public class PassmanE2ETest {
         return allOf(withId(R.id.password), isDescendantOfA(withId(editPasswordTextItemId)));
     }
 
-    private static ViewAssertion recyclerViewItemCount(int expected) {
+    /**
+     * The credential list shows exactly the given labels (order doesn't matter). Every entry is bound to a fresh row
+     * like the adapter does it, rows the adapter hides (like the vault test key) don't count as shown.
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private static ViewAssertion credentialListShows(List<String> expectedLabels) {
         return (view, noViewFoundException) -> {
             if (noViewFoundException != null) {
                 throw noViewFoundException;
             }
-            RecyclerView.Adapter<?> adapter = ((RecyclerView) view).getAdapter();
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
             assertNotNull("no adapter yet", adapter);
-            assertEquals("credentials in the list", expected, adapter.getItemCount());
+
+            List<String> shownLabels = new ArrayList<>();
+            for (int position = 0; position < adapter.getItemCount(); position++) {
+                RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(position));
+                adapter.bindViewHolder(holder, position);
+                if (holder.itemView.getVisibility() == View.VISIBLE) {
+                    shownLabels.add(((TextView) holder.itemView.findViewById(R.id.content)).getText().toString());
+                }
+            }
+
+            List<String> missing = new ArrayList<>(expectedLabels);
+            for (String label : shownLabels) {
+                missing.remove(label);
+            }
+            List<String> unexpected = new ArrayList<>(shownLabels);
+            for (String label : expectedLabels) {
+                unexpected.remove(label);
+            }
+            assertTrue("credential list: missing " + missing + ", unexpected " + unexpected,
+                    missing.isEmpty() && unexpected.isEmpty());
         };
+    }
+
+    private static List<String> visibleCredentialLabels() throws Exception {
+        List<String> labels = new ArrayList<>();
+        for (JSONObject credential : testVault.visibleFrontendCredentials()) {
+            labels.add(credential.getString("label"));
+        }
+        return labels;
     }
 }
