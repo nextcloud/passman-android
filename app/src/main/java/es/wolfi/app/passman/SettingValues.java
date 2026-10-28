@@ -31,6 +31,7 @@ public enum SettingValues {
     AUTOFILL_VAULT("autofill_vault"),
     ENABLE_AUTOFILL_MANUAL_SEARCH_FALLBACK("enable_autofill_manual_search_fallback"),
     ENABLE_APP_START_DEVICE_PASSWORD("enable_app_start_device_password"),
+    APP_START_DEVICE_CREDENTIAL_ONLY("enable_app_start_device_credential_only"),
     ENABLE_CREDENTIAL_LIST_ICONS("enable_credential_list_icons"),
     REQUEST_CONNECT_TIMEOUT("request_connect_timeout"),
     REQUEST_RESPONSE_TIMEOUT("request_response_timeout"),
