@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import com.koushikdutta.async.future.FutureCallback;
@@ -61,6 +62,7 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.databinding.ActivityLoginBinding;
 import es.wolfi.passman.API.Core;
 import es.wolfi.utils.KeyStoreUtils;
+import es.wolfi.utils.LocalNetworkPermission;
 import es.wolfi.utils.SSOUtils;
 
 public class LoginActivity extends BaseActivity {
@@ -79,6 +81,7 @@ public class LoginActivity extends BaseActivity {
     SharedPreferences settings;
     SingleTon ton;
     boolean isLegacyOnly = false;
+    private final LocalNetworkPermission localNetworkPermission = new LocalNetworkPermission(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -219,7 +222,7 @@ public class LoginActivity extends BaseActivity {
         ton.addString(SettingValues.USER.toString(), user);
         ton.addString(SettingValues.PASSWORD.toString(), pass);
 
-        Core.checkLogin(this, true, new FutureCallback<Boolean>() {
+        localNetworkPermission.request(host, () -> Core.checkLogin(this, true, new FutureCallback<Boolean>() {
             @Override
             public void onCompleted(Exception e, Boolean loginSuccessful) {
                 if (loginSuccessful) {
@@ -235,7 +238,13 @@ public class LoginActivity extends BaseActivity {
                     ton.removeString(SettingValues.PASSWORD.toString());
                 }
             }
-        });
+        }));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        localNetworkPermission.onRequestPermissionsResult(requestCode, grantResults);
     }
 
     @Override
