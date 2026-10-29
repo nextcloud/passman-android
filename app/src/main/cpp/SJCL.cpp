@@ -41,7 +41,7 @@ void handleErrors(const char* error){
 }
 
 int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad,
-               int aad_len, unsigned char *tag, unsigned char *key, unsigned char *iv,
+               int aad_len, unsigned char *tag, int tag_len, unsigned char *key, unsigned char *iv,
                unsigned char *plaintext
 ) {
     EVP_CIPHER_CTX *ctx;
@@ -68,7 +68,7 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
     }
 
     /* Set expected tag value. */
-    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, 8, tag)) {
+    if (1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_CCM_SET_TAG, tag_len, tag)) {
         handleErrors("Error setting TAG value");
         goto CLEANUP;
     }
@@ -299,6 +299,13 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
         return nullptr;
     }
 
+    // Passman only uses 64 bit tags, a smaller one would be read past the end of the cryptogram
+    if (tag_size != 64) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "Unsupported tag size, only 64 bit tags are supported");
+        delete data;
+        return nullptr;
+    }
+
     char *iv_64         = wstring_to_char(*iv_value),
          *adata         = wstring_to_char(*adata_value),
          *salt_64       = wstring_to_char(*salt_value),
@@ -328,7 +335,7 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key)) {
         // Decrypt the data
         plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
-                                   &cryptogram->data[cyphertext_data_length], derived_key, iv_raw->data, plaintext);
+                                   &cryptogram->data[cyphertext_data_length], tag_size, derived_key, iv_raw->data, plaintext);
     } else {
         handleErrors("Error deriving the key");
     }

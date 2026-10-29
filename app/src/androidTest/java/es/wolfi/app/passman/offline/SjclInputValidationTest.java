@@ -107,6 +107,15 @@ public class SjclInputValidationTest {
         }
     }
 
+    @Test
+    public void unsupportedTagSizeIsRejected() throws Exception {
+        // the web client and the app only use 64 bit tags
+        for (int tagSize : new int[]{32, 96, 128, 8, 1, Integer.MAX_VALUE}) {
+            JSONObject manipulated = new JSONObject(parameters.toString()).put("ts", tagSize);
+            assertRejected("ts: " + tagSize, manipulated.toString());
+        }
+    }
+
     private static void assertRejected(String message, String json) {
         assertThrows(message, Exception.class, () -> SJCLCrypto.decryptStringCpp(cryptogram(json), PASSWORD));
     }
