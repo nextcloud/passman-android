@@ -62,6 +62,7 @@
     <string name="cancel">Отказ</string>
     <string name="enable_credential_list_icons">Активиране на иконите на списъка с идентификационни данни</string>
     <string name="credential_icon">Икона за идентификационни данни</string>
+    <string name="highlight_color_digits">Цифри</string>
     <string name="clear_clipboard_delay">Изчистване на клипборда (след секунди)</string>
     <string name="generate_password">Генериране на парола</string>
     <string name="generate_password_to_clipboard">Генериране на произволна парола и копиране в клипборда</string>

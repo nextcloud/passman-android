@@ -41,6 +41,7 @@
     <string name="confirm_vault_deletion">Esteu segur que voleu suprimir aquesta caixa forta?</string>
     <string name="yes">Sí</string>
     <string name="cancel">Cancel·la</string>
+    <string name="highlight_color_digits">Dígits</string>
     <string name="generate_password">Genera contrasenya</string>
     <string name="password_generator_require_every_char_type">Requereix cada tipus de caràcter</string>
     <string name="password_generator_avoid_ambiguous_chars">Evita caràcters ambigus</string>

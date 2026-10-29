@@ -63,7 +63,13 @@
     <string name="cancel">İptal</string>
     <string name="enable_credential_list_icons">Kimlik doğrulama listesi simgeleri kullanılsın</string>
     <string name="credential_icon">Kimlik doğrulama bilgileri simgesi</string>
+    <string name="color_password_characters">Parola karakterleri vurgulansın</string>
+    <string name="color_password_characters_description">Görüntülenen parolalarda karakterler renklendirilsin</string>
+    <string name="choose_password_digit_color">Vurgulama rengini seçin</string>
     <string name="highlight_color_digits">Rakamlar</string>
+    <string name="highlight_color_symbols">Simgeler</string>
+    <string name="highlight_color_uppercase">Büyük harfler</string>
+    <string name="highlight_color_lowercase">Küçük harfler</string>
     <string name="clear_clipboard_delay">Pano temizlensin (bu kadar saniye sonra)</string>
     <string name="vault_auto_lock_delay">Otomatik kasa kilidi (dakika)</string>
     <string name="enable_screenshot_protection">Uygulama içeriği son kullanılanlarda, ekran görüntülerinde ve güvenli olmayan ekranlarda gizlensin</string>

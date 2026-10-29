@@ -63,7 +63,13 @@
     <string name="cancel">Zrušiť</string>
     <string name="enable_credential_list_icons">Povoliť ikony v zozname účtov</string>
     <string name="credential_icon">Ikona účtu</string>
+    <string name="color_password_characters">Zvýrazniť znaky hesla</string>
+    <string name="color_password_characters_description">Zafarbiť znaky v zobrazených heslách</string>
+    <string name="choose_password_digit_color">Vyberte farbu zvýraznenia</string>
     <string name="highlight_color_digits">Číslic</string>
+    <string name="highlight_color_symbols">Symboly</string>
+    <string name="highlight_color_uppercase">Veľké písmená</string>
+    <string name="highlight_color_lowercase">Malé písmená</string>
     <string name="clear_clipboard_delay">Vymazať schránku (po sekundách)</string>
     <string name="vault_auto_lock_delay">Automatické uzamknutie trezoru (počet minút)</string>
     <string name="enable_screenshot_protection">Skryť obsah aplikácie v zozname nedávnych aplikácií, na snímkach obrazovky a na nezabezpečených displejoch</string>
