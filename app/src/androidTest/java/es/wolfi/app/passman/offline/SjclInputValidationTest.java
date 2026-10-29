@@ -116,12 +116,34 @@ public class SjclInputValidationTest {
         }
     }
 
+    @Test
+    public void cryptogramShorterThanTheTagIsRejected() throws Exception {
+        // the 64 bit tag takes 8 bytes
+        for (int length : new int[]{0, 1, 4, 7}) {
+            JSONObject manipulated = new JSONObject(parameters.toString()).put("ct", base64(new byte[length]));
+            assertRejected("ct of " + length + " bytes", manipulated.toString());
+        }
+    }
+
+    @Test
+    public void tooShortIvIsRejected() throws Exception {
+        // the nonce of a cryptogram below 64 KB takes 13 bytes
+        for (int length : new int[]{0, 1, 8, 12}) {
+            JSONObject manipulated = new JSONObject(parameters.toString()).put("iv", base64(new byte[length]));
+            assertRejected("iv of " + length + " bytes", manipulated.toString());
+        }
+    }
+
     private static void assertRejected(String message, String json) {
         assertThrows(message, Exception.class, () -> SJCLCrypto.decryptStringCpp(cryptogram(json), PASSWORD));
     }
 
     private static String cryptogram(String json) {
-        return Base64.encodeToString(json.getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
+        return base64(json.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static String base64(byte[] data) {
+        return Base64.encodeToString(data, Base64.NO_WRAP);
     }
 
     /**

@@ -42,7 +42,7 @@ void handleErrors(const char* error){
 
 int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad,
                int aad_len, unsigned char *tag, int tag_len, unsigned char *key, unsigned char *iv,
-               unsigned char *plaintext
+               int iv_len, unsigned char *plaintext
 ) {
     EVP_CIPHER_CTX *ctx;
     int len;
@@ -52,6 +52,12 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
 
     if (ciphertext_len >= 1<<16) lol++;
     if (ciphertext_len >= 1<<24) lol++;
+
+    // OpenSSL reads the first 15-lol bytes of the IV as nonce
+    if (iv_len < 15-lol) {
+        handleErrors("The IV is too short");
+        return -1;
+    }
 
     /* Create and initialise the context */
     if (!(ctx = EVP_CIPHER_CTX_new())) handleErrors("Error initializing context");
@@ -331,13 +337,18 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
 
     char* ret = nullptr;
     int plaintext_len = -1;
-    /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
-    if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key)) {
-        // Decrypt the data
-        plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
-                                   &cryptogram->data[cyphertext_data_length], tag_size, derived_key, iv_raw->data, plaintext);
+    // The cryptogram is the ciphertext followed by the tag, so it can't be shorter than the tag
+    if (0 <= cyphertext_data_length) {
+        /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
+        if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key)) {
+            // Decrypt the data
+            plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
+                                       &cryptogram->data[cyphertext_data_length], tag_size, derived_key, iv_raw->data, iv_raw->length, plaintext);
+        } else {
+            handleErrors("Error deriving the key");
+        }
     } else {
-        handleErrors("Error deriving the key");
+        handleErrors("The cryptogram is shorter than the tag");
     }
 
     if (0 < plaintext_len) {
