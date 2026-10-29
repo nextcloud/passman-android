@@ -376,6 +376,7 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         Datagram* ciphertext_base64 = BASE64::encode(
                 reinterpret_cast<const unsigned char *>(ciphertext_with_tag), ciphertext_len + ts);
         char *tmpct64 = reinterpret_cast<char*>(ciphertext_base64->data);
+        free(ciphertext_with_tag);
 
         Datagram* salt_base64 = BASE64::encode(salt, salt_len);
         char *tmpsalt64 = reinterpret_cast<char*>(salt_base64->data);
@@ -401,6 +402,13 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         string retrn = food.dump();
         ret = (char *) std::calloc(retrn.length() +1, sizeof(char));
         strcpy(ret, retrn.c_str());
+
+        free(ciphertext_base64->data);
+        delete ciphertext_base64;
+        free(salt_base64->data);
+        delete salt_base64;
+        free(iv_base64->data);
+        delete iv_base64;
     }
 
     // Free up resources
