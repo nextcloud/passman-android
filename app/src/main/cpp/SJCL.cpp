@@ -21,6 +21,7 @@
  */
 
 #include "SJCL.h"
+#include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <JSON.h>
@@ -272,7 +273,8 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     unsigned char* derived_key = (unsigned char*) malloc(sizeof(unsigned char) * key_size);
 
     // Assuming plaintext will always be smaller than the sjcl cyphertext which includes the tag and padding and stuff
-    unsigned char* plaintext = (unsigned char*) std::calloc(cryptogram->length +1, sizeof(unsigned char));
+    int cryptogram_length = cryptogram->length;
+    unsigned char* plaintext = (unsigned char*) std::calloc(cryptogram_length +1, sizeof(unsigned char));
     string s = string("The allocated string is: ") + string((char*)plaintext);
 
     /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
@@ -286,6 +288,7 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     if (0 < plaintext_len) {
         Datagram* plaintext_base64 = BASE64::encode(plaintext, plaintext_len);
         ret = reinterpret_cast<char *>(plaintext_base64->data);
+        delete plaintext_base64;
 
         /* do decoding now in the java part
          *
@@ -302,12 +305,20 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
         */
     }
 
-    // Free up resources
+    // Free up resources, wipe the secrets before
     free(iv_64);
     free(adata);
     free(salt_64);
     free(cyphertext);
-    free(data);
+    delete data;
+    free(cryptogram->data);
+    delete cryptogram;
+    free(salt->data);
+    delete salt;
+    free(iv_raw->data);
+    delete iv_raw;
+    OPENSSL_cleanse(plaintext, cryptogram_length + 1);
+    free(plaintext);
     free(derived_key);
 
     return ret;

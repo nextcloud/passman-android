@@ -91,6 +91,8 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclas
 //        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "WHOOP!");
 //        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
         jstring str = env->NewStringUTF(result);
+        // the base64 encoded plaintext
+        OPENSSL_cleanse(result, strlen(result));
         free(result);
         return str;
     }
