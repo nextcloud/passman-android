@@ -247,6 +247,7 @@ public class CredentialDisplayFragment extends Fragment {
             url.setText(credential.getUrl());
             description.setText(credential.getDescription());
             otp.setEnabled(false);
+            otp.setSensitive(true);
 
             // overwrite real credential icon for every shared credential
             if (credential.getCredentialACL() != null) {

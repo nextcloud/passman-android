@@ -23,8 +23,6 @@ package es.wolfi.app.passman;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -48,6 +46,7 @@ import java.util.Objects;
 
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.databinding.FragmentCopyTextItemBinding;
+import es.wolfi.utils.ClipboardUtils;
 
 public class CopyTextItem extends LinearLayout {
 
@@ -60,6 +59,7 @@ public class CopyTextItem extends LinearLayout {
 
     private String rawText = "";
     private boolean passwordMode = false;
+    private boolean sensitive = false;
     private boolean highlightEnabled = true;
 
     private static final int CLASS_NONE = -1;
@@ -166,6 +166,7 @@ public class CopyTextItem extends LinearLayout {
 
     public void setModePassword() {
         passwordMode = true;
+        sensitive = true;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         toggle.setVisibility(View.VISIBLE);
         open_url_toggle.setVisibility(View.GONE);
@@ -174,6 +175,7 @@ public class CopyTextItem extends LinearLayout {
 
     public void setModeText() {
         passwordMode = false;
+        sensitive = false;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
         toggle.setVisibility(View.GONE);
         open_url_toggle.setVisibility(View.GONE);
@@ -181,6 +183,7 @@ public class CopyTextItem extends LinearLayout {
 
     public void setModeEmail() {
         passwordMode = false;
+        sensitive = false;
         text.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         toggle.setVisibility(View.GONE);
         open_url_toggle.setVisibility(View.GONE);
@@ -189,6 +192,14 @@ public class CopyTextItem extends LinearLayout {
     public void setModeURL() {
         setModeText();
         open_url_toggle.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Hide the copied text in the clipboard preview of the system and in the clipboard history of keyboards,
+     * already set by {@link #setModePassword()}.
+     */
+    public void setSensitive(boolean sensitive) {
+        this.sensitive = sensitive;
     }
 
     public void setEnabled(boolean enabled) {
@@ -256,9 +267,7 @@ public class CopyTextItem extends LinearLayout {
     }
 
     public void copyTextToClipboard() {
-        ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("pss_data", text.getText().toString());
-        clipboard.setPrimaryClip(clip);
+        ClipboardUtils.copyToClipboard(getContext(), "pss_data", text.getText().toString(), sensitive);
 
         Toast.makeText(getContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
     }

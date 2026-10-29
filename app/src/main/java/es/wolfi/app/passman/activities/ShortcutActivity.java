@@ -20,13 +20,11 @@
  */
 package es.wolfi.app.passman.activities;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
 
 import es.wolfi.app.passman.R;
+import es.wolfi.utils.ClipboardUtils;
 import es.wolfi.utils.PasswordGenerator;
 
 public class ShortcutActivity extends BaseActivity {
@@ -49,9 +47,7 @@ public class ShortcutActivity extends BaseActivity {
         String password = new PasswordGenerator(getApplicationContext()).generateRandomPassword();
 
         if (password != null && password.length() > 0) {
-            ClipboardManager clipboard = (ClipboardManager) getApplicationContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText("generated_password", password);
-            clipboard.setPrimaryClip(clip);
+            ClipboardUtils.copyToClipboard(getApplicationContext(), "generated_password", password, true);
 
             Toast.makeText(getApplicationContext(), R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show();
             return;
