@@ -63,7 +63,12 @@
     <string name="cancel">Abbrechen</string>
     <string name="enable_credential_list_icons">Symbole für Anmeldeinformationen aktivieren</string>
     <string name="credential_icon">Symbol für Anmeldeinformationen</string>
+    <string name="color_password_characters">Buchstaben in Passwörtern hervorheben</string>
+    <string name="choose_password_digit_color">Hervorhebungsfarbe auswählen</string>
     <string name="highlight_color_digits">Zeichen</string>
+    <string name="highlight_color_symbols">Symbole</string>
+    <string name="highlight_color_uppercase">Großbuchstaben</string>
+    <string name="highlight_color_lowercase">Kleinbuchstaben</string>
     <string name="clear_clipboard_delay">Zwischenablage leeren (nach ein paar Sekunden)</string>
     <string name="vault_auto_lock_delay">Automatische Tresorsperre (nach Minuten)</string>
     <string name="enable_screenshot_protection">App-Inhalte in aktuellen Ansichten, Screenshots und auf nicht sicheren Displays ausblenden</string>
