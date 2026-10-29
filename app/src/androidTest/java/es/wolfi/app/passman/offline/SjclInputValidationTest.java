@@ -98,6 +98,15 @@ public class SjclInputValidationTest {
         }
     }
 
+    @Test
+    public void unsupportedKeySizeIsRejected() throws Exception {
+        // the web client and the app only use AES-256
+        for (int keySize : new int[]{128, 192, 1, 512, Integer.MAX_VALUE}) {
+            JSONObject manipulated = new JSONObject(parameters.toString()).put("ks", keySize);
+            assertRejected("ks: " + keySize, manipulated.toString());
+        }
+    }
+
     private static void assertRejected(String message, String json) {
         assertThrows(message, Exception.class, () -> SJCLCrypto.decryptStringCpp(cryptogram(json), PASSWORD));
     }

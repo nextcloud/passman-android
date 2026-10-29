@@ -292,6 +292,13 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
         return nullptr;
     }
 
+    // The cipher is always AES-256, it would read a smaller key past its end
+    if (key_size != 256) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "Unsupported key size, only 256 bit keys are supported");
+        delete data;
+        return nullptr;
+    }
+
     char *iv_64         = wstring_to_char(*iv_value),
          *adata         = wstring_to_char(*adata_value),
          *salt_64       = wstring_to_char(*salt_value),
@@ -315,13 +322,16 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     unsigned char* plaintext = (unsigned char*) std::calloc(cryptogram_length +1, sizeof(unsigned char));
     string s = string("The allocated string is: ") + string((char*)plaintext);
 
-    /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
-    PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key);
-
     char* ret = nullptr;
-    // Decrypt the data
-    int plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
-               &cryptogram->data[cyphertext_data_length], derived_key, iv_raw->data, plaintext);
+    int plaintext_len = -1;
+    /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
+    if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key)) {
+        // Decrypt the data
+        plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
+                                   &cryptogram->data[cyphertext_data_length], derived_key, iv_raw->data, plaintext);
+    } else {
+        handleErrors("Error deriving the key");
+    }
 
     if (0 < plaintext_len) {
         Datagram* plaintext_base64 = BASE64::encode(plaintext, plaintext_len);
@@ -399,14 +409,18 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     RAND_bytes(iv, iv_len);
     RAND_bytes(salt, salt_len);
 
-    // PBKDF2 Key derivation with SHA256 as SJCL does by default
-    PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key);
-
     // Assuming ciphertext will not be bigger that the plaintext length * ciphertext_allocation_multiplicator
     ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator);
 
-    unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
-    int ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
+    int ciphertext_len = -1;
+    // PBKDF2 Key derivation with SHA256 as SJCL does by default
+    if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key)) {
+        unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
+        ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
+    } else {
+        handleErrors("Error deriving the key");
+    }
+
     if (0 < ciphertext_len) {
         uint8_t *ciphertext_with_tag = static_cast<uint8_t *>(malloc(sizeof(char *) * (ciphertext_len + ts)));
         memcpy(ciphertext_with_tag, ciphertext, ciphertext_len);
