@@ -233,7 +233,7 @@ char* wstring_to_char(wstring str) {
 
 using namespace WLF::Crypto;
 
-char* SJCL::decrypt(string sjcl_json, string key) {
+char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     JSONValue *data = JSON::Parse(sjcl_json.c_str());
 
     if (data == nullptr || ! data->IsObject()) {
