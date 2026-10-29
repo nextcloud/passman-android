@@ -51,6 +51,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.biometric.BiometricPrompt;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -89,6 +90,7 @@ import es.wolfi.passman.API.Core;
 import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.DeviceCredentialAuthentication;
 import es.wolfi.utils.FileUtils;
 import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.LocalNetworkPermission;
@@ -161,7 +163,9 @@ public class PasswordListActivity extends BaseActivity implements
                 settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false)) {
             KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
 
-            if (km.isKeyguardSecure()) {
+            if (km.isKeyguardSecure() && DeviceCredentialAuthentication.isEnabled(settings)) {
+                authenticateWithDeviceCredentialOnly();
+            } else if (km.isKeyguardSecure()) {
                 Intent authIntent = km.createConfirmDeviceCredentialIntent(getString(R.string.unlock_passman), getString(R.string.unlock_passman_message_device_auth));
                 startActivityForResult(authIntent, REQUEST_CODE_KEYGUARD);
             } else {
@@ -199,6 +203,27 @@ public class PasswordListActivity extends BaseActivity implements
 
             running = true;
         }
+    }
+
+    /**
+     * Unlike the KeyguardManager confirmation, the prompt doesn't offer biometrics.
+     * The prompt survives configuration changes, creating it again in onCreate reconnects the callback.
+     */
+    private void authenticateWithDeviceCredentialOnly() {
+        BiometricPrompt prompt = new BiometricPrompt(this, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                Log.d("initial authentication", "successful");
+                initialAuthentication(true);
+            }
+
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                // cancelled or not possible, like a failed KeyguardManager confirmation
+                finishAffinity();
+            }
+        });
+        prompt.authenticate(DeviceCredentialAuthentication.createPromptInfo(getString(R.string.unlock_passman), getString(R.string.unlock_passman_message_device_auth)));
     }
 
     public void attachClipboardListener() {

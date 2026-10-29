@@ -81,6 +81,15 @@
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 style="@style/CheckBox"
+                android:id="@+id/settings_app_start_device_credential_only_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:checked="false"
+                android:text="@string/app_start_device_credential_only" />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                style="@style/CheckBox"
                 android:id="@+id/settings_enable_screenshot_protection_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

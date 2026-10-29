@@ -79,6 +79,7 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.VaultLockManager;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.passman.API.Vault;
+import es.wolfi.utils.DeviceCredentialAuthentication;
 import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.PasswordGenerator;
 
@@ -95,6 +96,7 @@ public class SettingsFragment extends Fragment {
     EditText settings_nextcloud_password;
 
     MaterialCheckBox settings_app_start_password_switch;
+    MaterialCheckBox settings_app_start_device_credential_only_switch;
     MaterialCheckBox settings_enable_screenshot_protection_switch;
 
     MaterialCheckBox settings_password_generator_shortcut_switch;
@@ -193,6 +195,7 @@ public class SettingsFragment extends Fragment {
         settings_nextcloud_password = view.findViewById(R.id.settings_nextcloud_password);
 
         settings_app_start_password_switch = view.findViewById(R.id.settings_app_start_password_switch);
+        settings_app_start_device_credential_only_switch = view.findViewById(R.id.settings_app_start_device_credential_only_switch);
         settings_enable_screenshot_protection_switch = view.findViewById(R.id.settings_enable_screenshot_protection_switch);
 
         settings_password_generator_shortcut_switch = view.findViewById(R.id.settings_password_generator_shortcut_switch);
@@ -282,6 +285,15 @@ public class SettingsFragment extends Fragment {
         settings_nextcloud_password.setText(KeyStoreUtils.getString(SettingValues.PASSWORD.toString(), null));
 
         settings_app_start_password_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), false));
+        settings_app_start_device_credential_only_switch.setChecked(DeviceCredentialAuthentication.isEnabled(settings));
+        if (DeviceCredentialAuthentication.isSupported()) {
+            // only relevant with the app start authentication
+            settings_app_start_device_credential_only_switch.setEnabled(settings_app_start_password_switch.isChecked());
+            settings_app_start_password_switch.setOnCheckedChangeListener((buttonView, isChecked) -> settings_app_start_device_credential_only_switch.setEnabled(isChecked));
+        } else {
+            settings_app_start_device_credential_only_switch.setEnabled(false);
+            settings_app_start_device_credential_only_switch.setText(R.string.app_start_device_credential_only_unsupported);
+        }
         settings_enable_screenshot_protection_switch.setChecked(settings.getBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), true));
 
         passwordGenerator = new PasswordGenerator(context);
@@ -421,6 +433,7 @@ public class SettingsFragment extends Fragment {
                 SingleTon ton = SingleTon.getTon();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_APP_START_DEVICE_PASSWORD.toString(), settings_app_start_password_switch.isChecked()).commit();
+                settings.edit().putBoolean(SettingValues.APP_START_DEVICE_CREDENTIAL_ONLY.toString(), settings_app_start_device_credential_only_switch.isChecked()).commit();
                 settings.edit().putBoolean(SettingValues.ENABLE_SCREENSHOT_PROTECTION.toString(), settings_enable_screenshot_protection_switch.isChecked()).commit();
 
                 settings.edit().putBoolean(SettingValues.ENABLE_PASSWORD_GENERATOR_SHORTCUT.toString(), settings_password_generator_shortcut_switch.isChecked()).commit();
