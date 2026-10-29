@@ -1,7 +1,7 @@
+# pinned to a release tag of the OpenSSL 3.5 LTS line (e.g. openssl-3.5.9), not to the head of the openssl-3.5 branch
 [submodule "app/src/main/cpplibs/openssl"]
 	path = app/src/main/cpplibs/openssl
 	url = https://github.com/openssl/openssl.git
-	branch = openssl-3.5
 	ignore = dirty
 [submodule "app/src/main/cpplibs/SimpleJSON"]
 	path = app/src/main/cpplibs/SimpleJSON
