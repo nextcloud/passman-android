@@ -76,7 +76,8 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclas
                                                            dt.length());
 
     std::string json = (char *) t->data;
-    free(t);
+    free(t->data);
+    delete t;
 
     //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, json.c_str());
 
@@ -123,7 +124,9 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclas
 
         jstring str = env->NewStringUTF((char *) t->data);
 
-        free(t);
+        free(t->data);
+        delete t;
+        free(result);
         return str;
     }
 
