@@ -63,6 +63,13 @@
     <string name="cancel">Annuller</string>
     <string name="enable_credential_list_icons">Vis ikoner i listen over adgangskoder</string>
     <string name="credential_icon">Ikon for adgangskode</string>
+    <string name="color_password_characters">Fremhæv tegn i adgangskoder</string>
+    <string name="color_password_characters_description">Farv tegnene i viste adgangskoder</string>
+    <string name="choose_password_digit_color">Vælg fremhævningsfarve</string>
+    <string name="highlight_color_digits">Cifre</string>
+    <string name="highlight_color_symbols">Symboler</string>
+    <string name="highlight_color_uppercase">Store bogstaver</string>
+    <string name="highlight_color_lowercase">Små bogstaver</string>
     <string name="clear_clipboard_delay">Ryd udklipsholder (efter sekunder)</string>
     <string name="vault_auto_lock_delay">Lås boksen automatisk (efter minutter)</string>
     <string name="enable_screenshot_protection">Skjul appens indhold i Seneste, på screenshots og på ikke-sikre skærme</string>
@@ -77,7 +84,7 @@
     <string name="generate_password_to_clipboard">Generér en tilfældig adgangskode, og kopiér den til udklipsholderen</string>
     <string name="enable_password_generator_shortcut_description">Aktivér appgenvej til adgangskodegeneratoren</string>
     <string name="password_generator_require_every_char_type">Kræv alle tegntyper</string>
-    <string name="password_generator_avoid_ambiguous_chars">Undgå tvetydige karakterer </string>
+    <string name="password_generator_avoid_ambiguous_chars">Undgå tvetydige tegn</string>
     <string name="password_generator_use_special_chars">Brug specialtegn</string>
     <string name="password_generator_use_digits">Brug cifre</string>
     <string name="password_generator_use_lowercase">Brug små bogstaver</string>
