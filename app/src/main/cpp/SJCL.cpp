@@ -31,6 +31,8 @@
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
+#include <cmath>
+#include <limits>
 
 #define LOG_TAG "SJCL"
 
@@ -232,6 +234,34 @@ char* wstring_to_char(wstring str) {
     return c;
 }
 
+/**
+ * The string value of the key, nullptr if the key is missing or its value is no string.
+ * Replaces raw access like with food[L"iv"].
+ */
+const wstring* getString(const JSONObject& object, const wchar_t* key) {
+    auto value = object.find(key);
+    if (value == object.end() || ! value->second->IsString()) {
+        return nullptr;
+    }
+    return &value->second->AsString();
+}
+
+/**
+ * The value of the key as positive int, 0 if the key is missing or its value is no such number.
+ */
+int getPositiveInt(const JSONObject& object, const wchar_t* key) {
+    auto value = object.find(key);
+    if (value == object.end() || ! value->second->IsNumber()) {
+        return 0;
+    }
+    double number = value->second->AsNumber();
+    // the cast of a number out of the int range would be undefined behavior
+    if (! (number >= 1 && number <= std::numeric_limits<int>::max()) || number != std::floor(number)) {
+        return 0;
+    }
+    return (int) number;
+}
+
 using namespace WLF::Crypto;
 
 char* SJCL::decrypt(const string& sjcl_json, const string& key) {
@@ -239,25 +269,33 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
 
     if (data == nullptr || ! data->IsObject()) {
         __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "Error parsing the SJCL JSON");
+        delete data;
         return nullptr;
     }
 
-    JSONObject food = data->AsObject();
-
-    int iter        = 0,
-        key_size    = 0,
-        tag_size    = 0;
-    char *iv_64, *salt_64, *cyphertext, *adata;
+    const JSONObject& food = data->AsObject();
 
     // Extract the requiered values from the JSON
-    iv_64       = wstring_to_char(food[L"iv"]->AsString());
-    adata       = wstring_to_char(food[L"adata"]->AsString());
-    salt_64     = wstring_to_char(food[L"salt"]->AsString());
-    cyphertext  = wstring_to_char(food[L"ct"]->AsString());
+    const wstring *iv_value     = getString(food, L"iv"),
+                  *adata_value  = getString(food, L"adata"),
+                  *salt_value   = getString(food, L"salt"),
+                  *ct_value     = getString(food, L"ct");
 
-    iter        = (int) food[L"iter"]->AsNumber();
-    key_size    = (int) food[L"ks"]->AsNumber();
-    tag_size    = (int) food[L"ts"]->AsNumber();
+    int iter        = getPositiveInt(food, L"iter"),
+        key_size    = getPositiveInt(food, L"ks"),
+        tag_size    = getPositiveInt(food, L"ts");
+
+    if (iv_value == nullptr || adata_value == nullptr || salt_value == nullptr || ct_value == nullptr
+            || iter == 0 || key_size == 0 || tag_size == 0) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "The SJCL JSON lacks a required value");
+        delete data;
+        return nullptr;
+    }
+
+    char *iv_64         = wstring_to_char(*iv_value),
+         *adata         = wstring_to_char(*adata_value),
+         *salt_64       = wstring_to_char(*salt_value),
+         *cyphertext    = wstring_to_char(*ct_value);
 
     tag_size = (tag_size +7) / 8; // Make it bytes!
     key_size = (key_size +7) / 8; // Make it bytes
