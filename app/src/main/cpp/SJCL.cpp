@@ -319,6 +319,7 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     delete iv_raw;
     OPENSSL_cleanse(plaintext, cryptogram_length + 1);
     free(plaintext);
+    OPENSSL_cleanse(derived_key, key_size);
     free(derived_key);
 
     return ret;
@@ -411,10 +412,11 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         delete iv_base64;
     }
 
-    // Free up resources
+    // Free up resources, wipe the secrets before
     free(ciphertext);
     free(iv);
     free(salt);
+    OPENSSL_cleanse(derived_key, ks);
     free(derived_key);
 
     return ret;
