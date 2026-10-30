@@ -60,7 +60,10 @@ int decryptccm(unsigned char *ciphertext, int ciphertext_len, unsigned char *aad
     }
 
     /* Create and initialise the context */
-    if (!(ctx = EVP_CIPHER_CTX_new())) handleErrors("Error initializing context");
+    if (!(ctx = EVP_CIPHER_CTX_new())) {
+        handleErrors("Error initializing context");
+        goto CLEANUP;
+    }
 
     /* Initialise the decryption operation. */
     if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_ccm(), nullptr, nullptr, nullptr)) {
