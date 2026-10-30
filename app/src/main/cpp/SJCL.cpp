@@ -236,6 +236,9 @@ int encryptccm(unsigned char *plaintext, int plaintext_len,
  */
 char* wstring_to_char(wstring str) {
     char* c = (char *) malloc(sizeof(char) * str.length() + 1);
+    if (c == nullptr) {
+        return nullptr;
+    }
     const wchar_t* data = str.c_str();
     for (int i = 0; i <= str.length(); i++) {
         c[i] = (char) data[i];
@@ -327,6 +330,16 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
          *salt_64       = wstring_to_char(*salt_value),
          *cyphertext    = wstring_to_char(*ct_value);
 
+    if (iv_64 == nullptr || adata == nullptr || salt_64 == nullptr || cyphertext == nullptr) {
+        handleErrors("Out of memory"); // ... i guess
+        free(iv_64);
+        free(adata);
+        free(salt_64);
+        free(cyphertext);
+        delete data;
+        return nullptr;
+    }
+
     tag_size = (tag_size +7) / 8; // Make it bytes!
     key_size = (key_size +7) / 8; // Make it bytes
 
@@ -356,22 +369,25 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     // Assuming plaintext will always be smaller than the sjcl cyphertext which includes the tag and padding and stuff
     int cryptogram_length = cryptogram->length;
     unsigned char* plaintext = (unsigned char*) std::calloc(cryptogram_length +1, sizeof(unsigned char));
-    string s = string("The allocated string is: ") + string((char*)plaintext);
 
     char* ret = nullptr;
     int plaintext_len = -1;
-    // The cryptogram is the ciphertext followed by the tag, so it can't be shorter than the tag
-    if (0 <= cyphertext_data_length) {
-        /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
-        if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key)) {
-            // Decrypt the data
-            plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
-                                       &cryptogram->data[cyphertext_data_length], tag_size, derived_key, iv_raw->data, iv_raw->length, plaintext);
+    if (derived_key != nullptr && plaintext != nullptr) {
+        // The cryptogram is the ciphertext followed by the tag, so it can't be shorter than the tag
+        if (0 <= cyphertext_data_length) {
+            /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
+            if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt->data, salt->length, iter, EVP_sha256(), key_size, derived_key)) {
+                // Decrypt the data
+                plaintext_len = decryptccm(cryptogram->data, cyphertext_data_length, (unsigned char *) adata, strlen(adata),
+                                           &cryptogram->data[cyphertext_data_length], tag_size, derived_key, iv_raw->data, iv_raw->length, plaintext);
+            } else {
+                handleErrors("Error deriving the key");
+            }
         } else {
-            handleErrors("Error deriving the key");
+            handleErrors("The cryptogram is shorter than the tag");
         }
     } else {
-        handleErrors("The cryptogram is shorter than the tag");
+        handleErrors("Out of memory");
     }
 
     if (0 < plaintext_len) {
@@ -407,10 +423,14 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     releaseDatagram(cryptogram);
     releaseDatagram(salt);
     releaseDatagram(iv_raw);
-    OPENSSL_cleanse(plaintext, cryptogram_length + 1);
-    free(plaintext);
-    OPENSSL_cleanse(derived_key, key_size);
-    free(derived_key);
+    if (plaintext != nullptr) {
+        OPENSSL_cleanse(plaintext, cryptogram_length + 1);
+        free(plaintext);
+    }
+    if (derived_key != nullptr) {
+        OPENSSL_cleanse(derived_key, key_size);
+        free(derived_key);
+    }
 
     return ret;
 }
@@ -452,27 +472,35 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator);
 
     int ciphertext_len = -1;
-    // Without random bytes, the IV and salt would be leftover memory and could repeat between encryptions
-    if (1 == RAND_bytes(iv, iv_len) && 1 == RAND_bytes(salt, salt_len)) {
-        // PBKDF2 Key derivation with SHA256 as SJCL does by default
-        if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key)) {
-            unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
-            ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
+    if (iv != nullptr && salt != nullptr && derived_key != nullptr && ciphertext != nullptr) {
+        // Without random bytes, the IV and salt would be leftover memory and could repeat between encryptions
+        if (1 == RAND_bytes(iv, iv_len) && 1 == RAND_bytes(salt, salt_len)) {
+            // PBKDF2 Key derivation with SHA256 as SJCL does by default
+            if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key)) {
+                unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
+                ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
+            } else {
+                handleErrors("Error deriving the key");
+            }
         } else {
-            handleErrors("Error deriving the key");
+            handleErrors("Error generating the IV and salt");
         }
     } else {
-        handleErrors("Error generating the IV and salt");
+        handleErrors("Out of memory");
     }
 
     if (0 < ciphertext_len) {
+        // without memory for the ciphertext with tag, the missing ciphertext_base64 fails the encryption below
+        Datagram* ciphertext_base64 = nullptr;
         uint8_t *ciphertext_with_tag = static_cast<uint8_t *>(malloc(sizeof(char *) * (ciphertext_len + ts)));
-        memcpy(ciphertext_with_tag, ciphertext, ciphertext_len);
-        memcpy(ciphertext_with_tag + ciphertext_len, tag, ts);
+        if (ciphertext_with_tag != nullptr) {
+            memcpy(ciphertext_with_tag, ciphertext, ciphertext_len);
+            memcpy(ciphertext_with_tag + ciphertext_len, tag, ts);
 
-        Datagram* ciphertext_base64 = BASE64::encode(
-                reinterpret_cast<const unsigned char *>(ciphertext_with_tag), ciphertext_len + ts);
-        free(ciphertext_with_tag);
+            ciphertext_base64 = BASE64::encode(
+                    reinterpret_cast<const unsigned char *>(ciphertext_with_tag), ciphertext_len + ts);
+            free(ciphertext_with_tag);
+        }
 
         Datagram* salt_base64 = BASE64::encode(salt, salt_len);
         Datagram* iv_base64 = BASE64::encode(iv, iv_len);
@@ -495,7 +523,11 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
 
             string retrn = food.dump();
             ret = (char *) std::calloc(retrn.length() +1, sizeof(char));
-            strcpy(ret, retrn.c_str());
+            if (ret != nullptr) {
+                strcpy(ret, retrn.c_str());
+            } else {
+                handleErrors("Out of memory");
+            }
         } else {
             handleErrors("Error encoding the cryptogram");
         }
@@ -509,8 +541,10 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     free(ciphertext);
     free(iv);
     free(salt);
-    OPENSSL_cleanse(derived_key, ks);
-    free(derived_key);
+    if (derived_key != nullptr) {
+        OPENSSL_cleanse(derived_key, ks);
+        free(derived_key);
+    }
 
     return ret;
 }
