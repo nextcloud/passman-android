@@ -110,6 +110,7 @@
     <string name="issuer">Издатель</string>
     <string name="error_parsing_qr_code">Ошибка разбора QR-кода</string>
     <string name="camera_permission_denied">Разрешение на камеру отклонено</string>
+    <string name="local_network_permission_denied">Без разрешения на доступ к устройствам в локальной сети Passman не сможет подключиться к вашему серверу Nextcloud.</string>
     <string name="no_matching_credentials_or_fields_found">Не найдено подходящих записей или полей для автозаполнения</string>
     <string name="no_active_vault_add_credential_error">Нет активного хранилища. Не удаётся добавить запись!</string>
     <string name="automatic_autofill_vault_description">Выберите «Автоматически», чтобы автозаполнение работало, только когда хранилище открыто и разблокировано в приложении.</string>

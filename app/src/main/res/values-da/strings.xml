@@ -108,6 +108,7 @@
     <string name="issuer">Udsteder</string>
     <string name="error_parsing_qr_code">Fejl ved fortolkning af QR-kode</string>
     <string name="camera_permission_denied">Adgang til kameraet blev afvist</string>
+    <string name="local_network_permission_denied">Uden tilladelse til at få adgang til enheder på det lokale netværk kan Passman ikke oprette forbindelse til din Nextcloud-server.</string>
     <string name="no_matching_credentials_or_fields_found">Der blev ikke fundet nogen adgangskoder eller felter, der kan udfyldes automatisk</string>
     <string name="no_active_vault_add_credential_error">Ingen aktiv boks. Adgangskoden kan ikke tilføjes!</string>
     <string name="automatic_autofill_vault_description">Vælg Automatisk, hvis autofyld kun skal tilbydes, når en boks er åben og låst op i appen</string>

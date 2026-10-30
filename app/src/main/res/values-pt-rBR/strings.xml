@@ -109,6 +109,7 @@
     <string name="issuer">Emissor</string>
     <string name="error_parsing_qr_code">Erro ao analisar o código QR</string>
     <string name="camera_permission_denied">Permissão da câmera negada</string>
+    <string name="local_network_permission_denied">Sem a permissão para acessar dispositivos na rede local, o Passman não consegue se conectar ao seu servidor Nextcloud.</string>
     <string name="no_matching_credentials_or_fields_found">Nenhuma credencial correspondente ou nenhum campo de preenchimento automático foi encontrado</string>
     <string name="no_active_vault_add_credential_error">Nenhum cofre ativo. Não é possível adicionar credencial!</string>
     <string name="automatic_autofill_vault_description">Selecione Automático se desejar que o preenchimento automático seja fornecido apenas quando um Cofre estiver ativamente aberto e destrancado no aplicativo</string>

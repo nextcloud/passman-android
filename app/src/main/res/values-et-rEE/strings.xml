@@ -63,6 +63,8 @@
     <string name="cancel">Loobu</string>
     <string name="enable_credential_list_icons">Kasute teenuste loendis ikoone</string>
     <string name="credential_icon">Teenuse ikoon</string>
+    <string name="color_password_characters">Tõsta salasõna tähemärgid esile</string>
+    <string name="color_password_characters_description">Värvi näidatavate salasõnade tähemärgid</string>
     <string name="choose_password_digit_color">Vali esiletõstmise värv</string>
     <string name="highlight_color_digits">Numbrid</string>
     <string name="highlight_color_symbols">Sümbolid</string>
@@ -106,6 +108,7 @@
     <string name="issuer">Väljastaja</string>
     <string name="error_parsing_qr_code">Viga QR-koodi töötlemisel</string>
     <string name="camera_permission_denied">Vajalik on luba kaamera kasutamiseks</string>
+    <string name="local_network_permission_denied">Ilma õiguseta ligipääsuks seadmetele sinu kohtvõrgus ei saa Passman ühendada ka sinu Nextcloudi serveriga.</string>
     <string name="no_matching_credentials_or_fields_found">Sobilikku kasutajanime ja salasõna või automaattäidetavaid välju ei leidunud</string>
     <string name="no_active_vault_add_credential_error">Aktiivset andmehoidlat ei ole. Autentimise andmete lisamine pole võimalik!</string>
     <string name="automatic_autofill_vault_description">Vali „Automaatne“, kui soovid, et automaattäide oleks kasutusel, vaid siis, kui andmehoidla on rakenduses avatud ning lukustamata</string>
