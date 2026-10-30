@@ -270,6 +270,13 @@ int getPositiveInt(const JSONObject& object, const wchar_t* key) {
 
 using namespace WLF::Crypto;
 
+void releaseDatagram(Datagram* datagram) {
+    if (datagram != nullptr) {
+        free(datagram->data);
+        delete datagram;
+    }
+}
+
 char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     JSONValue *data = JSON::Parse(sjcl_json.c_str());
 
@@ -320,13 +327,26 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     tag_size = (tag_size +7) / 8; // Make it bytes!
     key_size = (key_size +7) / 8; // Make it bytes
 
-    // The actual cryptogram includes the tag size, so we need to take this into account later on!
     Datagram* cryptogram = BASE64::decode((unsigned char *) cyphertext, strlen(cyphertext));
-    int cyphertext_data_length = cryptogram->length - tag_size;
-
     Datagram* salt = BASE64::decode((unsigned char *) salt_64, strlen(salt_64));
     Datagram* iv_raw = BASE64::decode((unsigned char *) iv_64, strlen(iv_64));
 //    Datagram* aadata = BASE64::decode((const unsigned char *) "", 0); // Not sure if this is required since we don't use adata
+
+    if (cryptogram == nullptr || salt == nullptr || iv_raw == nullptr) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "The SJCL JSON contains invalid base64");
+        free(iv_64);
+        free(adata);
+        free(salt_64);
+        free(cyphertext);
+        delete data;
+        releaseDatagram(cryptogram);
+        releaseDatagram(salt);
+        releaseDatagram(iv_raw);
+        return nullptr;
+    }
+
+    // The actual cryptogram includes the tag size, so we need to take this into account later on!
+    int cyphertext_data_length = cryptogram->length - tag_size;
 
     unsigned char* derived_key = (unsigned char*) malloc(sizeof(unsigned char) * key_size);
 
@@ -377,12 +397,9 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     free(salt_64);
     free(cyphertext);
     delete data;
-    free(cryptogram->data);
-    delete cryptogram;
-    free(salt->data);
-    delete salt;
-    free(iv_raw->data);
-    delete iv_raw;
+    releaseDatagram(cryptogram);
+    releaseDatagram(salt);
+    releaseDatagram(iv_raw);
     OPENSSL_cleanse(plaintext, cryptogram_length + 1);
     free(plaintext);
     OPENSSL_cleanse(derived_key, key_size);
@@ -474,12 +491,9 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         ret = (char *) std::calloc(retrn.length() +1, sizeof(char));
         strcpy(ret, retrn.c_str());
 
-        free(ciphertext_base64->data);
-        delete ciphertext_base64;
-        free(salt_base64->data);
-        delete salt_base64;
-        free(iv_base64->data);
-        delete iv_base64;
+        releaseDatagram(ciphertext_base64);
+        releaseDatagram(salt_base64);
+        releaseDatagram(iv_base64);
     }
 
     // Free up resources, wipe the secrets before

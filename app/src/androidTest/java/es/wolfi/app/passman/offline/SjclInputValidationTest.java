@@ -134,6 +134,22 @@ public class SjclInputValidationTest {
         }
     }
 
+    @Test
+    public void invalidBase64IsRejected() throws Exception {
+        // a single character before the padding can't be decoded,
+        // unlike characters outside of the base64 alphabet, which the native base64 decoding skips
+        String[] invalid = {"A=", "AAAAA=="};
+        for (String value : invalid) {
+            assertThrows(value, Exception.class, () -> SJCLCrypto.decryptStringCpp(value, PASSWORD));
+        }
+        for (String field : new String[]{"ct", "salt", "iv"}) {
+            for (String value : invalid) {
+                JSONObject manipulated = new JSONObject(parameters.toString()).put(field, value);
+                assertRejected(field + ": " + value, manipulated.toString());
+            }
+        }
+    }
+
     private static void assertRejected(String message, String json) {
         assertThrows(message, Exception.class, () -> SJCLCrypto.decryptStringCpp(cryptogram(json), PASSWORD));
     }

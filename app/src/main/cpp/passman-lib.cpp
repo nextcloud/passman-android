@@ -75,6 +75,13 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclas
     WLF::Crypto::Datagram *t = WLF::Crypto::BASE64::decode((const unsigned char *) dt.c_str(),
                                                            dt.length());
 
+    if (t == NULL) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "error decoding the cryptogram");
+        wipe(password);
+        throwJavaException(env, "Error decrypting");
+        return NULL;
+    }
+
     std::string json = (char *) t->data;
     free(t->data);
     delete t;
