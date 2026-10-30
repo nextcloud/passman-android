@@ -66,9 +66,7 @@ void wipe(std::string &secret)
     OPENSSL_cleanse(&secret[0], secret.size());
 }
 
-extern "C" {
-
-jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclass jthis, jstring cryptogram, jstring key) {
+jstring decryptString(JNIEnv *env, jstring cryptogram, jstring key) {
     std::string dt = toStdString(env, cryptogram);
     std::string password = toStdString(env, key);
 
@@ -108,7 +106,7 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclas
     return NULL;
 }
 
-jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jstring plaintext, jstring key) {
+jstring encryptString(JNIEnv *env, jstring plaintext, jstring key) {
     std::string dt = toStdString(env, plaintext);
     std::string password = toStdString(env, key);
 
@@ -141,6 +139,33 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclas
 
     throwJavaException(env, "Error encrypting");
     return NULL;
+}
+
+/*
+ * A C++ exception leaving a JNI function aborts the app, e.g. the std::bad_alloc of a failed allocation
+ * in std::string or the JSON libraries, so the JNI functions turn it into the usual Java exception.
+ * (hopefully fixing a lot of random crashes, reported in the google play console)
+ */
+extern "C" {
+
+jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclass jthis, jstring cryptogram, jstring key) {
+    try {
+        return decryptString(env, cryptogram, key);
+    } catch (...) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "unexpected error decrypting");
+        throwJavaException(env, "Error decrypting");
+        return NULL;
+    }
+}
+
+jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jstring plaintext, jstring key) {
+    try {
+        return encryptString(env, plaintext, key);
+    } catch (...) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "unexpected error encrypting");
+        throwJavaException(env, "Error encrypting");
+        return NULL;
+    }
 }
 
 }
