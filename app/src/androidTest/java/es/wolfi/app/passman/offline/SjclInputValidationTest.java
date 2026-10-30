@@ -38,7 +38,7 @@ import es.wolfi.app.passman.SJCLCrypto;
 
 /**
  * Cryptograms come from the server or the offline cache, so the native SJCL implementation has to reject
- * malformed ones with an exception instead of crashing the app.
+ * malformed ones with an exception instead of crashing the app. The same applies to a failed encryption.
  */
 @RunWith(AndroidJUnit4.class)
 public class SjclInputValidationTest {
@@ -148,6 +148,15 @@ public class SjclInputValidationTest {
                 assertRejected(field + ": " + value, manipulated.toString());
             }
         }
+    }
+
+    /**
+     * (it was a surprise it did not work before this fix commit)
+     */
+    @Test
+    public void failedEncryptionThrowsAnException() {
+        // the native encryption fails for an empty plaintext, the app avoids this by JSON encoding it
+        assertThrows(Exception.class, () -> SJCLCrypto.encryptStringCpp("", PASSWORD));
     }
 
     private static void assertRejected(String message, String json) {

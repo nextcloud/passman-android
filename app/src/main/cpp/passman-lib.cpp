@@ -119,9 +119,6 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclas
     wipe(password);
     //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
 
-    char *arr_result = &result[0];
-    std::string lengthAsString = to_string(strlen(arr_result));
-
     if (result == NULL) {
         __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "error encrypting");
     }
@@ -129,7 +126,7 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclas
         //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "WHOOP!");
         //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
         WLF::Crypto::Datagram *t = WLF::Crypto::BASE64::encode((const unsigned char *) result,
-                                                               strlen(arr_result));
+                                                               strlen(result));
         free(result);
 
         if (t != NULL) {
