@@ -30,6 +30,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 import org.junit.runner.RunWith;
 
 import java.nio.charset.StandardCharsets;
@@ -60,6 +61,12 @@ public class SjclInputValidationTest {
     @Test
     public void unmodifiedCryptogramIsDecrypted() throws Exception {
         assertEquals(PLAINTEXT, SJCLCrypto.decryptString(cryptogram(parameters.toString()), PASSWORD));
+    }
+
+    @Test
+    public void wrongPasswordThrowsTheDecryptionError() {
+        // the exception the app gets from the Java wrapper
+        assertError("Error decrypting", () -> SJCLCrypto.decryptString(cryptogram(parameters.toString()), PASSWORD + "x"));
     }
 
     @Test
@@ -156,11 +163,24 @@ public class SjclInputValidationTest {
     @Test
     public void failedEncryptionThrowsAnException() {
         // the native encryption fails for an empty plaintext, the app avoids this by JSON encoding it
-        assertThrows(Exception.class, () -> SJCLCrypto.encryptStringCpp("", PASSWORD));
+        assertError("Error encrypting", () -> SJCLCrypto.encryptStringCpp("", PASSWORD));
     }
 
     private static void assertRejected(String message, String json) {
-        assertThrows(message, Exception.class, () -> SJCLCrypto.decryptStringCpp(cryptogram(json), PASSWORD));
+        assertError(message, "Error decrypting", () -> SJCLCrypto.decryptStringCpp(cryptogram(json), PASSWORD));
+    }
+
+    private static void assertError(String expectedMessage, ThrowingRunnable runnable) {
+        assertError(null, expectedMessage, runnable);
+    }
+
+    /**
+     * The native crypto reports every failure with a plain RuntimeException and a fixed message.
+     */
+    private static void assertError(String message, String expectedMessage, ThrowingRunnable runnable) {
+        Exception exception = assertThrows(message, Exception.class, runnable);
+        assertEquals(message, RuntimeException.class, exception.getClass());
+        assertEquals(message, expectedMessage, exception.getMessage());
     }
 
     private static String cryptogram(String json) {

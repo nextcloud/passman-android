@@ -105,7 +105,7 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclas
     }
 
     throwJavaException(env, "Error decrypting");
-    return (jstring) "";
+    return NULL;
 }
 
 jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jstring plaintext, jstring key) {
