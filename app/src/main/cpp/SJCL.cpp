@@ -448,19 +448,21 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
     salt = (unsigned char *) malloc(sizeof(unsigned char) * salt_len);
     derived_key = (unsigned char *) malloc(sizeof(unsigned char) * ks);
 
-    RAND_bytes(iv, iv_len);
-    RAND_bytes(salt, salt_len);
-
     // Assuming ciphertext will not be bigger that the plaintext length * ciphertext_allocation_multiplicator
     ciphertext = (unsigned char *) malloc(sizeof(unsigned char) * strlen(plaintext) * ciphertext_allocation_multiplicator);
 
     int ciphertext_len = -1;
-    // PBKDF2 Key derivation with SHA256 as SJCL does by default
-    if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key)) {
-        unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
-        ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
+    // Without random bytes, the IV and salt would be leftover memory and could repeat between encryptions
+    if (1 == RAND_bytes(iv, iv_len) && 1 == RAND_bytes(salt, salt_len)) {
+        // PBKDF2 Key derivation with SHA256 as SJCL does by default
+        if (1 == PKCS5_PBKDF2_HMAC(key.c_str(), key.length(), salt, salt_len, iter, EVP_sha256(), ks, derived_key)) {
+            unsigned char *tmp_plaintext = reinterpret_cast<unsigned char *>(plaintext);
+            ciphertext_len = encryptccm(tmp_plaintext, strlen(plaintext), additional, strlen ((char *)additional), derived_key, iv, iv_len, ciphertext, tag, ts);
+        } else {
+            handleErrors("Error deriving the key");
+        }
     } else {
-        handleErrors("Error deriving the key");
+        handleErrors("Error generating the IV and salt");
     }
 
     if (0 < ciphertext_len) {
