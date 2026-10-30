@@ -131,15 +131,15 @@ Datagram* BASE64::encode(const unsigned char *str, int length) {
     unsigned char *p;
 
     if ((length + 2) < 0 || ((length + 2) / 3) >= (1 << (sizeof(int) * 8 - 2))) {
-        ret->data = NULL;
-        ret->length = 0;
-        return ret;
+        delete ret;
+        return NULL;
     }
 
     ret->data = (unsigned char *)malloc((((length + 2) / 3) * 4)*(sizeof(char))+(1));
     if (ret->data == NULL) {
         fprintf(stderr, "out of memory!\n");
-        exit(1);
+        delete ret;
+        return NULL;
     }
     p = ret->data;
 

@@ -373,8 +373,12 @@ char* SJCL::decrypt(const string& sjcl_json, const string& key) {
 
     if (0 < plaintext_len) {
         Datagram* plaintext_base64 = BASE64::encode(plaintext, plaintext_len);
-        ret = reinterpret_cast<char *>(plaintext_base64->data);
-        delete plaintext_base64;
+        if (plaintext_base64 != nullptr) {
+            ret = reinterpret_cast<char *>(plaintext_base64->data);
+            delete plaintext_base64;
+        } else {
+            handleErrors("Error encoding the plaintext");
+        }
 
         /* do decoding now in the java part
          *
@@ -463,33 +467,33 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
 
         Datagram* ciphertext_base64 = BASE64::encode(
                 reinterpret_cast<const unsigned char *>(ciphertext_with_tag), ciphertext_len + ts);
-        char *tmpct64 = reinterpret_cast<char*>(ciphertext_base64->data);
         free(ciphertext_with_tag);
 
         Datagram* salt_base64 = BASE64::encode(salt, salt_len);
-        char *tmpsalt64 = reinterpret_cast<char*>(salt_base64->data);
-
         Datagram* iv_base64 = BASE64::encode(iv, iv_len);
-        char *tmpiv64 = reinterpret_cast<char *>(iv_base64->data);
 
+        // ensure all three encodings worked before continuing
+        if (ciphertext_base64 != nullptr && salt_base64 != nullptr && iv_base64 != nullptr) {
+            nlohmann::json food;
 
-        nlohmann::json food;
+            food["ct"] = reinterpret_cast<char*>(ciphertext_base64->data);
+            food["salt"] = reinterpret_cast<char*>(salt_base64->data);
+            food["iv"] = reinterpret_cast<char*>(iv_base64->data);
 
-        food["ct"] = tmpct64;
-        food["salt"] = tmpsalt64;
-        food["iv"] = tmpiv64;
+            food["v"] = 1;
+            food["iter"] = iter;
+            food["ks"] = key_size;
+            food["ts"] = tag_size;
+            food["mode"] = "ccm";
+            food["adata"] = "";
+            food["cipher"] = "aes";
 
-        food["v"] = 1;
-        food["iter"] = iter;
-        food["ks"] = key_size;
-        food["ts"] = tag_size;
-        food["mode"] = "ccm";
-        food["adata"] = "";
-        food["cipher"] = "aes";
-
-        string retrn = food.dump();
-        ret = (char *) std::calloc(retrn.length() +1, sizeof(char));
-        strcpy(ret, retrn.c_str());
+            string retrn = food.dump();
+            ret = (char *) std::calloc(retrn.length() +1, sizeof(char));
+            strcpy(ret, retrn.c_str());
+        } else {
+            handleErrors("Error encoding the cryptogram");
+        }
 
         releaseDatagram(ciphertext_base64);
         releaseDatagram(salt_base64);

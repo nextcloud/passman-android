@@ -130,13 +130,16 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclas
         //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
         WLF::Crypto::Datagram *t = WLF::Crypto::BASE64::encode((const unsigned char *) result,
                                                                strlen(arr_result));
-
-        jstring str = env->NewStringUTF((char *) t->data);
-
-        free(t->data);
-        delete t;
         free(result);
-        return str;
+
+        if (t != NULL) {
+            jstring str = env->NewStringUTF((char *) t->data);
+
+            free(t->data);
+            delete t;
+            return str;
+        }
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "error encoding the cryptogram");
     }
 
     throwJavaException(env, "Error encrypting");
