@@ -1,0 +1,10 @@
+- Add dark mode
+- Optionally highlight character classes in revealed passwords
+- Optionally require the device credential without biometrics on app start
+- Add credentials from the autofill manual search
+- Mark copied passwords and OTP codes as sensitive clipboard content
+- Fix deleting vaults that contain files
+- Correctly hide hidden credentials in the lists
+- Target Android 17 and optimize the build
+- Update OpenSSL to 3.5.9 LTS
+- Native crypto: fix memory leaks and reject malformed cryptograms for more stability
