@@ -188,16 +188,8 @@ public class AutofillInteractionActivity extends BaseActivity implements
 
     @Override
     public void onAddCredentialRequested() {
-        Credential credential = new Credential();
-        credential.setVault(vault);
-
         AutofillHelper.WebDomainResult domain = AutofillHelper.getLikelyDomain(structures);
-        if (domain.firstDomain != null) {
-            credential.setUrl(domain.getFirstUrl());
-        } else {
-            // apps without a web domain are matched by their package name
-            credential.setCustomFields(AutofillHelper.getPackageNameCustomFields(requesterPackageName));
-        }
+        Credential credential = AutofillHelper.newCredentialForRequester(vault, domain, requesterPackageName);
 
         getSupportFragmentManager()
                 .beginTransaction()

@@ -40,6 +40,7 @@ import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -395,7 +396,34 @@ public class AutofillHelper {
         }
     }
 
-    private static List<Credential> findMatchingCredentials(
+    /**
+     * New credential for the autofill requester, which will be matched by findMatchingCredentials once it's saved
+     *
+     * @param vault                target vault of the new credential
+     * @param domain               web domain of the requester, if it's a website
+     * @param requesterPackageName package name of the app that was requesting the autofill service
+     * @return credential with the url of the website or the package name custom field of the app
+     */
+    @NonNull
+    public static Credential newCredentialForRequester(
+            @NonNull Vault vault,
+            @NonNull WebDomainResult domain,
+            String requesterPackageName
+    ) {
+        Credential credential = new Credential();
+        credential.setVault(vault);
+
+        if (domain.firstDomain != null) {
+            credential.setUrl(domain.getFirstUrl());
+        } else {
+            // apps without a web domain are matched by their package name
+            credential.setCustomFields(getPackageNameCustomFields(requesterPackageName));
+        }
+        return credential;
+    }
+
+    @VisibleForTesting
+    public static List<Credential> findMatchingCredentials(
             @NonNull ArrayList<Credential> credentialArrayList,
             @NonNull String packageName,
             @NonNull WebDomainResult domain) {
