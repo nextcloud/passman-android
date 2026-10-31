@@ -44,6 +44,8 @@
     <string name="app_security">Rakenduse turvalisus</string>
     <string name="app_start_password">Rakenduse käivitamise salasõna</string>
     <string name="app_start_password_android_auth_description">Rakenduse käivitamisel kasuta Androidipõhist autentimist</string>
+    <string name="app_start_device_credential_only">Küsi seadme PIN-koodi, viibatavat võtmemustrit või salasõna (aga mitte biomeetrilist tuvastust)</string>
+    <string name="app_start_device_credential_only_unsupported">Seadme PIN-koodi, viibatavat võtmemustri või salasõna (aga mitte biomeetrilise tuvastuse) eeldamine vajab Androidi versiooni 11 või uuemat</string>
     <string name="wait_while_encrypting">Oota kuni krüptin andmeid…</string>
     <string name="wait_while_decrypting">Oota kuni dekrüptin andmeid…</string>
     <string name="wait_while_uploading">Oota kuni laadin andmeid üles…</string>

@@ -44,6 +44,8 @@
     <string name="app_security">App-Sicherheit</string>
     <string name="app_start_password">Passwort für App-Start</string>
     <string name="app_start_password_android_auth_description">Android-Benutzerauthentifizierung beim App-Start aktivieren</string>
+    <string name="app_start_device_credential_only">Fordert Geräte-PIN, Muster oder Passwort an (keine biometrischen Daten)</string>
+    <string name="app_start_device_credential_only_unsupported">Für die Anforderung der Geräte-PIN, des Musters oder des Passworts ohne biometrische Daten ist Android 11 oder neuer erforderlich</string>
     <string name="wait_while_encrypting">Warte während der Verschlüsselung …</string>
     <string name="wait_while_decrypting">Warte während der Entschlüsselung …</string>
     <string name="wait_while_uploading">Warte während des Hochladens …</string>

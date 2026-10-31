@@ -44,6 +44,8 @@
     <string name="app_security">Appsikkerhed</string>
     <string name="app_start_password">Adgangskode ved start af appen</string>
     <string name="app_start_password_android_auth_description">Aktivér Android-brugergodkendelse ved start af appen</string>
+    <string name="app_start_device_credential_only">Kræv enhedens pinkode, mønster eller adgangskode (uden biometri)</string>
+    <string name="app_start_device_credential_only_unsupported">Android 11 eller nyere er nødvendig for at kræve enhedens pinkode, mønster eller adgangskode uden biometri</string>
     <string name="wait_while_encrypting">Vent, mens der krypteres …</string>
     <string name="wait_while_decrypting">Vent, mens der dekrypteres …</string>
     <string name="wait_while_uploading">Vent, mens der uploades …</string>

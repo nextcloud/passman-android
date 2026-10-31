@@ -44,6 +44,8 @@
     <string name="app_security">應用程式安全性</string>
     <string name="app_start_password">應用程式啟動密碼</string>
     <string name="app_start_password_android_auth_description">在應用程式啟動時啟用 Android 使用者身份驗證</string>
+    <string name="app_start_device_credential_only">要求輸入裝置的 PIN 碼、圖案或密碼（不接受生物辨識）</string>
+    <string name="app_start_device_credential_only_unsupported">若要在不使用生物辨識的情況下要求輸入裝置的 PIN 碼、圖案或密碼，需使用 Android 11 或更新版本</string>
     <string name="wait_while_encrypting">正在加密，請稍候……</string>
     <string name="wait_while_decrypting">正在解密，請稍候……</string>
     <string name="wait_while_uploading">正在上傳，請稍候……</string>

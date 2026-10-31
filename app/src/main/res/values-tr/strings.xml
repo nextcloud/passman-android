@@ -44,6 +44,7 @@
     <string name="app_security">Uygulama güvenliği</string>
     <string name="app_start_password">Uygulama başlatma parolası</string>
     <string name="app_start_password_android_auth_description">Uygulama başlatılırken Android kullanıcısının kimliği doğrulansın</string>
+    <string name="app_start_device_credential_only">Aygıt PIN kodu, kilit deseni veya parolası istensin (biyometri yok)</string>
     <string name="wait_while_encrypting">Şifrelenirken bekleyin …</string>
     <string name="wait_while_decrypting">Şifre çözülürken bekleyin …</string>
     <string name="wait_while_uploading">Yüklenirken bekleyin …</string>

@@ -44,6 +44,8 @@
     <string name="app_security">Защита приложения</string>
     <string name="app_start_password">Пароль запуска приложения</string>
     <string name="app_start_password_android_auth_description">Включить аутентификацию пользователя Android при запуске приложения</string>
+    <string name="app_start_device_credential_only">Требовать PIN-код, графический ключ или пароль устройства (без биометрии)</string>
+    <string name="app_start_device_credential_only_unsupported">Запрашивать только PIN-код, графический ключ или пароль устройства, без биометрии, можно на Android 11 и новее</string>
     <string name="wait_while_encrypting">Подождите, идёт шифрование…</string>
     <string name="wait_while_decrypting">Подождите, идёт расшифровка…</string>
     <string name="wait_while_uploading">Дождитесь окончания загрузки…</string>
