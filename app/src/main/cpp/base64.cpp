@@ -63,13 +63,15 @@ Datagram* BASE64::decode(const unsigned char *str, int length) {
     ret->data = (unsigned char *)malloc(length+1);
     if (ret->data == NULL) {
         fprintf(stderr, "out of memory!\n");
-        exit(1);
+        delete ret;
+        return NULL;
     }
 
     while ((ch = *current++) != '\0' && length-- > 0) {
         if (ch == base64_pad) {
             if (*current != '=' && (i % 4) == 1) {
                 free(ret->data);
+                delete ret;
                 return NULL;
             }
             continue;
@@ -80,6 +82,7 @@ Datagram* BASE64::decode(const unsigned char *str, int length) {
             continue;
         } else if (ch == -2) {
             free(ret->data);
+            delete ret;
             return NULL;
         }
 
@@ -108,6 +111,7 @@ Datagram* BASE64::decode(const unsigned char *str, int length) {
         switch(i % 4) {
             case 1:
                 free(ret->data);
+                delete ret;
                 return NULL;
             case 2:
                 k++;
@@ -127,15 +131,15 @@ Datagram* BASE64::encode(const unsigned char *str, int length) {
     unsigned char *p;
 
     if ((length + 2) < 0 || ((length + 2) / 3) >= (1 << (sizeof(int) * 8 - 2))) {
-        ret->data = NULL;
-        ret->length = 0;
-        return ret;
+        delete ret;
+        return NULL;
     }
 
     ret->data = (unsigned char *)malloc((((length + 2) / 3) * 4)*(sizeof(char))+(1));
     if (ret->data == NULL) {
         fprintf(stderr, "out of memory!\n");
-        exit(1);
+        delete ret;
+        return NULL;
     }
     p = ret->data;
 
