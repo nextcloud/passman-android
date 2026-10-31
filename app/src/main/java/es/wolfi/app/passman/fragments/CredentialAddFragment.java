@@ -46,7 +46,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.koushikdutta.async.future.FutureCallback;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -55,6 +54,7 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import es.wolfi.app.ResponseHandlers.AutofillCredentialSaveResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialAddFileResponseHandler;
 import es.wolfi.app.ResponseHandlers.CredentialSaveResponseHandler;
 import es.wolfi.app.passman.EditPasswordTextItem;
@@ -105,7 +105,7 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     Spinner otp_algorithm_spinner;
     Spinner customFieldType;
 
-    private OnCredentialFragmentInteraction mListener;
+    private OnCredentialAddedListener mListener;
     private Credential credential;
     private FileEditAdapter fed;
     private CustomFieldEditAdapter cfed;
@@ -129,6 +129,17 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
      */
     public static CredentialAddFragment newInstance() {
         return new CredentialAddFragment();
+    }
+
+    /**
+     * Use this factory method to create a new instance of this fragment with prefilled values.
+     *
+     * @param prefilledCredential new credential with the target vault and the values to prefill
+     */
+    public static CredentialAddFragment newInstance(Credential prefilledCredential) {
+        CredentialAddFragment fragment = new CredentialAddFragment();
+        fragment.credential = prefilledCredential;
+        return fragment;
     }
 
     @Override
@@ -169,6 +180,8 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
         description = binding.addCredentialDescription;
         customFieldType = binding.customFieldType;
 
+        url.setText(credential.getUrl());
+
         otp_edit_extended = (LinearLayout) view.findViewById(R.id.otp_edit_extended);
         otp_secret = view.findViewById(R.id.edit_credential_otp_secret);
         otp_digits = view.findViewById(R.id.edit_credential_otp_digits);
@@ -185,8 +198,8 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnCredentialFragmentInteraction) {
-            mListener = (OnCredentialFragmentInteraction) context;
+        if (context instanceof OnCredentialAddedListener) {
+            mListener = (OnCredentialAddedListener) context;
         }
     }
 
@@ -219,6 +232,11 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (this.credential != null) {
+            // prefilled by newInstance(Credential)
+            return;
+        }
+
         Vault v = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
         if (v != null) {
             this.credential = new Credential();
@@ -419,25 +437,37 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
 
         Context context = getContext();
         final ProgressDialog progress = ProgressUtils.showLoadingSequence(context);
-        final AsyncHttpResponseHandler responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
+        final AsyncHttpResponseHandler responseHandler;
+        if (mListener != null) {
+            // the host handles the saved credential itself (e.g. the autofill interaction)
+            final OnCredentialAddedListener listener = mListener;
+            responseHandler = new AutofillCredentialSaveResponseHandler(this.credential.getVault(), context, context.getApplicationContext(), SingleTon.getTon(), "CredentialAdd",
+                    new AutofillCredentialSaveResponseHandler.OnCredentialSavedListener() {
+                        @Override
+                        public void onCredentialSaved(Credential credential) {
+                            alreadySaving.set(false);
+                            ProgressUtils.dismiss(progress);
+                            listener.onCredentialAdded(credential);
+                        }
+
+                        @Override
+                        public void onCredentialSaveFailed() {
+                            alreadySaving.set(false);
+                            ProgressUtils.dismiss(progress);
+                        }
+                    });
+        } else {
+            responseHandler = new CredentialSaveResponseHandler(alreadySaving, false, progress, view, (PasswordListActivity) getActivity(), getFragmentManager());
+        }
 
         this.credential.save(context, responseHandler);
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Activities containing this fragment can implement this interface to receive the saved credential,
+     * instead of the default vault list update of the PasswordListActivity.
      */
-    public interface OnCredentialFragmentInteraction {
-        // TODO: Update argument type and name
-        void onCredentialFragmentInteraction(Credential credential);
-
-        void saveCredential(Credential credential, Context c, FutureCallback<String> cb);
+    public interface OnCredentialAddedListener {
+        void onCredentialAdded(Credential credential);
     }
 }

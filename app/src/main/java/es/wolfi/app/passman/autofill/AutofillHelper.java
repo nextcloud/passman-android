@@ -63,6 +63,7 @@ import es.wolfi.utils.KeyStoreUtils;
 public class AutofillHelper {
     private static final String LOG_TAG = "AutofillHelper";
     private static final int MAX_DATASETS = 4;
+    public static final String PACKAGE_NAME_CUSTOM_FIELD_LABEL = "androidCredPackageName";
 
     /**
      * Returns the autofill vault, if there was one selected in the app settings.
@@ -290,7 +291,7 @@ public class AutofillHelper {
     }
 
     public static class WebDomainResult {
-        String firstDomain = null;
+        public String firstDomain = null;
         HashSet<String> allDomains;
 
         public WebDomainResult() {
@@ -329,8 +330,30 @@ public class AutofillHelper {
         return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
+    /**
+     * Credentials of apps without a web domain are matched by a custom field with the requester package name
+     *
+     * @param requesterPackageName package name of the app that was requesting the autofill service
+     * @return custom fields json string with the package name field, empty on error
+     */
+    public static String getPackageNameCustomFields(String requesterPackageName) {
+        try {
+            JSONArray customFields = new JSONArray();
+            JSONObject customField = new JSONObject();
+            customField.put("label", PACKAGE_NAME_CUSTOM_FIELD_LABEL);
+            customField.put("value", requesterPackageName);
+            customField.put("secret", false);
+            customField.put("field_type", "text");
+            customFields.put(customField);
+            return customFields.toString();
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "error creating package name customField");
+        }
+        return "";
+    }
+
     @NonNull
-    static WebDomainResult getLikelyDomain(ArrayList<AssistStructure> assistStructures) {
+    public static WebDomainResult getLikelyDomain(ArrayList<AssistStructure> assistStructures) {
         WebDomainResult res = new WebDomainResult();
 
         for (AssistStructure assistStructure : assistStructures) {
@@ -398,7 +421,7 @@ public class AutofillHelper {
 
                         String customFieldLabel = thisCredCustomField.getString("label");
 
-                        if (customFieldLabel.equalsIgnoreCase("androidCredPackageName")) {
+                        if (customFieldLabel.equalsIgnoreCase(PACKAGE_NAME_CUSTOM_FIELD_LABEL)) {
                             String credPackageName = thisCredCustomField.getString("value");
                             if (packageName.equalsIgnoreCase(credPackageName)) {
                                 matchingPackageCred.add(thisCred);

@@ -78,6 +78,7 @@ import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SettingsCache;
 import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.VaultLockManager;
+import es.wolfi.app.passman.fragments.CredentialAddFragment;
 import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
 import es.wolfi.app.passman.fragments.CredentialItemFragment;
 import es.wolfi.app.passman.fragments.SettingsFragment;
@@ -733,6 +734,16 @@ public class PasswordListActivity extends BaseActivity implements
     public void onVaultUnlock(Vault vault) {
         getSupportFragmentManager().popBackStack();
         showActiveVault();
+    }
+
+    @Override
+    public void onAddCredentialRequested() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                .replace(R.id.content_password_list, CredentialAddFragment.newInstance(), "credentialAdd")
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
