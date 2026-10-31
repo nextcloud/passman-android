@@ -23,6 +23,7 @@ package es.wolfi.app.passman.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -400,8 +401,11 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
             return;
         }
 
-        if (label.getText().toString().equals("")) {
+        if (label.getText().toString().isEmpty()) {
             label_header.setTextColor(getResources().getColor(R.color.danger));
+            // the label may be scrolled out of view, show the highlighted header and focus the empty field
+            label.requestFocus();
+            label_header.requestRectangleOnScreen(new Rect(0, 0, label_header.getWidth(), label_header.getHeight()));
             return;
         }
 
