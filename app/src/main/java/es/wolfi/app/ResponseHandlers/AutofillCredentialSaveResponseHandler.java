@@ -30,6 +30,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -51,8 +53,14 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
     private final Context applicationContext;
     private final SingleTon ton;
     private final String TAG;
+    @Nullable
+    private final OnCredentialSavedListener listener;
 
     public AutofillCredentialSaveResponseHandler(Vault vault, Context baseContext, Context applicationContext, SingleTon ton, String TAG) {
+        this(vault, baseContext, applicationContext, ton, TAG, null);
+    }
+
+    public AutofillCredentialSaveResponseHandler(Vault vault, Context baseContext, Context applicationContext, SingleTon ton, String TAG, @Nullable OnCredentialSavedListener listener) {
         super();
 
         this.vault = vault;
@@ -60,6 +68,7 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
         this.applicationContext = applicationContext;
         this.ton = ton;
         this.TAG = TAG;
+        this.listener = listener;
     }
 
     @Override
@@ -75,9 +84,14 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
                         if (credentialObject.has("credential_id") && credentialObject.getInt("vault_id") == vault.vault_id) {
                             Credential currentCredential = Credential.fromJSON(credentialObject, vault);
                             vault.addCredential(currentCredential);
-                            ((HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString())).put(vault.guid, vault);
+
+                            // vaults and active vault are not loaded if the app process was started by the autofill service
+                            HashMap<String, Vault> vaults = (HashMap<String, Vault>) ton.getExtra(SettingValues.VAULTS.toString());
+                            if (vaults != null) {
+                                vaults.put(vault.guid, vault);
+                            }
                             Vault activeVault = (Vault) SingleTon.getTon().getExtra(SettingValues.ACTIVE_VAULT.toString());
-                            if (vault.guid.equals(activeVault.guid)) {
+                            if (activeVault != null && vault.guid.equals(activeVault.guid)) {
                                 ton.addExtra(SettingValues.ACTIVE_VAULT.toString(), vault);
                             }
 
@@ -86,6 +100,9 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
 
                             Toast.makeText(applicationContext, applicationContext.getString(R.string.successfully_saved), Toast.LENGTH_SHORT).show();
                             Log.d(TAG, applicationContext.getString(R.string.successfully_saved));
+                            if (listener != null) {
+                                listener.onCredentialSaved(currentCredential);
+                            }
                             return;
                         }
                     } catch (JSONException e) {
@@ -95,6 +112,7 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
                     Toast.makeText(applicationContext, applicationContext.getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onSaveRequest(), failed to save: " + R.string.error_occurred);
                 }
+                notifySaveFailed();
             }
         });
     }
@@ -111,6 +129,8 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
+                notifySaveFailed();
+
                 if (!finalResponse.equals("") && JSONUtils.isJSONObject(finalResponse)) {
                     try {
                         JSONObject o = new JSONObject(finalResponse);
@@ -138,8 +158,20 @@ public class AutofillCredentialSaveResponseHandler extends AsyncHttpResponseHand
         });
     }
 
+    private void notifySaveFailed() {
+        if (listener != null) {
+            listener.onCredentialSaveFailed();
+        }
+    }
+
     @Override
     public void onRetry(int retryNo) {
         // called when request is retried
+    }
+
+    public interface OnCredentialSavedListener {
+        void onCredentialSaved(Credential credential);
+
+        void onCredentialSaveFailed();
     }
 }
