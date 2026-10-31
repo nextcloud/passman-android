@@ -21,6 +21,7 @@
  */
 
 #include "SJCL.h"
+#include <openssl/crypto.h>
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <JSON.h>
@@ -233,7 +234,7 @@ char* wstring_to_char(wstring str) {
 
 using namespace WLF::Crypto;
 
-char* SJCL::decrypt(string sjcl_json, string key) {
+char* SJCL::decrypt(const string& sjcl_json, const string& key) {
     JSONValue *data = JSON::Parse(sjcl_json.c_str());
 
     if (data == nullptr || ! data->IsObject()) {
@@ -272,7 +273,8 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     unsigned char* derived_key = (unsigned char*) malloc(sizeof(unsigned char) * key_size);
 
     // Assuming plaintext will always be smaller than the sjcl cyphertext which includes the tag and padding and stuff
-    unsigned char* plaintext = (unsigned char*) std::calloc(cryptogram->length +1, sizeof(unsigned char));
+    int cryptogram_length = cryptogram->length;
+    unsigned char* plaintext = (unsigned char*) std::calloc(cryptogram_length +1, sizeof(unsigned char));
     string s = string("The allocated string is: ") + string((char*)plaintext);
 
     /* PBKDF2 Key derivation with SHA256 as SJCL does by default */
@@ -286,6 +288,7 @@ char* SJCL::decrypt(string sjcl_json, string key) {
     if (0 < plaintext_len) {
         Datagram* plaintext_base64 = BASE64::encode(plaintext, plaintext_len);
         ret = reinterpret_cast<char *>(plaintext_base64->data);
+        delete plaintext_base64;
 
         /* do decoding now in the java part
          *
@@ -302,12 +305,21 @@ char* SJCL::decrypt(string sjcl_json, string key) {
         */
     }
 
-    // Free up resources
+    // Free up resources, wipe the secrets before
     free(iv_64);
     free(adata);
     free(salt_64);
     free(cyphertext);
-    free(data);
+    delete data;
+    free(cryptogram->data);
+    delete cryptogram;
+    free(salt->data);
+    delete salt;
+    free(iv_raw->data);
+    delete iv_raw;
+    OPENSSL_cleanse(plaintext, cryptogram_length + 1);
+    free(plaintext);
+    OPENSSL_cleanse(derived_key, key_size);
     free(derived_key);
 
     return ret;
@@ -365,6 +377,7 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         Datagram* ciphertext_base64 = BASE64::encode(
                 reinterpret_cast<const unsigned char *>(ciphertext_with_tag), ciphertext_len + ts);
         char *tmpct64 = reinterpret_cast<char*>(ciphertext_base64->data);
+        free(ciphertext_with_tag);
 
         Datagram* salt_base64 = BASE64::encode(salt, salt_len);
         char *tmpsalt64 = reinterpret_cast<char*>(salt_base64->data);
@@ -390,12 +403,20 @@ char* SJCL::encrypt(char* plaintext, const string& key) {
         string retrn = food.dump();
         ret = (char *) std::calloc(retrn.length() +1, sizeof(char));
         strcpy(ret, retrn.c_str());
+
+        free(ciphertext_base64->data);
+        delete ciphertext_base64;
+        free(salt_base64->data);
+        delete salt_base64;
+        free(iv_base64->data);
+        delete iv_base64;
     }
 
-    // Free up resources
+    // Free up resources, wipe the secrets before
     free(ciphertext);
     free(iv);
     free(salt);
+    OPENSSL_cleanse(derived_key, ks);
     free(derived_key);
 
     return ret;
