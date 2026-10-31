@@ -105,7 +105,7 @@ public class AutofillHelper {
      * @param packageName          Passman package name
      * @param requesterPackageName package name of the app that was requesting the autofill service
      * @param fields               fillable fields
-     * @param structures
+     * @param domain               web domain of the requester
      * @return set of tempFields
      */
     public static Set<AutofillId> fillResponseForDecryptedVault(
@@ -114,13 +114,11 @@ public class AutofillHelper {
             String packageName,
             String requesterPackageName,
             AutofillFieldCollection fields,
-            ArrayList<AssistStructure> structures
+            @NonNull WebDomainResult domain
     ) {
         AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
         AutofillField bestEmail = AutofillHelper.getEmailField(fields);
         AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
-
-        WebDomainResult domain = getLikelyDomain(structures);
 
         // Grab Credentials from vault
         ArrayList<Credential> allCred = vault.getCredentials();
