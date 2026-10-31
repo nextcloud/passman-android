@@ -140,6 +140,7 @@ public abstract class Core {
     }
 
     public static void requestInternalAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+        setUpAPIIfMissing(c);
         final AsyncHttpResponseHandler responseHandler = new CoreAPIGETResponseHandler(callback);
         if (ssoAccount != null) {
             final Map<String, List<String>> header = new HashMap<>();
@@ -167,6 +168,7 @@ public abstract class Core {
     }
 
     public static void requestAPIGET(Context c, String endpoint, final FutureCallback<String> callback) {
+        setUpAPIIfMissing(c);
         final AsyncHttpResponseHandler responseHandler = new CoreAPIGETResponseHandler(callback);
         if (ssoAccount != null) {
             final Map<String, List<String>> header = new HashMap<>();
@@ -195,6 +197,7 @@ public abstract class Core {
 
     public static void requestAPI(Context c, String endpoint, JSONObject jsonPostData, String requestType, final AsyncHttpResponseHandler responseHandler)
             throws MalformedURLException, UnsupportedEncodingException {
+        setUpAPIIfMissing(c);
 
         if (ssoAccount != null) {
             final Map<String, List<String>> header = new HashMap<>();
@@ -304,22 +307,19 @@ public abstract class Core {
     }
 
     /**
-     * Check if the user has logged in, also sets up the API
+     * Sets up the API with the stored server settings
      *
-     * @param c     The context where this should be run
-     * @param toast Whether we want or not a toast! Yum!
-     * @param cb    The callback
+     * @param c The context where this should be run
+     * @return true if the API was set up, false if the app has not yet been configured
      */
-    public static void checkLogin(final Context c, final boolean toast, final FutureCallback<Boolean> cb) {
+    public static boolean setUpAPIFromSettings(Context c) {
         SingleTon ton = SingleTon.getTon();
 
         if (ton.getString(SettingValues.HOST.toString()) == null) {
             String url = KeyStoreUtils.getString(SettingValues.HOST.toString(), null);
 
-            // If the url is null app has not yet been configured!
             if (url == null) {
-                cb.onCompleted(null, false);
-                return;
+                return false;
             }
 
             // Load the server settings
@@ -338,6 +338,33 @@ public abstract class Core {
         Log.d(LOG_TAG, "Pass: " + pass.replaceAll("(?s).", "*"));
 
         setUpAPI(c, host, user, pass);
+        return true;
+    }
+
+    /**
+     * The API is only set up by the app start, not if e.g. the autofill service started the app process
+     */
+    private static void setUpAPIIfMissing(Context c) {
+        if (host == null) {
+            setUpAPIFromSettings(c);
+        }
+    }
+
+    /**
+     * Check if the user has logged in, also sets up the API
+     *
+     * @param c     The context where this should be run
+     * @param toast Whether we want or not a toast! Yum!
+     * @param cb    The callback
+     */
+    public static void checkLogin(final Context c, final boolean toast, final FutureCallback<Boolean> cb) {
+        // If the API could not be set up the app has not yet been configured
+        if (!setUpAPIFromSettings(c)) {
+            cb.onCompleted(null, false);
+            return;
+        }
+
+        String host = SingleTon.getTon().getString(SettingValues.HOST.toString());
         getAPIVersion(c, new FutureCallback<String>() {
             @Override
             public void onCompleted(Exception e, String result) {

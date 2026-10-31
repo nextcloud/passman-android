@@ -45,6 +45,8 @@
     <string name="app_security">Appsäkerhet</string>
     <string name="app_start_password">Startlösenord för appen</string>
     <string name="app_start_password_android_auth_description">Kräv Android-autentisering när appen startas</string>
+    <string name="app_start_device_credential_only">Kräv enhetens PIN-kod, mönster eller lösenord (ingen biometri)</string>
+    <string name="app_start_device_credential_only_unsupported">Att kräva enhetens PIN-kod, mönster eller lösenord utan biometri kräver Android 11 eller senare</string>
     <string name="wait_while_encrypting">Vänta medan kryptering pågår …</string>
     <string name="wait_while_decrypting">Vänta medan dekryptering pågår …</string>
     <string name="wait_while_uploading">Vänta medan uppladdning pågår …</string>
@@ -64,7 +66,13 @@
     <string name="cancel">Avbryt</string>
     <string name="enable_credential_list_icons">Visa ikoner i listan över inloggningsuppgifter</string>
     <string name="credential_icon">Ikon för inloggningsuppgifter</string>
+    <string name="color_password_characters">Markera lösenordstecken</string>
+    <string name="color_password_characters_description">Färglägg tecken i visade lösenord</string>
+    <string name="choose_password_digit_color">Välj markeringsfärg</string>
     <string name="highlight_color_digits">Siffror</string>
+    <string name="highlight_color_symbols">Symboler</string>
+    <string name="highlight_color_uppercase">Versaler</string>
+    <string name="highlight_color_lowercase">Gemener</string>
     <string name="clear_clipboard_delay">Rensa urklipp efter (sekunder)</string>
     <string name="vault_auto_lock_delay">Fördröjning innan valvet låses automatiskt</string>
     <string name="enable_screenshot_protection">Aktivera skydd mot skärmbilder</string>
@@ -103,6 +111,7 @@
     <string name="issuer">Utfärdare</string>
     <string name="error_parsing_qr_code">Fel vid tolkning av QR-kod</string>
     <string name="camera_permission_denied">Åtkomst till kameran nekades</string>
+    <string name="local_network_permission_denied">Utan behörighet att få åtkomst till enheter i det lokala nätverket kan Passman inte ansluta till din Nextcloud-server.</string>
     <string name="no_matching_credentials_or_fields_found">Inga matchande autentiseringsuppgifter eller automatiskt ifyllbara fält hittades</string>
     <string name="no_active_vault_add_credential_error">Inget aktivt valv. Det går inte att lägga till autentiseringsuppgifter!</string>
     <string name="automatic_autofill_vault_description">Välj Automatiskt om autofyll endast ska vara tillgängligt när ett valv är öppet och upplåst i appen</string>

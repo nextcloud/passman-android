@@ -70,7 +70,6 @@ public class CredentialItemFragment extends Fragment {
     private AsyncTask filterTask = null;
     private RecyclerView recyclerView;
     private Vault customVault = null;
-    private boolean enableLimitedAutofillView = false;
     private SharedPreferences sharedPreferences;
     private boolean caseInsensitiveSort = false;
 
@@ -81,9 +80,8 @@ public class CredentialItemFragment extends Fragment {
     public CredentialItemFragment() {
     }
 
-    public CredentialItemFragment(Vault customVault, boolean enableLimitedAutofillView) {
+    public CredentialItemFragment(Vault customVault) {
         this.customVault = customVault;
-        this.enableLimitedAutofillView = enableLimitedAutofillView;
     }
 
     // TODO: Customize parameter initialization
@@ -187,21 +185,13 @@ public class CredentialItemFragment extends Fragment {
         View credentialView = view.findViewById(R.id.list);
         if (credentialView instanceof RecyclerView) {
 
-            if (!this.enableLimitedAutofillView) {
-                FloatingActionButton addCredentialButton = view.findViewById(R.id.addCredentialButton);
-                addCredentialButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        getParentFragmentManager()
-                                .beginTransaction()
-                                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
-                                .replace(R.id.content_password_list, CredentialAddFragment.newInstance(), "credentialAdd")
-                                .addToBackStack(null)
-                                .commit();
-                    }
-                });
-                addCredentialButton.setVisibility(View.VISIBLE);
-            }
+            FloatingActionButton addCredentialButton = view.findViewById(R.id.addCredentialButton);
+            addCredentialButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.onAddCredentialRequested();
+                }
+            });
 
             Context context = credentialView.getContext();
             recyclerView = (RecyclerView) credentialView;
@@ -266,6 +256,8 @@ public class CredentialItemFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(Credential item);
+
+        void onAddCredentialRequested();
 
         void setLastCredentialListPosition(int pos);
 

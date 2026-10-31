@@ -50,7 +50,6 @@ import androidx.annotation.RequiresApi;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -115,6 +114,8 @@ public final class CredentialAutofillService extends AutofillService {
             return;
         }
 
+        AutofillHelper.WebDomainResult domain = AutofillHelper.getLikelyDomain(structures);
+
         // Create the base response
         FillResponse.Builder response = new FillResponse.Builder();
 
@@ -136,11 +137,8 @@ public final class CredentialAutofillService extends AutofillService {
             RemoteViews vaultUnlockPresentation = new RemoteViews(getPackageName(), R.layout.autofill_list_item_with_icon);
             vaultUnlockPresentation.setTextViewText(R.id.autofilltext, "Unlock autofill vault");
 
-            Intent authIntent = new Intent(this, AutofillInteractionActivity.class);
-            authIntent.setAction(AutofillInteractionActivity.CustomAutofillIntentActions.VAULT_UNLOCK.name());
-            authIntent.putExtra("packageName", packageName);
-            authIntent.putExtra("requesterPackageName", requesterPackageName);
-            authIntent.putParcelableArrayListExtra("structures", structures);
+            Intent authIntent = AutofillInteractionActivity.newIntent(this, AutofillInteractionActivity.CustomAutofillIntentActions.VAULT_UNLOCK,
+                    packageName, requesterPackageName, fields, domain);
 
             boolean intentItemState = setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
             callback.onSuccess(intentItemState ? response.build() : null);
@@ -166,7 +164,7 @@ public final class CredentialAutofillService extends AutofillService {
                 packageName,
                 requesterPackageName,
                 fields,
-                structures
+                domain
         );
 
         if (tempFields.size() > 0) {
@@ -186,11 +184,8 @@ public final class CredentialAutofillService extends AutofillService {
                 RemoteViews vaultUnlockPresentation = new RemoteViews(getPackageName(), R.layout.autofill_list_item_with_icon);
                 vaultUnlockPresentation.setTextViewText(R.id.autofilltext, "Manual search");
 
-                Intent authIntent = new Intent(this, AutofillInteractionActivity.class);
-                authIntent.setAction(AutofillInteractionActivity.CustomAutofillIntentActions.MANUAL_SEARCH.name());
-                authIntent.putExtra("packageName", packageName);
-                authIntent.putExtra("requesterPackageName", requesterPackageName);
-                authIntent.putParcelableArrayListExtra("structures", structures);
+                Intent authIntent = AutofillInteractionActivity.newIntent(this, AutofillInteractionActivity.CustomAutofillIntentActions.MANUAL_SEARCH,
+                        packageName, requesterPackageName, fields, domain);
 
                 boolean intentItemState = setupCustomAutofillIntentItem(this, response, fields, vaultUnlockPresentation, authIntent);
                 callback.onSuccess(intentItemState ? response.build() : null);
@@ -326,19 +321,7 @@ public final class CredentialAutofillService extends AutofillService {
             username = "";
         }
 
-        String customFieldString = "";
-        try {
-            JSONArray customFields = new JSONArray();
-            JSONObject customField = new JSONObject();
-            customField.put("label", "androidCredPackageName");
-            customField.put("value", requesterPackageName);
-            customField.put("secret", false);
-            customField.put("field_type", "text");
-            customFields.put(customField);
-            customFieldString = customFields.toString();
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, "onSaveRequest(), error creating customField");
-        }
+        String customFieldString = AutofillHelper.getPackageNameCustomFields(requesterPackageName);
 
         Log.d(LOG_TAG, "onSaveRequest(), building Credential");
 

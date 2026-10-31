@@ -44,6 +44,8 @@
     <string name="app_security">Zabezpečenie aplikácie</string>
     <string name="app_start_password">Štartovacie heslo aplikácie</string>
     <string name="app_start_password_android_auth_description">Povoliť overovanie používateľa Androidu pri spustení aplikácie</string>
+    <string name="app_start_device_credential_only">Vyžadovať PIN kód, vzor alebo heslo zariadenia (bez biometrie)</string>
+    <string name="app_start_device_credential_only_unsupported">Vyžadovanie PIN kódu, vzoru alebo hesla zariadenia bez biometrie vyžaduje Android 11 alebo novší</string>
     <string name="wait_while_encrypting">Čakajte šifrujem ...</string>
     <string name="wait_while_decrypting">Čakajte dešifrujem ...</string>
     <string name="wait_while_uploading">Čakajte nahrávam ...</string>
@@ -110,6 +112,7 @@
     <string name="issuer">Vydavateľ</string>
     <string name="error_parsing_qr_code">Chyba pri spracovávaní QR kódu</string>
     <string name="camera_permission_denied">Prístup ku kamere bol odmietnutý</string>
+    <string name="local_network_permission_denied">Bez povolenia na prístup k zariadeniam v lokálnej sieti sa Passman nemôže pripojiť k vášmu serveru Nextcloud.</string>
     <string name="no_matching_credentials_or_fields_found">Nenašli sa žiadne zodpovedajúce poverenia ani automaticky vyplniteľné polia</string>
     <string name="no_active_vault_add_credential_error">Žiadny aktívny trezor. Nie je možné pridať poverenia!</string>
     <string name="automatic_autofill_vault_description">Ak chcete, aby sa automatické dopĺňanie poskytovalo iba vtedy, keď je trezor aktívne otvorený a odomknutý v aplikácii, vyberte možnosť Automaticky</string>

@@ -44,6 +44,7 @@
     <string name="app_security">Uygulama güvenliği</string>
     <string name="app_start_password">Uygulama başlatma parolası</string>
     <string name="app_start_password_android_auth_description">Uygulama başlatılırken Android kullanıcısının kimliği doğrulansın</string>
+    <string name="app_start_device_credential_only">Aygıt PIN kodu, kilit deseni veya parolası istensin (biyometri yok)</string>
     <string name="wait_while_encrypting">Şifrelenirken bekleyin …</string>
     <string name="wait_while_decrypting">Şifre çözülürken bekleyin …</string>
     <string name="wait_while_uploading">Yüklenirken bekleyin …</string>
@@ -108,6 +109,7 @@
     <string name="issuer">Yayınlayan</string>
     <string name="error_parsing_qr_code">Kare kod işlenirken sorun çıktı</string>
     <string name="camera_permission_denied">Kamera izni reddedildi</string>
+    <string name="local_network_permission_denied">Yerel ağdaki aygıtlara erişme izni verilmeden Passman, Nextcloud sunucunuz ile bağlantı kuramaz.</string>
     <string name="no_matching_credentials_or_fields_found">Eşleşen bir kimlik doğrulama bilgisi ya da otomatik doldurulabilir bir alan bulunamadı</string>
     <string name="no_active_vault_add_credential_error">Etkin bir kasa yok. Kimlik doğrulama bilgisi eklenemedi!</string>
     <string name="automatic_autofill_vault_description">Otomatik doldurmanın yalnızca bir kasa etkin olarak açıkken ve uygulama içinden kilidi açılmışken yapılmasını istiyorsanız Otomatik olarak seçin.</string>

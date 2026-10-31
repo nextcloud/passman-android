@@ -65,7 +65,6 @@ import com.nextcloud.android.sso.helper.SingleAccountHelper;
 
 import org.json.JSONException;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
@@ -81,7 +80,6 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.VaultLockManager;
 import es.wolfi.app.passman.fragments.CredentialAddFragment;
 import es.wolfi.app.passman.fragments.CredentialDisplayFragment;
-import es.wolfi.app.passman.fragments.CredentialEditFragment;
 import es.wolfi.app.passman.fragments.CredentialItemFragment;
 import es.wolfi.app.passman.fragments.SettingsFragment;
 import es.wolfi.app.passman.fragments.VaultFragment;
@@ -91,7 +89,6 @@ import es.wolfi.passman.API.Credential;
 import es.wolfi.passman.API.File;
 import es.wolfi.passman.API.Vault;
 import es.wolfi.utils.DeviceCredentialAuthentication;
-import es.wolfi.utils.FileUtils;
 import es.wolfi.utils.KeyStoreUtils;
 import es.wolfi.utils.LocalNetworkPermission;
 import es.wolfi.utils.ProgressUtils;
@@ -108,8 +105,6 @@ public class PasswordListActivity extends BaseActivity implements
     private static final int REQUEST_CODE_KEYGUARD = 0;
     private static final int REQUEST_CODE_AUTHENTICATE = 1;
     private static final int REQUEST_CODE_CREATE_DOCUMENT = 2;
-    public static final int REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_EDIT = 7;
-    public static final int REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD = 8;
 
     static boolean running = false;
 
@@ -742,6 +737,16 @@ public class PasswordListActivity extends BaseActivity implements
     }
 
     @Override
+    public void onAddCredentialRequested() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                .replace(R.id.content_password_list, CredentialAddFragment.newInstance(), "credentialAdd")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
     public void onCredentialFragmentInteraction(Credential credential) {
     }
 
@@ -795,22 +800,6 @@ public class PasswordListActivity extends BaseActivity implements
         item.download(getApplicationContext(), progress, offerDownloadCallback);
     }
 
-    public void selectFileToAdd(int activityRequestFileCode) {
-        //new Intent("android.intent.action.GET_CONTENT").addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE).setType("*/*");
-
-        // Optionally, specify a URI for the directory that should be opened in
-        // the system file picker when your app creates the document.
-        //intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, pickerInitialUri);
-
-        startActivityForResult(intent, activityRequestFileCode);
-    }
-
-    public void scanQRCodeForOTP(int requestCode) {
-        startActivityForResult(new Intent(this, ScanQRCodeActivity.class), requestCode);
-    }
-
     /**
      * The server of the manual login, null when logged in with Nextcloud SSO (the Nextcloud files app connects then).
      */
@@ -852,28 +841,6 @@ public class PasswordListActivity extends BaseActivity implements
             }
         }
 
-        if (requestCode == REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_EDIT) { // scan qr code as otp config in credential edit
-            if (resultCode != RESULT_OK) {
-                return;
-            }
-
-            CredentialEditFragment credentialEditFragment = (CredentialEditFragment) getSupportFragmentManager().findFragmentByTag("credentialEdit");
-            if (credentialEditFragment != null) {
-                credentialEditFragment.processScannedQRCodeData(data.getData().toString());
-            }
-        }
-
-        if (requestCode == REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD) { // scan qr code as otp config in credential add
-            if (resultCode != RESULT_OK) {
-                return;
-            }
-
-            CredentialAddFragment credentialAddFragment = (CredentialAddFragment) getSupportFragmentManager().findFragmentByTag("credentialAdd");
-            if (credentialAddFragment != null) {
-                credentialAddFragment.processScannedQRCodeData(data.getData().toString());
-            }
-        }
-
         // Following cases should only be handled on positive result
         if (resultCode != RESULT_OK)
             return;
@@ -901,65 +868,6 @@ public class PasswordListActivity extends BaseActivity implements
                 }
             }
             Toast.makeText(getApplicationContext(), getString(R.string.error_writing_file), Toast.LENGTH_SHORT).show();
-        }
-
-        if (requestCode >= FileUtils.activityRequestFileCode.credentialEditFile.ordinal() && requestCode <= FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) { //add file
-            if (data != null) {
-                Uri uri = data.getData();
-
-                if (uri != null) {
-                    try {
-                        ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(uri, "r");
-                        if (pfd != null) {
-                            FileInputStream fileInputStream = new FileInputStream(pfd.getFileDescriptor());
-                            int fileSize = fileInputStream.available();
-                            byte[] fileContent = new byte[fileSize];
-
-                            int num = fileInputStream.read(fileContent);
-                            fileInputStream.close();
-                            String realEncodedFile = Base64.encodeToString(fileContent, Base64.DEFAULT | Base64.NO_WRAP);
-                            pfd.close();
-
-                            String mimeType = getContentResolver().getType(uri);
-                            String fileName = "unknown";
-                            String filePathFromUri = FileUtils.getPath(this, uri);
-                            if (filePathFromUri != null) {
-                                java.io.File file = new java.io.File(filePathFromUri);
-                                fileName = file.getName();
-                            }
-
-                            try {
-                                String encodedFile = String.format("data:%s;base64,%s", mimeType, realEncodedFile);
-                                if (requestCode == FileUtils.activityRequestFileCode.credentialEditFile.ordinal() || requestCode == FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal()) {
-                                    CredentialEditFragment credentialEditFragment = (CredentialEditFragment) getSupportFragmentManager().findFragmentByTag("credentialEdit");
-
-                                    // generalize requestCode for usage with generalized ResponseHandler instances
-                                    if (requestCode == FileUtils.activityRequestFileCode.credentialEditCustomFieldFile.ordinal()) {
-                                        requestCode = FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal();
-                                    } else {
-                                        requestCode = FileUtils.activityRequestFileCode.credentialAddFile.ordinal();
-                                    }
-
-                                    if (credentialEditFragment != null) {
-                                        credentialEditFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
-                                    }
-                                } else if (requestCode == FileUtils.activityRequestFileCode.credentialAddFile.ordinal() || requestCode == FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal()) {
-                                    CredentialAddFragment credentialAddFragment = (CredentialAddFragment) getSupportFragmentManager().findFragmentByTag("credentialAdd");
-                                    if (credentialAddFragment != null) {
-                                        credentialAddFragment.addSelectedFile(encodedFile, fileName, mimeType, fileSize, requestCode);
-                                    }
-                                }
-                                return;
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            Toast.makeText(getApplicationContext(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
         }
     }
 

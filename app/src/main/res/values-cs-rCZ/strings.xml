@@ -63,6 +63,7 @@
     <string name="enable_credential_list_icons">Zapnout ikony v seznamu přihlašovacích údajů</string>
     <string name="credential_icon">Ikona přihlašovacího údaje</string>
     <string name="highlight_color_digits">Číslic</string>
+    <string name="highlight_color_symbols">Symboly</string>
     <string name="clear_clipboard_delay">Vymazat obsah schránky po uplynutí (sekund)</string>
     <string name="generate_password">Vytvořit heslo</string>
     <string name="generate_password_to_clipboard">Vytvořit náhodné heslo a zkopírovat ho do schránky</string>

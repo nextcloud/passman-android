@@ -23,7 +23,7 @@ package es.wolfi.app.passman.activities;
 
 import static android.view.autofill.AutofillManager.EXTRA_AUTHENTICATION_RESULT;
 
-import android.app.assist.AssistStructure;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +44,7 @@ import es.wolfi.app.passman.SingleTon;
 import es.wolfi.app.passman.autofill.AutofillFieldCollection;
 import es.wolfi.app.passman.autofill.AutofillHelper;
 import es.wolfi.app.passman.databinding.ActivityAutofillInteractionBinding;
+import es.wolfi.app.passman.fragments.CredentialAddFragment;
 import es.wolfi.app.passman.fragments.CredentialItemFragment;
 import es.wolfi.app.passman.fragments.VaultLockScreenFragment;
 import es.wolfi.passman.API.Credential;
@@ -52,10 +53,17 @@ import es.wolfi.passman.API.Vault;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class AutofillInteractionActivity extends BaseActivity implements
         VaultLockScreenFragment.VaultUnlockInteractionListener,
-        CredentialItemFragment.OnListFragmentInteractionListener {
+        CredentialItemFragment.OnListFragmentInteractionListener,
+        CredentialAddFragment.OnCredentialAddedListener {
     public final static String LOG_TAG = "AutofillInteractionAct.";
 
     public static final int REQUEST_CODE_AUTOFILL_PLACEHOLDER = 1;
+
+    private static final String EXTRA_PACKAGE_NAME = "packageName";
+    private static final String EXTRA_REQUESTER_PACKAGE_NAME = "requesterPackageName";
+    private static final String EXTRA_FIELDS = "fields";
+    private static final String EXTRA_WEB_DOMAIN = "webDomain";
+    private static final String EXTRA_WEB_SCHEME = "webScheme";
 
     public enum CustomAutofillIntentActions {
         VAULT_UNLOCK("VAULT_UNLOCK"),
@@ -68,9 +76,29 @@ public class AutofillInteractionActivity extends BaseActivity implements
         }
     }
 
-    private ArrayList<AssistStructure> structures;
+    private AutofillFieldCollection fields;
+    private AutofillHelper.WebDomainResult domain;
     private String packageName;
     private String requesterPackageName;
+    private Vault vault;
+
+    /**
+     * The activity gets the already parsed fields and web domain instead of the AssistStructures.
+     * Reading AssistStructures that were passed on by the autofill service crashes on MIUI
+     * (SecurityException in AssistStructure$ParcelTransferWriter).
+     */
+    public static Intent newIntent(Context context, CustomAutofillIntentActions action, String packageName,
+                                   String requesterPackageName, AutofillFieldCollection fields,
+                                   AutofillHelper.WebDomainResult domain) {
+        Intent intent = new Intent(context, AutofillInteractionActivity.class);
+        intent.setAction(action.name);
+        intent.putExtra(EXTRA_PACKAGE_NAME, packageName);
+        intent.putExtra(EXTRA_REQUESTER_PACKAGE_NAME, requesterPackageName);
+        intent.putParcelableArrayListExtra(EXTRA_FIELDS, fields.toBundles());
+        intent.putExtra(EXTRA_WEB_DOMAIN, domain.firstDomain);
+        intent.putExtra(EXTRA_WEB_SCHEME, domain.firstScheme);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +113,15 @@ public class AutofillInteractionActivity extends BaseActivity implements
 
         Intent intent = getIntent();
         if (intent != null) {
-            structures = intent.getParcelableArrayListExtra("structures");
-            packageName = intent.getStringExtra("packageName");
-            requesterPackageName = intent.getStringExtra("requesterPackageName");
+            ArrayList<Bundle> fieldBundles = intent.getParcelableArrayListExtra(EXTRA_FIELDS);
+            fields = AutofillFieldCollection.fromBundles(fieldBundles);
+            domain = new AutofillHelper.WebDomainResult();
+            domain.addDomain(intent.getStringExtra(EXTRA_WEB_DOMAIN), intent.getStringExtra(EXTRA_WEB_SCHEME));
+            packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME);
+            requesterPackageName = intent.getStringExtra(EXTRA_REQUESTER_PACKAGE_NAME);
 
             SingleTon ton = SingleTon.getTon();
-            Vault vault = AutofillHelper.getAutofillVault(ton, getBaseContext());
+            vault = AutofillHelper.getAutofillVault(ton, getBaseContext());
 
             if (intent.getAction().equals(CustomAutofillIntentActions.VAULT_UNLOCK.name)) {
                 Log.d(LOG_TAG, "open VaultLockScreenFragment");
@@ -106,7 +137,7 @@ public class AutofillInteractionActivity extends BaseActivity implements
                 getSupportFragmentManager()
                         .beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                        .replace(R.id.frameContainer, new CredentialItemFragment(vault, true), "vault")
+                        .replace(R.id.frameContainer, new CredentialItemFragment(vault), "vault")
                         .commitNow();
             }
         }
@@ -115,12 +146,10 @@ public class AutofillInteractionActivity extends BaseActivity implements
     @Override
     public void onVaultUnlock(Vault vault) {
         Log.d(LOG_TAG, "onVaultUnlock " + vault.name);
+        this.vault = vault;
 
         FillResponse.Builder fillResponse = new FillResponse.Builder();
         Intent replyIntent = new Intent();
-
-        // Find autofillable fields
-        AutofillFieldCollection fields = AutofillHelper.getAutofillableFields(structures.get(structures.size() - 1), false);
 
         Set<AutofillId> tempFields = AutofillHelper.fillResponseForDecryptedVault(
                 fillResponse,
@@ -128,7 +157,7 @@ public class AutofillInteractionActivity extends BaseActivity implements
                 packageName,
                 requesterPackageName,
                 fields,
-                structures
+                domain
         );
 
         if (tempFields.size() > 0) {
@@ -146,7 +175,7 @@ public class AutofillInteractionActivity extends BaseActivity implements
             getSupportFragmentManager()
                     .beginTransaction()
                     .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_out_left, R.anim.slide_out_left)
-                    .replace(R.id.frameContainer, new CredentialItemFragment(vault, true), "vault")
+                    .replace(R.id.frameContainer, new CredentialItemFragment(vault), "vault")
                     .commitNow();
         }
     }
@@ -157,9 +186,6 @@ public class AutofillInteractionActivity extends BaseActivity implements
 
         FillResponse.Builder fillResponse = new FillResponse.Builder();
         Intent replyIntent = new Intent();
-
-        // Find autofillable fields
-        AutofillFieldCollection fields = AutofillHelper.getAutofillableFields(structures.get(structures.size() - 1), false);
 
         Set<AutofillId> tempFields = AutofillHelper.fillResponseForExplicitCredential(
                 fillResponse,
@@ -180,6 +206,24 @@ public class AutofillInteractionActivity extends BaseActivity implements
         replyIntent.putExtra(EXTRA_AUTHENTICATION_RESULT, fillResponse.build());
         setResult(RESULT_OK, replyIntent);
         finish();
+    }
+
+    @Override
+    public void onAddCredentialRequested() {
+        Credential credential = AutofillHelper.newCredentialForRequester(vault, domain, requesterPackageName);
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+                .replace(R.id.frameContainer, CredentialAddFragment.newInstance(credential), "credentialAdd")
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onCredentialAdded(Credential credential) {
+        // select the new credential for autofill like a manually selected one
+        onListFragmentInteraction(credential);
     }
 
     @Override

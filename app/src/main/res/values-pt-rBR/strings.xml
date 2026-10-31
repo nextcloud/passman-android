@@ -44,6 +44,8 @@
     <string name="app_security">Segurança do aplicativo</string>
     <string name="app_start_password">Senha de início do aplicativo</string>
     <string name="app_start_password_android_auth_description">Ativar autenticação do usuário Android ao iniciar o aplicativo</string>
+    <string name="app_start_device_credential_only">Exigir o PIN, o padrão ou a senha do dispositivo (sem biometria)</string>
+    <string name="app_start_device_credential_only_unsupported">Para exigir o PIN, o padrão ou a senha do dispositivo sem o uso de biometria, é necessário o Android 11 ou uma versão mais recente</string>
     <string name="wait_while_encrypting">Aguarde enquanto criptografa ...</string>
     <string name="wait_while_decrypting">Aguarde enquanto descriptografa ...</string>
     <string name="wait_while_uploading">Aguarde enquanto faz o upload ...</string>
@@ -109,6 +111,7 @@
     <string name="issuer">Emissor</string>
     <string name="error_parsing_qr_code">Erro ao analisar o código QR</string>
     <string name="camera_permission_denied">Permissão da câmera negada</string>
+    <string name="local_network_permission_denied">Sem a permissão para acessar dispositivos na rede local, o Passman não consegue se conectar ao seu servidor Nextcloud.</string>
     <string name="no_matching_credentials_or_fields_found">Nenhuma credencial correspondente ou nenhum campo de preenchimento automático foi encontrado</string>
     <string name="no_active_vault_add_credential_error">Nenhum cofre ativo. Não é possível adicionar credencial!</string>
     <string name="automatic_autofill_vault_description">Selecione Automático se desejar que o preenchimento automático seja fornecido apenas quando um Cofre estiver ativamente aberto e destrancado no aplicativo</string>

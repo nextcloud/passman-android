@@ -22,11 +22,34 @@
 
 package es.wolfi.app.passman.autofill;
 
+import android.os.Bundle;
+
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class AutofillFieldCollection extends ArrayList<AutofillField> {
+    /**
+     * @return the fields as Bundles to pass them within a PendingIntent (see AutofillField.toBundle())
+     */
+    public ArrayList<Bundle> toBundles() {
+        ArrayList<Bundle> bundles = new ArrayList<>();
+        for (AutofillField field : this) {
+            bundles.add(field.toBundle());
+        }
+        return bundles;
+    }
+
+    public static AutofillFieldCollection fromBundles(@NonNull List<Bundle> bundles) {
+        AutofillFieldCollection fields = new AutofillFieldCollection();
+        for (Bundle bundle : bundles) {
+            fields.add(AutofillField.fromBundle(bundle));
+        }
+        return fields;
+    }
+
     public AutofillField getRequiredId(String hint) {
         // Order: Android Hint, HTMLInfo, View Hint,  Resource id
         // Focused First

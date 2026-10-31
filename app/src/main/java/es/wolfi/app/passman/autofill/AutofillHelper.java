@@ -40,6 +40,7 @@ import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,6 +64,7 @@ import es.wolfi.utils.KeyStoreUtils;
 public class AutofillHelper {
     private static final String LOG_TAG = "AutofillHelper";
     private static final int MAX_DATASETS = 4;
+    public static final String PACKAGE_NAME_CUSTOM_FIELD_LABEL = "androidCredPackageName";
 
     /**
      * Returns the autofill vault, if there was one selected in the app settings.
@@ -103,7 +105,7 @@ public class AutofillHelper {
      * @param packageName          Passman package name
      * @param requesterPackageName package name of the app that was requesting the autofill service
      * @param fields               fillable fields
-     * @param structures
+     * @param domain               web domain of the requester
      * @return set of tempFields
      */
     public static Set<AutofillId> fillResponseForDecryptedVault(
@@ -112,13 +114,11 @@ public class AutofillHelper {
             String packageName,
             String requesterPackageName,
             AutofillFieldCollection fields,
-            ArrayList<AssistStructure> structures
+            @NonNull WebDomainResult domain
     ) {
         AutofillField bestUsername = AutofillHelper.getUsernameField(fields);
         AutofillField bestEmail = AutofillHelper.getEmailField(fields);
         AutofillField bestPassword = AutofillHelper.getPasswordField(fields);
-
-        WebDomainResult domain = getLikelyDomain(structures);
 
         // Grab Credentials from vault
         ArrayList<Credential> allCred = vault.getCredentials();
@@ -290,7 +290,8 @@ public class AutofillHelper {
     }
 
     public static class WebDomainResult {
-        String firstDomain = null;
+        public String firstDomain = null;
+        public String firstScheme = null;
         HashSet<String> allDomains;
 
         public WebDomainResult() {
@@ -298,7 +299,7 @@ public class AutofillHelper {
             Log.d(LOG_TAG, "Web Domain Result constructed");
         }
 
-        public void addDomain(String domain) {
+        public void addDomain(String domain, String scheme) {
             if (TextUtils.isEmpty(domain)) {
                 return;
             }
@@ -308,7 +309,20 @@ public class AutofillHelper {
 
             if (firstDomain == null) {
                 firstDomain = domain;
+                firstScheme = scheme;
             }
+        }
+
+        /**
+         * The autofill framework only provides the domain and (since Android 9) the scheme of a website, not its path
+         *
+         * @return the first domain, prefixed with its scheme if known
+         */
+        public String getFirstUrl() {
+            if (TextUtils.isEmpty(firstScheme)) {
+                return firstDomain;
+            }
+            return firstScheme + "://" + firstDomain;
         }
     }
 
@@ -329,8 +343,30 @@ public class AutofillHelper {
         return domain.startsWith("www.") ? domain.substring(4) : domain;
     }
 
+    /**
+     * Credentials of apps without a web domain are matched by a custom field with the requester package name
+     *
+     * @param requesterPackageName package name of the app that was requesting the autofill service
+     * @return custom fields json string with the package name field, empty on error
+     */
+    public static String getPackageNameCustomFields(String requesterPackageName) {
+        try {
+            JSONArray customFields = new JSONArray();
+            JSONObject customField = new JSONObject();
+            customField.put("label", PACKAGE_NAME_CUSTOM_FIELD_LABEL);
+            customField.put("value", requesterPackageName);
+            customField.put("secret", false);
+            customField.put("field_type", "text");
+            customFields.put(customField);
+            return customFields.toString();
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, "error creating package name customField");
+        }
+        return "";
+    }
+
     @NonNull
-    static WebDomainResult getLikelyDomain(ArrayList<AssistStructure> assistStructures) {
+    public static WebDomainResult getLikelyDomain(ArrayList<AssistStructure> assistStructures) {
         WebDomainResult res = new WebDomainResult();
 
         for (AssistStructure assistStructure : assistStructures) {
@@ -347,14 +383,45 @@ public class AutofillHelper {
     static void getNodeDomain(AssistStructure.ViewNode viewNode, WebDomainResult res) {
         String webDomain = viewNode.getWebDomain();
         if (webDomain != null) {
-            res.addDomain(webDomain);
+            String webScheme = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                webScheme = viewNode.getWebScheme();
+            }
+            res.addDomain(webDomain, webScheme);
         }
         for (int i = 0; i < viewNode.getChildCount(); i++) {
             getNodeDomain(viewNode.getChildAt(i), res);
         }
     }
 
-    private static List<Credential> findMatchingCredentials(
+    /**
+     * New credential for the autofill requester, which will be matched by findMatchingCredentials once it's saved
+     *
+     * @param vault                target vault of the new credential
+     * @param domain               web domain of the requester, if it's a website
+     * @param requesterPackageName package name of the app that was requesting the autofill service
+     * @return credential with the url of the website or the package name custom field of the app
+     */
+    @NonNull
+    public static Credential newCredentialForRequester(
+            @NonNull Vault vault,
+            @NonNull WebDomainResult domain,
+            String requesterPackageName
+    ) {
+        Credential credential = new Credential();
+        credential.setVault(vault);
+
+        if (domain.firstDomain != null) {
+            credential.setUrl(domain.getFirstUrl());
+        } else {
+            // apps without a web domain are matched by their package name
+            credential.setCustomFields(getPackageNameCustomFields(requesterPackageName));
+        }
+        return credential;
+    }
+
+    @VisibleForTesting
+    public static List<Credential> findMatchingCredentials(
             @NonNull ArrayList<Credential> credentialArrayList,
             @NonNull String packageName,
             @NonNull WebDomainResult domain) {
@@ -398,7 +465,7 @@ public class AutofillHelper {
 
                         String customFieldLabel = thisCredCustomField.getString("label");
 
-                        if (customFieldLabel.equalsIgnoreCase("androidCredPackageName")) {
+                        if (customFieldLabel.equalsIgnoreCase(PACKAGE_NAME_CUSTOM_FIELD_LABEL)) {
                             String credPackageName = thisCredCustomField.getString("value");
                             if (packageName.equalsIgnoreCase(credPackageName)) {
                                 matchingPackageCred.add(thisCred);
