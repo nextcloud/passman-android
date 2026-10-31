@@ -66,14 +66,19 @@ void wipe(std::string &secret)
     OPENSSL_cleanse(&secret[0], secret.size());
 }
 
-extern "C" {
-
-jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclass jthis, jstring cryptogram, jstring key) {
+jstring decryptString(JNIEnv *env, jstring cryptogram, jstring key) {
     std::string dt = toStdString(env, cryptogram);
     std::string password = toStdString(env, key);
 
     WLF::Crypto::Datagram *t = WLF::Crypto::BASE64::decode((const unsigned char *) dt.c_str(),
                                                            dt.length());
+
+    if (t == NULL) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "error decoding the cryptogram");
+        wipe(password);
+        throwJavaException(env, "Error decrypting");
+        return NULL;
+    }
 
     std::string json = (char *) t->data;
     free(t->data);
@@ -98,10 +103,10 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclas
     }
 
     throwJavaException(env, "Error decrypting");
-    return (jstring) "";
+    return NULL;
 }
 
-jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jstring plaintext, jstring key) {
+jstring encryptString(JNIEnv *env, jstring plaintext, jstring key) {
     std::string dt = toStdString(env, plaintext);
     std::string password = toStdString(env, key);
 
@@ -112,9 +117,6 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclas
     wipe(password);
     //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
 
-    char *arr_result = &result[0];
-    std::string lengthAsString = to_string(strlen(arr_result));
-
     if (result == NULL) {
         __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "error encrypting");
     }
@@ -122,18 +124,48 @@ jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclas
         //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "WHOOP!");
         //__android_log_write(ANDROID_LOG_ERROR, LOG_TAG, result);
         WLF::Crypto::Datagram *t = WLF::Crypto::BASE64::encode((const unsigned char *) result,
-                                                               strlen(arr_result));
-
-        jstring str = env->NewStringUTF((char *) t->data);
-
-        free(t->data);
-        delete t;
+                                                               strlen(result));
         free(result);
-        return str;
+
+        if (t != NULL) {
+            jstring str = env->NewStringUTF((char *) t->data);
+
+            free(t->data);
+            delete t;
+            return str;
+        }
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "error encoding the cryptogram");
     }
 
     throwJavaException(env, "Error encrypting");
     return NULL;
+}
+
+/*
+ * A C++ exception leaving a JNI function aborts the app, e.g. the std::bad_alloc of a failed allocation
+ * in std::string or the JSON libraries, so the JNI functions turn it into the usual Java exception.
+ * (hopefully fixing a lot of random crashes, reported in the google play console)
+ */
+extern "C" {
+
+jstring Java_es_wolfi_app_passman_SJCLCrypto_decryptStringCpp(JNIEnv *env, jclass jthis, jstring cryptogram, jstring key) {
+    try {
+        return decryptString(env, cryptogram, key);
+    } catch (...) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "unexpected error decrypting");
+        throwJavaException(env, "Error decrypting");
+        return NULL;
+    }
+}
+
+jstring Java_es_wolfi_app_passman_SJCLCrypto_encryptStringCpp(JNIEnv *env, jclass jthis, jstring plaintext, jstring key) {
+    try {
+        return encryptString(env, plaintext, key);
+    } catch (...) {
+        __android_log_write(ANDROID_LOG_ERROR, LOG_TAG, "unexpected error encrypting");
+        throwJavaException(env, "Error encrypting");
+        return NULL;
+    }
 }
 
 }

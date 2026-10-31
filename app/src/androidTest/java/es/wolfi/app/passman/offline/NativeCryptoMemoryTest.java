@@ -21,15 +21,20 @@
 package es.wolfi.app.passman.offline;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import android.os.Debug;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.nio.charset.StandardCharsets;
 
 import es.wolfi.app.passman.SJCLCrypto;
 
@@ -80,6 +85,26 @@ public class NativeCryptoMemoryTest {
             SJCLCrypto.encryptString(PLAINTEXT, PASSWORD, true);
         }
         assertGrowthBelowLimit("encrypt", before, Debug.getNativeHeapAllocatedSize());
+    }
+
+    @Test
+    public void rejectedDecryptionDoesNotLeakNativeMemory() throws Exception {
+        JSONObject parameters = new JSONObject(new String(
+                Base64.decode(SJCLCrypto.encryptString(PLAINTEXT, PASSWORD, true), Base64.DEFAULT),
+                StandardCharsets.UTF_8
+        ));
+        // the large ct and the salt are decoded before the undecodable iv lets the decryption fail
+        parameters.put("iv", "A=");
+        String rejected = Base64.encodeToString(parameters.toString().getBytes(StandardCharsets.UTF_8), Base64.NO_WRAP);
+        for (int i = 0; i < 20; i++) {
+            assertThrows(Exception.class, () -> SJCLCrypto.decryptStringCpp(rejected, PASSWORD));
+        }
+
+        long before = Debug.getNativeHeapAllocatedSize();
+        for (int i = 0; i < RUNS; i++) {
+            assertThrows(Exception.class, () -> SJCLCrypto.decryptStringCpp(rejected, PASSWORD));
+        }
+        assertGrowthBelowLimit("rejected decrypt", before, Debug.getNativeHeapAllocatedSize());
     }
 
     private static void assertGrowthBelowLimit(String operation, long before, long after) {
