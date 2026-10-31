@@ -61,6 +61,7 @@ import es.wolfi.app.passman.EditPasswordTextItem;
 import es.wolfi.app.passman.R;
 import es.wolfi.app.passman.SettingValues;
 import es.wolfi.app.passman.SingleTon;
+import es.wolfi.app.passman.activities.BaseActivity;
 import es.wolfi.app.passman.activities.PasswordListActivity;
 import es.wolfi.app.passman.adapters.CustomFieldEditAdapter;
 import es.wolfi.app.passman.adapters.FileEditAdapter;
@@ -326,7 +327,7 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordListActivity) requireActivity()).scanQRCodeForOTP(PasswordListActivity.REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD);
+                ((BaseActivity) requireActivity()).scanQRCodeForOTP(BaseActivity.REQUEST_CODE_SCAN_QR_CODE_FOR_OTP_ADD);
             }
         };
     }
@@ -350,7 +351,7 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddFile.ordinal());
+                ((BaseActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddFile.ordinal());
             }
         };
     }
@@ -360,7 +361,7 @@ public class CredentialAddFragment extends Fragment implements View.OnClickListe
             @Override
             public void onClick(View view) {
                 if (customFieldType.getSelectedItem().toString().equals("File")) {
-                    ((PasswordListActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal());
+                    ((BaseActivity) requireActivity()).selectFileToAdd(FileUtils.activityRequestFileCode.credentialAddCustomFieldFile.ordinal());
                 } else {
                     CustomField cf = new CustomField();
                     cf.setLabel("newLabel" + (cfed.getItemCount() + 1));
