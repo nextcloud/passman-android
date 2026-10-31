@@ -24,6 +24,7 @@ package es.wolfi.app.passman.autofill;
 
 import android.app.assist.AssistStructure;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
@@ -35,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -50,12 +52,20 @@ public class AutofillField implements Comparable {
     public static final int AUTOFILL_DISCOVERY_TYPE_RESOURCEID = 8;
     public static final int AUTOFILL_DISCOVERY_TYPE_TEXT = 16;
 
+    private static final String BUNDLE_ID = "id";
+    private static final String BUNDLE_VALUE = "value";
+    private static final String BUNDLE_HINTS = "hints";
+    private static final String BUNDLE_FOCUSED = "focused";
+    private static final String BUNDLE_DISCOVERY_TYPES = "discoveryTypes";
+
     private HashSet<String> hints;
     private AutofillId autofillid;
     private AutofillValue autofillValue;
     private boolean focused;
     private int discoveryTypes;
 
+    private AutofillField() {
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public AutofillField(AutofillId id, AssistStructure.ViewNode viewNode) throws Exception {
@@ -87,6 +97,32 @@ public class AutofillField implements Comparable {
         if ((discoveryTypes == AUTOFILL_DISCOVERY_TYPE_NONE) || hints.isEmpty()) {
             throw new Exception("Not autofillable.");
         }
+    }
+
+    /**
+     * Fields passed within a PendingIntent must only contain framework classes,
+     * the system unparcels its extras without access to the classes of this app.
+     *
+     * @return the field as Bundle, readable with fromBundle()
+     */
+    public Bundle toBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(BUNDLE_ID, autofillid);
+        bundle.putParcelable(BUNDLE_VALUE, autofillValue);
+        bundle.putStringArrayList(BUNDLE_HINTS, new ArrayList<>(hints));
+        bundle.putBoolean(BUNDLE_FOCUSED, focused);
+        bundle.putInt(BUNDLE_DISCOVERY_TYPES, discoveryTypes);
+        return bundle;
+    }
+
+    public static AutofillField fromBundle(@NonNull Bundle bundle) {
+        AutofillField field = new AutofillField();
+        field.autofillid = bundle.getParcelable(BUNDLE_ID);
+        field.autofillValue = bundle.getParcelable(BUNDLE_VALUE);
+        field.hints = new HashSet<>(bundle.getStringArrayList(BUNDLE_HINTS));
+        field.focused = bundle.getBoolean(BUNDLE_FOCUSED);
+        field.discoveryTypes = bundle.getInt(BUNDLE_DISCOVERY_TYPES);
+        return field;
     }
 
     public boolean isFocused() {

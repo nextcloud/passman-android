@@ -44,6 +44,8 @@
     <string name="app_security">應用程式安全性</string>
     <string name="app_start_password">應用程式啟動密碼</string>
     <string name="app_start_password_android_auth_description">在應用程式啟動時啟用 Android 使用者身份驗證</string>
+    <string name="app_start_device_credential_only">要求輸入裝置的 PIN 碼、圖案或密碼（不接受生物辨識）</string>
+    <string name="app_start_device_credential_only_unsupported">若要在不使用生物辨識的情況下要求輸入裝置的 PIN 碼、圖案或密碼，需使用 Android 11 或更新版本</string>
     <string name="wait_while_encrypting">正在加密，請稍候……</string>
     <string name="wait_while_decrypting">正在解密，請稍候……</string>
     <string name="wait_while_uploading">正在上傳，請稍候……</string>
@@ -63,7 +65,13 @@
     <string name="cancel">取消</string>
     <string name="enable_credential_list_icons">啟用憑證清單圖示</string>
     <string name="credential_icon">憑證圖示</string>
+    <string name="color_password_characters">突顯密碼字元</string>
+    <string name="color_password_characters_description">為已揭露的密碼中的字元上色</string>
+    <string name="choose_password_digit_color">選擇突顯顏色</string>
     <string name="highlight_color_digits">數字</string>
+    <string name="highlight_color_symbols">符號</string>
+    <string name="highlight_color_uppercase">大寫字母</string>
+    <string name="highlight_color_lowercase">小寫字母</string>
     <string name="clear_clipboard_delay">清除剪貼簿（幾秒後）</string>
     <string name="vault_auto_lock_delay">保險庫自動上鎖（分鐘後）</string>
     <string name="enable_screenshot_protection">在「最近使用」清單、螢幕截圖以及不安全的顯示器上隱藏應用程式內容</string>
@@ -101,6 +109,7 @@
     <string name="issuer">簽發者</string>
     <string name="error_parsing_qr_code">解析 QR code 時發生錯誤</string>
     <string name="camera_permission_denied">相機權限被拒絕</string>
+    <string name="local_network_permission_denied">若未獲得存取區域網路中裝置的權限，Passman 將無法連線至您的 Nextcloud 伺服器。</string>
     <string name="no_matching_credentials_or_fields_found">找不到符合的憑證或自動填入欄位</string>
     <string name="no_active_vault_add_credential_error">無活躍的保管箱。無法新增憑證！</string>
     <string name="automatic_autofill_vault_description">若您希望僅在應用程式中主動開啟並解鎖保管箱時提供自動填入，請選取「自動」</string>

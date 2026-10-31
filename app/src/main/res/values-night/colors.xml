@@ -11,6 +11,7 @@
     <color name="form_text_color">#E0E0E0</color>
     <color name="icon_tint">#B0B0B0</color>
     <color name="checkbox_color">@color/colorPrimary</color>
+    <color name="sso_account_background">#4A4B4B</color>
     <color name="autofill_item_background">#303030</color>
     <color name="autofill_item_text_color">@color/white</color>
 </resources>

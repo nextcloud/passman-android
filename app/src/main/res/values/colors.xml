@@ -28,6 +28,7 @@
     <color name="form_text_color">#333333</color>
     <color name="icon_tint">#757575</color>
     <color name="checkbox_color">@color/colorPrimaryDark</color>
+    <color name="sso_account_background">@color/white</color>
     <!-- the autofill suggestions are drawn by the system, the host's popup background may not match the text color of the theme -->
     <color name="autofill_item_background">#FFFFFF</color>
     <color name="autofill_item_text_color">#DE000000</color>
