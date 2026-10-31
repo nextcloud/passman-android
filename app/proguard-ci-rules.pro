@@ -10,5 +10,6 @@
 -keep class androidx.concurrent.futures.** { *; }
 -keep class com.google.common.util.concurrent.ListenableFuture { *; }
 
-# resource ids the tests look up but the app code doesn't reference (only used in layouts)
--keep class es.wolfi.app.passman.R$* { public static <fields>; }
+# view ids the tests look up but the app code doesn't reference (only used in layouts),
+# only R$id, keeping all R classes would keep every resource and disable the resource shrinking
+-keep class es.wolfi.app.passman.R$id { public static <fields>; }
