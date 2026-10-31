@@ -193,7 +193,7 @@ public class AutofillInteractionActivity extends BaseActivity implements
 
         AutofillHelper.WebDomainResult domain = AutofillHelper.getLikelyDomain(structures);
         if (domain.firstDomain != null) {
-            credential.setUrl(domain.firstDomain);
+            credential.setUrl(domain.getFirstUrl());
         } else {
             // apps without a web domain are matched by their package name
             credential.setCustomFields(AutofillHelper.getPackageNameCustomFields(requesterPackageName));

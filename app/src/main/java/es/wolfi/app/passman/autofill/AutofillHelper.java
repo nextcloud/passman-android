@@ -292,6 +292,7 @@ public class AutofillHelper {
 
     public static class WebDomainResult {
         public String firstDomain = null;
+        public String firstScheme = null;
         HashSet<String> allDomains;
 
         public WebDomainResult() {
@@ -299,7 +300,7 @@ public class AutofillHelper {
             Log.d(LOG_TAG, "Web Domain Result constructed");
         }
 
-        public void addDomain(String domain) {
+        public void addDomain(String domain, String scheme) {
             if (TextUtils.isEmpty(domain)) {
                 return;
             }
@@ -309,7 +310,20 @@ public class AutofillHelper {
 
             if (firstDomain == null) {
                 firstDomain = domain;
+                firstScheme = scheme;
             }
+        }
+
+        /**
+         * The autofill framework only provides the domain and (since Android 9) the scheme of a website, not its path
+         *
+         * @return the first domain, prefixed with its scheme if known
+         */
+        public String getFirstUrl() {
+            if (TextUtils.isEmpty(firstScheme)) {
+                return firstDomain;
+            }
+            return firstScheme + "://" + firstDomain;
         }
     }
 
@@ -370,7 +384,11 @@ public class AutofillHelper {
     static void getNodeDomain(AssistStructure.ViewNode viewNode, WebDomainResult res) {
         String webDomain = viewNode.getWebDomain();
         if (webDomain != null) {
-            res.addDomain(webDomain);
+            String webScheme = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                webScheme = viewNode.getWebScheme();
+            }
+            res.addDomain(webDomain, webScheme);
         }
         for (int i = 0; i < viewNode.getChildCount(); i++) {
             getNodeDomain(viewNode.getChildAt(i), res);
