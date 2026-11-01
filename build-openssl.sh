@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 OPENSSL_SUBMODULE_PATH="app/src/main/cpplibs/openssl"
 
