@@ -168,7 +168,9 @@ android {
 
     splits {
         abi {
-            enable = true
+            // R8 shrinks the resources per ABI split since AGP 9, but bundling expects a single shrunk resources file.
+            // App bundles are split by ABI anyway, so build bundles in a separate Gradle run without the ABI splits.
+            enable = !gradle.startParameter.taskNames.any { it.toLowerCase().contains("bundle") }
             reset()
             include 'armeabi-v7a', 'arm64-v8a', 'x86_64', 'x86'
             universalApk = true

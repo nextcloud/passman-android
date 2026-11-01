@@ -28,7 +28,9 @@ platform :android do
 
   desc "Create and sign a new build"
   lane :build do
-    gradle(tasks: ["clean", "assembleRelease", "assembleGooglePlayRelease", "bundleRelease", "bundleGooglePlayRelease"])
+    gradle(tasks: ["clean", "assembleRelease", "assembleGooglePlayRelease"])
+    # separate run, bundle builds disable the ABI splits (see app/build.gradle)
+    gradle(tasks: ["bundleRelease", "bundleGooglePlayRelease"])
   end
 
   desc "Submit a new Beta Build to the Google Play store"
