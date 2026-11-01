@@ -44,6 +44,8 @@
     <string name="app_security">Slándáil aipeanna</string>
     <string name="app_start_password">Pasfhocal tosaithe aip</string>
     <string name="app_start_password_android_auth_description">Cumasaigh fíordheimhniú úsáideora Android ar thosú aip</string>
+    <string name="app_start_device_credential_only">Éiligh PIN, patrún nó pasfhocal an ghléis (gan bithmhéadracht)</string>
+    <string name="app_start_device_credential_only_unsupported">Teastaíonn Android 11 nó níos nuaí chun PIN, patrún nó pasfhocal an ghléis a éileamh gan bithmhéadracht a úsáid.</string>
     <string name="wait_while_encrypting">Fan agus tú ag criptiú…</string>
     <string name="wait_while_decrypting">Fan agus tú ag díchriptiú…</string>
     <string name="wait_while_uploading">Fan agus tú ag uaslódáil…</string>
@@ -63,7 +65,13 @@
     <string name="cancel">Cealaigh</string>
     <string name="enable_credential_list_icons">Cumasaigh deilbhíní liostaí creidiúnaithe</string>
     <string name="credential_icon">Deilbhín dintiúir</string>
+    <string name="color_password_characters">Aibhsigh carachtair an phasfhocail</string>
+    <string name="color_password_characters_description">Dathaigh carachtair i bhfocail fhaire a nochtadh</string>
+    <string name="choose_password_digit_color">Roghnaigh dath an aibhsithe</string>
     <string name="highlight_color_digits">Digití</string>
+    <string name="highlight_color_symbols">Siombailí</string>
+    <string name="highlight_color_uppercase">Litreacha móra</string>
+    <string name="highlight_color_lowercase">Litreacha beaga</string>
     <string name="clear_clipboard_delay">Glan an ghearrthaisce (tar éis soicind)</string>
     <string name="vault_auto_lock_delay">Glasáil uathoibríoch cruinneacháin (tar éis cúpla nóiméad)</string>
     <string name="enable_screenshot_protection">Folaigh ábhar aipeanna i scannáin le déanaí, i nglacthaí scáileáin agus ar thaispeántais neamhshlána</string>
@@ -105,6 +113,7 @@
     <string name="issuer">Eisitheoir</string>
     <string name="error_parsing_qr_code">Tharla earráid agus an cód QR á pharsáil</string>
     <string name="camera_permission_denied">Diúltaíodh cead ceamara</string>
+    <string name="local_network_permission_denied">Gan cead rochtain a fháil ar fheistí sa líonra áitiúil, ní féidir le Passman nascadh le do fhreastalaí Nextcloud.</string>
     <string name="no_matching_credentials_or_fields_found">Ní bhfuarthas aon dintiúir mheaitseála nó réimsí uath-líonta</string>
     <string name="no_active_vault_add_credential_error">Gan cruinneachán gníomhach. Ní féidir dintiúir a chur leis!</string>
     <string name="automatic_autofill_vault_description">Roghnaigh Uathoibríoch más mian leat go gcuirfí líonadh uathoibríoch ar fáil ach amháin nuair a bhíonn cruinneachán oscailte agus díghlasáilte go gníomhach san aip</string>

@@ -41,6 +41,7 @@
     <string name="add_custom_field">Přidat uživatelsky určenou kolonku</string>
     <string name="unlock_passman">Odemknout Passman</string>
     <string name="unlock_passman_message_device_auth">Udělte pověření pro přístup do aplikace Passman</string>
+    <string name="app_security">Zabezpečení aplikace</string>
     <string name="app_start_password">Heslo při spuštění aplikace</string>
     <string name="app_start_password_android_auth_description">Zapnout ověření uživatele ze systému Android při spuštění aplikace</string>
     <string name="wait_while_encrypting">Vyčkejte dokončení šifrování …</string>
@@ -65,6 +66,8 @@
     <string name="highlight_color_digits">Číslic</string>
     <string name="highlight_color_symbols">Symboly</string>
     <string name="clear_clipboard_delay">Vymazat obsah schránky po uplynutí (sekund)</string>
+    <string name="vault_locked_notification_title">Trezor uzamčen</string>
+    <string name="security_channel_name">Zabezpečení trezoru</string>
     <string name="generate_password">Vytvořit heslo</string>
     <string name="generate_password_to_clipboard">Vytvořit náhodné heslo a zkopírovat ho do schránky</string>
     <string name="enable_password_generator_shortcut_description">Zapnout zkratku na generátor hesel</string>

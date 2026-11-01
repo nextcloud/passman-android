@@ -1,12 +1,12 @@
 <resources>
     <string name="action_settings">Indstillinger</string>
-    <string name="action_refresh">Opdatér</string>
+    <string name="action_refresh">Opdater</string>
     <string name="nchost">Serveradresse</string>
     <string name="username">Brugernavn</string>
     <string name="password">Adgangskode</string>
     <string name="connect">Tilslut</string>
-    <string name="wrongNCUrl">URL\'en er forkert eller ikke i stand til at tilslutte</string>
-    <string name="wrongNCSettings">Indstillingerne er ikke korrekt</string>
+    <string name="wrongNCUrl">Forkert URL til Nextcloud-backend, eller der kunne ikke oprettes forbindelse</string>
+    <string name="wrongNCSettings">Indstillingerne er ikke korrekte</string>
     <string name="net_error">Netværksfejl</string>
     <string name="net_error_dialog_description">Der kunne ikke oprettes forbindelse til serveren!\nÆndringer kan ikke gemmes uden en fungerende forbindelse til serveren.</string>
     <string name="unlock">Lås op</string>
@@ -15,17 +15,17 @@
     <string name="email">E-mail</string>
     <string name="URL">URL</string>
     <string name="description">Beskrivelse</string>
-    <string name="copied_to_clipboard">Tekst kopieret til udklipsholder</string>
+    <string name="copied_to_clipboard">Teksten er kopieret til udklipsholderen</string>
     <string name="vault_password">Boksadgangskode</string>
-    <string name="vault_password_save">Gem ny boksadgangskode</string>
+    <string name="vault_password_save">Gem boksadgangskoden</string>
     <string name="not_implemented_yet">Ikke implementeret endnu</string>
     <string name="created">Oprettet:</string>
-    <string name="last_accessed">Sidst tilgået:</string>
+    <string name="last_accessed">Sidst åbnet:</string>
     <string name="search">Søg</string>
     <string name="save">Gem</string>
     <string name="successfully_saved">Gemt</string>
     <string name="error_occurred">Der opstod en fejl</string>
-    <string name="update">Opdatér</string>
+    <string name="update">Opdater</string>
     <string name="successfully_updated">Opdateret</string>
     <string name="delete">Slet</string>
     <string name="successfully_deleted">Slettet</string>
@@ -36,7 +36,7 @@
     <string name="error_downloading_file">Filen kunne ikke downloades</string>
     <string name="error_writing_file">Filen kunne ikke skrives</string>
     <string name="files">Filer</string>
-    <string name="custom_fields">Brugerdefineret felter</string>
+    <string name="custom_fields">Brugerdefinerede felter</string>
     <string name="add_file">Tilføj fil</string>
     <string name="add_custom_field">Tilføj et brugerdefineret felt</string>
     <string name="unlock_passman">Lås Passman op</string>
@@ -58,7 +58,7 @@
     <string name="automatically">automatisk</string>
     <string name="request_connect_timeout">Timeout for forbindelsesanmodning (i sekunder)</string>
     <string name="request_response_timeout">Timeout for svar på anmodning (i sekunder)</string>
-    <string name="expert_settings">Eksportér indstillinger</string>
+    <string name="expert_settings">Ekspertindstillinger</string>
     <string name="confirm_credential_deletion">Er du sikker på, at du vil slette denne adgangskode?</string>
     <string name="confirm_vault_deletion">Er du sikker på, at du vil slette denne boks?</string>
     <string name="yes">Ja</string>
@@ -91,7 +91,7 @@
     <string name="password_generator_use_digits">Brug cifre</string>
     <string name="password_generator_use_lowercase">Brug små bogstaver</string>
     <string name="password_generator_use_uppercase">Brug store bogstaver</string>
-    <string name="password_length">Adgangskode længde</string>
+    <string name="password_length">Adgangskodens længde</string>
     <string name="vault_name">Boksnavn</string>
     <string name="sharing_key_strength">Nøglestyrke til deling</string>
     <string name="new_vault_name">Nyt boksnavn</string>
