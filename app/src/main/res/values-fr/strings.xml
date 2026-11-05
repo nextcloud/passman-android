@@ -109,6 +109,7 @@
     <string name="issuer">Émetteur</string>
     <string name="error_parsing_qr_code">Erreur de traitement du code QR</string>
     <string name="camera_permission_denied">Autorisation de caméra refusée</string>
+    <string name="local_network_permission_denied">Sans la permission d\'accéder aux appareils du réseau local, Passman ne peut pas se connecter à votre serveur Nextcloud.</string>
     <string name="no_matching_credentials_or_fields_found">Aucune information d\'identification correspondante ni aucun champ à remplir automatiquement n\'a été trouvé</string>
     <string name="no_active_vault_add_credential_error">Aucun coffre-fort actif. Impossible d\'ajouter des informations d\'identification !</string>
     <string name="automatic_autofill_vault_description">Sélectionnez Automatique si vous souhaitez que le remplissage automatique soit fourni uniquement lorsqu\'un coffre-fort est activement ouvert et déverrouillé dans l\'application.</string>
