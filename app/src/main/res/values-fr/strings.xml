@@ -44,6 +44,8 @@
     <string name="app_security">Sécurité de l\'application</string>
     <string name="app_start_password">Mot de passe de démarrage de l\'appli</string>
     <string name="app_start_password_android_auth_description">Autoriser authentification utilisateur au démarrage de l\'application. </string>
+    <string name="app_start_device_credential_only">Exiger le code PIN, le motif ou le mot de passe de l\'appareil (pas de biométrie)</string>
+    <string name="app_start_device_credential_only_unsupported">Exiger le code PIN, le motif ou le mot de passe de l\'appareil sans biométrie nécessite Android 11 ou plus récent</string>
     <string name="wait_while_encrypting">Patientez pendant le chiffrement…</string>
     <string name="wait_while_decrypting">Patientez pendant le déchiffrage…</string>
     <string name="wait_while_uploading">Patientez pendant le téléversement...</string>
